@@ -1,9 +1,15 @@
 package com.htecgroup.SkyNest.enitity;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "user")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 8310242347168695452L;
