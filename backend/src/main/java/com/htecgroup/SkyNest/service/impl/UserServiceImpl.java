@@ -5,7 +5,7 @@ import com.htecgroup.SkyNest.model.dto.UserDto;
 import com.htecgroup.SkyNest.model.enitity.UserEntity;
 import com.htecgroup.SkyNest.repository.UserRepository;
 import com.htecgroup.SkyNest.service.UserService;
-import org.springframework.beans.BeanUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,16 +27,15 @@ public class UserServiceImpl implements UserService {
       throw new RuntimeException("Email already in use");
     }
 
-    UserEntity userEntity = new UserEntity();
-
     userDto.setUserId(utils.generateUserId(30));
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-    BeanUtils.copyProperties(userDto, userEntity);
+
+    ModelMapper modelMapper = new ModelMapper();
+    UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
 
     userEntity = userRepository.save(userEntity);
-    BeanUtils.copyProperties(userEntity, userDto);
 
-    return userDto;
+    return modelMapper.map(userEntity, UserDto.class);
   }
 
   @Override
@@ -48,9 +47,8 @@ public class UserServiceImpl implements UserService {
       throw new UsernameNotFoundException("could not find user with email: " + email);
     }
 
-    UserDto userDto = new UserDto();
-    BeanUtils.copyProperties(userEntity, userDto);
+    ModelMapper modelMapper = new ModelMapper();
 
-    return userDto;
+    return modelMapper.map(userEntity, UserDto.class);
   }
 }
