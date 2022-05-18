@@ -5,13 +5,13 @@ import LoginPage from "./components/Login/LoginPage";
 
 function App() {
 	const [fakeToken, setFakeToken] = useState(localStorage.accessToken);
-	const [fakeData, setFakeData] = useState("FAKE_DATA");
+	const [fakeData, setFakeData] = useState("");
 
 	if (fakeToken) {
 		if (fakeData) {
-			return <HomePage setFakeToken={setFakeToken} />;
+			return <HomePage setFakeToken={setFakeToken} fakeData={fakeData} setFakeData={setFakeData} />;
 		}
-		return <Loader />;
+		return <Loader setFakeData={setFakeData} />;
 	} else {
 		return <LoginPage setFakeToken={setFakeToken} />;
 	}

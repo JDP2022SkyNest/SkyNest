@@ -28,7 +28,7 @@ const LoginPage = ({ setFakeToken }) => {
 		if (textInput.length > 5 && passwordInput.length > 5) {
 			fakeTokenFunc();
 		} else {
-			setErrorMsg("User and PW > 5 chars");
+			setErrorMsg("TEST User and Password have to be more than 5 characters");
 		}
 	};
 
@@ -44,7 +44,7 @@ const LoginPage = ({ setFakeToken }) => {
 					<div className="input-group mb-3">
 						<div className="input-group-prepend">
 							<span className="input-group-text">
-								<i className="fa-solid fa-at"></i>
+								<i className="fa fa-user"></i>
 							</span>
 						</div>
 						<input
