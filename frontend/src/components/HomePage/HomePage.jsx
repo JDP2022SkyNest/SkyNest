@@ -1,4 +1,5 @@
 import React from "react";
+import Data from "./Data";
 import "../Login/LoginPage.css";
 
 const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
@@ -44,8 +45,9 @@ const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
 			<div className="container">
 				<div>
 					<span className="h3 text-center d-block my-3 text-success font-weight-bold">TOKEN FOUND</span>
-					<div className="text-center display-4">Your Data:</div>
-					<div className="text-center h4 text-danger">{fakeData}</div>
+					<div className="text-left shadow p-4" style={{ borderRadius: "10px" }}>
+						<Data fakeData={fakeData} />
+					</div>
 				</div>
 			</div>
 		</React.Fragment>
