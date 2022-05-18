@@ -31,5 +31,6 @@ public class UserEntity implements Serializable {
   // private UserType type;
 
   // private String company;
+  //  createdAt, deletedAt, updatedAt...
 
 }
