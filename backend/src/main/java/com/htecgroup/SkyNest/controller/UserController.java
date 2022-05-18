@@ -1,9 +1,8 @@
 package com.htecgroup.SkyNest.controller;
 
-import com.htecgroup.SkyNest.dto.UserDto;
-import com.htecgroup.SkyNest.io.request.UserLoginRequest;
-import com.htecgroup.SkyNest.io.request.UserRegisterRequest;
-import com.htecgroup.SkyNest.io.response.UserResponse;
+import com.htecgroup.SkyNest.model.dto.UserDto;
+import com.htecgroup.SkyNest.model.request.UserRegisterRequest;
+import com.htecgroup.SkyNest.model.response.UserResponse;
 import com.htecgroup.SkyNest.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

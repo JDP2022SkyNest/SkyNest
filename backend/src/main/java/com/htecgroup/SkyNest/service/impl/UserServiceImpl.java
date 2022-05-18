@@ -1,8 +1,8 @@
 package com.htecgroup.SkyNest.service.impl;
 
 import com.htecgroup.SkyNest.Utils;
-import com.htecgroup.SkyNest.dto.UserDto;
-import com.htecgroup.SkyNest.enitity.UserEntity;
+import com.htecgroup.SkyNest.model.dto.UserDto;
+import com.htecgroup.SkyNest.model.enitity.UserEntity;
 import com.htecgroup.SkyNest.repository.UserRepository;
 import com.htecgroup.SkyNest.service.UserService;
 import org.springframework.beans.BeanUtils;

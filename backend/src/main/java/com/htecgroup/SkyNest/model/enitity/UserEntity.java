@@ -1,4 +1,4 @@
-package com.htecgroup.SkyNest.enitity;
+package com.htecgroup.SkyNest.model.enitity;
 
 import lombok.*;
 

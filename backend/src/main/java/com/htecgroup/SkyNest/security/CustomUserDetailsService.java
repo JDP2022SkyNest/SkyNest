@@ -1,6 +1,6 @@
 package com.htecgroup.SkyNest.security;
 
-import com.htecgroup.SkyNest.dto.UserDto;
+import com.htecgroup.SkyNest.model.dto.UserDto;
 import com.htecgroup.SkyNest.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

@@ -1,4 +1,4 @@
-package com.htecgroup.SkyNest.io.response;
+package com.htecgroup.SkyNest.model.response;
 
 import lombok.Data;
 

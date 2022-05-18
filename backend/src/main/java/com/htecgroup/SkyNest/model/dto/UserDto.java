@@ -1,4 +1,4 @@
-package com.htecgroup.SkyNest.dto;
+package com.htecgroup.SkyNest.model.dto;
 
 import lombok.Data;
 
