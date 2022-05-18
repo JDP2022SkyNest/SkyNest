@@ -10,7 +10,7 @@ const Data = ({ fakeData }) => {
 		} else if (data.size >= 600) {
 			color = "danger";
 		}
-		console.log(color, data.size);
+
 		return (
 			<div key={data.id} className={`d-inline-block m-3 card border-${color} mb-3`} style={{ maxWidth: "12rem" }}>
 				{/* <div className="card-header border-success">File number: {data.id}</div> */}
