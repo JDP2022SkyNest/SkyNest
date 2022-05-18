@@ -3,6 +3,7 @@ package com.htecgroup.SkyNest.model.enitity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Entity(name = "user")
@@ -18,22 +19,14 @@ public class UserEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @Column(nullable = false, unique = true)
-  private String userId;
-
-  @Column(nullable = false)
-  private String email;
-
-  @Column(nullable = false)
-  private String name;
-
-  @Column(nullable = false)
-  private String surname;
-
-  @Column(nullable = false)
-  private String encryptedPassword;
+  @NotBlank private String userId;
+  @NotBlank private String email;
+  @NotBlank private String name;
+  @NotBlank private String surname;
+  @NotBlank private String encryptedPassword;
 
   //  TODO
+  //  private Boolean deleted = false;
 
   // private UserType type;
 
