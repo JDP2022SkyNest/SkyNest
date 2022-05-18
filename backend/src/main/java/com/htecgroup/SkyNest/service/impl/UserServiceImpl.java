@@ -7,6 +7,7 @@ import com.htecgroup.SkyNest.repository.UserRepository;
 import com.htecgroup.SkyNest.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,21 @@ public class UserServiceImpl implements UserService {
     BeanUtils.copyProperties(userDto, userEntity);
 
     userEntity = userRepository.save(userEntity);
+    BeanUtils.copyProperties(userEntity, userDto);
+
+    return userDto;
+  }
+
+  @Override
+  public UserDto findUserByEmail(String email) {
+
+    UserEntity userEntity = userRepository.findUserByEmail(email);
+
+    if (userEntity == null) {
+      throw new UsernameNotFoundException("could not find user with email: " + email);
+    }
+
+    UserDto userDto = new UserDto();
     BeanUtils.copyProperties(userEntity, userDto);
 
     return userDto;
