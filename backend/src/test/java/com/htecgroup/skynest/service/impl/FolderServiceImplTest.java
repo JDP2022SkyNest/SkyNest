@@ -102,6 +102,21 @@ class FolderServiceImplTest {
     verify(folderRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
   }
 
+  @Test
+  void getAllFoldersWithParent() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    List<FolderEntity> expectedFolders = new ArrayList<>(Collections.singleton(folderEntity));
+    when(folderRepository.findAllByParentFolderId(any())).thenReturn(expectedFolders);
+
+    List<FolderResponse> actualFolders =
+        folderService.getAllFoldersWithParent(folderEntity.getParentFolder().getId());
+
+    Assertions.assertEquals(expectedFolders.size(), actualFolders.size());
+    this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
+    verify(folderRepository, times(1))
+        .findAllByParentFolderId(folderEntity.getParentFolder().getId());
+  }
+
   private void assertFolderEntityAndFolderResponse(
       FolderEntity expectedFolderEntity, FolderResponse actualFolderResponse) {
     Assertions.assertEquals(
