@@ -2,8 +2,8 @@ import React from "react";
 
 const Data = ({ fakeData }) => {
 	const allFakeData = fakeData.map((data) => {
-		let color = "secondary";
-		if (data.size >= 300 && data.size < 400) {
+		let color = "success";
+		if (data.size >= 200 && data.size < 400) {
 			color = "primary";
 		} else if (data.size >= 400 && data.size < 600) {
 			color = "warning";
