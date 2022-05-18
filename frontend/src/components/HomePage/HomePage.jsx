@@ -31,11 +31,11 @@ const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
 								</a>
 							</li>
 						</ul>
-						<form onSubmit={(e) => e.preventDefault()} className="form-inline ml-auto">
-							<input type="text" className="form-control" />
+						<form onSubmit={(e) => e.preventDefault()} className="form-inline ml-auto mb-2 mb-md-0">
+							<input type="text" className="form-control d-inline" />
 							<button className="btn btn-warning ml-2">Search</button>
 						</form>
-						<button className="btn btn-danger ml-2" onClick={onLogOut}>
+						<button className="btn btn-danger ml-0 ml-md-2" onClick={onLogOut}>
 							Log Out
 						</button>
 					</div>
@@ -43,7 +43,7 @@ const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
 			</nav>
 			<div className="container">
 				<div>
-					<span className="display-4 text-center d-block my-3 bg-secondary text-success font-weight-bold">TOKEN FOUND</span>
+					<span className="h3 text-center d-block my-3 text-success font-weight-bold">TOKEN FOUND</span>
 					<div className="text-center display-4">Your Data:</div>
 					<div className="text-center h4 text-danger">{fakeData}</div>
 				</div>

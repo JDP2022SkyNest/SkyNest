@@ -18,7 +18,7 @@ const Loader = ({ setFakeData }) => {
 		<React.Fragment>
 			<div className="container-fluid d-flex flex-column justify-content-center align-items-center vh-100">
 				{/* Main Loader Style */}
-				<div className="spinner-border" style={{ width: "5rem", height: "5rem" }} role="status">
+				<div className="spinner-border text-primary" style={{ width: "5rem", height: "5rem" }} role="status">
 					<span className="sr-only">Loading...</span>
 				</div>
 
@@ -27,7 +27,9 @@ const Loader = ({ setFakeData }) => {
 					<span className="sr-only">Loading...</span>
 				</div> */}
 				<br />
-				<div className="text-muted h3">Loading your data...</div>
+				<div className="text-muted" style={{ fontSize: "20px" }}>
+					Loading your data...
+				</div>
 			</div>
 		</React.Fragment>
 	);

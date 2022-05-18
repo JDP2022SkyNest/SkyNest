@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import HomePage from "./components/HomePage/HomePage";
 import Loader from "./components/LoadingScreen/Loader";
 import LoginPage from "./components/Login/LoginPage";
+import SignUpPage from "./components/SignUp/SignUpPage";
 
 function App() {
 	const [fakeToken, setFakeToken] = useState(localStorage.accessToken);
