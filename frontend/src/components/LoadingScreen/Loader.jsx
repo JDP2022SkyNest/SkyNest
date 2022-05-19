@@ -29,7 +29,7 @@ const FakeData = [
 const Loader = ({ setFakeData }) => {
 	// Fake Data that will come in X seconds - Testing purposes
 	const getFakeDataFunc = () => {
-		let RNG = Math.ceil(Math.random() * 2);
+		let RNG = Math.ceil(Math.random() * 1);
 		console.log(`Fake Data will come in: ${RNG} seconds`);
 
 		setTimeout(() => {
