@@ -7,22 +7,27 @@ const LoginPage = ({ setFakeToken }) => {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [usernameMsg, setusernameMsg] = useState("");
 
+	// Username input , used Ref to Focus it.
 	const inputRef = useRef();
 
+	// Fake Token Func
 	const fakeTokenFunc = () => {
 		setFakeToken("FAKE_TOKEN_VALUE");
 		localStorage.setItem("accessToken", "FAKE_TOKEN_VALUE");
 	};
 
+	// Focuset username input on page load
 	useEffect(() => {
 		inputRef.current.focus();
 	}, []);
 
+	// When username and pw inputs are changed, hide error message
 	useEffect(() => {
 		setErrorMsg("");
 		setusernameMsg("");
 	}, [textInput, passwordInput]);
 
+	// Dummy conditional statement set just to TEST it
 	const onFormSubmit = (e) => {
 		e.preventDefault();
 		if (textInput.length > 5 && passwordInput.length > 5) {
@@ -78,7 +83,7 @@ const LoginPage = ({ setFakeToken }) => {
 						<p className="mt-4">
 							<small className="text-white">Don't have an account?</small>
 							<br />
-							<a href="#">Register Here</a>
+							<button className="btn btn-link">Register Here</button>
 						</p>
 					</div>
 				</form>
