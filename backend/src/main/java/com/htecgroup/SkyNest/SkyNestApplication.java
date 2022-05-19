@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SkyNestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SkyNestApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(SkyNestApplication.class, args);
+  }
 }
