@@ -18,12 +18,10 @@ public class UserController {
   @PostMapping("/register")
   public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
-    ModelMapper modelMapper = new ModelMapper();
-
-    UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
+    UserDto userDto = new ModelMapper().map(userRegisterRequest, UserDto.class);
     userDto = userService.registerUser(userDto);
 
-    return modelMapper.map(userDto, UserResponse.class);
+    return new ModelMapper().map(userDto, UserResponse.class);
   }
 
   @GetMapping

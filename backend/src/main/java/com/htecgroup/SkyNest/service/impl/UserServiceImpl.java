@@ -30,12 +30,11 @@ public class UserServiceImpl implements UserService {
     userDto.setUserId(utils.generateUserId(30));
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
 
-    ModelMapper modelMapper = new ModelMapper();
-    UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
+    UserEntity userEntity = new ModelMapper().map(userDto, UserEntity.class);
 
     userEntity = userRepository.save(userEntity);
 
-    return modelMapper.map(userEntity, UserDto.class);
+    return new ModelMapper().map(userEntity, UserDto.class);
   }
 
   @Override
@@ -47,8 +46,6 @@ public class UserServiceImpl implements UserService {
       throw new UsernameNotFoundException("could not find user with email: " + email);
     }
 
-    ModelMapper modelMapper = new ModelMapper();
-
-    return modelMapper.map(userEntity, UserDto.class);
+    return new ModelMapper().map(userEntity, UserDto.class);
   }
 }
