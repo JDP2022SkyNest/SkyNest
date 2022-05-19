@@ -27,6 +27,12 @@ public class UserServiceImpl implements UserService {
       throw new RuntimeException("Email already in use");
     }
 
+    String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$";
+    if (!userDto.getPassword().matches(passwordPattern)) {
+      throw new RuntimeException(
+          "Passwords must be at least 8 characters long, have at least one uppercase letter, lowercase letter, and one number");
+    }
+
     userDto.setUserId(utils.generateUserId(30));
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
 
