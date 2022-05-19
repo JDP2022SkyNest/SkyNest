@@ -15,7 +15,7 @@ const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
 		<React.Fragment>
 			<nav className="navbar sticky-top navbar-expand-md navbar-dark text-light  gradient-custom">
 				<div className="container">
-					<a href="#" className="navbar-brand text-warning">
+					<a href="/" className="navbar-brand text-warning">
 						SKYNEST
 					</a>
 					<button className="navbar-toggler" data-toggle="collapse" data-target="#mynav3">
@@ -24,12 +24,12 @@ const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
 					<div className="collapse navbar-collapse" id="mynav3">
 						<ul className="navbar-nav">
 							<li className="nav-item">
-								<a href="#" className="nav-link active">
+								<a href="/" className="nav-link active">
 									Home
 								</a>
 							</li>
 							<li className="nav-item">
-								<a href="#" className="nav-link">
+								<a href="/" className="nav-link">
 									About
 								</a>
 							</li>
@@ -46,8 +46,7 @@ const HomePage = ({ setFakeToken, fakeData, setFakeData }) => {
 			</nav>
 			<div className="container">
 				<div>
-					<span className="h3 text-center d-block my-3 text-success font-weight-bold">TOKEN FOUND</span>
-					<div className="shadow p-4" style={{ borderRadius: "10px" }}>
+					<div className="shadow p-4 mt-3" style={{ borderRadius: "10px", backgroundColor: "whitesmoke" }}>
 						{/* OUR DATA FROM SERVER HERE */}
 						<Data fakeData={fakeData} />
 					</div>

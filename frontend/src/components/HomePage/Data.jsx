@@ -1,7 +1,6 @@
 import React from "react";
 
 const Data = ({ fakeData }) => {
-	
 	// Different colors depending of the File size
 	const allFakeData = fakeData.map((data) => {
 		let color = "success";
@@ -22,7 +21,7 @@ const Data = ({ fakeData }) => {
 						<h5 className="card-title text-center">{data.title}</h5>
 						<p className="card-text">{data.info}</p>
 					</div>
-					<div className={`text-center text-${color} card-footer bg-transparent border-${color}`}>{data.size} mb</div>
+					<div className={`text-center text-${color} card-footer bg-transparent border-${color} font-weight-bold`}>{data.size} mb</div>
 				</div>
 			</div>
 		);

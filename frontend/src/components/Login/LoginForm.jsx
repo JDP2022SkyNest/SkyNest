@@ -27,7 +27,7 @@ const LoginPage = ({ setFakeToken }) => {
 		setusernameMsg("");
 	}, [textInput, passwordInput]);
 
-	// Dummy conditional statement set just to TEST it
+	// Dummy conditional statement set just to TEST
 	const onFormSubmit = (e) => {
 		e.preventDefault();
 		if (textInput.length > 5 && passwordInput.length > 5) {
@@ -42,7 +42,7 @@ const LoginPage = ({ setFakeToken }) => {
 			<div className="col-12 col-sm-8 col-md-7 col-lg-5 col-xl-7 bg-dark p-5" style={{ borderRadius: "20px" }}>
 				<div className="text-center pb-5">
 					<h1 className="text-light font-weight-bold">LOGIN</h1>
-					<small className="text-secondary">Please enter your e-mail and password</small>
+					<small className="text-secondary">Please enter your username and password</small>
 				</div>
 				<form onSubmit={onFormSubmit}>
 					<p className={errorMsg ? "d-block text-danger" : "d-none"}>{errorMsg}</p>
