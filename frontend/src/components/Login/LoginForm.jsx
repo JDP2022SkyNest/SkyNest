@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./LoginPage.css";
 
-const LoginPage = ({ setFakeToken }) => {
+const LoginPage = ({ setAccessToken }) => {
 	const [textInput, setTextInput] = useState("");
 	const [passwordInput, setPasswordInput] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
-	const [usernameMsg, setusernameMsg] = useState("");
+	const [usernameMsg, setUsernameMsg] = useState("");
 
 	// Username input , used Ref to Focus it.
 	const inputRef = useRef();
 
 	// Fake Token Func
 	const fakeTokenFunc = () => {
-		setFakeToken("FAKE_TOKEN_VALUE");
+		setAccessToken("FAKE_TOKEN_VALUE");
 		localStorage.setItem("accessToken", "FAKE_TOKEN_VALUE");
 	};
 
@@ -24,7 +24,7 @@ const LoginPage = ({ setFakeToken }) => {
 	// When username and pw inputs are changed, hide error message
 	useEffect(() => {
 		setErrorMsg("");
-		setusernameMsg("");
+		setUsernameMsg("");
 	}, [textInput, passwordInput]);
 
 	// Dummy conditional statement set just to TEST

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 
 // Our Fake Data - Will be changed when we get our endpoint and data from there
-const FakeData = [
+const dataForTesting = [
 	{ id: 1, title: "File 1", info: "Pictures", size: 124 },
 	{ id: 2, title: "File 2", info: "Backups", size: 215 },
 	{ id: 3, title: "File 3", info: "Movies", size: 186 },
@@ -26,41 +26,40 @@ const FakeData = [
 	{ id: 22, title: "File 22", info: "My Books", size: 5 },
 ];
 
-const Loader = ({ setFakeData }) => {
+const Loader = ({ setUserData }) => {
 	// Fake Data that will come in X seconds - Testing purposes
-	const getFakeDataFunc = () => {
+	// This will be deleted as soon as we get our endpoint and real data
+	const getTestingData = () => {
 		let RNG = Math.ceil(Math.random() * 1);
 		console.log(`Fake Data will come in: ${RNG} seconds`);
 
 		setTimeout(() => {
-			setFakeData(FakeData);
+			setUserData(dataForTesting);
 		}, RNG * 1000);
 	};
 
 	// Load it at first render of this Component
-	useState(() => {
-		getFakeDataFunc();
+	useEffect(() => {
+		getTestingData();
 	}, []);
 
 	return (
 		// Loader animation with Text - Can be changed whenever, however
-		<React.Fragment>
-			<div className="container-fluid d-flex flex-column justify-content-center align-items-center vh-100">
-				{/* Main Loader Style */}
-				<div className="spinner-border text-primary" style={{ width: "5rem", height: "5rem" }} role="status">
-					<span className="sr-only">Loading...</span>
-				</div>
+		<div className="container-fluid d-flex flex-column justify-content-center align-items-center vh-100">
+			{/* Main Loader Style */}
+			<div className="spinner-border text-primary" style={{ width: "5rem", height: "5rem" }} role="status">
+				<span className="sr-only">Loading...</span>
+			</div>
 
-				{/* This is the optional Loader that we may use. */}
-				{/* <div className="spinner-grow" style={{ width: "5rem", height: "5rem" }} role="status">
+			{/* This is the optional Loader that we may use. */}
+			{/* <div className="spinner-grow" style={{ width: "5rem", height: "5rem" }} role="status">
 					<span className="sr-only">Loading...</span>
 				</div> */}
-				<br />
-				<div className="text-muted" style={{ fontSize: "20px" }}>
-					Loading your data...
-				</div>
+			<br />
+			<div className="text-muted" style={{ fontSize: "20px" }}>
+				Loading your data...
 			</div>
-		</React.Fragment>
+		</div>
 	);
 };
 
