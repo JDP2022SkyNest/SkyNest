@@ -1,19 +1,39 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./LoginPage.css";
+import AxiosInstance from "../axios/AxiosInstance";
 
 const LoginPage = ({ setAccessToken }) => {
-	const [textInput, setTextInput] = useState("");
+	const [usernameInput, setUsernameInput] = useState("");
 	const [passwordInput, setPasswordInput] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
-	const [usernameMsg, setUsernameMsg] = useState("");
+	const [forgotPassword, setForgotPassword] = useState("");
+
+	// Used to navigate to other URLs
+	const navigate = useNavigate();
 
 	// Username input , used Ref to Focus it.
 	const inputRef = useRef();
 
-	// Fake Token Func
-	const fakeTokenFunc = () => {
-		setAccessToken("FAKE_TOKEN_VALUE");
-		localStorage.setItem("accessToken", "FAKE_TOKEN_VALUE");
+	// Fetch User Token
+	const getUserToken = async () => {
+		AxiosInstance.post("/login", {
+			email: usernameInput,
+			password: passwordInput,
+		})
+			.then(({ data }) => {
+				setAccessToken(data.accessToken);
+				localStorage.setItem("accessToken", data.accessToken);
+				navigate("/homepage");
+			})
+			.catch(({ response }) => {
+				if (response.status === 400) {
+					setErrorMsg("Incorrect username or password");
+				} else if (response.status === 0) {
+					setErrorMsg("Server Timeout");
+				}
+				setForgotPassword("Forgot Password?");
+			});
 	};
 
 	// Focuset username input on page load
@@ -24,16 +44,17 @@ const LoginPage = ({ setAccessToken }) => {
 	// When username and pw inputs are changed, hide error message
 	useEffect(() => {
 		setErrorMsg("");
-		setUsernameMsg("");
-	}, [textInput, passwordInput]);
+	}, [usernameInput, passwordInput]);
 
-	// Dummy conditional statement set just to TEST
+	// Func that executes on Form Submit
 	const onFormSubmit = (e) => {
 		e.preventDefault();
-		if (textInput.length > 5 && passwordInput.length > 5) {
-			fakeTokenFunc();
+		// Dummy conditional statement, will change this to meet the
+		// username and password client requirements (char length, char symbols, numbers etc..)
+		if (usernameInput.length > 5 && passwordInput.length > 5) {
+			getUserToken();
 		} else {
-			setErrorMsg("TEST User and Password have to be more than 5 characters");
+			setErrorMsg("User and pw needs to have more than 5 characters");
 		}
 	};
 
@@ -45,7 +66,7 @@ const LoginPage = ({ setAccessToken }) => {
 					<small className="text-secondary">Please enter your username and password</small>
 				</div>
 				<form onSubmit={onFormSubmit}>
-					<p className={errorMsg ? "d-block text-danger" : "d-none"}>{errorMsg}</p>
+					<p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
 					<div className="input-group mb-3">
 						<div className="input-group-prepend">
 							<span className="input-group-text">
@@ -53,11 +74,11 @@ const LoginPage = ({ setAccessToken }) => {
 							</span>
 						</div>
 						<input
-							onChange={(e) => setTextInput(e.target.value)}
-							value={textInput}
+							onChange={(e) => setUsernameInput(e.target.value)}
+							value={usernameInput}
 							type="text"
 							className="form-control"
-							placeholder="Enter your email"
+							placeholder="Enter your username"
 							ref={inputRef}
 							required
 						/>
@@ -77,13 +98,17 @@ const LoginPage = ({ setAccessToken }) => {
 							required
 						/>
 					</div>
-					<p className={usernameMsg ? "d-block text-danger" : "d-none"}>{usernameMsg}</p>
+					<p className={forgotPassword ? "d-block btn btn-link btn-sm text-left" : "d-none"}>
+						<Link to={"/"}>{forgotPassword}</Link>
+					</p>
 					<div className="text-center mt-5">
-						<button className="btn btn-primary mb-3 mt-1 py-3 px-5 btn-lg">LOGIN</button>
+						<button className="btn btn-primary mb-3 mt-1 py-3 px-5 btn-lg d-block w-100">LOGIN</button>
 						<p className="mt-4">
 							<small className="text-white">Don't have an account?</small>
 							<br />
-							<button className="btn btn-link">Register Here</button>
+							<Link to={"/signup"} className="btn btn-link">
+								Register Here
+							</Link>
 						</p>
 					</div>
 				</form>

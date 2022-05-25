@@ -1,17 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./SignUpPage";
 
-const LoginPage = ({ setFakeToken }) => {
-	const [textInput, setTextInput] = useState("");
+const LoginPage = () => {
+	const [nameInput, setNameInputt] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [usernameInput, setUsernameInput] = useState("");
 	const [passwordInput, setPasswordInput] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
 	const [usernameMsg, setusernameMsg] = useState("");
 
 	const inputRef = useRef();
 
-	const fakeTokenFunc = () => {
-		setFakeToken("FAKE_TOKEN_VALUE");
-		localStorage.setItem("accessToken", "FAKE_TOKEN_VALUE");
+	const logUserData = () => {
+		console.table([{ nameInput }, { lastName }, { usernameInput }, { passwordInput }]);
 	};
 
 	useEffect(() => {
@@ -21,14 +23,14 @@ const LoginPage = ({ setFakeToken }) => {
 	useEffect(() => {
 		setErrorMsg("");
 		setusernameMsg("");
-	}, [textInput, passwordInput]);
+	}, [usernameInput, passwordInput]);
 
 	const onFormSubmit = (e) => {
 		e.preventDefault();
-		if (textInput.length > 5 && passwordInput.length > 5) {
-			fakeTokenFunc();
+		if (usernameInput.length > 5 && passwordInput.length > 5) {
+			logUserData();
 		} else {
-			setErrorMsg("TEST User and Password have to be more than 5 characters");
+			setErrorMsg("TEST ERROR WHILE SIGN-UP");
 		}
 	};
 
@@ -41,6 +43,32 @@ const LoginPage = ({ setFakeToken }) => {
 				</div>
 				<form onSubmit={onFormSubmit}>
 					<p className={errorMsg ? "d-block text-danger" : "d-none"}>{errorMsg}</p>
+					<div className="row">
+						<div className="col-6">
+							<div className="input-group mb-3">
+								<input
+									onChange={(e) => setNameInputt(e.target.value)}
+									value={nameInput}
+									type="text"
+									className="form-control"
+									placeholder="Name"
+									required
+								/>
+							</div>
+						</div>
+						<div className="col-6">
+							<div className="input-group mb-3">
+								<input
+									onChange={(e) => setLastName(e.target.value)}
+									value={lastName}
+									type="text"
+									className="form-control"
+									placeholder="Last Name"
+									required
+								/>
+							</div>
+						</div>
+					</div>
 					<div className="input-group mb-3">
 						<div className="input-group-prepend">
 							<span className="input-group-text">
@@ -48,11 +76,11 @@ const LoginPage = ({ setFakeToken }) => {
 							</span>
 						</div>
 						<input
-							onChange={(e) => setTextInput(e.target.value)}
-							value={textInput}
+							onChange={(e) => setUsernameInput(e.target.value)}
+							value={usernameInput}
 							type="text"
 							className="form-control"
-							placeholder="Enter your email"
+							placeholder="Enter your username"
 							ref={inputRef}
 							required
 						/>
@@ -76,9 +104,11 @@ const LoginPage = ({ setFakeToken }) => {
 					<div className="text-center mt-5">
 						<button className="btn btn-primary mb-3 mt-1 py-3 px-5 btn-lg">SIGN UP</button>
 						<p className="mt-4">
-							<small className="text-white">Don't have an account?</small>
+							<small className="text-white">Already have an account?</small>
 							<br />
-							<a href="#">Register Here</a>
+							<Link to={"/login"} href="#">
+								Go back to Login screen
+							</Link>
 						</p>
 					</div>
 				</form>

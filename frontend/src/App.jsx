@@ -1,23 +1,33 @@
 import React, { useState } from "react";
 import HomePage from "./components/HomePage/HomePage";
-import Loader from "./components/LoadingScreen/Loader";
+import SignUpPage from "./components/SignUp/SignUpPage";
 import LoginPage from "./components/Login/LoginPage";
+import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
+import RedirectRoute from "./components/Routes/RedirectRoute";
 
 function App() {
-	// Fake dummy Values that will be changed
 	const [accessToken, setAccessToken] = useState(localStorage.accessToken);
-	const [userData, setUserData] = useState("");
 
-	// 1- If users logged in the past and have token in LS
-	if (accessToken) {
-		// 3- When Data gets Loaded we go to Home Page.
-		if (userData) {
-			return <HomePage setAccessToken={setAccessToken} userData={userData} setUserData={setUserData} />;
-		}
-		// 2 - If logged in, Loader's function is to show loading screen while Loading data
-		return <Loader setUserData={setUserData} />;
-	}
-	return <LoginPage setAccessToken={setAccessToken} />;
+	return (
+		<Routes>
+			<Route path="/" exact element={<RedirectRoute accessToken={accessToken} />} />
+			<Route path="login" exact element={<LoginPage setAccessToken={setAccessToken} />} />
+			<Route path="signup" exact element={<SignUpPage />} />
+			<Route
+				path="homepage"
+				exact
+				element={
+					<ProtectedRoute accessToken={accessToken}>
+						<HomePage setAccessToken={setAccessToken} />
+					</ProtectedRoute>
+				}
+			/>
+
+			{/* CATCH ALL PATH */}
+			<Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
+		</Routes>
+	);
 }
 
 export default App;

@@ -1,6 +1,7 @@
 import React from "react";
 import LoginForm from "./LoginForm";
 import LoginSidePage from "./LoginSidePage";
+import "./LoginPage.css";
 
 const LoginPage = ({ setAccessToken }) => {
 	return (

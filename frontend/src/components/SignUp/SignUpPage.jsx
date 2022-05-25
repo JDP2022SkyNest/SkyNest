@@ -1,6 +1,7 @@
 import React from "react";
 import SignUpForm from "./SignUpForm";
 import SignUpSidePage from "./SignUpSidePage";
+import "./SignUpPage.css";
 
 const LoginPage = () => {
 	return (
@@ -11,7 +12,7 @@ const LoginPage = () => {
 						{/* if we want gradient add 'gradient-custom-side' to div above */}
 						<SignUpSidePage />
 					</div>
-					<div className="col gradient-custom">
+					<div className="col gradient-custom-reverse">
 						<SignUpForm />
 					</div>
 				</div>
