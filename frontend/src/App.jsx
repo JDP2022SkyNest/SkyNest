@@ -1,8 +1,8 @@
 import React from "react";
-import Loader from "./Components/Loader/Loader";
+import { Login } from "./Components/Login/Login";
 
 const App = () => {
-	return <Loader />;
+  return <Login />;
 };
 
 export default App;
