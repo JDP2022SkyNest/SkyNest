@@ -1,22 +1,22 @@
 services:
 
-  mysqldb:
-    image: mysql:8
-    container_name: mysqldb
+  skynest-db:
+    image: mysql:latest
+    container_name: skynest-db
     ports:
-      - 3305:3306
+      - 3306:3306
     restart: unless-stopped
     volumes:
       - db:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: 'SkyNest'
+      MYSQL_DATABASE: 'skynest'
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: '123456'
       MYSQL_ROOT_PASSWORD: '123456'
 
-  cassandra:
+  skynest-token-db:
     image: cassandra:latest
-    container_name: cassandra
+    container_name: skynest-token-db
     ports:
       - 9042:9042
     environment:
@@ -31,11 +31,11 @@ services:
       timeout: 10s
       retries: 10
 
-  cassandra-load-keyspace:
-    container_name: cassandra-load-keyspace
+  skynest-token-db-init:
+    container_name: skynest-token-db-init
     image: cassandra:latest
     depends_on:
-      cassandra:
+      skynest-token-db:
         condition: service_healthy
     volumes:
       - ./src/main/resources/cassandra_init_keyspace.cql:/schema.cql
