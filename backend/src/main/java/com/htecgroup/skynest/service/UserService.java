@@ -7,4 +7,5 @@ public interface UserService {
   UserDto registerUser(UserDto userDto);
 
   UserDto findUserByEmail(String email);
+
 }
