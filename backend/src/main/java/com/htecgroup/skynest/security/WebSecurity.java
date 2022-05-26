@@ -1,7 +1,10 @@
 package com.htecgroup.skynest.security;
 
+import com.htecgroup.SkyNest.filter.CustomAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,9 +30,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .permitAll()
         //        .anyRequest()
         //        .authenticated()
-        .and()
+        .and().addFilter(new CustomAuthenticationFilter(authenticationManagerBean()))
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+  }
+
+  @Bean
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws  Exception {
+    return super.authenticationManagerBean();
   }
 
   @Override
