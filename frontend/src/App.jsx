@@ -1,8 +1,6 @@
 import React from "react";
-import { Login } from "./Components/Login/Login";
+import Login from "./Components/Login/Login";
 
-const App = () => {
-  return <Login />;
-};
+const App = () => <Login />;
 
 export default App;
