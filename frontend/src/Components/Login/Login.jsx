@@ -4,13 +4,13 @@ import logoImage from "./assets/logoblackandwhite.svg";
 
 const Login = () => {
 	return (
-		<section className="vh-100 container-fluid pageBackgroudColor">
+		<section className="vh-100 container-fluid page-background-color">
 			<div className="container py-5 h-100">
 				<div className="row d-flex justify-content-center align-items-center h-100">
 					<div className="col col-xl-10">
 						<div className="card radius">
 							<div className="row g-0">
-								<div className="imageLogo loginFormRadius col-md-6 col-lg-5 d-none d-md-flex justify-content-center align-items-start">
+								<div className="image-logo login-form-radius col-md-6 col-lg-5 d-none d-md-flex justify-content-center align-items-start">
 									<img src={logoImage} alt="login form" className="img-fluid image m-auto" />
 								</div>
 								<div className="col-md-6 col-lg-7 d-flex align-items-center">
@@ -18,7 +18,7 @@ const Login = () => {
 										<form>
 											<div className="d-flex align-items-center mb-3 pb-1">
 												<span className="d-flex justify-content-center m-auto">
-													<img src={logoImage} alt="logo" className="littleImgLogo d-md-none d-xs-flex" />
+													<img src={logoImage} alt="logo" className="little-image-logo d-md-none d-xs-flex" />{" "}
 													<span className="h1 fw-bold m-auto">SkyNest</span>
 												</span>
 											</div>
