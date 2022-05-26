@@ -1,13 +1,15 @@
 .imageLogo {
-  background-color: #fafafa;
-  padding-top: 2rem;
+	background-color: whitesmoke;
 }
+
 .littleImgLogo {
-  width: 5rem;
+	width: 5rem;
 }
-.cont {
-  background-color: #ebe7e8;
+
+.pageBackgroudColor {
+	background-color: #ebe7e8;
 }
-.radius {
-  border-radius: 1rem;
+
+.loginFormRadius {
+	border-radius: 1rem;
 }
