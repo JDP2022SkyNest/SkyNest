@@ -1,7 +1,7 @@
 import React from "react";
 
 function App() {
-  return "SkyNest";
+  return <div>SkyNest</div>;
 }
 
 export default App;
