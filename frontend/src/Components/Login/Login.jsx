@@ -1,7 +1,6 @@
 import React from "react";
+import "./Login.css";
 
-function App() {
+export const Login = () => {
   return <div>SkyNest</div>;
-}
-
-export default App;
+};
