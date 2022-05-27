@@ -71,7 +71,7 @@ const Login = ({ setAccessToken }) => {
 			<div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 p-5 border login-form-radius shadow bg-white">
 				<form onSubmit={onFormSubmit}>
 					<div className="d-flex justify-content-center m-0">
-						<img src={logoImage} alt="logo-image" className="little-image-logo" />
+						<img src={logoImage} alt="LOGO" className="little-image-logo" />
 					</div>
 					<h1 className="mt-2 text-center">SKY-NEST</h1>
 					<p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
