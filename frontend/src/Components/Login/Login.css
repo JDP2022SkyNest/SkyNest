@@ -1,25 +1,25 @@
-.image-logo {
-	background-color: var(--smoke);
+.smoke {
+  background-color: var(--smoke);
+}
+
+.latte {
+  background-color: var(--latte);
 }
 
 .little-image-logo {
-	width: 5rem;
-	animation: logoRotation 20s linear infinite;
-}
-
-.page-background-color {
-	background-color: var(--latte);
+  width: 5rem;
+  /*animation: logoRotation 20s linear infinite;*/
 }
 
 .login-form-radius {
-	border-radius: 1rem;
+  border-radius: 1rem;
 }
 
 @keyframes logoRotation {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
