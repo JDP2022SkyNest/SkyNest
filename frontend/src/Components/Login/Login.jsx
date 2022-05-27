@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
@@ -13,12 +14,15 @@ const Login = ({ setAccessToken }) => {
 	const emailRef = useRef();
 	const passwordRef = useRef();
 
+	const navigate = useNavigate();
+
 	const getUserToken = async () => {
 		await AxiosInstance.post("/login", { email, password })
 			.then(({ data }) => {
 				if (data?.accessToken) {
 					setAccessToken(data.accessToken);
 					localStorage.setItem("accessToken", data.accessToken);
+					navigate("/home");
 				} else {
 					setErrorMsg("Internal error, please try again");
 				}
@@ -125,9 +129,9 @@ const Login = ({ setAccessToken }) => {
 					)}
 					<div className="mt-5 text-center">
 						<p className="m-0">Don't have an account? </p>
-						<p href="#!" className="m-0 btn btn-link">
+						<Link to={"/signup"} href="#!" className="m-0 btn btn-link">
 							Register here
-						</p>
+						</Link>
 					</div>
 				</form>
 			</div>
