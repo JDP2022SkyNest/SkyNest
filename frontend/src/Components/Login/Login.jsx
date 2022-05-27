@@ -16,8 +16,12 @@ const Login = ({ setAccessToken }) => {
 	const getUserToken = async () => {
 		await AxiosInstance.post("/login", { email, password })
 			.then(({ data }) => {
-				setAccessToken(data.accessToken);
-				localStorage.setItem("accessToken", data.accessToken);
+				if (data?.accessToken) {
+					setAccessToken(data.accessToken);
+					localStorage.setItem("accessToken", data.accessToken);
+				} else {
+					setErrorMsg("Internal error, please try again");
+				}
 			})
 			.catch(({ response }) => {
 				if (response.status === 400) {
