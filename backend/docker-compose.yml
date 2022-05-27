@@ -39,7 +39,7 @@ services:
         condition: service_healthy
     volumes:
       - ./src/main/resources/cassandra_init_keyspace.cql:/schema.cql
-    command: /bin/bash -c "echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
+    command: /bin/bash -c "echo loading cassandra keyspace && cqlsh skynest-token-db -f /schema.cql"
 
 volumes:
   db:
