@@ -23,29 +23,26 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-    //customAuthenticationFilter.setFilterProcessesUrl("");
     http.cors()
         .and()
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/users/register")
+        .antMatchers(HttpMethod.POST, SecurityConstants.SING_UP_URL)
         .permitAll()
-                .anyRequest()
-               .authenticated()
-        .and()
-        .formLogin()
-        .loginPage("/users/login")
-        .and().addFilter(customAuthenticationFilter).addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+        .anyRequest()
+        .authenticated()
+        .and().addFilter(getAuthenticationFilter())
+        .addFilter(new CustomAuthorizationFilter(authenticationManager()))
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
-  @Bean
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws  Exception {
-    return super.authenticationManagerBean();
+
+  public CustomAuthenticationFilter getAuthenticationFilter() throws Exception {
+    final CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager());
+    filter.setFilterProcessesUrl("/users/login");
+    return filter;
   }
 
   @Override
