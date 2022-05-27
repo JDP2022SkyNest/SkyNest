@@ -16,14 +16,22 @@ public class UserController {
   @Autowired private UserService userService;
 
   @PostMapping("/register")
-  public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public String registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
     ModelMapper modelMapper = new ModelMapper();
 
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
-    userDto = userService.registerUser(userDto);
+    // userDto = userService.registerUser(userDto);
 
-    return modelMapper.map(userDto, UserResponse.class);
+    // for testing
+    return userService.registerUser(userDto);
+
+    // return modelMapper.map(userDto, UserResponse.class);
+  }
+
+  @GetMapping("/confirm")
+  public String confirmEmail(@RequestParam String token) {
+    return userService.confirmEmail(token);
   }
 
   @GetMapping

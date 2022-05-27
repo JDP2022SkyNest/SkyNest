@@ -4,24 +4,37 @@ import com.htecgroup.SkyNest.Utils;
 import com.htecgroup.SkyNest.model.dto.UserDto;
 import com.htecgroup.SkyNest.model.enitity.UserEntity;
 import com.htecgroup.SkyNest.repository.UserRepository;
+import com.htecgroup.SkyNest.service.EmailService;
 import com.htecgroup.SkyNest.service.UserService;
+import com.htecgroup.SkyNest.util.JwtEmailVerificationUtils;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService {
 
   @Autowired private UserRepository userRepository;
 
+  @Autowired private JwtEmailVerificationUtils jwtEmailVerificationUtils;
   @Autowired private Utils utils;
 
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+  @Autowired private EmailService emailService;
+
   @Override
-  public UserDto registerUser(UserDto userDto) {
+  public String registerUser(UserDto userDto) {
 
     if (userRepository.findUserByEmail(userDto.getEmail()) != null) {
       throw new RuntimeException("Email already in use");
@@ -35,7 +48,13 @@ public class UserServiceImpl implements UserService {
 
     userEntity = userRepository.save(userEntity);
 
-    return modelMapper.map(userEntity, UserDto.class);
+    String token = jwtEmailVerificationUtils.generateJwtEmailVerificationToken(userEntity);
+
+    // TODO: SEND EMAIL
+
+    // for testing
+    return token;
+    // return modelMapper.map(userEntity, UserDto.class);
   }
 
   @Override
@@ -50,5 +69,27 @@ public class UserServiceImpl implements UserService {
     ModelMapper modelMapper = new ModelMapper();
 
     return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public String confirmEmail(String token) {
+    boolean validated = jwtEmailVerificationUtils.validateJwtToken(token);
+    String email = jwtEmailVerificationUtils.getEmailFromJwtEmailVerificationToken(token);
+
+    String isUserEnabled;
+
+    // TODO: Exception Handling
+    if (validated) {
+      isUserEnabled = this.verifyUser(email);
+    } else
+      throw new RuntimeException(
+          "Jwt Token completed all validations with no errors and is still invalid");
+
+    return isUserEnabled;
+  }
+
+  public String verifyUser(String email) {
+    // TODO: possibly in different service
+    return "User successfully verified";
   }
 }
