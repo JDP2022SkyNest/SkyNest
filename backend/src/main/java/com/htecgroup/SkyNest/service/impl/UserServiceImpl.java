@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private UserRepository userRepository;
   @Autowired private RoleRepository roleRepository;
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Autowired private ModelMapper modelMapper;
 
   @Override
   public UserDto registerUser(UserDto userDto) {
@@ -32,15 +33,15 @@ public class UserServiceImpl implements UserService {
             .findByName(RoleEntity.ROLE_WORKER)
             .orElseThrow(
                 () -> new RuntimeException("Role " + RoleEntity.ROLE_WORKER + " not found."));
-    userDto.setRole(new ModelMapper().map(roleEntity, RoleDto.class));
+    userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
 
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
     userDto.setVerified(false);
     userDto.setEnabled(false);
 
-    UserEntity userEntity = userRepository.save(new ModelMapper().map(userDto, UserEntity.class));
+    UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
-    return new ModelMapper().map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserDto.class);
   }
 
   @Override
@@ -52,6 +53,6 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(
                 () -> new UsernameNotFoundException("could not find user with email: " + email));
 
-    return new ModelMapper().map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserDto.class);
   }
 }

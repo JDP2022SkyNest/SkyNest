@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
   @Autowired private UserService userService;
+  @Autowired private ModelMapper modelMapper;
 
   @PostMapping("/register")
   public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
-    UserDto userDto =
-        userService.registerUser(new ModelMapper().map(userRegisterRequest, UserDto.class));
+    UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
 
-    return new ModelMapper().map(userDto, UserResponse.class);
+    return modelMapper.map(userDto, UserResponse.class);
   }
 
   @GetMapping
