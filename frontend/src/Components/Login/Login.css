@@ -1,15 +1,15 @@
 .image-logo {
-	background-color: whitesmoke;
+  background-color: var(--smoke);
 }
 
 .little-image-logo {
-	width: 5rem;
+  width: 5rem;
 }
 
 .page-background-color {
-	background-color: #ebe7e8;
+  background-color: var(--latte);
 }
 
 .login-form-radius {
-	border-radius: 1rem;
+  border-radius: 1rem;
 }
