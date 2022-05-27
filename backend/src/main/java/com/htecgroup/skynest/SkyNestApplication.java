@@ -22,4 +22,10 @@ public class SkyNestApplication {
   public ModelMapper modelMapper() {
     return new ModelMapper();
   }
+
+  @Bean
+  public SpringApplicationContext springApplicationContext()
+  {
+    return new SpringApplicationContext();
+  }
 }
