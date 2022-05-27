@@ -7,14 +7,13 @@ const Login = ({ setAccessToken }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const emailRef = useRef();
 
 	const getUserToken = async () => {
-		AxiosInstance.post("/login", {
-			email: email,
-			password: password,
-		})
+		await AxiosInstance.post("/login", { email, password })
 			.then(({ data }) => {
 				setAccessToken(data.accessToken);
 				localStorage.setItem("accessToken", data.accessToken);
@@ -27,6 +26,7 @@ const Login = ({ setAccessToken }) => {
 				}
 				emailRef.current.focus();
 			});
+		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -37,12 +37,22 @@ const Login = ({ setAccessToken }) => {
 		setErrorMsg("");
 	}, [email, password]);
 
-	const onFormSubmit = (e) => {
+	const onFormSubmit = async (e) => {
 		e.preventDefault();
-		getUserToken();
+		setLoading(true);
+		await getUserToken();
+	};
 
-		setEmail("");
-		setPassword("");
+	const onEmailChange = (e) => {
+		setEmail(e.target.value);
+	};
+
+	const onPasswordChange = (e) => {
+		setPassword(e.target.value);
+	};
+
+	const passwordShowHide = () => {
+		setShowPassword(!showPassword);
 	};
 
 	return (
@@ -69,33 +79,49 @@ const Login = ({ setAccessToken }) => {
 											<div className="form-outline mb-4">
 												<input
 													type="email"
-													onChange={(e) => setEmail(e.target.value)}
+													onChange={onEmailChange}
 													value={email}
 													ref={emailRef}
 													id="emailInput"
 													className="form-control form-control-lg"
 													required
+													autoComplete="off"
 												/>
 												<label className="form-label" htmlFor="emailInput">
 													Email address
 												</label>
 											</div>
 											<div className="form-outline mb-4">
-												<input
-													type="password"
-													onChange={(e) => setPassword(e.target.value)}
-													value={password}
-													id="passwordInput"
-													className="form-control form-control-lg"
-													required
-												/>
+												<div className="input-group input-group-lg">
+													<input
+														type={showPassword ? "text" : "password"}
+														onChange={onPasswordChange}
+														value={password}
+														id="passwordInput"
+														className="form-control form-control-lg"
+														required
+													/>
+													<div className="input-group-prepend">
+														<span onClick={passwordShowHide} className="input-group-text bg-white">
+															<i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
+														</span>
+													</div>
+												</div>
 												<label className="form-label" htmlFor="passwordInput">
 													Password
 												</label>
 											</div>
-											<div className="pt-1 mb-4">
-												<button className="btn btn-dark btn-lg btn-block">Login</button>
-											</div>
+											{loading ? (
+												<div className="pt-1 mb-4">
+													<button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
+														<span className="spinner-border spinner-border-md"></span>
+													</button>
+												</div>
+											) : (
+												<div className="pt-1 mb-4">
+													<button className="btn btn-dark btn-lg btn-block">Login</button>
+												</div>
+											)}
 											<div className="mt-2 text-center">
 												<p className="">Don't have an account? </p>
 												<p href="#!" className="btn btn-link">
