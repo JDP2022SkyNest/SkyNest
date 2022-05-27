@@ -1,0 +1,54 @@
+package com.htecgroup.skynest.validator;
+
+import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.dto.UserDto;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
+
+import java.util.regex.Pattern;
+
+public class UserValidator {
+
+  private static final String PASSWORD_PATTERN =
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,50}$";
+
+  private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+
+  public void isUserValid(UserDto userDto) {
+
+    String email = userDto.getEmail();
+
+    if (!EmailValidator.getInstance().isValid(email) || email.length() > 254) {
+      throw new UserException(UserExceptionType.EMAIL_NOT_VALID);
+    }
+
+    String password = userDto.getPassword();
+    if (password==null || !pattern.matcher(password).matches()) {
+      throw new UserException(UserExceptionType.INVALID_PASSWORD_FORMAT);
+    }
+
+    String name = userDto.getName();
+    if (StringUtils.isBlank(name) || name.length() > 50) {
+      throw new UserException(UserExceptionType.NAME_NOT_VALID);
+    }
+
+    String surname = userDto.getSurname();
+    if (StringUtils.isBlank(surname) || surname.length() > 100) {
+      throw new UserException(UserExceptionType.SURNAME_NOT_VALID);
+    }
+
+    // Phone number blank and !>30 char TODO
+    //    String surname = userDto.getSurname();
+    //    if (StringUtils.isBlank(surname) || surname.length() > 100) {
+    //      throw new RuntimeException("Surname is not valid");
+    //    }
+
+    // Adress is empty and !>254 char TODO
+    //    String surname = userDto.getSurname();
+    //    if (StringUtils.isBlank(surname) || surname.length() > 100) {
+    //      throw new RuntimeException("Surname is not valid");
+    //    }
+
+  }
+}
