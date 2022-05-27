@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +32,7 @@ class UserServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private RoleRepository roleRepository;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Mock private ModelMapper modelMapper;
+  @Spy private ModelMapper modelMapper;
 
   @InjectMocks private UserServiceImpl userService;
 
@@ -41,6 +42,8 @@ class UserServiceImplTest {
 
   @BeforeEach
   void setUp() {
+
+    modelMapper = new ModelMapper();
 
     LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -72,6 +75,27 @@ class UserServiceImplTest {
   }
 
   @Test
+  void registerUser() {
+
+    UserEntity expectedUserEntity = enabledWorkerEntity;
+    expectedUserEntity.setEnabled(false);
+    expectedUserEntity.setVerified(false);
+    UserDto expectedUserDto = new ModelMapper().map(expectedUserEntity, UserDto.class);
+
+    when(userRepository.existsByEmail(anyString())).thenReturn(false);
+    when(roleRepository.findByName(anyString()))
+        .thenReturn(Optional.of(new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_WORKER)));
+    when(userRepository.save(any())).thenReturn(expectedUserEntity);
+    when(bCryptPasswordEncoder.encode(anyString()))
+        .thenReturn(expectedUserDto.getEncryptedPassword());
+
+    UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
+    UserDto actualUserDto = userService.registerUser(newUserDto);
+
+    Assertions.assertEquals(expectedUserDto, actualUserDto);
+  }
+
+  @Test
   void registerUser_AlreadyExists() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
@@ -90,6 +114,17 @@ class UserServiceImplTest {
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
 
     Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+  }
+
+  @Test
+  void findUserByEmail() {
+
+    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(enabledWorkerEntity));
+
+    UserDto expectedUserDto = userService.findUserByEmail(enabledWorkerEntity.getEmail());
+
+    Assertions.assertEquals(
+        new ModelMapper().map(enabledWorkerEntity, UserDto.class), expectedUserDto);
   }
 
   @Test
