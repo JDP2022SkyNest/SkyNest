@@ -3,8 +3,9 @@ package com.htecgroup.SkyNest.model.enitity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity(name = "user")
 @Getter
@@ -15,24 +16,29 @@ public class UserEntity implements Serializable {
 
   private static final long serialVersionUID = 8310242347168695452L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  @Id @GeneratedValue private UUID id;
 
-  @NotBlank private String userId;
-  @NotBlank private String email;
-  @NotBlank private String name;
-  @NotBlank private String surname;
-  @NotBlank private String encryptedPassword;
+  @Column(insertable = false)
+  private LocalDateTime createdOn;
 
-  //  TODO
-  //  private Boolean deleted = false;
+  @Column(insertable = false)
+  private LocalDateTime modifiedOn;
 
-  // private UserType type;
+  private LocalDateTime deletedOn;
+  private String email;
+  private String encryptedPassword;
+  private String name;
+  private String surname;
+  private String address;
+  private String phoneNumber;
+  private Boolean verified;
+  private Boolean enabled;
 
-  // private String company;
-  //  createdAt, deletedAt, updatedAt...
+  @ManyToOne
+  @JoinColumn(name = "role_id", nullable = false)
+  private RoleEntity role;
 
-  //testcommit
-
+  @ManyToOne
+  @JoinColumn(name = "company_id")
+  private CompanyEntity company;
 }

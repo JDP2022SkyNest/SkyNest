@@ -1,8 +1,10 @@
 package com.htecgroup.SkyNest.service.impl;
 
-import com.htecgroup.SkyNest.Utils;
+import com.htecgroup.SkyNest.model.dto.RoleDto;
 import com.htecgroup.SkyNest.model.dto.UserDto;
+import com.htecgroup.SkyNest.model.enitity.RoleEntity;
 import com.htecgroup.SkyNest.model.enitity.UserEntity;
+import com.htecgroup.SkyNest.repository.RoleRepository;
 import com.htecgroup.SkyNest.repository.UserRepository;
 import com.htecgroup.SkyNest.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -15,40 +17,41 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
   @Autowired private UserRepository userRepository;
-
-  @Autowired private Utils utils;
-
+  @Autowired private RoleRepository roleRepository;
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Override
   public UserDto registerUser(UserDto userDto) {
 
-    if (userRepository.findUserByEmail(userDto.getEmail()) != null) {
+    if (userRepository.existsByEmail(userDto.getEmail())) {
       throw new RuntimeException("Email already in use");
     }
 
-    userDto.setUserId(utils.generateUserId(30));
+    RoleEntity roleEntity =
+        roleRepository
+            .findByName(RoleEntity.ROLE_WORKER)
+            .orElseThrow(
+                () -> new RuntimeException("Role " + RoleEntity.ROLE_WORKER + " not found."));
+    userDto.setRole(new ModelMapper().map(roleEntity, RoleDto.class));
+
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+    userDto.setVerified(false);
+    userDto.setEnabled(false);
 
-    ModelMapper modelMapper = new ModelMapper();
-    UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
+    UserEntity userEntity = userRepository.save(new ModelMapper().map(userDto, UserEntity.class));
 
-    userEntity = userRepository.save(userEntity);
-
-    return modelMapper.map(userEntity, UserDto.class);
+    return new ModelMapper().map(userEntity, UserDto.class);
   }
 
   @Override
   public UserDto findUserByEmail(String email) {
 
-    UserEntity userEntity = userRepository.findUserByEmail(email);
+    UserEntity userEntity =
+        userRepository
+            .findUserByEmail(email)
+            .orElseThrow(
+                () -> new UsernameNotFoundException("could not find user with email: " + email));
 
-    if (userEntity == null) {
-      throw new UsernameNotFoundException("could not find user with email: " + email);
-    }
-
-    ModelMapper modelMapper = new ModelMapper();
-
-    return modelMapper.map(userEntity, UserDto.class);
+    return new ModelMapper().map(userEntity, UserDto.class);
   }
 }
