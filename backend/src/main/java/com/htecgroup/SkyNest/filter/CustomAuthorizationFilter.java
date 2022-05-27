@@ -33,33 +33,12 @@ public class CustomAuthorizationFilter extends BasicAuthenticationFilter {
 
        if(header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)){
            filterChain.doFilter(request,response);
+           return;
        }
 
        UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(request);
        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
        filterChain.doFilter(request,response);
-
-
-//
-//        if(request.getServletPath().equals("/users/login")){
-//            filterChain.doFilter(request,response);
-//        }
-//        String authorizationHeader = request.getHeader(AUTHORIZATION);
-//        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-//              String token = authorizationHeader.substring("Bearer ".length());
-//              Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-//              JWTVerifier verifier = JWT.require(algorithm).build();
-//              DecodedJWT decodedJWT = verifier.verify(token);
-//              String username = decodedJWT.getSubject();
-//
-//              UsernamePasswordAuthenticationToken authenticationToken =
-//                  new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
-//              SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-//              filterChain.doFilter(request, response);
-//        }
-//         else {
-//            filterChain.doFilter(request,response);
-//        }
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request){

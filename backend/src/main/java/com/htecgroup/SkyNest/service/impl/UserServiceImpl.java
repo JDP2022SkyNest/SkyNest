@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
   public UserDto registerUser(UserDto userDto) {
 
     if (userRepository.findUserByEmail(userDto.getEmail()) != null) {
-      throw new RuntimeException("Email already in use");
+       throw new RuntimeException("Email already in use");
     }
 
     userDto.setUserId(utils.generateUserId(30));
