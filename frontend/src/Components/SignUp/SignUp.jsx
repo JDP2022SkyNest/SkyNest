@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./SignUp.css";
+
 import AxiosInstance from "../axios/AxiosInstance";
-import logoImage from "../Login/assets/logoblackandwhite.svg";
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState("");
@@ -45,13 +45,10 @@ const SignUp = () => {
 
   return (
     <div className="vh-100 container-fluid d-flex justify-content-center align-items-center  latte">
-      <div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 p-5 border login-form-radius shadow bg-white">
+      <div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 px-5 py-4 border login-form-radius shadow bg-white">
         <form>
-          <div className="d-flex justify-content-center m-0">
-            <img src={logoImage} alt="LOGO" className="little-image-logo" />
-          </div>
-          <h1 className="text-center">SKY-NEST</h1>
-          <p className="mb-3 p-0 text-center text-secondary">Create your account</p>
+          <h2 className="text-center">SKY-NEST</h2>
+          <p className="mb-4 p-0 text-center text-secondary">Create your account</p>
           <p className="alert alert-danger text-danger text-center d-none"></p>
           <div class="row">
             <div class="col-md-6">
@@ -67,7 +64,7 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="firstNameInput">
-                  First Name
+                  First Name <span className="crldanger">*</span>
                 </label>
               </div>
             </div>
@@ -84,7 +81,7 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="lastNameInput">
-                  Last Name
+                  Last Name <span className="crldanger">*</span>
                 </label>
               </div>
             </div>
@@ -101,7 +98,7 @@ const SignUp = () => {
               autoComplete="off"
             />
             <label className="form-label" htmlFor="emailInput">
-              Email address
+              Email address <span className="crldanger">*</span>
             </label>
           </div>
           <div className="form-outline mb-1">
@@ -116,7 +113,7 @@ const SignUp = () => {
               autoComplete="off"
             />
             <label className="form-label" htmlFor="phoneInput">
-              Phone number
+              Phone number <span className="crldanger">*</span>
             </label>
           </div>
           <div className="form-outline mb-1">
@@ -131,7 +128,7 @@ const SignUp = () => {
               autoComplete="off"
             />
             <label className="form-label" htmlFor="adressInput">
-              Adress
+              Adress <span className="crldanger">*</span>
             </label>
           </div>
           <div class="row">
@@ -148,7 +145,7 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="passwordInput">
-                  Password
+                  Password <span className="crldanger">*</span>
                 </label>
               </div>
             </div>
@@ -165,20 +162,20 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="confPasswordInput">
-                  Confirm Password
+                  Confirm Password <span className="crldanger">*</span>
                 </label>
               </div>
             </div>
           </div>
           {
             <div className="pt-1 mb-1">
-              <button className="btn btn-dark btn-lg btn-block">Signup</button>
+              <button className="btn btn-dark btn-lg btn-block">Sign Up</button>
             </div>
           }
-          <div className="mt-5 text-center">
+          <div className="mt-4 text-center">
             <p className="m-0">Already have an account? </p>
             <Link to={"/login"} href="#!" className="m-0 btn btn-link">
-              Sign in
+              Login
             </Link>
           </div>
         </form>
