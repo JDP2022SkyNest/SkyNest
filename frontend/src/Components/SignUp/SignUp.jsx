@@ -44,44 +44,50 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center  latte">
+    <div className="vh-100 container-fluid d-flex justify-content-center align-items-center  latte">
       <div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 p-5 border login-form-radius shadow bg-white">
         <form>
           <div className="d-flex justify-content-center m-0">
             <img src={logoImage} alt="LOGO" className="little-image-logo" />
           </div>
-          <h1 className="mt-2 text-center">SKY-NEST</h1>
+          <h1 className="text-center">SKY-NEST</h1>
           <p className="mb-3 p-0 text-center text-secondary">Create your account</p>
           <p className="alert alert-danger text-danger text-center d-none"></p>
-          <div className="form-outline mb-1">
-            <input
-              type="name"
-              value={firstName}
-              id="firstNameInput"
-              ref={firstNameRef}
-              onChange={handleFirstNameChange}
-              className="form-control form-control-lg"
-              required
-              autoComplete="off"
-            />
-            <label className="form-label" htmlFor="firstNameInput">
-              First Name
-            </label>
-          </div>
-          <div className="form-outline mb-">
-            <input
-              type="name"
-              value={lastName}
-              ref={lastNameRef}
-              onChange={handleLastNameChange}
-              id="lastNameInput"
-              className="form-control form-control-lg"
-              required
-              autoComplete="off"
-            />
-            <label className="form-label" htmlFor="lastNameInput">
-              Last Name
-            </label>
+          <div class="row">
+            <div class="col-md-6">
+              <div className="form-outline mb-1">
+                <input
+                  type="name"
+                  value={firstName}
+                  id="firstNameInput"
+                  ref={firstNameRef}
+                  onChange={handleFirstNameChange}
+                  className="form-control form-control-lg"
+                  required
+                  autoComplete="off"
+                />
+                <label className="form-label" htmlFor="firstNameInput">
+                  First Name
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div className="form-outline mb-1">
+                <input
+                  type="name"
+                  value={lastName}
+                  ref={lastNameRef}
+                  onChange={handleLastNameChange}
+                  id="lastNameInput"
+                  className="form-control form-control-lg"
+                  required
+                  autoComplete="off"
+                />
+                <label className="form-label" htmlFor="lastNameInput">
+                  Last Name
+                </label>
+              </div>
+            </div>
           </div>
           <div className="form-outline mb-1">
             <input
@@ -128,44 +134,50 @@ const SignUp = () => {
               Adress
             </label>
           </div>
-          <div className="form-outline mb-1">
-            <input
-              type="password"
-              value={password}
-              ref={paswordRef}
-              onChange={handlePasswordChange}
-              id="passwordInput"
-              className="form-control form-control-lg"
-              required
-              autoComplete="off"
-            />
-            <label className="form-label" htmlFor="passwordInput">
-              Password
-            </label>
-          </div>
-          <div className="form-outline mb-1">
-            <input
-              type="password"
-              value={confPassword}
-              ref={confPasswordRef}
-              onChange={handleConfPasswordChange}
-              id="confPasswordInput"
-              className="form-control form-control-lg"
-              required
-              autoComplete="off"
-            />
-            <label className="form-label" htmlFor="confPasswordInput">
-              Confirm Password
-            </label>
+          <div class="row">
+            <div class="col-md-6">
+              <div className="form-outline mb-1">
+                <input
+                  type="password"
+                  value={password}
+                  ref={paswordRef}
+                  onChange={handlePasswordChange}
+                  id="passwordInput"
+                  className="form-control form-control-lg"
+                  required
+                  autoComplete="off"
+                />
+                <label className="form-label" htmlFor="passwordInput">
+                  Password
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div className="form-outline mb-1">
+                <input
+                  type="password"
+                  value={confPassword}
+                  ref={confPasswordRef}
+                  onChange={handleConfPasswordChange}
+                  id="confPasswordInput"
+                  className="form-control form-control-lg"
+                  required
+                  autoComplete="off"
+                />
+                <label className="form-label" htmlFor="confPasswordInput">
+                  Confirm Password
+                </label>
+              </div>
+            </div>
           </div>
           {
             <div className="pt-1 mb-1">
-              <button className="btn btn-dark btn-lg btn-block">Login</button>
+              <button className="btn btn-dark btn-lg btn-block">Signup</button>
             </div>
           }
-          <div className="mt-2 text-center">
+          <div className="mt-5 text-center">
             <p className="m-0">Already have an account? </p>
-            <Link to="/login" className="btn btn-link btn-lg">
+            <Link to={"/login"} href="#!" className="m-0 btn btn-link">
               Sign in
             </Link>
           </div>
