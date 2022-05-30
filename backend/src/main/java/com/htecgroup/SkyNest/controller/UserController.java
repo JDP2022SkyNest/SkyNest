@@ -5,7 +5,6 @@ import com.htecgroup.SkyNest.model.request.UserRegisterRequest;
 import com.htecgroup.SkyNest.model.response.UserResponse;
 import com.htecgroup.SkyNest.service.UserService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,21 +15,20 @@ public class UserController {
   @Autowired private UserService userService;
 
   @PostMapping("/register")
-  public String registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
     ModelMapper modelMapper = new ModelMapper();
 
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
-    // userDto = userService.registerUser(userDto);
+    userDto = userService.registerUser(userDto);
 
     // for testing
-    return userService.registerUser(userDto);
 
-    // return modelMapper.map(userDto, UserResponse.class);
+    return modelMapper.map(userDto, UserResponse.class);
   }
 
   @GetMapping("/confirm")
-  public String confirmEmail(@RequestParam String token) {
+  public Boolean confirmEmail(@RequestParam String token) {
     return userService.confirmEmail(token);
   }
 
