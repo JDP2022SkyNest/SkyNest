@@ -12,8 +12,10 @@ public class UserValidator {
 
   private static final String PASSWORD_PATTERN =
       "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,50}$";
+  private static final String PHONE_NUMBER_PATTERN = "[\\d]{1,30}$";
 
-  private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+  private static final Pattern passwordPattern = Pattern.compile(PASSWORD_PATTERN);
+  private static final Pattern phoneNumberPattern = Pattern.compile(PHONE_NUMBER_PATTERN);
 
   public void isUserValid(UserDto userDto) {
 
@@ -24,7 +26,7 @@ public class UserValidator {
     }
 
     String password = userDto.getPassword();
-    if (password==null || !pattern.matcher(password).matches()) {
+    if (password == null || !passwordPattern.matcher(password).matches()) {
       throw new UserException(UserExceptionType.INVALID_PASSWORD_FORMAT);
     }
 
@@ -38,17 +40,14 @@ public class UserValidator {
       throw new UserException(UserExceptionType.SURNAME_NOT_VALID);
     }
 
-    // Phone number blank and !>30 char TODO
-    //    String surname = userDto.getSurname();
-    //    if (StringUtils.isBlank(surname) || surname.length() > 100) {
-    //      throw new RuntimeException("Surname is not valid");
-    //    }
+    String address = userDto.getAddress();
+    if (StringUtils.isBlank(address) || address.length() > 254) {
+      throw new UserException(UserExceptionType.ADRESS_NOT_VALID);
+    }
 
-    // Adress is empty and !>254 char TODO
-    //    String surname = userDto.getSurname();
-    //    if (StringUtils.isBlank(surname) || surname.length() > 100) {
-    //      throw new RuntimeException("Surname is not valid");
-    //    }
-
+    String phoneNumber = userDto.getAddress();
+    if (phoneNumber == null || !phoneNumberPattern.matcher(phoneNumber).matches()) {
+      throw new UserException(UserExceptionType.PHONE_NOT_VALID);
+    }
   }
 }

@@ -25,6 +25,8 @@ class UserValidatorTest {
     userDto.setPassword("Mm1asdass");
     userDto.setName("Name");
     userDto.setSurname("Surname");
+    userDto.setAddress("Cara Lazara 5");
+    userDto.setPhoneNumber("0641234567");
   }
 
   @Test
@@ -47,7 +49,7 @@ class UserValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"marko", "marko@", "marko@gmail"})
+  @ValueSource(strings = {"username", "username@", "username@gmail"})
   void isUserEmailValidBadFormat(String mail) {
 
     userDto.setEmail(mail);
@@ -62,7 +64,8 @@ class UserValidatorTest {
     userDto.setPassword(null);
 
     userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
-    assertEquals(UserExceptionType.INVALID_PASSWORD_FORMAT.getMessage(), userException.getMessage());
+    assertEquals(
+        UserExceptionType.INVALID_PASSWORD_FORMAT.getMessage(), userException.getMessage());
   }
 
   @ParameterizedTest
@@ -97,12 +100,13 @@ class UserValidatorTest {
   @Test
   void isUserNameValidTooLong() {
 
-    String name = RandomStringUtils.random(51,true,false);
+    String name = RandomStringUtils.random(51, true, false);
     userDto.setName(name);
 
     userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
     assertEquals(UserExceptionType.NAME_NOT_VALID.getMessage(), userException.getMessage());
   }
+
   @Test
   void isUserSurameValidNUll() {
 
@@ -124,11 +128,67 @@ class UserValidatorTest {
   @Test
   void isUserSurnameValidTooLong() {
 
-    String surname = RandomStringUtils.random(101,true,false);
+    String surname = RandomStringUtils.random(101, true, false);
     userDto.setSurname(surname);
 
     userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
     assertEquals(UserExceptionType.SURNAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
+  @Test
+  void isUserAddressValidNUll() {
+
+    userDto.setAddress(null);
+
+    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    assertEquals(UserExceptionType.ADRESS_NOT_VALID.getMessage(), userException.getMessage());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", " "})
+  void isUserAddressValidEmpty(String address) {
+
+    userDto.setAddress(address);
+    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    assertEquals(UserExceptionType.ADRESS_NOT_VALID.getMessage(), userException.getMessage());
+  }
+
+  @Test
+  void isUserAddressValidTooLong() {
+
+    String address = RandomStringUtils.random(255, true, false);
+    userDto.setAddress(address);
+
+    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    assertEquals(UserExceptionType.ADRESS_NOT_VALID.getMessage(), userException.getMessage());
+  }
+
+  @Test
+  void isUserPhoneNumberValidNUll() {
+
+    userDto.setPhoneNumber(null);
+
+    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    assertEquals(UserExceptionType.PHONE_NOT_VALID.getMessage(), userException.getMessage());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"", " "})
+  void isUserPhoneNumberValidBlank(String phoneNumber) {
+
+    userDto.setPhoneNumber(phoneNumber);
+
+    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    assertEquals(UserExceptionType.PHONE_NOT_VALID.getMessage(), userException.getMessage());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"+121352", "username", "marko@gmail"})
+  void isUserPhoneNumberValidBadFormat(String phoneNumber) {
+
+    userDto.setPhoneNumber(phoneNumber);
+
+    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    assertEquals(UserExceptionType.PHONE_NOT_VALID.getMessage(), userException.getMessage());
+  }
 }

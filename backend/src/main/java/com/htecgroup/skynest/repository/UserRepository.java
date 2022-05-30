@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.repository;
 
-import com.htecgroup.skynest.model.enitity.UserEntity;
+import com.htecgroup.skynest.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

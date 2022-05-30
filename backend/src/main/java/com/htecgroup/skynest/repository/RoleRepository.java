@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.repository;
 
-import com.htecgroup.skynest.model.enitity.RoleEntity;
+import com.htecgroup.skynest.model.entity.RoleEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
