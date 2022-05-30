@@ -39,13 +39,13 @@ public class UserServiceImpl implements UserService {
     }
 
     RoleEntity roleEntity =
-            roleRepository
-                    .findByName(RoleEntity.ROLE_WORKER)
-                    .orElseThrow(
-                            () ->
-                                    new UserException(
-                                            "Role " + RoleEntity.ROLE_WORKER + " not found.",
-                                            HttpStatus.INTERNAL_SERVER_ERROR));
+        roleRepository
+            .findByName(RoleEntity.ROLE_WORKER)
+            .orElseThrow(
+                () ->
+                    new UserException(
+                        "Role " + RoleEntity.ROLE_WORKER + " not found.",
+                        HttpStatus.INTERNAL_SERVER_ERROR));
     userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
 
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
@@ -67,10 +67,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
-            userRepository
-                    .findUserByEmail(email)
-                    .orElseThrow(
-                            () -> new UsernameNotFoundException("could not find user with email: " + email));
+        userRepository
+            .findUserByEmail(email)
+            .orElseThrow(
+                () -> new UsernameNotFoundException("could not find user with email: " + email));
 
     return modelMapper.map(userEntity, UserDto.class);
   }
@@ -85,7 +85,16 @@ public class UserServiceImpl implements UserService {
   }
 
   public Boolean enableUser(String email) {
-    // TODO: possibly in different service
-    return true;
+    UserEntity userEntity =
+        userRepository
+            .findUserByEmail(email)
+            .orElseThrow(
+                () -> new UsernameNotFoundException("could not find user with email: " + email));
+
+    userEntity.setEnabled(true);
+    userEntity.setVerified(true);
+    userRepository.save(userEntity);
+
+    return userEntity.getEnabled() && userEntity.getVerified();
   }
 }
