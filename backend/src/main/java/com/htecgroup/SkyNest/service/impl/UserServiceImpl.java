@@ -7,8 +7,8 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.enitity.RoleEntity;
 import com.htecgroup.skynest.model.enitity.UserEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
-import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
 import org.modelmapper.ModelMapper;
@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired private ModelMapper modelMapper;
+
   @Autowired private EmailService emailService;
 
   @Autowired private RoleRepository roleRepository;
