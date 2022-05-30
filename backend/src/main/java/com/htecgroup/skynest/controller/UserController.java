@@ -16,11 +16,11 @@ public class UserController {
   @Autowired private ModelMapper modelMapper;
 
   @PostMapping("/register")
-  public String registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
 
     UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
 
-    // return modelMapper.map(userDto, UserResponse.class);
+    return modelMapper.map(userDto, UserResponse.class);
   }
 
   @GetMapping("/confirm")
