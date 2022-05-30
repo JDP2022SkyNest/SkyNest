@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
+import ROUTES from "../Routes/ROUTES";
 
 const Login = ({ setAccessToken }) => {
 	const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ const Login = ({ setAccessToken }) => {
 
 	const homePageRedirect = (delay) => {
 		setTimeout(() => {
-			navigate("/home");
+			navigate(ROUTES.HOME);
 		}, delay);
 	};
 
@@ -79,7 +80,7 @@ const Login = ({ setAccessToken }) => {
 	};
 
 	return (
-		<div className="container-fluid vh-100 d-flex justify-content-center align-items-center  latte">
+		<div className="container-fluid vh-100 d-flex justify-content-center align-items-center color-latte">
 			<div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 p-5 border login-form-radius shadow bg-white">
 				<form onSubmit={onFormSubmit}>
 					<div className="d-flex justify-content-center m-0">
@@ -138,7 +139,7 @@ const Login = ({ setAccessToken }) => {
 					)}
 					<div className="mt-5 text-center">
 						<p className="m-0">Don't have an account? </p>
-						<Link to={"/signup"} href="#!" className="m-0 btn btn-link">
+						<Link to={ROUTES.SIGNUP} href="#!" className="m-0 btn btn-link">
 							Register here
 						</Link>
 					</div>
