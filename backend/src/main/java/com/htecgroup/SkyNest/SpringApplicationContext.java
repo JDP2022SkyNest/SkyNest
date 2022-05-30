@@ -1,4 +1,4 @@
-package com.htecgroup.SkyNest;
+package com.htecgroup.skynest;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
