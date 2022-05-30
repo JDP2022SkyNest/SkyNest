@@ -1,6 +1,6 @@
-package com.htecgroup.SkyNest.filter;
+package com.htecgroup.skynest.filter;
 
-import com.htecgroup.SkyNest.security.SecurityConstants;
+import com.htecgroup.skynest.security.SecurityConstants;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

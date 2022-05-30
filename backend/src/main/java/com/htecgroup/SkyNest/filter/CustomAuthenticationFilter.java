@@ -1,14 +1,17 @@
-package com.htecgroup.SkyNest.filter;
+package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.SkyNest.SpringApplicationContext;
-import com.htecgroup.SkyNest.model.dto.UserDto;
-import com.htecgroup.SkyNest.model.request.UserLoginRequest;
-import com.htecgroup.SkyNest.security.SecurityConstants;
-import com.htecgroup.SkyNest.service.UserService;
+import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.request.UserLoginRequest;
+import com.htecgroup.skynest.security.SecurityConstants;
+import com.htecgroup.skynest.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,7 +41,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>())
             );
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
     }
 
@@ -55,6 +58,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         UserDto userDto = userService.findUserByEmail(userName);
 
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-        response.addHeader("UserID", userDto.getUserId());
+        response.addHeader("UserID", userDto.getId().toString());
     }
 }
