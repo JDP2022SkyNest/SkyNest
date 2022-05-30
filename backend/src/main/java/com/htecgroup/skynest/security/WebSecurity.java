@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.security;
 
-import com.htecgroup.SkyNest.filter.CustomAuthenticationFilter;
-import com.htecgroup.SkyNest.filter.CustomAuthorizationFilter;
+import com.htecgroup.skynest.filter.CustomAuthenticationFilter;
+import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
