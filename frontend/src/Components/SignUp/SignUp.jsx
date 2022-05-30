@@ -1,39 +1,41 @@
-import React, { useState } from "react";
+import { useReducer } from "react";
 import { Link } from "react-router-dom";
 import "./SignUp.css";
 
-import AxiosInstance from "../axios/AxiosInstance";
+const initialState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phoneNumber: "",
+  adress: "",
+  password: "",
+  confPassword: "",
+};
+
+function reduser(state, action) {
+  return { ...state, [action.input]: action.value };
+}
+function validateState(state) {
+  return state.password === state.confPassword && state.password.length > 8;
+}
 
 const SignUp = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [adress, setAdress] = useState("");
-  const [password, setPassword] = useState("");
-  const [confPassword, setConfPassword] = useState("");
+  const [state, dispatch] = useReducer(reduser, initialState);
 
-  const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
-  };
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-  };
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-  const handlePhoneChange = (e) => {
-    setPhone(e.target.value);
-  };
-  const handleAdressChange = (e) => {
-    setAdress(e.target.value);
-  };
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-  const handleConfPasswordChange = (e) => {
-    setConfPassword(e.target.value);
-  };
+  console.log(state);
+
+  function handleOnSubmit(e) {
+    e.preventDefault();
+    alert(`Hello, ${state.firstName}, you are signup`);
+  }
+
+  function onChange(e) {
+    const action = {
+      input: e.target.name,
+      value: e.target.value,
+    };
+    dispatch(action);
+  }
 
   return (
     <div className="vh-100 container-fluid d-flex justify-content-center align-items-center  latte">
@@ -47,9 +49,9 @@ const SignUp = () => {
               <div className="form-outline mb-1">
                 <input
                   type="name"
-                  value={firstName}
+                  name="firstName"
                   id="firstNameInput"
-                  onChange={handleFirstNameChange}
+                  onChange={onChange}
                   className="form-control form-control-lg"
                   required
                   autoComplete="off"
@@ -63,8 +65,8 @@ const SignUp = () => {
               <div className="form-outline mb-1">
                 <input
                   type="name"
-                  value={lastName}
-                  onChange={handleLastNameChange}
+                  name="lastName"
+                  onChange={onChange}
                   id="lastNameInput"
                   className="form-control form-control-lg"
                   required
@@ -79,8 +81,8 @@ const SignUp = () => {
           <div className="form-outline mb-1">
             <input
               type="email"
-              value={email}
-              onChange={handleEmailChange}
+              name="email"
+              onChange={onChange}
               id="emailInput"
               className="form-control form-control-lg"
               required
@@ -93,8 +95,8 @@ const SignUp = () => {
           <div className="form-outline mb-1">
             <input
               type="number"
-              value={phone}
-              onChange={handlePhoneChange}
+              name="phoneNumber"
+              onChange={onChange}
               id="phoneInput"
               className="form-control form-control-lg"
               required
@@ -107,8 +109,8 @@ const SignUp = () => {
           <div className="form-outline mb-1">
             <input
               type="text"
-              value={adress}
-              onChange={handleAdressChange}
+              name="adress"
+              onChange={onChange}
               id="adressInput"
               className="form-control form-control-lg"
               required
@@ -123,8 +125,8 @@ const SignUp = () => {
               <div className="form-outline mb-1">
                 <input
                   type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
+                  name="password"
+                  onChange={onChange}
                   id="passwordInput"
                   className="form-control form-control-lg"
                   required
@@ -139,8 +141,8 @@ const SignUp = () => {
               <div className="form-outline mb-1">
                 <input
                   type="password"
-                  value={confPassword}
-                  onChange={handleConfPasswordChange}
+                  name="confPassword"
+                  onChange={onChange}
                   id="confPasswordInput"
                   className="form-control form-control-lg"
                   required
@@ -152,11 +154,14 @@ const SignUp = () => {
               </div>
             </div>
           </div>
-          {
-            <div className="pt-1 mb-1">
-              <button className="btn btn-dark btn-lg btn-block">Sign Up</button>
-            </div>
-          }
+          <div className="pt-1 mb-1">
+            <button
+              onClick={handleOnSubmit}
+              className={!validateState(state) ? "btn btn-dark btn-lg btn-block disabled" : "btn btn-dark btn-lg btn-block"}
+            >
+              Sign Up
+            </button>
+          </div>
           <div className="mt-4 text-center">
             <p className="m-0">Already have an account? </p>
             <Link to={"/login"} href="#!" className="m-0 btn btn-link">
