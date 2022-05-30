@@ -1,0 +1,16 @@
+ALTER TABLE `user`
+DROP COLUMN `user_id`,
+ADD COLUMN `created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `id`,
+ADD COLUMN `modified_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `created_on`,
+ADD COLUMN `deleted_on` datetime NULL DEFAULT NULL AFTER `modified_on`,
+ADD COLUMN `address` varchar(255) NOT NULL AFTER `surname`,
+ADD COLUMN `phone_number` varchar(30) NOT NULL AFTER `address`,
+ADD COLUMN `verified` tinyint NOT NULL DEFAULT 0 AFTER `phone_number`,
+ADD COLUMN `enabled` tinyint NOT NULL DEFAULT 0 AFTER `verified`,
+CHANGE COLUMN `id` `id` binary(16) NOT NULL,
+CHANGE COLUMN `email` `email` varchar(254) NOT NULL ,
+CHANGE COLUMN `encrypted_password` `encrypted_password` varchar(60) NOT NULL ,
+CHANGE COLUMN `name` `name` varchar(50) NOT NULL ,
+CHANGE COLUMN `surname` `surname` varchar(100) NOT NULL ,
+ADD UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+ADD UNIQUE INDEX `phone_number_UNIQUE` (`phone_number` ASC) VISIBLE;
