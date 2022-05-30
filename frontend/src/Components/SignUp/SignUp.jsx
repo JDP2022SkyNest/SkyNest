@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./SignUp.css";
 
@@ -12,14 +12,6 @@ const SignUp = () => {
   const [adress, setAdress] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
-
-  const firstNameRef = useRef();
-  const lastNameRef = useRef();
-  const emailRef = useRef();
-  const phoneRef = useRef();
-  const adressRef = useRef();
-  const paswordRef = useRef();
-  const confPasswordRef = useRef();
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -50,30 +42,28 @@ const SignUp = () => {
           <h2 className="text-center">SKY-NEST</h2>
           <p className="mb-4 p-0 text-center text-secondary">Create your account</p>
           <p className="alert alert-danger text-danger text-center d-none"></p>
-          <div class="row">
-            <div class="col-md-6">
+          <div className="row">
+            <div className="col-md-6">
               <div className="form-outline mb-1">
                 <input
                   type="name"
                   value={firstName}
                   id="firstNameInput"
-                  ref={firstNameRef}
                   onChange={handleFirstNameChange}
                   className="form-control form-control-lg"
                   required
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="firstNameInput">
-                  First Name <span className="crldanger">*</span>
+                  First Name <span className="text-danger">*</span>
                 </label>
               </div>
             </div>
-            <div class="col-md-6">
+            <div className="col-md-6">
               <div className="form-outline mb-1">
                 <input
                   type="name"
                   value={lastName}
-                  ref={lastNameRef}
                   onChange={handleLastNameChange}
                   id="lastNameInput"
                   className="form-control form-control-lg"
@@ -81,7 +71,7 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="lastNameInput">
-                  Last Name <span className="crldanger">*</span>
+                  Last Name <span className="text-danger">*</span>
                 </label>
               </div>
             </div>
@@ -90,7 +80,6 @@ const SignUp = () => {
             <input
               type="email"
               value={email}
-              ref={emailRef}
               onChange={handleEmailChange}
               id="emailInput"
               className="form-control form-control-lg"
@@ -98,14 +87,13 @@ const SignUp = () => {
               autoComplete="off"
             />
             <label className="form-label" htmlFor="emailInput">
-              Email address <span className="crldanger">*</span>
+              Email address <span className="text-danger">*</span>
             </label>
           </div>
           <div className="form-outline mb-1">
             <input
               type="number"
               value={phone}
-              ref={phoneRef}
               onChange={handlePhoneChange}
               id="phoneInput"
               className="form-control form-control-lg"
@@ -113,14 +101,13 @@ const SignUp = () => {
               autoComplete="off"
             />
             <label className="form-label" htmlFor="phoneInput">
-              Phone number <span className="crldanger">*</span>
+              Phone number <span className="text-danger">*</span>
             </label>
           </div>
           <div className="form-outline mb-1">
             <input
               type="text"
               value={adress}
-              ref={adressRef}
               onChange={handleAdressChange}
               id="adressInput"
               className="form-control form-control-lg"
@@ -128,16 +115,15 @@ const SignUp = () => {
               autoComplete="off"
             />
             <label className="form-label" htmlFor="adressInput">
-              Adress <span className="crldanger">*</span>
+              Adress <span className="text-danger">*</span>
             </label>
           </div>
-          <div class="row">
-            <div class="col-md-6">
+          <div className="row">
+            <div className="col-md-6">
               <div className="form-outline mb-1">
                 <input
                   type="password"
                   value={password}
-                  ref={paswordRef}
                   onChange={handlePasswordChange}
                   id="passwordInput"
                   className="form-control form-control-lg"
@@ -145,16 +131,15 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="passwordInput">
-                  Password <span className="crldanger">*</span>
+                  Password <span className="text-danger">*</span>
                 </label>
               </div>
             </div>
-            <div class="col-md-6">
+            <div className="col-md-6">
               <div className="form-outline mb-1">
                 <input
                   type="password"
                   value={confPassword}
-                  ref={confPasswordRef}
                   onChange={handleConfPasswordChange}
                   id="confPasswordInput"
                   className="form-control form-control-lg"
@@ -162,7 +147,7 @@ const SignUp = () => {
                   autoComplete="off"
                 />
                 <label className="form-label" htmlFor="confPasswordInput">
-                  Confirm Password <span className="crldanger">*</span>
+                  Confirm Password <span className="text-danger">*</span>
                 </label>
               </div>
             </div>

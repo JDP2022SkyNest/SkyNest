@@ -29,7 +29,7 @@ const Login = ({ setAccessToken }) => {
         if (data?.accessToken) {
           setAccessToken(data.accessToken);
           localStorage.setItem("accessToken", data.accessToken);
-          setSuccessfulLogin("Login Sucessful, redirecting.");
+          setSuccessfulLogin("Login Successful, redirecting.");
           homePageRedirect(2500);
         } else {
           setErrorMsg("Internal error, please try again");
