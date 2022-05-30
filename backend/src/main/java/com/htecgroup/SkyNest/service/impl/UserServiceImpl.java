@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+<<<<<<< HEAD
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.RoleDto;
@@ -11,6 +12,17 @@ import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
+=======
+import com.htecgroup.SkyNest.Utils;
+import com.htecgroup.SkyNest.exception.UserException;
+import com.htecgroup.SkyNest.exception.UserExceptionType;
+import com.htecgroup.SkyNest.model.dto.UserDto;
+import com.htecgroup.SkyNest.model.enitity.UserEntity;
+import com.htecgroup.SkyNest.repository.UserRepository;
+import com.htecgroup.SkyNest.service.EmailService;
+import com.htecgroup.SkyNest.service.UserService;
+import com.htecgroup.SkyNest.util.JwtEmailVerificationUtils;
+>>>>>>> f610259104afc374e5e5dd09634c7eab36514421
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +36,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private UserRepository userRepository;
 
   @Autowired private JwtEmailVerificationUtils jwtEmailVerificationUtils;
+<<<<<<< HEAD
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired private ModelMapper modelMapper;
@@ -32,6 +45,14 @@ public class UserServiceImpl implements UserService {
 
   @Autowired private RoleRepository roleRepository;
 
+=======
+  @Autowired private Utils utils;
+
+  @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+  @Autowired private EmailService emailService;
+
+>>>>>>> f610259104afc374e5e5dd09634c7eab36514421
   @Override
   public UserDto registerUser(UserDto userDto) {
 
@@ -54,6 +75,13 @@ public class UserServiceImpl implements UserService {
     userDto.setEnabled(false);
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
+
+    String token = jwtEmailVerificationUtils.generateJwtEmailVerificationToken(userDto);
+
+    String confirmationLink = jwtEmailVerificationUtils.getConfirmationLink() + token;
+    emailService.send(
+        userEntity.getEmail(),
+        jwtEmailVerificationUtils.buildEmail(userEntity.getName(), confirmationLink));
 
     String token = jwtEmailVerificationUtils.generateJwtEmailVerificationToken(userDto);
 
@@ -86,6 +114,7 @@ public class UserServiceImpl implements UserService {
   }
 
   public Boolean enableUser(String email) {
+<<<<<<< HEAD
     UserEntity userEntity =
         userRepository
             .findUserByEmail(email)
@@ -97,5 +126,9 @@ public class UserServiceImpl implements UserService {
     userRepository.save(userEntity);
 
     return userEntity.getEnabled() && userEntity.getVerified();
+=======
+    // TODO: possibly in different service
+    return true;
+>>>>>>> f610259104afc374e5e5dd09634c7eab36514421
   }
 }

@@ -1,6 +1,6 @@
-package com.htecgroup.skynest.service.impl;
+package com.htecgroup.SkyNest.service.impl;
 
-import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.SkyNest.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
