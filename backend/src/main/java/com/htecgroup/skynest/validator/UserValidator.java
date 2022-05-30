@@ -45,7 +45,7 @@ public class UserValidator {
       throw new UserException(UserExceptionType.ADRESS_NOT_VALID);
     }
 
-    String phoneNumber = userDto.getAddress();
+    String phoneNumber = userDto.getPhoneNumber();
     if (phoneNumber == null || !phoneNumberPattern.matcher(phoneNumber).matches()) {
       throw new UserException(UserExceptionType.PHONE_NOT_VALID);
     }

@@ -9,6 +9,7 @@ import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.UserService;
+import com.htecgroup.skynest.validator.UserValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private RoleRepository roleRepository;
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
   @Autowired private ModelMapper modelMapper;
+  @Autowired private UserValidator userValidator;
 
   @Override
   public UserDto registerUser(UserDto userDto) {
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
     if (userRepository.existsByEmail(userDto.getEmail())) {
       throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
     }
+
+    userValidator.isUserValid(userDto);
 
     RoleEntity roleEntity =
         roleRepository

@@ -1,5 +1,6 @@
 package com.htecgroup.skynest;
 
+import com.htecgroup.skynest.validator.UserValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,5 +22,10 @@ public class SkyNestApplication {
   @Bean
   public ModelMapper modelMapper() {
     return new ModelMapper();
+  }
+
+  @Bean
+  public UserValidator userValidator() {
+    return new UserValidator();
   }
 }

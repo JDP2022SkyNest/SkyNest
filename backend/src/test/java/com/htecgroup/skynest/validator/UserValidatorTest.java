@@ -183,7 +183,7 @@ class UserValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"+121352", "username", "marko@gmail"})
+  @ValueSource(strings = {"+121352", "username"})
   void isUserPhoneNumberValidBadFormat(String phoneNumber) {
 
     userDto.setPhoneNumber(phoneNumber);
