@@ -5,7 +5,7 @@ const RedirectRoute = ({ accessToken }) => {
 	if (!accessToken) {
 		return <Navigate to={"/login"} />;
 	}
-	return <Navigate to={"/homepage"} />;
+	return <Navigate to={"/"} />;
 };
 
 export default RedirectRoute;
