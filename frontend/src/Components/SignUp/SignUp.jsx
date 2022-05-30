@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import ROUTES from "../Routes/ROUTES";
 import "./SignUp.css";
 
 const SignUp = () => {
@@ -10,6 +11,8 @@ const SignUp = () => {
 	const [adress, setAdress] = useState("");
 	const [password, setPassword] = useState("");
 	const [confPassword, setConfPassword] = useState("");
+
+	const RegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 	const handleFirstNameChange = (e) => {
 		setFirstName(e.target.value);
@@ -33,13 +36,21 @@ const SignUp = () => {
 		setConfPassword(e.target.value);
 	};
 
+	const onFormSubmit = (e) => {
+		e.preventDefault();
+		if (password.match(RegEx)) {
+			console.log("Success");
+		} else {
+			console.log("Failed");
+		}
+	};
+
 	return (
-		<div className="vh-100 container-fluid d-flex justify-content-center align-items-center  latte">
+		<div className="vh-100 container-fluid d-flex justify-content-center align-items-center color-latte">
 			<div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 px-5 py-4 border login-form-radius shadow bg-white">
-				<form>
+				<form onSubmit={onFormSubmit}>
 					<h2 className="text-center">SKY-NEST</h2>
 					<p className="mb-4 p-0 text-center text-secondary">Create your account</p>
-					<p className="alert alert-danger text-danger text-center d-none"></p>
 					<div className="row">
 						<div className="col-md-6">
 							<div className="form-outline mb-1">
@@ -150,14 +161,12 @@ const SignUp = () => {
 							</div>
 						</div>
 					</div>
-					{
-						<div className="pt-1 mb-1">
-							<button className="btn btn-dark btn-lg btn-block">Sign Up</button>
-						</div>
-					}
+					<div className="pt-1 mb-1">
+						<button className="btn btn-dark btn-lg btn-block">Sign Up</button>
+					</div>
 					<div className="mt-4 text-center">
 						<p className="m-0">Already have an account? </p>
-						<Link to={"/login"} href="#!" className="m-0 btn btn-link">
+						<Link to={ROUTES.LOGIN} href="#!" className="m-0 btn btn-link">
 							Login
 						</Link>
 					</div>
