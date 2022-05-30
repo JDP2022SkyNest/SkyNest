@@ -59,7 +59,5 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         response.addHeader("UserID", userDto.getId().toString());
 
-        response.addHeader("UserID", userDto.getId().toString());
-
     }
 }
