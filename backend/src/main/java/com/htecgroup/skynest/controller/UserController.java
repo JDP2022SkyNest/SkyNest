@@ -24,7 +24,7 @@ public class UserController {
   }
 
   @GetMapping("/confirm")
-  public String confirmEmail(@RequestParam String token) {
+  public Boolean confirmEmail(@RequestParam String token) {
     return userService.confirmEmail(token);
   }
 
