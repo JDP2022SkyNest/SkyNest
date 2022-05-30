@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Login = ({ setAccessToken }) => {
   const [email, setEmail] = useState("");
