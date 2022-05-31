@@ -8,6 +8,7 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
 import com.htecgroup.skynest.security.SecurityConstants;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @AllArgsConstructor
+@Log4j2
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -37,10 +39,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         UserLoginRequest credentials = new UserLoginRequest();
         try {
             credentials = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
+            log.info("Here, with help of object mapper we map the value of the request to UserLoginRequest class");
 
         } catch (IOException e) {
-
-            // need to add logger
+            log.error(e);
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
         if (!credentials.getEmail().equals(userDetails.getUsername())){
@@ -55,6 +57,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+        log.info("We get in this method, only if we return from attemptAuthenticate method successfully");
         String userName = ((User) authentication.getPrincipal()).getUsername();
 
         String token = JWT.create()
@@ -63,6 +66,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET));
 
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+
+        log.info("We create the token for the user, with that specific username, and we add the token in the header with key Authentication");
 
     }
 }
