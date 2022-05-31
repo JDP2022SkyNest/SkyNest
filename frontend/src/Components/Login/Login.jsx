@@ -25,25 +25,25 @@ const Login = ({ setAccessToken }) => {
    };
 
    const getUserToken = async () => {
-      await AxiosInstance.post("/login", { email, password })
-         .then(({ data }) => {
-            if (data?.accessToken) {
-               setAccessToken(data.accessToken);
-               localStorage.setItem("accessToken", data.accessToken);
-               setSuccessfulLogin("Login Successful, redirecting.");
-               homePageRedirect(1000);
-            } else {
-               setErrorMsg("Internal error, please try again");
-            }
-         })
-         .catch(({ response }) => {
-            if (response.status === 400) {
-               setErrorMsg("Incorrect username or password");
-            } else if (response.status === 0) {
-               setErrorMsg("Server Timeout");
-            }
-            setLoading(false);
-         });
+      try {
+         let reposnse = await AxiosInstance.post("/login", { email, password });
+         let { data } = reposnse;
+         if (data?.accessToken) {
+            setAccessToken(data.accessToken);
+            localStorage.setItem("accessToken", data.accessToken);
+            setSuccessfulLogin("Login Successful, redirecting.");
+            homePageRedirect(1000);
+         } else {
+            setErrorMsg("Internal error, please try again");
+         }
+      } catch ({ response }) {
+         if (response.status === 400) {
+            setErrorMsg("Incorrect username or password");
+         } else if (response.status === 0) {
+            setErrorMsg("Server Timeout");
+         }
+         setLoading(false);
+      }
    };
 
    useEffect(() => {
