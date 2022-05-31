@@ -7,26 +7,26 @@ import ProtectedRoute from "./Components/Routes/ProtectedRoute";
 import RedirectRoute from "./Components/Routes/RedirectRoute";
 
 const App = () => {
-	const [accessToken, setAccessToken] = useState(localStorage.accessToken);
+   const [accessToken, setAccessToken] = useState(localStorage.accessToken);
 
-	return (
-		<Routes>
-			<Route
-				path="/"
-				exact
-				element={
-					<ProtectedRoute accessToken={accessToken}>
-						<HomePage setAccessToken={setAccessToken} />
-					</ProtectedRoute>
-				}
-			/>
-			<Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
-			<Route path="signup" exact element={<SignUp />} />
+   return (
+      <Routes>
+         <Route
+            path="/"
+            exact
+            element={
+               <ProtectedRoute accessToken={accessToken}>
+                  <HomePage setAccessToken={setAccessToken} />
+               </ProtectedRoute>
+            }
+         />
+         <Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
+         <Route path="signup" exact element={<SignUp />} />
 
-			{/* Other Paths */}
-			<Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
-		</Routes>
-	);
+         {/* Other Paths */}
+         <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
+      </Routes>
+   );
 };
 
 export default App;
