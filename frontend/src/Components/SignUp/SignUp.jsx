@@ -42,7 +42,7 @@ const SignUp = () => {
       } catch ({ response }) {
          if (response.status === 409) {
             setErrorMsg("Email aready exists");
-         } else if (response.status === 409) {
+         } else if (response.status === 500) {
             setErrorMsg("Internal Server Error");
          } else {
             setErrorMsg("Placeholder for other errors");
