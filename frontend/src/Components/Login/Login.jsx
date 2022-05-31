@@ -106,18 +106,18 @@ const Login = ({ setAccessToken }) => {
                   </label>
                </div>
                <div className="form-outline mb-4">
-                  <div className="input-group input-group-lg">
+                  <div className="input-group input-group-lg ">
                      <input
                         type={showPassword ? "text" : "password"}
                         onChange={onPasswordChange}
                         value={password}
                         ref={passwordRef}
                         id="passwordInput"
-                        className={`form-control form-control-lg ${errorMsg ? "border-danger" : null}`}
+                        className={`border-right-0 form-control form-control-lg ${errorMsg ? "border-danger border-left-0" : null}`}
                         required
                      />
                      <div className="input-group-prepend">
-                        <span onClick={passwordShowHide} className="input-group-text bg-white">
+                        <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
                            <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
                         </span>
                      </div>

@@ -8,7 +8,7 @@
 
 .little-image-logo {
 	width: 5rem;
-	animation: logoRotation 20s linear infinite reverse;
+	animation: logoRotation 60s linear infinite;
 }
 
 .login-form-radius {
