@@ -1,21 +1,21 @@
 package com.htecgroup.skynest.filter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.SpringApplicationContext;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
-import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
 import com.htecgroup.skynest.security.SecurityConstants;
-import com.htecgroup.skynest.service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -30,36 +30,38 @@ import java.util.Date;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
-        try{
-            UserLoginRequest credentials = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
+        UserLoginRequest credentials = new UserLoginRequest();
+        try {
+            credentials = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>())
             );
-        } catch (UserException | IOException e){
+        } catch (IOException e) {
 
-            throw new UserException(UserExceptionType.INVALID_EMAIL_OR_PASSWORD);
+            e.printStackTrace();
         }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
+        if (!passwordEncoder.matches(credentials.getPassword(), userDetails.getPassword())) {
+            throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
+        }
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", new ArrayList<>()));
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         String userName = ((User) authentication.getPrincipal()).getUsername();
 
-        String token = Jwts.builder().setSubject(userName)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
-                .compact();
-
-        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-        UserDto userDto = userService.findUserByEmail(userName);
+        String token = JWT.create()
+                .withSubject(userName)
+                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .sign(Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET));
 
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-
-        response.addHeader("UserID", userDto.getId().toString());
 
     }
 }

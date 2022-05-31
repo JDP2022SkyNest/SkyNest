@@ -1,8 +1,8 @@
 package com.htecgroup.skynest.security;
 
 import com.htecgroup.skynest.filter.CustomAuthenticationFilter;
-import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @EnableWebSecurity
+@Configuration
 @RequiredArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
@@ -30,14 +31,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .anyRequest()
         .authenticated()
         .and().addFilter(getAuthenticationFilter())
-        .addFilter(new CustomAuthorizationFilter(authenticationManager()))
+      //  .addFilter(new CustomAuthorizationFilter(authenticationManager()))   TODO: authorization filter
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
 
   public CustomAuthenticationFilter getAuthenticationFilter() throws Exception {
-    final CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager());
+    final CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager(), userDetailsService, bCryptPasswordEncoder);
     filter.setFilterProcessesUrl("/users/login");
     return filter;
   }
