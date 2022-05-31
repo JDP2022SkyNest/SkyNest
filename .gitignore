@@ -1,0 +1,8 @@
+### Cassandra ###
+out/
+
+### Maven ###
+.m2/
+
+### Environment ###
+.env
