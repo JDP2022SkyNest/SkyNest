@@ -4,9 +4,9 @@ import com.htecgroup.skynest.model.dto.UserDto;
 
 public interface UserService {
 
-    UserDto registerUser(UserDto userDto);
+  UserDto registerUser(UserDto userDto);
 
-    UserDto findUserByEmail(String email);
+  UserDto findUserByEmail(String email);
 
-    Boolean confirmEmail(String token);
+  Boolean confirmEmail(String token);
 }

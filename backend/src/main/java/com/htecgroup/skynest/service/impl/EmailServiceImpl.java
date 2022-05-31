@@ -1,6 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.service.EmailService;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
+@Log4j2
 public class EmailServiceImpl implements EmailService {
   @Autowired private JavaMailSender javaMailSender;
-  private final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
-
   @Override
   @Async
   public void send(String to, String email) {
@@ -25,11 +27,11 @@ public class EmailServiceImpl implements EmailService {
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
       helper.setText(email, true);
       helper.setTo(to);
-      helper.setSubject("Confirm your email");
+      helper.setSubject("Confirm your email for SkyNest");
       javaMailSender.send(mimeMessage);
     } catch (MessagingException e) {
-      LOGGER.error("Failed to send email", e);
-      throw new IllegalStateException("Failed to send email");
+      log.error("Failed to send email", e);
+      throw new UserException(UserExceptionType.EMAIL_FAILED_TO_SEND);
     }
   }
 }

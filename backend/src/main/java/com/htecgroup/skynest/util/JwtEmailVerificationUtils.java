@@ -1,20 +1,18 @@
 package com.htecgroup.skynest.util;
 
-import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.model.dto.UserDto;
 import io.jsonwebtoken.*;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
+@Log4j2
 public class JwtEmailVerificationUtils {
-
-  private static final Logger logger = LoggerFactory.getLogger(JwtEmailVerificationUtils.class);
 
   @Value("${backend.app.jwtEmailVerificationSecret}")
   private String jwtEmailVerificationSecret;
@@ -47,15 +45,15 @@ public class JwtEmailVerificationUtils {
       Jwts.parser().setSigningKey(jwtEmailVerificationSecret).parseClaimsJws(token);
       return true;
     } catch (SignatureException e) {
-      logger.error("Invalid JWT signature: {}", e.getMessage());
+      log.error("Invalid JWT signature: {}", e.getMessage());
     } catch (MalformedJwtException e) {
-      logger.error("Invalid JWT token: {}", e.getMessage());
+      log.error("Invalid JWT token: {}", e.getMessage());
     } catch (ExpiredJwtException e) {
-      logger.error("JWT token is expired: {}", e.getMessage());
+      log.error("JWT token is expired: {}", e.getMessage());
     } catch (UnsupportedJwtException e) {
-      logger.error("JWT token is unsupported: {}", e.getMessage());
+      log.error("JWT token is unsupported: {}", e.getMessage());
     } catch (IllegalArgumentException e) {
-      logger.error("JWT claims string is empty: {}", e.getMessage());
+      log.error("JWT claims string is empty: {}", e.getMessage());
     }
     return false;
   }
