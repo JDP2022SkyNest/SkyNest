@@ -32,11 +32,6 @@ public class UserServiceImpl implements UserService {
             throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
         }
 
-        if (userRepository.findUserByEmail(userDto.getEmail()) != null) {
-            throw new RuntimeException("Email already in use");
-
-        }
-
         RoleEntity roleEntity =
                 roleRepository
                         .findByName(RoleEntity.ROLE_WORKER)
