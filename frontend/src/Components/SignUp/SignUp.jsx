@@ -27,7 +27,7 @@ const SignUp = () => {
 
   function handleOnSubmit(e) {
     e.preventDefault();
-    if (password.match(RegEx)) {
+    if (state.password.match(RegEx)) {
       console.log("Success");
     } else {
       console.log("Failed");
