@@ -80,7 +80,7 @@ const Login = ({ setAccessToken }) => {
    };
 
    return (
-      <div className="container-fluid vh-100 d-flex justify-content-center align-items-center color-latte">
+      <div className="container-fluid vh-100  d-flex justify-content-center align-items-center color-latte">
          <div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 p-5 border login-form-radius shadow bg-white">
             <form onSubmit={onFormSubmit}>
                <div className="d-flex justify-content-center m-0">
