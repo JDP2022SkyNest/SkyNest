@@ -5,9 +5,11 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 
+@Component
 public class UserValidator {
 
   private static final String PASSWORD_PATTERN =
@@ -17,7 +19,7 @@ public class UserValidator {
   private static final Pattern passwordPattern = Pattern.compile(PASSWORD_PATTERN);
   private static final Pattern phoneNumberPattern = Pattern.compile(PHONE_NUMBER_PATTERN);
 
-  public void isUserValid(UserDto userDto) {
+  public void validateUser(UserDto userDto) {
 
     String email = userDto.getEmail();
 

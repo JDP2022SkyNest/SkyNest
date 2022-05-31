@@ -34,7 +34,7 @@ class UserValidatorTest {
 
     userDto.setEmail(null);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.EMAIL_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -44,7 +44,7 @@ class UserValidatorTest {
 
     userDto.setEmail(mail);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.EMAIL_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -54,7 +54,7 @@ class UserValidatorTest {
 
     userDto.setEmail(mail);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.EMAIL_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -63,7 +63,7 @@ class UserValidatorTest {
 
     userDto.setPassword(null);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(
         UserExceptionType.INVALID_PASSWORD_FORMAT.getMessage(), userException.getMessage());
   }
@@ -74,7 +74,7 @@ class UserValidatorTest {
   void isUserPasswordValidBadFormat(String pass) {
 
     userDto.setPassword(pass);
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(
         UserExceptionType.INVALID_PASSWORD_FORMAT.getMessage(), userException.getMessage());
   }
@@ -84,7 +84,7 @@ class UserValidatorTest {
 
     userDto.setName(null);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.NAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -93,7 +93,7 @@ class UserValidatorTest {
   void isUserNameValidEmpty(String name) {
 
     userDto.setName(name);
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.NAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -103,7 +103,7 @@ class UserValidatorTest {
     String name = RandomStringUtils.random(51, true, false);
     userDto.setName(name);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.NAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -112,7 +112,7 @@ class UserValidatorTest {
 
     userDto.setSurname(null);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.SURNAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -121,7 +121,7 @@ class UserValidatorTest {
   void isUserSurnameValidEmpty(String surname) {
 
     userDto.setSurname(surname);
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.SURNAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -131,7 +131,7 @@ class UserValidatorTest {
     String surname = RandomStringUtils.random(101, true, false);
     userDto.setSurname(surname);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.SURNAME_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -140,7 +140,7 @@ class UserValidatorTest {
 
     userDto.setAddress(null);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.ADRESS_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -149,7 +149,7 @@ class UserValidatorTest {
   void isUserAddressValidEmpty(String address) {
 
     userDto.setAddress(address);
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.ADRESS_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -159,7 +159,7 @@ class UserValidatorTest {
     String address = RandomStringUtils.random(255, true, false);
     userDto.setAddress(address);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.ADRESS_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -168,7 +168,7 @@ class UserValidatorTest {
 
     userDto.setPhoneNumber(null);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.PHONE_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -178,7 +178,7 @@ class UserValidatorTest {
 
     userDto.setPhoneNumber(phoneNumber);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.PHONE_NOT_VALID.getMessage(), userException.getMessage());
   }
 
@@ -188,7 +188,7 @@ class UserValidatorTest {
 
     userDto.setPhoneNumber(phoneNumber);
 
-    userException = assertThrows(UserException.class, () -> userValidator.isUserValid(userDto));
+    userException = assertThrows(UserException.class, () -> userValidator.validateUser(userDto));
     assertEquals(UserExceptionType.PHONE_NOT_VALID.getMessage(), userException.getMessage());
   }
 }

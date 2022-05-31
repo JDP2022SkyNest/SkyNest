@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
       throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
     }
 
-    userValidator.isUserValid(userDto);
+    userValidator.validateUser(userDto);
 
     RoleEntity roleEntity =
         roleRepository
