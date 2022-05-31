@@ -42,6 +42,10 @@ const SignUp = () => {
       } catch ({ response }) {
          if (response.status === 409) {
             setErrorMsg("Email aready exists");
+         } else if (response.status === 409) {
+            setErrorMsg("Internal Server Error");
+         } else {
+            setErrorMsg("Placeholder for other errors");
          }
       }
    };
@@ -51,8 +55,15 @@ const SignUp = () => {
       if (password.match(RegEx) && password === confpassword) {
          userRegistration();
       } else {
-         errorMsg("Requirements not met");
+         setErrorMsg("Requirements not met");
       }
+   };
+
+   const onSuccessfulValidation = () => {
+      if (password.match(RegEx) && password === confpassword) {
+         return true;
+      }
+      return false;
    };
 
    useEffect(() => {
@@ -96,7 +107,7 @@ const SignUp = () => {
                            autoComplete="off"
                         />
                         <label className="form-label" htmlFor="lastNameInput">
-                           Last Name <span className="text-danger">*</span>
+                           <small>Last Name</small> <span className="text-danger">*</span>
                         </label>
                      </div>
                   </div>
@@ -112,7 +123,7 @@ const SignUp = () => {
                      autoComplete="off"
                   />
                   <label className="form-label" htmlFor="emailInput">
-                     Email address <span className="text-danger">*</span>
+                     <small>Email address</small> <span className="text-danger">*</span>
                   </label>
                </div>
                <div className="form-outline mb-1">
@@ -126,7 +137,7 @@ const SignUp = () => {
                      autoComplete="off"
                   />
                   <label className="form-label" htmlFor="phoneInput">
-                     Phone number <span className="text-danger">*</span>
+                     <small>Phone number</small> <span className="text-danger">*</span>
                   </label>
                </div>
                <div className="form-outline mb-1">
@@ -140,7 +151,7 @@ const SignUp = () => {
                      autoComplete="off"
                   />
                   <label className="form-label" htmlFor="adressInput">
-                     Adress <span className="text-danger">*</span>
+                     <small>Home address</small> <span className="text-danger">*</span>
                   </label>
                </div>
                <div className="row">
@@ -156,7 +167,7 @@ const SignUp = () => {
                            autoComplete="off"
                         />
                         <label className="form-label" htmlFor="passwordInput">
-                           Password <span className="text-danger">*</span>
+                           <small>Password</small> <span className="text-danger">*</span>
                         </label>
                      </div>
                   </div>
@@ -172,7 +183,7 @@ const SignUp = () => {
                            autoComplete="off"
                         />
                         <label className="form-label" htmlFor="confPasswordInput">
-                           Confirm Password <span className="text-danger">*</span>
+                           <small>Confirm password</small> <span className="text-danger">*</span>
                         </label>
                      </div>
                   </div>
@@ -189,11 +200,8 @@ const SignUp = () => {
                </small>
                <div className="my-4">
                   <button
-                     className={
-                        password.match(RegEx) && password === confpassword
-                           ? "btn btn-dark btn-lg btn-block  "
-                           : "btn btn-dark btn-lg btn-block disabled"
-                     }
+                     className={onSuccessfulValidation() ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
+                     disabled={onSuccessfulValidation() ? false : true}
                   >
                      {buttonText}
                   </button>
