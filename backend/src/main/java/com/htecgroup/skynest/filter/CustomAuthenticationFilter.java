@@ -2,6 +2,8 @@ package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.SpringApplicationContext;
+import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
 import com.htecgroup.skynest.security.SecurityConstants;
@@ -37,9 +39,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>())
             );
-        } catch (IOException e){
+        } catch (UserException | IOException e){
 
-            throw new RuntimeException();
+            throw new UserException(UserExceptionType.INVALID_EMAIL_OR_PASSWORD);
         }
     }
 
