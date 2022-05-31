@@ -11,11 +11,8 @@ const App = () => {
 
 	return (
 		<Routes>
-			<Route path="/" exact element={<RedirectRoute accessToken={accessToken} />} />
-			<Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
-			<Route path="signup" exact element={<SignUp />} />
 			<Route
-				path="homepage"
+				path="/"
 				exact
 				element={
 					<ProtectedRoute accessToken={accessToken}>
@@ -23,6 +20,8 @@ const App = () => {
 					</ProtectedRoute>
 				}
 			/>
+			<Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
+			<Route path="signup" exact element={<SignUp />} />
 
 			{/* Other Paths */}
 			<Route path="*" element={<RedirectRoute accessToken={accessToken} />} />

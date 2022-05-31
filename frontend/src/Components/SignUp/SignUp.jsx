@@ -1,5 +1,6 @@
 import { useReducer } from "react";
 import { Link } from "react-router-dom";
+import ROUTES from "../Routes/ROUTES";
 import "./SignUp.css";
 
 const initialState = {
@@ -12,6 +13,8 @@ const initialState = {
   confPassword: "",
 };
 
+const RegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
 function reduser(state, action) {
   return { ...state, [action.input]: action.value };
 }
@@ -22,11 +25,13 @@ function validateState(state) {
 const SignUp = () => {
   const [state, dispatch] = useReducer(reduser, initialState);
 
-  console.log(state);
-
   function handleOnSubmit(e) {
     e.preventDefault();
-    alert(`Hello, ${state.firstName}, you are signup`);
+    if (password.match(RegEx)) {
+      console.log("Success");
+    } else {
+      console.log("Failed");
+    }
   }
 
   function onChange(e) {
@@ -164,7 +169,7 @@ const SignUp = () => {
           </div>
           <div className="mt-4 text-center">
             <p className="m-0">Already have an account? </p>
-            <Link to={"/login"} href="#!" className="m-0 btn btn-link">
+            <Link to={ROUTES.LOGIN} href="#!" className="m-0 btn btn-link">
               Login
             </Link>
           </div>
