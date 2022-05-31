@@ -38,18 +38,19 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         try {
             credentials = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
 
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>())
-            );
         } catch (IOException e) {
 
-            e.printStackTrace();
+            // need to add logger
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
+        if (!credentials.getEmail().equals(userDetails.getUsername())){
+            throw new UserException(UserExceptionType.INVALID_EMAIL_OR_PASSWORD);
+        }
+
         if (!passwordEncoder.matches(credentials.getPassword(), userDetails.getPassword())) {
             throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
         }
-        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", new ArrayList<>()));
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>()));
     }
 
     @Override
