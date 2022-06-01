@@ -17,4 +17,6 @@ An <code>.env</code> file should also be in root. Use <code>CTRL+C</code> or <co
 To run the app locally, start the database docker services <code>skynest-db</code> and <code>skynest-token-db-init</code> - for example, using <code>docker compose skynest-db skynest-token-db-init</code>.
 Then start the app using Maven, or use the IDE of your choice to do it for you. In IntelliJ, for example, open the folder <code>backend/</code> as a project and right-click on <code>SkyNestApplication.java</code> in <code>src/main/java/com/htecgroup/skynest/</code>.
 
+To reset the databases, delete the folder <code>.db_data/</code> - but make sure the database services are not running.
+
 ## QA
