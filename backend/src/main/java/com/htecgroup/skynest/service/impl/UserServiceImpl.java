@@ -14,7 +14,6 @@ import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -48,8 +47,6 @@ public class UserServiceImpl implements UserService {
     userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
 
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-    userDto.setVerified(false);
-    userDto.setEnabled(false);
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 

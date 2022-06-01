@@ -4,10 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Verification;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Component
@@ -39,15 +42,9 @@ public class JwtEmailVerificationUtils {
 
   public boolean validateJwtToken(String token) {
     try {
-      Date expiresAt =
-          JWT.require(Algorithm.HMAC256(jwtEmailVerificationSecret))
-              .build()
-              .verify(token)
-              .getExpiresAt();
-      JWTVerifier verifier =
-          JWT.require(Algorithm.HMAC256(jwtEmailVerificationSecret))
-              .acceptExpiresAt(expiresAt.getTime())
-              .build();
+      Verification verification = JWT.require(Algorithm.HMAC256(jwtEmailVerificationSecret));
+      Date expiresAt = verification.build().verify(token).getExpiresAt();
+      JWTVerifier verifier = verification.acceptExpiresAt(expiresAt.getTime()).build();
       verifier.verify(token);
       return true;
     } catch (JWTVerificationException e) {
