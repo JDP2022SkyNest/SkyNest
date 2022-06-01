@@ -1,12 +1,12 @@
 package com.htecgroup.skynest.filter;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
 import com.htecgroup.skynest.security.SecurityConstants;
+import com.htecgroup.skynest.util.JwtTokens;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,17 +34,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+
+    private ObjectMapper objectMapper;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         UserLoginRequest credentials = new UserLoginRequest();
+        objectMapper = new ObjectMapper();
         try {
-            credentials = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequest.class);
-            log.info("Here, with help of object mapper we map the value of the request to UserLoginRequest class");
+            credentials = objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
 
         } catch (IOException e) {
             log.error(e);
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
+        log.info("The user: " + credentials.getEmail() + " is trying to authenticate.");
         if (!credentials.getEmail().equals(userDetails.getUsername())){
             throw new UserException(UserExceptionType.INVALID_EMAIL_OR_PASSWORD);
         }
@@ -57,17 +61,17 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
-        log.info("We get in this method, only if we return from attemptAuthenticate method successfully");
         String userName = ((User) authentication.getPrincipal()).getUsername();
+        log.info(userName + " is successfully logged in.");
 
-        String token = JWT.create()
-                .withSubject(userName)
-                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .sign(Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET));
+        Date expiration = new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME);
+        Algorithm algorithm = Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET);
+
+        String token = JwtTokens.generateToken(userName, expiration, algorithm);
 
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 
-        log.info("We create the token for the user, with that specific username, and we add the token in the header with key Authentication");
+        log.info("Jwt token successfully created for user: "+ userName );
 
     }
 }

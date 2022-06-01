@@ -9,20 +9,21 @@ import com.htecgroup.skynest.model.enitity.UserEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.UserService;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private RoleRepository roleRepository;
-    @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired private ModelMapper modelMapper;
+     private UserRepository userRepository;
+     private RoleRepository roleRepository;
+     private BCryptPasswordEncoder bCryptPasswordEncoder;
+     private ModelMapper modelMapper;
 
     @Override
     public UserDto registerUser(UserDto userDto) {

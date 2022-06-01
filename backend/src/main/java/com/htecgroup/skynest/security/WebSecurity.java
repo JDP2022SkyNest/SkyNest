@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.filter.CustomAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final CustomUserDetailsService userDetailsService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+  private ObjectMapper objectMapper;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.cors()
@@ -26,20 +29,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, SecurityConstants.SING_UP_URL)
+        .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
         .permitAll()
         .anyRequest()
         .authenticated()
         .and().addFilter(getAuthenticationFilter())
-      //  .addFilter(new CustomAuthorizationFilter(authenticationManager()))   TODO: authorization filter
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
 
   public CustomAuthenticationFilter getAuthenticationFilter() throws Exception {
-    final CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager(), userDetailsService, bCryptPasswordEncoder);
-    filter.setFilterProcessesUrl("/users/login");
+    final CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager(), userDetailsService, bCryptPasswordEncoder,objectMapper);
+    filter.setFilterProcessesUrl(SecurityConstants.LOG_IN_URL);
     return filter;
   }
 
