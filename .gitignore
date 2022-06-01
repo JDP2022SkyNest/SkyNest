@@ -1,5 +1,5 @@
-### Cassandra ###
-out/
+### Databases ###
+.db_data/
 
 ### Maven ###
 .m2/

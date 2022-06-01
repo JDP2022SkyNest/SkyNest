@@ -6,71 +6,57 @@ services:
       - $DB_PORT_HOST:$DB_PORT_CONTAINER
     restart: unless-stopped
     env_file:
-      - db.env
+      - ./db.env
     volumes:
-      - db:/var/lib/mysql
-
-  skynest-db-flyway:
-    depends_on:
-      - skynest-db
-    image: flyway/flyway
-    container_name: skynest-db-flyway
-    command:
-      -url=jdbc:mysql://skynest-db?allowPublicKeyRetrieval=true
-      -schemas=$DB_NAME
-      -user=$DB_USERNAME
-      -password=$DB_PASSWORD
-      -connectRetries=60
-      -connectRetriesInterval=5
-      migrate
-    volumes:
-      - ./backend/src/main/resources/db/migration:/flyway/sql
+      - ./.db_data/mysql:/var/lib/mysql
+    healthcheck:
+      test: mysql ${DB_NAME} --user=${DB_USERNAME} --password=${DB_PASSWORD} --silent --execute "SELECT 1;"
+      interval: 15s
+      timeout: 10s
+      retries: 15
 
   skynest-token-db:
     image: cassandra:latest
     container_name: skynest-token-db
     ports:
       - $TOKEN_DB_PORT_HOST:$TOKEN_DB_PORT_CONTAINER
-    environment:
-      - "MAX_HEAP_SIZE=256M"
-      - "HEAP_NEWSIZE=128M"
     restart: unless-stopped
+    environment:
+      MAX_HEAP_SIZE: 256M
+      HEAP_NEWSIZE: 128M
     volumes:
-      - ./out/cassandra_data:/var/lib/cassandra
+      - ./.db_data/cassandra:/var/lib/cassandra
     healthcheck:
-      test: [ "CMD", "cqlsh", "-u cassandra", "-p cassandra" ,"-e describe keyspaces" ]
+      test: cqlsh --username=${TOKEN_DB_USERNAME} --password={TOKEN_DB_PASSWORD} --execute="describe keyspaces"
       interval: 15s
       timeout: 10s
-      retries: 10
+      retries: 15
 
   skynest-token-db-init:
-    container_name: skynest-token-db-init
-    image: cassandra:latest
     depends_on:
       skynest-token-db:
         condition: service_healthy
+    image: cassandra:latest
+    container_name: skynest-token-db-init
     volumes:
       - ./backend/src/main/resources/cassandra_init_keyspace.cql:/schema.cql
     command: /bin/bash -c "echo loading cassandra keyspace && cqlsh skynest-token-db -f /schema.cql"
 
   skynest-be:
     depends_on:
-      skynest-db-flyway:
-        condition: service_completed_successfully
+      skynest-db:
+        condition: service_healthy
       skynest-token-db-init:
         condition: service_completed_successfully
     image: skynest/skynest-api
     container_name: skynest-be
     ports:
       - $SPRING_PORT_HOST:$SPRING_PORT_CONTAINER
-    build: ./backend
     restart: on-failure
+    build: ./backend
     env_file:
-      - spring.env
+      - ./spring.env
     volumes:
-      - .m2:/root/.m2
+      - ./.m2:/root/.m2
     stdin_open: true
     tty: true
-
-volumes:
-  db:
