@@ -1,0 +1,8 @@
+### Databases ###
+.db_data/
+
+### Maven ###
+.m2/
+
+### Environment ###
+.env
