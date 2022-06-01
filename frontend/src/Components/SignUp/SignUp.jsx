@@ -146,7 +146,7 @@ const SignUp = () => {
                      value={phoneNumber}
                      onChange={(e) => setPhoneNumber(e.target.value)}
                      id="phoneInput"
-                     className="form-control form-control-lg no-arrow"
+                     className="form-control no-arrow"
                      required
                      autoComplete="off"
                   />
