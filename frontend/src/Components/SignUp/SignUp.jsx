@@ -44,8 +44,11 @@ const SignUp = () => {
             setErrorMsg("Email aready exists");
          } else if (response.status === 500) {
             setErrorMsg("Internal Server Error");
+         } else if (response.status === 0) {
+            setErrorMsg("Server currently offline");
          } else {
             setErrorMsg("Placeholder for other errors");
+            console.log(response.status);
          }
       }
    };
