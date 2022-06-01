@@ -12,6 +12,7 @@ import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
 
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,19 +21,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
-
-  @Autowired private UserRepository userRepository;
-
-  @Autowired private JwtEmailVerificationUtils jwtEmailVerificationUtils;
-
-  @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-  @Autowired private ModelMapper modelMapper;
-
-  @Autowired private EmailService emailService;
-
-  @Autowired private RoleRepository roleRepository;
+  private UserRepository userRepository;
+  private JwtEmailVerificationUtils jwtEmailVerificationUtils;
+  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private ModelMapper modelMapper;
+  private EmailService emailService;
+  private RoleRepository roleRepository;
 
   @Override
   public UserDto registerUser(UserDto userDto) {
@@ -57,14 +53,25 @@ public class UserServiceImpl implements UserService {
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
-    String token = jwtEmailVerificationUtils.generateJwtEmailVerificationToken(userDto);
-
-    String confirmationLink = jwtEmailVerificationUtils.getConfirmationLink() + token;
-    emailService.send(
-        userDto.getEmail(),
-        jwtEmailVerificationUtils.buildEmail(userDto.getName(), confirmationLink));
+    this.sendVerificationEmail(userDto.getEmail());
 
     return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public void sendVerificationEmail(String email) {
+    UserDto userDto = this.findUserByEmail(email);
+    if (userDto != null) {
+      if (userDto.getEnabled() && userDto.getVerified()) {
+        throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
+      }
+    }
+
+    String token = jwtEmailVerificationUtils.generateJwtEmailVerificationToken(email);
+
+    String confirmationLink = jwtEmailVerificationUtils.getConfirmationLink() + token;
+    String subject = "Confirm your email for SkyNest";
+    emailService.send(email, jwtEmailVerificationUtils.buildEmail(email, confirmationLink), subject);
   }
 
   @Override
@@ -79,19 +86,24 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Boolean confirmEmail(String token) {
+  public String confirmEmail(String token) {
     boolean validateToken = jwtEmailVerificationUtils.validateJwtToken(token);
     if (validateToken) {
       String email = jwtEmailVerificationUtils.getEmailFromJwtEmailVerificationToken(token);
-      UserEntity userEntity =
-              userRepository
-                      .findUserByEmail(email)
-                      .orElseThrow(
-                              () -> new UsernameNotFoundException("could not find user with email: " + email));
-      userEntity.setEnabled(true);
-      userEntity.setVerified(true);
-      userRepository.save(userEntity);
-      return userEntity.getEnabled() && userEntity.getVerified();
+      UserDto userDto = findUserByEmail(email);
+      userDto = this.enableUser(userDto);
+      userRepository.save(modelMapper.map(userDto, UserEntity.class));
+      return "User verified successfully";
     } else throw new UserException(UserExceptionType.EMAIL_VERIFICATION_TOKEN_FAILED);
+  }
+
+  @Override
+  public UserDto enableUser(UserDto userDto){
+    if (userDto.getVerified() && userDto.getEnabled()) {
+      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
+    }
+    userDto.setEnabled(true);
+    userDto.setVerified(true);
+    return userDto;
   }
 }

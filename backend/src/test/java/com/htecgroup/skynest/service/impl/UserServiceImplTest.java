@@ -26,8 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -93,9 +92,7 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString()))
         .thenReturn(expectedUserDto.getEncryptedPassword());
-    when(jwtEmailVerificationUtils.generateJwtEmailVerificationToken(any())).thenReturn("token");
-    when(jwtEmailVerificationUtils.getConfirmationLink()).thenReturn("link");
-    when(jwtEmailVerificationUtils.buildEmail(any(), anyString())).thenReturn("mail");
+    doNothing().when(userService).sendUserEmail(anyString());
 
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
     UserDto actualUserDto = userService.registerUser(newUserDto);

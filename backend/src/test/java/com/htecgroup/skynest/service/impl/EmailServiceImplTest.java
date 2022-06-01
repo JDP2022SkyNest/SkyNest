@@ -37,8 +37,9 @@ class EmailServiceImplTest {
     MimeMessage mimeMessage = mock(MimeMessage.class);
     String to = "test@yahoo.com";
     String email = "MailContent";
+    String subject = "Subject";
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
-    emailService.send(to, email);
+    emailService.send(to, email, subject);
     Mockito.verify(javaMailSender).send(mimeMessage);
   }
 
@@ -46,18 +47,20 @@ class EmailServiceImplTest {
   void sendFailsTest() {
     String to = "test@yahoo.com";
     String email = "MailContent";
+    String subject = "Subject";
     when(javaMailSender.createMimeMessage()).thenThrow(UserException.class);
-    Assertions.assertThrows(UserException.class, () -> emailService.send(to, email));
+    Assertions.assertThrows(UserException.class, () -> emailService.send(to, email,subject));
   }
 
   @Test
   void testMimeMessageHelperArgumentsInSend() throws MessagingException, IOException {
     String to = "test@yahoo.com";
     String emailText = "MailContent";
+    String subject = "Confirm your email for SkyNest";
     String expectedSubject = "Confirm your email for SkyNest";
     MimeMessage mimeMessage = new MimeMessage((Session) null);
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
-    emailService.send(to, emailText);
+    emailService.send(to, emailText, subject);
 
     Mockito.verify(javaMailSender).send(captorMimeMessage.capture());
 

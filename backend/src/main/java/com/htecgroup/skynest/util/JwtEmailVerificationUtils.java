@@ -1,10 +1,10 @@
 package com.htecgroup.skynest.util;
 
-import com.htecgroup.skynest.model.dto.UserDto;
-import io.jsonwebtoken.*;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,6 @@ import java.util.Date;
 @Component
 @Log4j2
 public class JwtEmailVerificationUtils {
-
   @Value("${backend.app.jwtEmailVerificationSecret}")
   private String jwtEmailVerificationSecret;
 
@@ -23,35 +22,36 @@ public class JwtEmailVerificationUtils {
   @Value("${backend.app.confirmationLink}")
   private String confirmationLink;
 
-  public String generateJwtEmailVerificationToken(UserDto userDto) {
-    return Jwts.builder()
-        .setSubject((userDto.getEmail()))
-        .setIssuedAt(new Date())
-        .setExpiration(new Date((new Date()).getTime() + jwtEmailVerificationExpirationMs))
-        .signWith(SignatureAlgorithm.HS512, jwtEmailVerificationSecret)
-        .compact();
+  public String generateJwtEmailVerificationToken(String email) {
+    return JWT.create()
+        .withSubject(email)
+        .withIssuedAt(new Date())
+        .withExpiresAt(new Date((new Date()).getTime() + jwtEmailVerificationExpirationMs))
+        .sign(Algorithm.HMAC256(jwtEmailVerificationSecret));
   }
 
   public String getEmailFromJwtEmailVerificationToken(String token) {
-    return Jwts.parser()
-        .setSigningKey(jwtEmailVerificationSecret)
-        .parseClaimsJws(token)
-        .getBody()
+    return JWT.require(Algorithm.HMAC256(jwtEmailVerificationSecret))
+        .build()
+        .verify(token)
         .getSubject();
   }
 
   public boolean validateJwtToken(String token) {
     try {
-      Jwts.parser().setSigningKey(jwtEmailVerificationSecret).parseClaimsJws(token);
+      Date expiresAt =
+          JWT.require(Algorithm.HMAC256(jwtEmailVerificationSecret))
+              .build()
+              .verify(token)
+              .getExpiresAt();
+      JWTVerifier verifier =
+          JWT.require(Algorithm.HMAC256(jwtEmailVerificationSecret))
+              .acceptExpiresAt(expiresAt.getTime())
+              .build();
+      verifier.verify(token);
       return true;
-    } catch (SignatureException e) {
-      log.error("Invalid JWT signature: {}", e.getMessage());
-    } catch (MalformedJwtException e) {
+    } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
-    } catch (ExpiredJwtException e) {
-      log.error("JWT token is expired: {}", e.getMessage());
-    } catch (UnsupportedJwtException e) {
-      log.error("JWT token is unsupported: {}", e.getMessage());
     } catch (IllegalArgumentException e) {
       log.error("JWT claims string is empty: {}", e.getMessage());
     }
@@ -62,7 +62,7 @@ public class JwtEmailVerificationUtils {
     return confirmationLink;
   }
 
-  public String buildEmail(String name, String link) {
+  public String buildEmail(String email, String link) {
     return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n"
         + "\n"
         + "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n"
@@ -119,7 +119,7 @@ public class JwtEmailVerificationUtils {
         + "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n"
         + "        \n"
         + "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi "
-        + name
+        + email
         + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\""
         + link
         + "\">Activate Now</a> </p></blockquote>\n Link will expire in 30 minutes. <p>See you soon</p>"
