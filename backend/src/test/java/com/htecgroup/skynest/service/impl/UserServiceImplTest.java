@@ -8,6 +8,7 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,7 @@ class UserServiceImplTest {
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
 
+  @Spy
   @InjectMocks private UserServiceImpl userService;
 
   private UserEntity enabledWorkerEntity;
@@ -92,7 +94,8 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString()))
         .thenReturn(expectedUserDto.getEncryptedPassword());
-    doNothing().when(userService).sendUserEmail(anyString());
+
+    doNothing().when(userService).sendVerificationEmail(anyString());
 
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
     UserDto actualUserDto = userService.registerUser(newUserDto);
@@ -144,6 +147,8 @@ class UserServiceImplTest {
 
   @Test
   void confirmEmail() {
+    String expectedResponse = "User verified successfully";
+
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
@@ -153,7 +158,7 @@ class UserServiceImplTest {
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(disabledWorkerEntity));
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
-    Assertions.assertEquals(true, userService.confirmEmail(anyString()));
+    Assertions.assertEquals(expectedResponse, userService.confirmEmail(anyString()));
   }
 
   @Test

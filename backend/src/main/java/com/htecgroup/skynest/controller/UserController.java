@@ -10,8 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.sun.activation.registries.LogSupport.log;
-
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
@@ -32,7 +30,7 @@ public class UserController {
   @GetMapping("/confirm")
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
     String response = userService.confirmEmail(token);
-    log("User successfully confirmed");
+    log.info("User successfully confirmed");
     return ResponseEntity.ok(response);
   }
 
@@ -40,7 +38,7 @@ public class UserController {
   public ResponseEntity<String> resendUserEmail(@RequestParam String email){
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
-    log("Email resend successfully");
+    log.info("Email resend successfully");
     return ResponseEntity.ok(response);
   }
 

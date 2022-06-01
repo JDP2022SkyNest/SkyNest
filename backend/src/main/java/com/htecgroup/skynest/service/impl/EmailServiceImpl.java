@@ -5,7 +5,6 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.service.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
