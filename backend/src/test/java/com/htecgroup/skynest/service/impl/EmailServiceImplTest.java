@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -16,10 +15,10 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.transaction.Transactional;
 import java.io.IOException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EmailServiceImplTest {
@@ -28,8 +27,7 @@ class EmailServiceImplTest {
 
   @InjectMocks private EmailServiceImpl emailService;
 
-  @Captor
-  ArgumentCaptor<MimeMessage> captorMimeMessage;
+  @Captor ArgumentCaptor<MimeMessage> captorMimeMessage;
 
   @BeforeEach
   void setUp() {}
@@ -53,7 +51,7 @@ class EmailServiceImplTest {
   }
 
   @Test
-  void checkMimeMessageHelperArgumentsInSend() throws MessagingException, IOException {
+  void testMimeMessageHelperArgumentsInSend() throws MessagingException, IOException {
     String to = "test@yahoo.com";
     String emailText = "MailContent";
     String expectedSubject = "Confirm your email for SkyNest";
@@ -70,6 +68,4 @@ class EmailServiceImplTest {
     Assertions.assertEquals(expectedSubject, capturedMessage.getSubject());
     Assertions.assertEquals(emailText, capturedMessage.getContent());
   }
-
-
 }
