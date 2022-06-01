@@ -97,7 +97,7 @@ const SignUp = () => {
                            id="firstNameInput"
                            value={name}
                            onChange={(e) => setName(e.target.value)}
-                           className="form-control form-control"
+                           className="form-control"
                            required
                            autoComplete="off"
                         />
@@ -114,7 +114,7 @@ const SignUp = () => {
                            value={surname}
                            onChange={(e) => setSurname(e.target.value)}
                            id="lastNameInput"
-                           className="form-control form-control"
+                           className="form-control"
                            required
                            autoComplete="off"
                         />
@@ -131,7 +131,7 @@ const SignUp = () => {
                      value={email}
                      onChange={(e) => setEmail(e.target.value)}
                      id="emailInput"
-                     className="form-control form-control"
+                     className="form-control"
                      required
                      autoComplete="off"
                   />
@@ -161,7 +161,7 @@ const SignUp = () => {
                      value={address}
                      onChange={(e) => setAddress(e.target.value)}
                      id="adressInput"
-                     className="form-control form-control"
+                     className="form-control"
                      required
                      autoComplete="off"
                   />
@@ -178,7 +178,7 @@ const SignUp = () => {
                            value={uPassword}
                            onChange={(e) => setPassword(e.target.value)}
                            id="passwordInput"
-                           className="form-control form-control"
+                           className="form-control"
                            required
                            autoComplete="off"
                         />
@@ -198,7 +198,7 @@ const SignUp = () => {
                            value={confpassword}
                            onChange={(e) => setConfpassword(e.target.value)}
                            id="confPasswordInput"
-                           className="form-control form-control"
+                           className="form-control"
                            required
                            autoComplete="off"
                         />
