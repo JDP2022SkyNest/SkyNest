@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ROUTES from "../Routes/ROUTES";
+import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
 import "./SignUp.css";
 
@@ -12,7 +13,7 @@ const SignUp = () => {
    const [email, setEmail] = useState("");
    const [phoneNumber, setPhoneNumber] = useState("");
    const [address, setAddress] = useState("");
-   const [password, setPassword] = useState("");
+   const [uPassword, setPassword] = useState("");
    const [confpassword, setConfpassword] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [successfulRegister, setSuccessfulRegister] = useState("");
@@ -26,11 +27,17 @@ const SignUp = () => {
       }, delay);
    };
 
+   const pwSuggestion = (length) => {
+      let suggestedPw = password.randomPassword({ length, characters: [password.lower, password.upper, password.digits] });
+      setPassword(suggestedPw);
+      setConfpassword(suggestedPw);
+   };
+
    const userRegistration = async () => {
       try {
          await AxiosInstance.post("/users/register", {
             email,
-            password,
+            password: uPassword,
             name,
             surname,
             phoneNumber,
@@ -55,7 +62,7 @@ const SignUp = () => {
 
    const handleSubmit = (e) => {
       e.preventDefault();
-      if (password.match(RegEx) && password === confpassword) {
+      if (uPassword.match(RegEx) && uPassword === confpassword) {
          userRegistration();
       } else {
          setErrorMsg("Requirements not met");
@@ -63,7 +70,7 @@ const SignUp = () => {
    };
 
    const onSuccessfulValidation = () => {
-      if (password.match(RegEx) && password === confpassword) {
+      if (uPassword.match(RegEx) && uPassword === confpassword) {
          return true;
       }
       return false;
@@ -88,6 +95,7 @@ const SignUp = () => {
                            type="name"
                            name="firstName"
                            id="firstNameInput"
+                           value={name}
                            onChange={(e) => setName(e.target.value)}
                            className="form-control form-control"
                            required
@@ -103,6 +111,7 @@ const SignUp = () => {
                         <input
                            type="name"
                            name="lastName"
+                           value={surname}
                            onChange={(e) => setSurname(e.target.value)}
                            id="lastNameInput"
                            className="form-control form-control"
@@ -119,6 +128,7 @@ const SignUp = () => {
                   <input
                      type="email"
                      name="email"
+                     value={email}
                      onChange={(e) => setEmail(e.target.value)}
                      id="emailInput"
                      className="form-control form-control"
@@ -133,6 +143,7 @@ const SignUp = () => {
                   <input
                      type="number"
                      name="phoneNumber"
+                     value={phoneNumber}
                      onChange={(e) => setPhoneNumber(e.target.value)}
                      id="phoneInput"
                      className="form-control form-control"
@@ -147,6 +158,7 @@ const SignUp = () => {
                   <input
                      type="text"
                      name="adress"
+                     value={address}
                      onChange={(e) => setAddress(e.target.value)}
                      id="adressInput"
                      className="form-control form-control"
@@ -163,14 +175,18 @@ const SignUp = () => {
                         <input
                            type="password"
                            name="password"
+                           value={uPassword}
                            onChange={(e) => setPassword(e.target.value)}
                            id="passwordInput"
                            className="form-control form-control"
                            required
                            autoComplete="off"
                         />
-                        <label className="form-label" htmlFor="passwordInput">
+                        <label className="form-label position-relative w-100" htmlFor="passwordInput">
                            <small>Password</small> <span className="text-danger">*</span>
+                           <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10)}>
+                              Suggest PW?
+                           </small>
                         </label>
                      </div>
                   </div>
@@ -179,6 +195,7 @@ const SignUp = () => {
                         <input
                            type="password"
                            name="confPassword"
+                           value={confpassword}
                            onChange={(e) => setConfpassword(e.target.value)}
                            id="confPasswordInput"
                            className="form-control form-control"
@@ -194,11 +211,11 @@ const SignUp = () => {
                <small>
                   Password requirements:
                   <ul className="mt-2 bt-2 text-danger unordered-list-padding">
-                     <li className={password.match(/([A-Z])/) ? "text-success" : ""}>Uppercase Letter</li>
-                     <li className={password.match(/([a-z])/) ? "text-success" : ""}>Lowercase Letter</li>
-                     <li className={password.match(/([\d])/) ? "text-success" : ""}>Number</li>
-                     <li className={password.length >= 8 ? "text-success" : ""}>Length of 8 characters or more</li>
-                     <li className={password === confpassword && password.length > 8 ? "text-success" : ""}>Passwords match</li>
+                     <li className={uPassword.match(/([A-Z])/) ? "text-success" : ""}>Uppercase Letter</li>
+                     <li className={uPassword.match(/([a-z])/) ? "text-success" : ""}>Lowercase Letter</li>
+                     <li className={uPassword.match(/([\d])/) ? "text-success" : ""}>Number</li>
+                     <li className={uPassword.length >= 8 ? "text-success" : ""}>Length of 8 characters or more</li>
+                     <li className={uPassword === confpassword && uPassword.length > 8 ? "text-success" : ""}>Passwords match</li>
                   </ul>
                </small>
                <div className="my-4">
