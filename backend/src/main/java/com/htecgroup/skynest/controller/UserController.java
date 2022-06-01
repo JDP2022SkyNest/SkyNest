@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -23,9 +25,9 @@ public class UserController {
     return modelMapper.map(userDto, UserResponse.class);
   }
 
-  @GetMapping
-  public String getUser() {
-    //  TODO
-    return "test";
+  @GetMapping()
+  public String  getUsers() {
+    ArrayList<UserDto> listOfUsers = userService.listAllUsers();
+    return listOfUsers.toString();
   }
 }

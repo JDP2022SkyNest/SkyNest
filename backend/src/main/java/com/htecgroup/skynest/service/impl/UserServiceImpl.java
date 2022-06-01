@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -62,6 +64,17 @@ public class UserServiceImpl implements UserService {
                                 () -> new UsernameNotFoundException("could not find user with email: " + email));
 
         return modelMapper.map(userEntity, UserDto.class);
+    }
+
+    @Override
+    public ArrayList<UserDto> listAllUsers() {
+        ArrayList<UserEntity> entityArrayList = (ArrayList<UserEntity>) userRepository.findAll();
+        ArrayList<UserDto> userDtoArrayList = new ArrayList<>();
+        for(UserEntity user : entityArrayList){
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            userDtoArrayList.add(userDto);
+        }
+        return userDtoArrayList;
     }
 
 }
