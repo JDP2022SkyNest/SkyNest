@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { pwSuggestion } from "../ReusableComponents/ReusableFunctions";
+import { redirect } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
-import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import "./SignUp.css";
@@ -21,20 +22,6 @@ const SignUp = () => {
    const [buttonText, setButtonText] = useState("REGISTER");
    const [showPassword, setShowPassword] = useState(false);
 
-   const navigate = useNavigate();
-
-   const loginPageRedirect = (delay) => {
-      setTimeout(() => {
-         navigate(ROUTES.LOGIN);
-      }, delay);
-   };
-
-   const pwSuggestion = (length) => {
-      let suggestedPw = password.randomPassword({ length, characters: [password.lower, password.upper, password.digits] });
-      setPassword(suggestedPw);
-      setConfpassword(suggestedPw);
-   };
-
    const userRegistration = async () => {
       try {
          await AxiosInstance.post("/users/register", {
@@ -47,7 +34,7 @@ const SignUp = () => {
          });
          setSuccessfulRegister("Registration Successful");
          setButtonText("SUCCESSFUL");
-         loginPageRedirect(2000);
+         redirect(2000, ROUTES.LOGIN);
       } catch ({ response }) {
          if (response.status === 409) {
             setErrorMsg("Email aready exists");
@@ -179,7 +166,7 @@ const SignUp = () => {
                   <div className="form-outline mb-1">
                      <label className="form-label position-relative w-100" htmlFor="passwordInput">
                         <small>Password</small> <span className="text-danger">*</span>
-                        <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10)}>
+                        <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfpassword)}>
                            Suggest PW?
                         </small>
                      </label>
