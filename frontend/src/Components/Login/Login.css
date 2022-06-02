@@ -1,0 +1,25 @@
+.color-smoke {
+	background-color: var(--smoke);
+}
+
+.color-latte {
+	background-color: var(--latte);
+}
+
+.little-image-logo {
+	width: 5rem;
+	animation: logoRotation 60s linear infinite reverse;
+}
+
+.login-form-radius {
+	border-radius: 1rem;
+}
+
+@keyframes logoRotation {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
