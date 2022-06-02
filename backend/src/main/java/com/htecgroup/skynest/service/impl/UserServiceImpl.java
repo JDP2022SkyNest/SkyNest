@@ -16,65 +16,61 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-     private UserRepository userRepository;
-     private RoleRepository roleRepository;
-     private BCryptPasswordEncoder bCryptPasswordEncoder;
-     private ModelMapper modelMapper;
+  private UserRepository userRepository;
+  private RoleRepository roleRepository;
+  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private ModelMapper modelMapper;
 
-    @Override
-    public UserDto registerUser(UserDto userDto) {
+  @Override
+  public UserDto registerUser(UserDto userDto) {
 
-
-        if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
-        }
-
-        RoleEntity roleEntity =
-                roleRepository
-                        .findByName(RoleEntity.ROLE_WORKER)
-                        .orElseThrow(
-                                () ->
-                                        new UserException(
-                                                "Role " + RoleEntity.ROLE_WORKER + " not found.",
-                                                HttpStatus.INTERNAL_SERVER_ERROR));
-        userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
-
-        userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        userDto.setVerified(false);
-        userDto.setEnabled(false);
-
-        UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
-
-        return modelMapper.map(userEntity, UserDto.class);
+    if (userRepository.existsByEmail(userDto.getEmail())) {
+      throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
     }
 
-    @Override
-    public UserDto findUserByEmail(String email) {
+    RoleEntity roleEntity =
+        roleRepository
+            .findByName(RoleEntity.ROLE_WORKER)
+            .orElseThrow(
+                () ->
+                    new UserException(
+                        "Role " + RoleEntity.ROLE_WORKER + " not found.",
+                        HttpStatus.INTERNAL_SERVER_ERROR));
+    userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
 
-        UserEntity userEntity =
-                userRepository
-                        .findUserByEmail(email)
-                        .orElseThrow(
-                                () -> new UsernameNotFoundException("could not find user with email: " + email));
+    userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+    userDto.setVerified(false);
+    userDto.setEnabled(false);
 
-        return modelMapper.map(userEntity, UserDto.class);
-    }
+    UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
-    @Override
-    public ArrayList<UserDto> listAllUsers() {
-        ArrayList<UserEntity> entityArrayList = (ArrayList<UserEntity>) userRepository.findAll();
-        ArrayList<UserDto> userDtoArrayList = new ArrayList<>();
-        for(UserEntity user : entityArrayList){
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            userDtoArrayList.add(userDto);
-        }
-        return userDtoArrayList;
-    }
+    return modelMapper.map(userEntity, UserDto.class);
+  }
 
+  @Override
+  public UserDto findUserByEmail(String email) {
+
+    UserEntity userEntity =
+        userRepository
+            .findUserByEmail(email)
+            .orElseThrow(
+                () -> new UsernameNotFoundException("could not find user with email: " + email));
+
+    return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public List<UserDto> listAllUsers() {
+    List<UserEntity> entityList = userRepository.findAll();
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, UserDto.class))
+        .collect(Collectors.toList());
+  }
 }

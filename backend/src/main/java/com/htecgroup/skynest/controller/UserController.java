@@ -8,7 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -27,8 +28,10 @@ public class UserController {
   }
 
   @GetMapping()
-  public String  getUsers() {
-    ArrayList<UserDto> listOfUsers = userService.listAllUsers();
-    return listOfUsers.toString();
+  public List<UserResponse> getUsers() {
+    List<UserDto> listOfUsers = userService.listAllUsers();
+    return listOfUsers.stream()
+        .map(e -> modelMapper.map(e, UserResponse.class))
+        .collect(Collectors.toList());
   }
 }

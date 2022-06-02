@@ -2,7 +2,7 @@ package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.dto.UserDto;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface UserService {
 
@@ -10,5 +10,5 @@ public interface UserService {
 
   UserDto findUserByEmail(String email);
 
-  ArrayList<UserDto> listAllUsers();
+  List<UserDto> listAllUsers();
 }
