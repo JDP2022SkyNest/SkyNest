@@ -7,15 +7,13 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.enitity.RoleEntity;
 import com.htecgroup.skynest.model.enitity.UserEntity;
-import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
-
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,13 +21,14 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+
+  private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
   private UserRepository userRepository;
-  private JwtEmailVerificationUtils jwtEmailVerificationUtils;
+  private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
+  private JwtEmailVerificationUtils jwtEmailVerificationUtils;
   private EmailService emailService;
-  private RoleRepository roleRepository;
-  private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
 
   @Override
   public UserDto registerUser(UserDto userDto) {
@@ -37,20 +36,13 @@ public class UserServiceImpl implements UserService {
     if (userRepository.existsByEmail(userDto.getEmail())) {
       throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
     }
-
-    RoleEntity roleEntity =
-        roleRepository
-            .findByName(RoleEntity.ROLE_WORKER)
-            .orElseThrow(
-                () ->
-                    new UserException(
-                        "Role " + RoleEntity.ROLE_WORKER + " not found.",
-                        HttpStatus.INTERNAL_SERVER_ERROR));
-    userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
-    userDto.setVerified(false);
-    userDto.setEnabled(false);
+    String roleName = RoleEntity.ROLE_WORKER;
+    RoleDto roleDto = roleService.findByName(roleName);
+    userDto.setRole(roleDto);
 
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+    userDto.setVerified(false);
+    userDto.setEnabled(false);
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
@@ -78,6 +70,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDto findUserByEmail(String email) {
+
     UserEntity userEntity =
         userRepository
             .findUserByEmail(email)
