@@ -116,7 +116,7 @@ const Login = ({ setAccessToken }) => {
                      value={password}
                      ref={passwordRef}
                      id="passwordInput"
-                     className={`border-right-0 form-control form-control-lg ${errorMsg ? "border-danger border-left-0" : null}`}
+                     className={`form-control form-control-lg ${errorMsg ? "border-danger" : "border-right-0"}`}
                      required
                   />
                   <div className="input-group-prepend">
