@@ -1,7 +1,7 @@
 echo "Stopping Cassandra container..."
-docker stop skynest-token-db skynest-token-db-init
+docker stop skynest-token-db
 echo "Deleting Cassandra container..."
-docker rm skynest-token-db skynest-token-db-init
+docker rm skynest-token-db
 echo "Pruning everything..."
 docker system prune --volumes --force
 echo "Deleting Cassandra cache..."
