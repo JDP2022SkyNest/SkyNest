@@ -1,36 +1,33 @@
+## Instructions 
+
+### `git repo`
+
 [SkyNest](https://github.com/JDP2022SkyNest/SkyNest)
-SkyNest is a cloud service that supports data storage and manipulation via creating buckets (and objects inside those buckets) as well as creating lambda functions to process data or events. 
 
-Techologies used in this project are React, JavaScript, Bootstrap... 
+### `general`
 
-This project uses data from ...
-Regarding this API you will be using a local web server that runs on localhost:8080. Complete API which is
-needed for developing tasks can be found at:
-....
+Every command down below needs to be entered in the Terminal.
+If you're using VSC you can open it by pressing CTRL + J.
+In the terminal you need to navigate to frontend folder.
+You can do that by typing `cd .\frontend\`.
+From that path you can execute other commands that are explained below
 
-Set up instructions:
-git clone ............
-npm install
-npm start
+### `npm install [or] npm i`
 
-On the github repository page you will find all information about how to start a web server and
-how to use API locally for development.
-
-
-
-This project was bootstrapped with with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
+After you've downloaded the project, first thing you need to do is install libraries.
+Without them the project work.
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+After you install all necessary libraries then you can start the project using npm start.
+Runs the app in the development mode.
+Open [http://localhost:3000] to view it in the browser.
 
-The page will reload if you make edits.\
+The page will reload if you make edits.
 You will also see any lint errors in the console.
+
+
+## Additional Advanced Instructions
 
 ### `npm test`
 
@@ -45,8 +42,6 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
@@ -56,33 +51,3 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
