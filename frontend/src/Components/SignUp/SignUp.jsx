@@ -40,7 +40,7 @@ const SignUp = () => {
 
    const userRegistration = async () => {
       try {
-         await AxiosInstance.post("/users/register", {
+         await AxiosInstance.post("/reports/register", {
             email,
             password: uPassword,
             name,
