@@ -19,6 +19,7 @@ const SignUp = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [successfulRegister, setSuccessfulRegister] = useState("");
    const [buttonText, setButtonText] = useState("REGISTER");
+   const [showPassword, setShowPassword] = useState(false);
 
    const navigate = useNavigate();
 
@@ -75,6 +76,10 @@ const SignUp = () => {
          return true;
       }
       return false;
+   };
+
+   const passwordShowHide = () => {
+      setShowPassword(!showPassword);
    };
 
    useEffect(() => {
@@ -178,16 +183,23 @@ const SignUp = () => {
                            Suggest PW?
                         </small>
                      </label>
-                     <input
-                        type="password"
-                        name="password"
-                        value={uPassword}
-                        onChange={(e) => setPassword(e.target.value)}
-                        id="passwordInput"
-                        className="form-control form-control"
-                        required
-                        autoComplete="off"
-                     />
+                     <div className="input-group">
+                        <input
+                           type={showPassword ? "text" : "password"}
+                           name="password"
+                           value={uPassword}
+                           onChange={(e) => setPassword(e.target.value)}
+                           id="passwordInput"
+                           className="form-control form-control border-right-0"
+                           required
+                           autoComplete="off"
+                        />
+                        <div className="input-group-prepend">
+                           <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
+                              <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
+                           </span>
+                        </div>
+                     </div>
                   </div>
                </div>
                <div className="col-md-6">
@@ -196,7 +208,7 @@ const SignUp = () => {
                         <small>Confirm password</small> <span className="text-danger">*</span>
                      </label>
                      <input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         name="confPassword"
                         value={confpassword}
                         onChange={(e) => setConfpassword(e.target.value)}
