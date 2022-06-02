@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.service;
 
-import com.htecgroup.skynest.model.enitity.RoleEntity;
+import com.htecgroup.skynest.model.dto.RoleDto;
 
 public interface RoleService {
-    RoleEntity findByName(String name);
+  RoleDto findByName(String name);
 }
