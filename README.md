@@ -25,4 +25,6 @@ The backend server uses Spring Boot and is built using Maven and Java 11. The wh
   >   For example, if <code>skynest-db</code> is still running, use <code>docker stop skynest-db</code>.
 - delete the folder <code>.db_data/</code>
 
+There are also some convenience scripts in <code>docker scripts/</code>.
+
 ## QA
