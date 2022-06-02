@@ -20,18 +20,26 @@ const SignUp = () => {
    const [successfulRegister, setSuccessfulRegister] = useState("");
    const [buttonText, setButtonText] = useState("REGISTER");
    const [showPassword, setShowPassword] = useState(false);
+   const [loading, setLoading] = useState(false);
 
    const navigate = useNavigate();
 
-   let redirectToLoginPage = (delay) => {
+   const redirectToLoginPage = (delay) => {
       setTimeout(() => {
          navigate(ROUTES.LOGIN);
       }, delay);
    };
 
+   const allInputs = document.querySelectorAll("input");
+   const inputsDisabled = (value) => [
+      allInputs.forEach((el) => {
+         el.disabled = value;
+      }),
+   ];
+
    const userRegistration = async () => {
       try {
-         await AxiosInstance.post("/users/register", {
+         await AxiosInstance.post("/reports/register", {
             email,
             password: uPassword,
             name,
@@ -54,15 +62,19 @@ const SignUp = () => {
             console.log(response.status);
          }
       }
+      setLoading(false);
    };
 
-   const handleSubmit = (e) => {
+   const handleSubmit = async (e) => {
       e.preventDefault();
+      inputsDisabled(true);
       if (uPassword.match(RegEx) && uPassword === confpassword) {
-         userRegistration();
+         setLoading(true);
+         await userRegistration();
       } else {
          setErrorMsg("Requirements not met");
       }
+      inputsDisabled(false);
    };
 
    const onSuccessfulValidation = () => {
@@ -225,12 +237,18 @@ const SignUp = () => {
                </ul>
             </small>
             <div className="my-4">
-               <button
-                  className={onSuccessfulValidation() ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
-                  disabled={onSuccessfulValidation() ? false : true}
-               >
-                  {buttonText}
-               </button>
+               {!loading ? (
+                  <button
+                     className={onSuccessfulValidation() ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
+                     disabled={onSuccessfulValidation() ? false : true}
+                  >
+                     {buttonText}
+                  </button>
+               ) : (
+                  <button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
+                     <span className="spinner-border spinner-border-md"></span>
+                  </button>
+               )}
             </div>
             <div className="mt-4 text-center">
                <p className="m-0">Already have an account? </p>
