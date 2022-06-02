@@ -35,20 +35,20 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         UserLoginRequest credentials = new UserLoginRequest();
-        objectMapper = new ObjectMapper();
+
         try {
             credentials = objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
 
         } catch (IOException e) {
-            log.error(e);
+            log.error("Unable to authenticate, because of Input or Output error",e);
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
-        log.info("The user: " + credentials.getEmail() + " is trying to authenticate.");
+        log.info("The user: {} is trying to authenticate.", credentials.getEmail());
         if (!credentials.getEmail().equals(userDetails.getUsername())){
             throw new UserException(UserExceptionType.INVALID_EMAIL_OR_PASSWORD);
         }
@@ -59,10 +59,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>()));
     }
 
+
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         String userName = ((User) authentication.getPrincipal()).getUsername();
-        log.info(userName + " is successfully logged in.");
+        log.info("{} is successfully logged in.", userName);
 
         Date expiration = new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME);
         Algorithm algorithm = Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET);
@@ -71,7 +72,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 
-        log.info("Jwt token successfully created for user: "+ userName );
+        log.info("Jwt token successfully created for user: {}", userName );
 
     }
 }

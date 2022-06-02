@@ -11,4 +11,9 @@ public interface UserService {
   UserDto findUserByEmail(String email);
 
   List<UserDto> listAllUsers();
+
+  String confirmEmail(String token);
+
+  UserDto enableUser(UserDto userDto);
+  void sendVerificationEmail(String email);
 }
