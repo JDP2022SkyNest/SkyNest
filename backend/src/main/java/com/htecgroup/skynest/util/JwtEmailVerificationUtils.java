@@ -26,10 +26,12 @@ public class JwtEmailVerificationUtils {
   private String confirmationLink;
 
   public String generateJwtEmailVerificationToken(String email) {
+    // Check for new version of JWT
+    Date now = new Date();
     return JWT.create()
         .withSubject(email)
-        .withIssuedAt(new Date())
-        .withExpiresAt(new Date((new Date()).getTime() + jwtEmailVerificationExpirationMs))
+        .withIssuedAt(now)
+        .withExpiresAt(new Date(now.getTime() + jwtEmailVerificationExpirationMs))
         .sign(Algorithm.HMAC256(jwtEmailVerificationSecret));
   }
 

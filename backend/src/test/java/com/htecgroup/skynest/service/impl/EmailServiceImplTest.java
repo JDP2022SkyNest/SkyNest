@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.model.email.Email;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,46 +30,47 @@ class EmailServiceImplTest {
 
   @Captor ArgumentCaptor<MimeMessage> captorMimeMessage;
 
+  private Email email;
+
   @BeforeEach
-  void setUp() {}
+  void setUp() {
+    String to = "test@yahoo.com";
+    String emailText = "MailContent";
+    String subject = "Confirm your email for SkyNest";
+    this.email = new Email(to, subject, emailText, true);
+  }
 
   @Test
   void sendTest() {
     MimeMessage mimeMessage = mock(MimeMessage.class);
-    String to = "test@yahoo.com";
-    String email = "MailContent";
-    String subject = "Subject";
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
-    emailService.send(to, email, subject);
+    emailService.send(email);
     Mockito.verify(javaMailSender).send(mimeMessage);
   }
 
   @Test
   void sendFailsTest() {
-    String to = "test@yahoo.com";
-    String email = "MailContent";
-    String subject = "Subject";
+    Email mockedEmail = mock(Email.class);
     when(javaMailSender.createMimeMessage()).thenThrow(UserException.class);
-    Assertions.assertThrows(UserException.class, () -> emailService.send(to, email,subject));
+    Assertions.assertThrows(UserException.class, () -> emailService.send(mockedEmail));
   }
 
   @Test
   void testMimeMessageHelperArgumentsInSend() throws MessagingException, IOException {
-    String to = "test@yahoo.com";
-    String emailText = "MailContent";
-    String subject = "Confirm your email for SkyNest";
+    String expectedTo = "test@yahoo.com";
+    String expectedEmailText = "MailContent";
     String expectedSubject = "Confirm your email for SkyNest";
     MimeMessage mimeMessage = new MimeMessage((Session) null);
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
-    emailService.send(to, emailText, subject);
+    emailService.send(email);
 
     Mockito.verify(javaMailSender).send(captorMimeMessage.capture());
 
     MimeMessage capturedMessage = captorMimeMessage.getValue();
     Address[] recipients = capturedMessage.getRecipients(Message.RecipientType.TO);
     String recipient = recipients == null ? null : ((InternetAddress) recipients[0]).getAddress();
-    Assertions.assertEquals(to, recipient);
+    Assertions.assertEquals(expectedTo, recipient);
     Assertions.assertEquals(expectedSubject, capturedMessage.getSubject());
-    Assertions.assertEquals(emailText, capturedMessage.getContent());
+    Assertions.assertEquals(expectedEmailText, capturedMessage.getContent());
   }
 }

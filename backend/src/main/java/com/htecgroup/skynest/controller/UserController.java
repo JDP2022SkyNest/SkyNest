@@ -30,7 +30,7 @@ public class UserController {
   @GetMapping("/confirm")
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
     String response = userService.confirmEmail(token);
-    log.info("User successfully confirmed");
+    log.info(response);
     return ResponseEntity.ok(response);
   }
 
@@ -38,7 +38,7 @@ public class UserController {
   public ResponseEntity<String> resendUserEmail(@RequestParam String email){
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
-    log.info("Email resend successfully");
+    log.info(response);
     return ResponseEntity.ok(response);
   }
 

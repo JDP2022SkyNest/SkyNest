@@ -2,15 +2,18 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.service.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.MimeMessage;
 
 @Service
@@ -20,16 +23,19 @@ public class EmailServiceImpl implements EmailService {
   private JavaMailSender javaMailSender;
   @Override
   @Async
-  public void send(String to, String emailText, String subject) {
+  public void send(Email email) {
     try {
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-      helper.setText(emailText, true);
-      helper.setTo(to);
-      helper.setSubject(subject);
+      helper.setText(email.getEmailBody(), email.getHtml());
+      helper.setTo(email.getTo());
+      helper.setSubject(email.getSubject());
       javaMailSender.send(mimeMessage);
-    } catch (MessagingException e) {
-      log.error("Failed to send email", e);
+    } catch (AddressException e) {
+      log.error("Illegal mail address", e);
+      throw new UserException("Not a valid email address exception", HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (MessagingException messagingException){
+      log.error("Failed to send email", messagingException);
       throw new UserException(UserExceptionType.EMAIL_FAILED_TO_SEND);
     }
   }
