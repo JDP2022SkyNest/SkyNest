@@ -19,7 +19,7 @@ const Login = ({ setAccessToken }) => {
 
    const navigate = useNavigate();
 
-   let redirectToHomePage = (delay) => {
+   const redirectToHomePage = (delay) => {
       setTimeout(() => {
          navigate(ROUTES.HOME);
       }, delay);
