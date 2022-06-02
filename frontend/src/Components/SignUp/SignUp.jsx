@@ -91,6 +91,9 @@ const SignUp = () => {
                <div className="row">
                   <div className="col-md-6">
                      <div className="form-outline mb-1">
+                        <label className="form-label" htmlFor="firstNameInput">
+                           <small>First Name</small> <span className="text-danger">*</span>
+                        </label>
                         <input
                            type="name"
                            name="firstName"
@@ -101,13 +104,13 @@ const SignUp = () => {
                            required
                            autoComplete="off"
                         />
-                        <label className="form-label" htmlFor="firstNameInput">
-                           <small>First Name</small> <span className="text-danger">*</span>
-                        </label>
                      </div>
                   </div>
                   <div className="col-md-6">
                      <div className="form-outline mb-1">
+                        <label className="form-label" htmlFor="lastNameInput">
+                           <small>Last Name</small> <span className="text-danger">*</span>
+                        </label>
                         <input
                            type="name"
                            name="lastName"
@@ -118,13 +121,13 @@ const SignUp = () => {
                            required
                            autoComplete="off"
                         />
-                        <label className="form-label" htmlFor="lastNameInput">
-                           <small>Last Name</small> <span className="text-danger">*</span>
-                        </label>
                      </div>
                   </div>
                </div>
                <div className="form-outline mb-1">
+                  <label className="form-label" htmlFor="emailInput">
+                     <small>Email address</small> <span className="text-danger">*</span>
+                  </label>
                   <input
                      type="email"
                      name="email"
@@ -135,11 +138,11 @@ const SignUp = () => {
                      required
                      autoComplete="off"
                   />
-                  <label className="form-label" htmlFor="emailInput">
-                     <small>Email address</small> <span className="text-danger">*</span>
-                  </label>
                </div>
                <div className="form-outline mb-1">
+                  <label className="form-label" htmlFor="phoneInput">
+                     <small>Phone number</small> <span className="text-danger">*</span>
+                  </label>
                   <input
                      type="number"
                      name="phoneNumber"
@@ -150,11 +153,11 @@ const SignUp = () => {
                      required
                      autoComplete="off"
                   />
-                  <label className="form-label" htmlFor="phoneInput">
-                     <small>Phone number</small> <span className="text-danger">*</span>
-                  </label>
                </div>
                <div className="form-outline mb-1">
+                  <label className="form-label" htmlFor="adressInput">
+                     <small>Home address</small> <span className="text-danger">*</span>
+                  </label>
                   <input
                      type="text"
                      name="adress"
@@ -165,13 +168,16 @@ const SignUp = () => {
                      required
                      autoComplete="off"
                   />
-                  <label className="form-label" htmlFor="adressInput">
-                     <small>Home address</small> <span className="text-danger">*</span>
-                  </label>
                </div>
                <div className="row">
                   <div className="col-md-6">
                      <div className="form-outline mb-1">
+                        <label className="form-label position-relative w-100" htmlFor="passwordInput">
+                           <small>Password</small> <span className="text-danger">*</span>
+                           <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10)}>
+                              Suggest PW?
+                           </small>
+                        </label>
                         <input
                            type="password"
                            name="password"
@@ -182,16 +188,13 @@ const SignUp = () => {
                            required
                            autoComplete="off"
                         />
-                        <label className="form-label position-relative w-100" htmlFor="passwordInput">
-                           <small>Password</small> <span className="text-danger">*</span>
-                           <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10)}>
-                              Suggest PW?
-                           </small>
-                        </label>
                      </div>
                   </div>
                   <div className="col-md-6">
                      <div className="form-outline mb-1">
+                        <label className="form-label" htmlFor="confPasswordInput">
+                           <small>Confirm password</small> <span className="text-danger">*</span>
+                        </label>
                         <input
                            type="password"
                            name="confPassword"
@@ -202,9 +205,6 @@ const SignUp = () => {
                            required
                            autoComplete="off"
                         />
-                        <label className="form-label" htmlFor="confPasswordInput">
-                           <small>Confirm password</small> <span className="text-danger">*</span>
-                        </label>
                      </div>
                   </div>
                </div>
