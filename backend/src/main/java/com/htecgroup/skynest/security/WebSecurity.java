@@ -20,7 +20,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final CustomUserDetailsService userDetailsService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {

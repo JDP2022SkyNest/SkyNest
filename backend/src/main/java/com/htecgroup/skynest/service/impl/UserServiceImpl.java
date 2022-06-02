@@ -8,10 +8,10 @@ import com.htecgroup.skynest.model.enitity.RoleEntity;
 import com.htecgroup.skynest.model.enitity.UserEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,8 @@ public class UserServiceImpl implements UserService {
 
      private UserRepository userRepository;
      private RoleRepository roleRepository;
+
+     private RoleService roleService;
      private BCryptPasswordEncoder bCryptPasswordEncoder;
      private ModelMapper modelMapper;
 
@@ -32,15 +34,8 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
         }
-
-        RoleEntity roleEntity =
-                roleRepository
-                        .findByName(RoleEntity.ROLE_WORKER)
-                        .orElseThrow(
-                                () ->
-                                        new UserException(
-                                                "Role " + RoleEntity.ROLE_WORKER + " not found.",
-                                                HttpStatus.INTERNAL_SERVER_ERROR));
+        String roleName = RoleEntity.ROLE_WORKER;
+        RoleEntity roleEntity = roleService.findByName(roleName);
         userDto.setRole(modelMapper.map(roleEntity, RoleDto.class));
 
         userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
