@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { redirect } from "../ReusableComponents/ReusableFunctions";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
@@ -18,6 +17,14 @@ const Login = ({ setAccessToken }) => {
    const emailRef = useRef();
    const passwordRef = useRef();
 
+   const navigate = useNavigate();
+
+   let redirectToHomePage = (delay) => {
+      setTimeout(() => {
+         navigate(ROUTES.HOME);
+      }, delay);
+   };
+
    const getUserToken = async () => {
       try {
          let reposnse = await AxiosInstance.post("/login", { email, password });
@@ -26,7 +33,7 @@ const Login = ({ setAccessToken }) => {
             setAccessToken(data.accessToken);
             localStorage.setItem("accessToken", data.accessToken);
             setSuccessfulLogin("Login Successful, redirecting.");
-            redirect(2000, ROUTES.HOME);
+            redirectToHomePage(1000);
          } else {
             setErrorMsg("Internal error, please try again");
          }
