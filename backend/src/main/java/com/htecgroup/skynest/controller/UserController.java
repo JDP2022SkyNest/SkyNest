@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
-<<<<<<< HEAD
 @AllArgsConstructor
 @Log4j2
-=======
 @CrossOrigin
->>>>>>> development
 public class UserController {
 
   private UserService userService;
