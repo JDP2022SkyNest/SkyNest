@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum UserExceptionType {
   EMAIL_ALREADY_IN_USE("This email is already in use", HttpStatus.CONFLICT),
+  PHONE_NUMBER_ALREADY_IN_USE("This phone number is already in use", HttpStatus.CONFLICT),
   INVALID_PASSWORD_FORMAT("The password doesn't match the required format", HttpStatus.BAD_REQUEST),
   INVALID_EMAIL_OR_PASSWORD("The email and password are not valid", HttpStatus.BAD_REQUEST),
 
