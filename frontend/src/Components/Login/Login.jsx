@@ -4,6 +4,7 @@ import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
 import ROUTES from "../Routes/ROUTES";
+import CenteredContainer from "..//CenteredContainer";
 
 const Login = ({ setAccessToken }) => {
    const [email, setEmail] = useState("");
@@ -80,72 +81,70 @@ const Login = ({ setAccessToken }) => {
    };
 
    return (
-      <div className="container-fluid vh-100  d-flex justify-content-center align-items-center color-latte">
-         <div className="col-sm-10 col-md-7 col-lg-6 col-xl-4 p-5 border login-form-radius shadow bg-white">
-            <form onSubmit={onFormSubmit}>
-               <div className="d-flex justify-content-center m-0">
-                  <img src={logoImage} alt="LOGO" className="little-image-logo" />
-               </div>
-               <h1 className="mt-2 text-center">SKY-NEST</h1>
-               <p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
-               <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
-               <p className={successfulLogin ? "alert alert-success text-success text-center" : "d-none"}>{successfulLogin}</p>
-               <div className="form-outline mb-4">
+      <CenteredContainer>
+         <form onSubmit={onFormSubmit}>
+            <div className="d-flex justify-content-center m-0">
+               <img src={logoImage} alt="LOGO" className="little-image-logo" />
+            </div>
+            <h1 className="mt-2 text-center">SKY-NEST</h1>
+            <p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
+            <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
+            <p className={successfulLogin ? "alert alert-success text-success text-center" : "d-none"}>{successfulLogin}</p>
+            <div className="form-outline mb-4">
+               <input
+                  type="email"
+                  onChange={onEmailChange}
+                  value={email}
+                  ref={emailRef}
+                  id="emailInput"
+                  className={`form-control form-control-lg ${errorMsg ? "border-danger" : null}`}
+                  required
+                  autoComplete="off"
+               />
+               <label className="form-label" htmlFor="emailInput">
+                  Email address
+               </label>
+            </div>
+            <div className="form-outline mb-4">
+               <div className="input-group input-group-lg ">
                   <input
-                     type="email"
-                     onChange={onEmailChange}
-                     value={email}
-                     ref={emailRef}
-                     id="emailInput"
-                     className={`form-control form-control-lg ${errorMsg ? "border-danger" : null}`}
+                     type={showPassword ? "text" : "password"}
+                     onChange={onPasswordChange}
+                     value={password}
+                     ref={passwordRef}
+                     id="passwordInput"
+                     className={`border-right-0 form-control form-control-lg ${errorMsg ? "border-danger border-left-0" : null}`}
                      required
-                     autoComplete="off"
                   />
-                  <label className="form-label" htmlFor="emailInput">
-                     Email address
-                  </label>
-               </div>
-               <div className="form-outline mb-4">
-                  <div className="input-group input-group-lg ">
-                     <input
-                        type={showPassword ? "text" : "password"}
-                        onChange={onPasswordChange}
-                        value={password}
-                        ref={passwordRef}
-                        id="passwordInput"
-                        className={`border-right-0 form-control form-control-lg ${errorMsg ? "border-danger border-left-0" : null}`}
-                        required
-                     />
-                     <div className="input-group-prepend">
-                        <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
-                           <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
-                        </span>
-                     </div>
+                  <div className="input-group-prepend">
+                     <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
+                        <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
+                     </span>
                   </div>
-                  <label className="form-label" htmlFor="passwordInput">
-                     Password
-                  </label>
                </div>
-               {loading ? (
-                  <div className="pt-1">
-                     <button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
-                        <span className="spinner-border spinner-border-md"></span>
-                     </button>
-                  </div>
-               ) : (
-                  <div className="pt-1 mb-4">
-                     <button className="btn btn-dark btn-lg btn-block">Login</button>
-                  </div>
-               )}
-               <div className="mt-5 text-center">
-                  <p className="m-0">Don't have an account? </p>
-                  <Link to={ROUTES.SIGNUP} href="#!" className="m-0 btn btn-link">
-                     Register here
-                  </Link>
+               <label className="form-label" htmlFor="passwordInput">
+                  Password
+               </label>
+            </div>
+            {loading ? (
+               <div className="pt-1">
+                  <button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
+                     <span className="spinner-border spinner-border-md"></span>
+                  </button>
                </div>
-            </form>
-         </div>
-      </div>
+            ) : (
+               <div className="pt-1 mb-4">
+                  <button className="btn btn-dark btn-lg btn-block">Login</button>
+               </div>
+            )}
+            <div className="mt-5 text-center">
+               <p className="m-0">Don't have an account? </p>
+               <Link to={ROUTES.SIGNUP} href="#!" className="m-0 btn btn-link">
+                  Register here
+               </Link>
+            </div>
+         </form>
+      </CenteredContainer>
    );
 };
 
