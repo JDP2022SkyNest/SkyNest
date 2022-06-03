@@ -17,7 +17,6 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 @AllArgsConstructor
 @Log4j2
-@CrossOrigin
 public class UserController {
 
   private UserService userService;
