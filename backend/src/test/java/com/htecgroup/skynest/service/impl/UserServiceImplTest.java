@@ -22,8 +22,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -182,6 +185,15 @@ class UserServiceImplTest {
 
   @Test
   void listAllUsers() {
-    // when(userRepository.findAll()).thenReturn()
+    List<UserEntity> userEntityList = new ArrayList<>();
+    userEntityList.add(new UserEntity());
+    userEntityList.add(new UserEntity());
+    userEntityList.add(new UserEntity());
+    when(userRepository.findAll()).thenReturn(userEntityList);
+    List<UserEntity> entities =
+        userService.listAllUsers().stream()
+            .map(e -> modelMapper.map(e, UserEntity.class))
+            .collect(Collectors.toList());
+    Assertions.assertEquals(entities.size(), userEntityList.size());
   }
 }
