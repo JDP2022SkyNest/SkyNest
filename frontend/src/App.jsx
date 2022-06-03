@@ -5,6 +5,7 @@ import Login from "./Components/Login/Login";
 import SignUp from "./Components/SignUp/SignUp";
 import ProtectedRoute from "./Components/Routes/ProtectedRoute";
 import RedirectRoute from "./Components/Routes/RedirectRoute";
+import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -22,6 +23,7 @@ const App = () => {
          />
          <Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
          <Route path="signup" exact element={<SignUp />} />
+         <Route path="forgot-password" exact element={<ForgotPassword />} />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />

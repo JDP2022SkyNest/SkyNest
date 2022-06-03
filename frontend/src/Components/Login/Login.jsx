@@ -128,7 +128,7 @@ const Login = ({ setAccessToken }) => {
                   </div>
                </div>
                <small className={forgotPassword ? "p-0" : "d-none"}>
-                  <Link to={ROUTES.LOGIN}>Forgot Password?</Link>
+                  <Link to={ROUTES.FORGOTPW}>Forgot Password?</Link>
                </small>
             </div>
             {loading ? (
@@ -144,7 +144,7 @@ const Login = ({ setAccessToken }) => {
             )}
             <div className="mt-5 text-center">
                <p className="m-0">Don't have an account? </p>
-               <Link to={ROUTES.SIGNUP} href="#!" className="m-0 btn btn-link">
+               <Link to={ROUTES.SIGNUP} className="m-0 btn btn-link">
                   Register here
                </Link>
             </div>
