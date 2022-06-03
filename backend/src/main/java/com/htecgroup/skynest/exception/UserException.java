@@ -8,8 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class UserException extends RuntimeException {
 
-  private String message;
-  private HttpStatus status;
+  private static final long serialVersionUID = 2371435714335613721L;
+  private final String message;
+  private final HttpStatus status;
 
   public UserException(UserExceptionType userExceptionType) {
     message = userExceptionType.getMessage();

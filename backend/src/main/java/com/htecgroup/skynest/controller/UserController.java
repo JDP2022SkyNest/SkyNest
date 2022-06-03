@@ -7,8 +7,10 @@ import com.htecgroup.skynest.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 
 @RestController
@@ -22,11 +24,13 @@ public class UserController {
   private ModelMapper modelMapper;
 
   @PostMapping("/register")
-  public UserResponse registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
+  public ResponseEntity<UserResponse> registerUser(
+      @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
     UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
 
-    return modelMapper.map(userDto, UserResponse.class);
+    return new ResponseEntity<>(
+        modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
   }
 
   @GetMapping("/confirm")
@@ -37,7 +41,7 @@ public class UserController {
   }
 
   @PostMapping("/resendEmail")
-  public ResponseEntity<String> resendUserEmail(@RequestParam String email){
+  public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
     log.info(response);

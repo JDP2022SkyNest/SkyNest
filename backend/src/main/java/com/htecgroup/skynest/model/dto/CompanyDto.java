@@ -7,7 +7,6 @@ import java.util.UUID;
 
 @Data
 public class CompanyDto {
-
   private UUID id;
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;

@@ -2,7 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.model.dto.RoleDto;
-import com.htecgroup.skynest.model.enitity.RoleEntity;
+import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.service.RoleService;
 import lombok.AllArgsConstructor;

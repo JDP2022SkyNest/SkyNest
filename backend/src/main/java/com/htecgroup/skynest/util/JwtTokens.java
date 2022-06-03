@@ -7,12 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-@NoArgsConstructor(access = AccessLevel. PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtTokens {
-    public static String generateToken(String userName, Date expiration, Algorithm algorithm) {
-        return JWT.create()
-                .withSubject(userName)
-                .withExpiresAt(expiration)
-                .sign(algorithm);
-    }
+  public static String generateToken(String userName, Date expiration, Algorithm algorithm) {
+    return JWT.create().withSubject(userName).withExpiresAt(expiration).sign(algorithm);
+  }
 }
