@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void resetPassword(String token, String password) {
+  public String resetPassword(String token, String password) {
     boolean validateToken = jwtUtils.validateJwtToken(token);
     if (validateToken) {
       String email = jwtUtils.getEmailFromJwtEmailToken(token);
@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
       UserDto userDtoNewPassword =
           userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
       userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
+      return "Password was successfully reset";
     } else throw new UserException(UserExceptionType.EMAIL_VERIFICATION_TOKEN_FAILED);
   }
 

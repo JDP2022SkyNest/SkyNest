@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.UserService;
@@ -57,9 +58,10 @@ public class UserController {
 
   @PutMapping("/passwordReset/confirm")
   public ResponseEntity<String> confirmPasswordReset(
-      @RequestParam String token, @RequestParam String password) {
-    userService.resetPassword(token, password);
-    String response = "Password was successfully reset";
+      @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
+    String response =
+        userService.resetPassword(
+            userPasswordResetRequest.getToken(), userPasswordResetRequest.getPassword());
     log.info(response);
     return ResponseEntity.ok(response);
   }

@@ -38,8 +38,7 @@ class UserServiceImplTest {
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
 
-  @Spy
-  @InjectMocks private UserServiceImpl userService;
+  @Spy @InjectMocks private UserServiceImpl userService;
 
   private UserEntity enabledWorkerEntity;
   private RoleEntity roleWorkerEntity;
@@ -179,5 +178,25 @@ class UserServiceImplTest {
 
     Assertions.assertThrows(
         UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
+  }
+
+  @Test
+  void resetPassword_EmailTokenFailed() {
+    when(jwtUtils.validateJwtToken(anyString())).thenReturn(false);
+
+    Assertions.assertThrows(UserException.class, () -> userService.confirmEmail(anyString()));
+  }
+
+  @Test
+  void resetPassword() {
+    String expectedResponse = "Password was successfully reset";
+
+    when(jwtUtils.validateJwtToken(anyString())).thenReturn(true);
+    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
+        .thenReturn(enabledWorkerEntity.getEmail());
+    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(enabledWorkerEntity));
+    when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
+
+    Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
   }
 }
