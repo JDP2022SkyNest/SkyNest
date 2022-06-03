@@ -20,7 +20,8 @@ public enum UserExceptionType {
       "User is already registered, verified and enabled", HttpStatus.INTERNAL_SERVER_ERROR),
   EMAIL_VERIFICATION_TOKEN_FAILED(
       "Jwt token failed the validation. For more information check the logger",
-      HttpStatus.INTERNAL_SERVER_ERROR);
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  EMAIL_NOT_IN_USE("This email is not in use", HttpStatus.BAD_REQUEST);
 
   private final String message;
   private final HttpStatus status;
