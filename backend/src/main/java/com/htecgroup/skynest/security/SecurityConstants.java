@@ -16,4 +16,5 @@ public class SecurityConstants {
   public static final String CONFIRM_EMAIL_URL = "/users/confirm";
   public static final String TOKEN_SECRET = "jfgi95jgnfi4";
   public static final String PASSWORD_RESET_REQUEST_URL = "/users/passwordReset/request";
+  public static final String PASSWORD_RESET_CONFIRM_URL = "/users/passwordReset/confirm";
 }
