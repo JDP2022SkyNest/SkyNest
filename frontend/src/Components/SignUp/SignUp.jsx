@@ -201,7 +201,7 @@ const SignUp = () => {
                </div>
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <Label>Confirme password</Label>
+                     <Label>Confirm password</Label>
                      <input
                         type={showPassword ? "text" : "password"}
                         name="confPassword"
