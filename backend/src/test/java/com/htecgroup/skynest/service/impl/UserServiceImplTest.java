@@ -186,14 +186,18 @@ class UserServiceImplTest {
   @Test
   void listAllUsers() {
     List<UserEntity> userEntityList = new ArrayList<>();
-    userEntityList.add(new UserEntity());
-    userEntityList.add(new UserEntity());
-    userEntityList.add(new UserEntity());
+    userEntityList.add(enabledWorkerEntity);
     when(userRepository.findAll()).thenReturn(userEntityList);
-    List<UserEntity> entities =
-        userService.listAllUsers().stream()
-            .map(e -> modelMapper.map(e, UserEntity.class))
+
+    List<UserDto> expectedDTOs =
+        userEntityList.stream()
+            .map(e -> modelMapper.map(e, UserDto.class))
             .collect(Collectors.toList());
-    Assertions.assertEquals(entities.size(), userEntityList.size());
+
+    List<UserDto> returnedDTOs = userService.listAllUsers();
+
+    Assertions.assertEquals(expectedDTOs.size(), returnedDTOs.size());
+    Assertions.assertEquals(expectedDTOs.get(0), returnedDTOs.get(0));
+    Assertions.assertEquals(expectedDTOs.get(0).getEmail(), returnedDTOs.get(0).getEmail());
   }
 }

@@ -49,7 +49,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping()
+  @GetMapping
   public List<UserResponse> getUsers() {
     List<UserDto> listOfUsers = userService.listAllUsers();
     return listOfUsers.stream()
