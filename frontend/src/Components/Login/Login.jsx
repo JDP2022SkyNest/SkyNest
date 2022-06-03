@@ -13,6 +13,7 @@ const Login = ({ setAccessToken }) => {
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
    const [successfulLogin, setSuccessfulLogin] = useState("");
+   const [forgotPassword, setForgotPassword] = useState(false);
 
    const emailRef = useRef();
    const passwordRef = useRef();
@@ -44,6 +45,7 @@ const Login = ({ setAccessToken }) => {
             setErrorMsg("Server Timeout");
          }
          setLoading(false);
+         setForgotPassword(true);
       }
    };
 
@@ -125,6 +127,9 @@ const Login = ({ setAccessToken }) => {
                      </span>
                   </div>
                </div>
+               <small className={forgotPassword ? "p-0" : "d-none"}>
+                  <Link to={ROUTES.LOGIN}>Forgot Password?</Link>
+               </small>
             </div>
             {loading ? (
                <div className="pt-1">
