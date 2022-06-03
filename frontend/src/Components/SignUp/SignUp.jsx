@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { pwSuggestion } from "../ReusableComponents/ReusableFunctions";
+import { RegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import Label from "../ReusableComponents/Label";
 import "./SignUp.css";
-
-const RegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 const SignUp = () => {
    const [name, setName] = useState("");
@@ -40,7 +39,7 @@ const SignUp = () => {
 
    const userRegistration = async () => {
       try {
-         await AxiosInstance.post("/reports/register", {
+         await AxiosInstance.post("/users/register", {
             email,
             password: uPassword,
             name,
@@ -48,6 +47,7 @@ const SignUp = () => {
             phoneNumber,
             address,
          });
+         setErrorMsg("");
          setSuccessfulRegister("Registration Successful");
          setButtonText("SUCCESSFUL");
          redirectToLoginPage(2000);
@@ -59,8 +59,7 @@ const SignUp = () => {
          } else if (response.status === 0) {
             setErrorMsg("Server currently offline");
          } else {
-            setErrorMsg("Placeholder for other errors");
-            console.log(response.status);
+            setErrorMsg(response.data.messages);
          }
       }
       setLoading(false);
