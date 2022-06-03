@@ -8,7 +8,6 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
-import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,8 +38,7 @@ class UserServiceImplTest {
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
 
-  @Spy
-  @InjectMocks private UserServiceImpl userService;
+  @Spy @InjectMocks private UserServiceImpl userService;
 
   private UserEntity enabledWorkerEntity;
   private RoleEntity roleWorkerEntity;
@@ -180,5 +178,10 @@ class UserServiceImplTest {
 
     Assertions.assertThrows(
         UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
+  }
+
+  @Test
+  void listAllUsers() {
+    // when(userRepository.findAll()).thenReturn()
   }
 }
