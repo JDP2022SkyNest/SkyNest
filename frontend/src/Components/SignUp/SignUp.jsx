@@ -4,6 +4,7 @@ import { pwSuggestion } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
+import Label from "../ReusableComponents/Label";
 import "./SignUp.css";
 
 const RegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -102,9 +103,7 @@ const SignUp = () => {
             <div className="row">
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <label className="form-label" htmlFor="firstNameInput">
-                        <small>First Name</small> <span className="text-danger">*</span>
-                     </label>
+                     <Label>First Name</Label>
                      <input
                         type="name"
                         name="firstName"
@@ -119,9 +118,7 @@ const SignUp = () => {
                </div>
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <label className="form-label" htmlFor="lastNameInput">
-                        <small>Last Name</small> <span className="text-danger">*</span>
-                     </label>
+                     <Label>Last Name</Label>
                      <input
                         type="name"
                         name="lastName"
@@ -136,9 +133,7 @@ const SignUp = () => {
                </div>
             </div>
             <div className="form-outline mb-1">
-               <label className="form-label" htmlFor="emailInput">
-                  <small>Email address</small> <span className="text-danger">*</span>
-               </label>
+               <Label>Email adress</Label>
                <input
                   type="email"
                   name="email"
@@ -151,9 +146,7 @@ const SignUp = () => {
                />
             </div>
             <div className="form-outline mb-1">
-               <label className="form-label" htmlFor="phoneInput">
-                  <small>Phone number</small> <span className="text-danger">*</span>
-               </label>
+               <Label>Phone number</Label>
                <input
                   type="number"
                   name="phoneNumber"
@@ -166,9 +159,7 @@ const SignUp = () => {
                />
             </div>
             <div className="form-outline mb-1">
-               <label className="form-label" htmlFor="adressInput">
-                  <small>Home address</small> <span className="text-danger">*</span>
-               </label>
+               <Label>Home adress</Label>
                <input
                   type="text"
                   name="adress"
@@ -183,12 +174,12 @@ const SignUp = () => {
             <div className="row">
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <label className="form-label position-relative w-100" htmlFor="passwordInput">
-                        <small>Password</small> <span className="text-danger">*</span>
+                     <Label>
+                        Password
                         <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfpassword)}>
                            Suggest PW?
                         </small>
-                     </label>
+                     </Label>
                      <div className="input-group">
                         <input
                            type={showPassword ? "text" : "password"}
@@ -210,9 +201,7 @@ const SignUp = () => {
                </div>
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <label className="form-label" htmlFor="confPasswordInput">
-                        <small>Confirm password</small> <span className="text-danger">*</span>
-                     </label>
+                     <Label>Confirme password</Label>
                      <input
                         type={showPassword ? "text" : "password"}
                         name="confPassword"
