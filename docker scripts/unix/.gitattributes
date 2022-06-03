@@ -1,0 +1,2 @@
+# bash scripts should always checkout with LF
+*.sh text eol=lf
