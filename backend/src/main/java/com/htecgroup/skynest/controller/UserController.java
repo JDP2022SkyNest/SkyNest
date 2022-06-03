@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 @AllArgsConstructor
 @Log4j2
-@CrossOrigin
 public class UserController {
 
   private UserService userService;
