@@ -7,12 +7,11 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
-import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
+import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,11 +23,12 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
   private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
+  private static final String SUBJECT_FOR_PASSWORD_RESET = "Password reset for SkyNest";
   private UserRepository userRepository;
   private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private JwtEmailVerificationUtils jwtEmailVerificationUtils;
+  private JwtUtils jwtUtils;
   private EmailService emailService;
 
   @Override
@@ -64,11 +64,25 @@ public class UserServiceImpl implements UserService {
       }
     }
 
-    String token = jwtEmailVerificationUtils.generateJwtEmailVerificationToken(emailAddress);
+    String token = jwtUtils.generateJwtEmailToken(emailAddress);
 
-    String confirmationLink = jwtEmailVerificationUtils.getConfirmationLink() + token;
-    String emailBody = jwtEmailVerificationUtils.buildEmail(emailAddress, confirmationLink);
+    String confirmationLink = jwtUtils.getEmailConfirmationLink() + token;
+    String emailBody = jwtUtils.buildVerificationEmail(emailAddress, confirmationLink);
     Email emailToSend = new Email(emailAddress, SUBJECT_FOR_EMAIL_CONFIRMATION, emailBody, true);
+    emailService.send(emailToSend);
+  }
+
+  @Override
+  public void sendPasswordResetEmail(String email) {
+    if (!userRepository.existsByEmail(email)) {
+      throw new UserException(UserExceptionType.EMAIL_NOT_IN_USE);
+    }
+
+    String token = jwtUtils.generateJwtEmailToken(email);
+
+    String confirmationLink = jwtUtils.getPasswordResetLink() + token;
+    String emailBody = jwtUtils.buildPasswordResetEmail(email, confirmationLink);
+    Email emailToSend = new Email(email, SUBJECT_FOR_PASSWORD_RESET, emailBody, true);
     emailService.send(emailToSend);
   }
 
@@ -86,9 +100,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String confirmEmail(String token) {
-    boolean validateToken = jwtEmailVerificationUtils.validateJwtToken(token);
+    boolean validateToken = jwtUtils.validateJwtToken(token);
     if (validateToken) {
-      String email = jwtEmailVerificationUtils.getEmailFromJwtEmailVerificationToken(token);
+      String email = jwtUtils.getEmailFromJwtEmailToken(token);
       UserDto userDto = findUserByEmail(email);
       UserDto enabledUser = this.enableUser(userDto);
       userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
