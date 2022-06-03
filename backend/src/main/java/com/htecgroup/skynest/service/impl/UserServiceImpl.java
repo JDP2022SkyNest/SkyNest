@@ -88,15 +88,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String resetPassword(String token, String password) {
-    boolean validateToken = jwtUtils.validateJwtToken(token);
-    if (validateToken) {
+    jwtUtils.validateJwtToken(token);
       String email = jwtUtils.getEmailFromJwtEmailToken(token);
       UserDto userDto = findUserByEmail(email);
       UserDto userDtoNewPassword =
           userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
       userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
       return "Password was successfully reset";
-    } else throw new UserException(UserExceptionType.EMAIL_VERIFICATION_TOKEN_FAILED);
   }
 
   @Override
@@ -113,14 +111,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String confirmEmail(String token) {
-    boolean validateToken = jwtUtils.validateJwtToken(token);
-    if (validateToken) {
+    jwtUtils.validateJwtToken(token);
       String email = jwtUtils.getEmailFromJwtEmailToken(token);
       UserDto userDto = findUserByEmail(email);
       UserDto enabledUser = this.enableUser(userDto);
       userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
       return "User verified successfully";
-    } else throw new UserException(UserExceptionType.EMAIL_VERIFICATION_TOKEN_FAILED);
   }
 
   @Override
