@@ -16,9 +16,14 @@ const Login = ({ setAccessToken }) => {
    const [forgotPassword, setForgotPassword] = useState(false);
 
    const emailRef = useRef();
-   const passwordRef = useRef();
-
    const navigate = useNavigate();
+
+   const allInputs = document.querySelectorAll("input");
+   const inputsDisabled = (value) => [
+      allInputs.forEach((el) => {
+         el.disabled = value;
+      }),
+   ];
 
    const redirectToHomePage = (delay) => {
       setTimeout(() => {
@@ -59,27 +64,14 @@ const Login = ({ setAccessToken }) => {
 
    const onFormSubmit = async (e) => {
       e.preventDefault();
-      disableEnableInputs(true);
+      inputsDisabled(true);
       setLoading(true);
       await getUserToken();
-      disableEnableInputs(false);
-   };
-
-   const onEmailChange = (e) => {
-      setEmail(e.target.value);
-   };
-
-   const onPasswordChange = (e) => {
-      setPassword(e.target.value);
+      inputsDisabled(false);
    };
 
    const passwordShowHide = () => {
       setShowPassword(!showPassword);
-   };
-
-   const disableEnableInputs = (value) => {
-      emailRef.current.disabled = value;
-      passwordRef.current.disabled = value;
    };
 
    return (
@@ -98,7 +90,7 @@ const Login = ({ setAccessToken }) => {
                </label>
                <input
                   type="email"
-                  onChange={onEmailChange}
+                  onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   ref={emailRef}
                   id="emailInput"
@@ -114,9 +106,8 @@ const Login = ({ setAccessToken }) => {
                <div className="input-group input-group-lg ">
                   <input
                      type={showPassword ? "text" : "password"}
-                     onChange={onPasswordChange}
+                     onChange={(e) => setPassword(e.target.value)}
                      value={password}
-                     ref={passwordRef}
                      id="passwordInput"
                      className={`form-control form-control-lg ${errorMsg ? "border-danger" : "border-right-0"}`}
                      required
