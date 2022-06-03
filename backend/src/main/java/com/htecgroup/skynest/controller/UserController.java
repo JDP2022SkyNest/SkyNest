@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -21,7 +22,7 @@ public class UserController {
   private ModelMapper modelMapper;
 
   @PostMapping("/register")
-  public UserResponse registerUser(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public UserResponse registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
     UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
 
