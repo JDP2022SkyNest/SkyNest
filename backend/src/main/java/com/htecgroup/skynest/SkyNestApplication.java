@@ -25,7 +25,7 @@ public class SkyNestApplication {
   }
 
   @Bean
-  public ObjectMapper objectMapper(){return new ObjectMapper();
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper();
   }
-
 }

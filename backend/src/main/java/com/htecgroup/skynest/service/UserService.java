@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.dto.UserDto;
+
 public interface UserService {
 
   UserDto registerUser(UserDto userDto);
@@ -10,5 +11,6 @@ public interface UserService {
   String confirmEmail(String token);
 
   UserDto enableUser(UserDto userDto);
+
   void sendVerificationEmail(String email);
 }
