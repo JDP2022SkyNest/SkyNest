@@ -14,15 +14,17 @@ The backend server uses Spring Boot and is built using Maven and Java 11. The wh
   - use <code>CTRL+C</code> or <code>CMD+C</code> to stop docker
 
 ### To run the sever locally:
-- start the database docker services <code>skynest-db</code> and <code>skynest-token-db-init</code>
-    >For example, using <code>docker compose skynest-db skynest-token-db-init</code>.
+- start the database docker services <code>skynest-db</code> and <code>skynest-token-db</code>
+    >For example, using <code>docker compose up skynest-db skynest-token-db</code>.
 - start the app using Maven, or use the IDE of your choice to do it for you
-    > For example, use IntelliJ to open the folder <code>backend/</code> as a project and right-click on <code>SkyNestApplication.java</code> in <code>src/main/java/com/htecgroup/skynest/</code>.
+    > For example, use IntelliJ to open the folder <code>backend/</code> as a project and right-click -> <code>Run...</code> on <code>SkyNestApplication.java</code> in <code>src/main/java/com/htecgroup/skynest/</code>.
 
-### To reset the databases:
+### To clear the databases:
 - make sure none of the database services are still running
   - check with <code>docker ps</code>
   >   For example, if <code>skynest-db</code> is still running, use <code>docker stop skynest-db</code>.
 - delete the folder <code>.db_data/</code>
+
+There are also some convenience scripts in <code>docker scripts/</code>.
 
 ## QA

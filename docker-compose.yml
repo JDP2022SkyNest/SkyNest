@@ -26,28 +26,19 @@ services:
       HEAP_NEWSIZE: 128M
     volumes:
       - ./.db_data/cassandra:/var/lib/cassandra
+      - ./backend/src/main/resources/cassandra_init_keyspace.cql:/schema.cql
     healthcheck:
-      test: cqlsh --username=${TOKEN_DB_USERNAME} --password={TOKEN_DB_PASSWORD} --execute="describe keyspaces"
+      test: cqlsh --username=${TOKEN_DB_USERNAME} --password={TOKEN_DB_PASSWORD} --file=/schema.cql
       interval: 15s
       timeout: 10s
       retries: 15
-
-  skynest-token-db-init:
-    depends_on:
-      skynest-token-db:
-        condition: service_healthy
-    image: cassandra:latest
-    container_name: skynest-token-db-init
-    volumes:
-      - ./backend/src/main/resources/cassandra_init_keyspace.cql:/schema.cql
-    command: /bin/bash -c "echo loading cassandra keyspace && cqlsh skynest-token-db -f /schema.cql"
 
   skynest-be:
     depends_on:
       skynest-db:
         condition: service_healthy
-      skynest-token-db-init:
-        condition: service_completed_successfully
+      skynest-token-db:
+        condition: service_healthy
     image: skynest/skynest-api
     container_name: skynest-be
     ports:

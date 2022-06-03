@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.repository;
 
-import com.htecgroup.skynest.model.enitity.UserEntity;
+import com.htecgroup.skynest.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
   Optional<UserEntity> findUserByEmail(String email);
 
   boolean existsByEmail(String email);
+
+  boolean existsByPhoneNumber(String phoneNumber);
 }

@@ -5,8 +5,8 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
-import com.htecgroup.skynest.model.enitity.RoleEntity;
-import com.htecgroup.skynest.model.enitity.UserEntity;
+import com.htecgroup.skynest.model.entity.RoleEntity;
+import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
@@ -40,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     if (userRepository.existsByEmail(userDto.getEmail())) {
       throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
+    }
+    if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
+      throw new UserException(UserExceptionType.PHONE_NUMBER_ALREADY_IN_USE);
     }
     String roleName = RoleEntity.ROLE_WORKER;
     RoleDto roleDto = roleService.findByName(roleName);
