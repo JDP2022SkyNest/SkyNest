@@ -150,7 +150,6 @@ class UserServiceImplTest {
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
-    when(jwtUtils.validateJwtToken(anyString())).thenReturn(true);
     when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(disabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(disabledWorkerEntity));
@@ -160,18 +159,10 @@ class UserServiceImplTest {
   }
 
   @Test
-  void confirmEmail_EmailTokenFailed() {
-    when(jwtUtils.validateJwtToken(anyString())).thenReturn(false);
-
-    Assertions.assertThrows(UserException.class, () -> userService.confirmEmail(anyString()));
-  }
-
-  @Test
   void confirmEmail_UserWithEmailNotFound() {
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
-    when(jwtUtils.validateJwtToken(anyString())).thenReturn(true);
     when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(disabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
@@ -181,17 +172,9 @@ class UserServiceImplTest {
   }
 
   @Test
-  void resetPassword_EmailTokenFailed() {
-    when(jwtUtils.validateJwtToken(anyString())).thenReturn(false);
-
-    Assertions.assertThrows(UserException.class, () -> userService.confirmEmail(anyString()));
-  }
-
-  @Test
   void resetPassword() {
     String expectedResponse = "Password was successfully reset";
 
-    when(jwtUtils.validateJwtToken(anyString())).thenReturn(true);
     when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(enabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(enabledWorkerEntity));

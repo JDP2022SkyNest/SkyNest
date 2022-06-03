@@ -43,19 +43,17 @@ public class JwtUtils {
         .getSubject();
   }
 
-  public boolean validateJwtToken(String token) {
+  public void validateJwtToken(String token) {
     try {
       Verification verification = JWT.require(Algorithm.HMAC256(jwtSecret));
       Date expiresAt = verification.build().verify(token).getExpiresAt();
       JWTVerifier verifier = verification.acceptExpiresAt(expiresAt.getTime()).build();
       verifier.verify(token);
-      return true;
     } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
     } catch (IllegalArgumentException e) {
       log.error("JWT claims string is empty: {}", e.getMessage());
     }
-    return false;
   }
 
   public String getEmailConfirmationLink() {

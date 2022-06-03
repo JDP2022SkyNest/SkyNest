@@ -40,7 +40,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/resendEmail")
+  @PostMapping("/resend-email")
   public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
@@ -48,7 +48,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/passwordReset/request")
+  @PostMapping("/password-reset/request")
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
     userService.sendPasswordResetEmail(email);
     String response = "Password reset email sent";
@@ -56,7 +56,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping("/passwordReset/confirm")
+  @PutMapping("/password-reset/confirm")
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
     String response =
