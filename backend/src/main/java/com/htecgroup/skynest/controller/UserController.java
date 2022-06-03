@@ -28,8 +28,7 @@ public class UserController {
 
     UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
 
-    return new ResponseEntity<>(
-        modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
+    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
   }
 
   @GetMapping("/confirm")
@@ -51,6 +50,15 @@ public class UserController {
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
     userService.sendPasswordResetEmail(email);
     String response = "Password reset email sent";
+    log.info(response);
+    return ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/passwordReset/confirm")
+  public ResponseEntity<String> confirmPasswordReset(
+      @RequestParam String token, @RequestParam String password) {
+    userService.resetPassword(token, password);
+    String response = "Password was successfully reset";
     log.info(response);
     return ResponseEntity.ok(response);
   }
