@@ -21,6 +21,7 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
   private JavaMailSender javaMailSender;
+
   @Override
   @Async
   public void send(Email email) {
@@ -33,8 +34,9 @@ public class EmailServiceImpl implements EmailService {
       javaMailSender.send(mimeMessage);
     } catch (AddressException e) {
       log.error("Illegal mail address", e);
-      throw new UserException("Not a valid email address exception", HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (MessagingException messagingException){
+      throw new UserException(
+          "Not a valid email address exception", HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (MessagingException messagingException) {
       log.error("Failed to send email", messagingException);
       throw new UserException(UserExceptionType.EMAIL_FAILED_TO_SEND);
     }

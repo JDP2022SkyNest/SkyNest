@@ -18,11 +18,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RoleEntity implements Serializable {
 
+  private static final long serialVersionUID = -6954026563601179057L;
   public static final String ROLE_WORKER = "role_worker";
   public static final String ROLE_MANAGER = "role_manager";
   public static final String ROLE_ADMIN = "role_admin";
-  private static final long serialVersionUID = -6954026563601179057L;
-  @Id @GeneratedValue private UUID id;
 
+  @Id @GeneratedValue private UUID id;
   private String name;
 }

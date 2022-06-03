@@ -12,7 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-
   private UUID id;
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
@@ -24,10 +23,8 @@ public class UserDto {
   private String surname;
   private String address;
   private String phoneNumber;
-  @With
-  private Boolean verified;
-  @With
-  private Boolean enabled;
+  @With private Boolean verified;
+  @With private Boolean enabled;
   private RoleDto role;
   private CompanyDto company;
 }
