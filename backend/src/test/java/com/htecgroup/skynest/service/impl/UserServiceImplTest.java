@@ -22,8 +22,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -169,6 +172,24 @@ class UserServiceImplTest {
 
     Assertions.assertThrows(
         UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
+  }
+
+  @Test
+  void listAllUsers() {
+    List<UserEntity> userEntityList = new ArrayList<>();
+    userEntityList.add(enabledWorkerEntity);
+    when(userRepository.findAll()).thenReturn(userEntityList);
+
+    List<UserDto> expectedDTOs =
+        userEntityList.stream()
+            .map(e -> modelMapper.map(e, UserDto.class))
+            .collect(Collectors.toList());
+
+    List<UserDto> returnedDTOs = userService.listAllUsers();
+
+    Assertions.assertEquals(expectedDTOs.size(), returnedDTOs.size());
+    Assertions.assertEquals(expectedDTOs.get(0), returnedDTOs.get(0));
+    Assertions.assertEquals(expectedDTOs.get(0).getEmail(), returnedDTOs.get(0).getEmail());
   }
 
   @Test

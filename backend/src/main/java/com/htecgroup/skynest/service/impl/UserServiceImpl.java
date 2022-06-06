@@ -18,6 +18,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -25,10 +28,10 @@ public class UserServiceImpl implements UserService {
   private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
   private static final String SUBJECT_FOR_PASSWORD_RESET = "Password reset for SkyNest";
   private UserRepository userRepository;
-  private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
   private JwtUtils jwtUtils;
+  private RoleService roleService;
   private EmailService emailService;
 
   @Override
@@ -106,6 +109,14 @@ public class UserServiceImpl implements UserService {
                 () -> new UsernameNotFoundException("could not find user with email: " + email));
 
     return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public List<UserDto> listAllUsers() {
+    List<UserEntity> entityList = userRepository.findAll();
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, UserDto.class))
+        .collect(Collectors.toList());
   }
 
   @Override
