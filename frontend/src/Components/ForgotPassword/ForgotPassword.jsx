@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ROUTES from "../Routes/ROUTES";
 import { Link } from "react-router-dom";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
+import AxiosInstance from "../axios/AxiosInstance";
 
 const ForgotPassword = () => {
    const [email, setEmail] = useState("");
@@ -13,6 +14,16 @@ const ForgotPassword = () => {
 
    const onFormSubmit = (e) => {
       e.preventDefault();
+      onSuccessfulChange();
+   };
+
+   const onSuccessfulChange = async () => {
+      try {
+         await AxiosInstance.post("/users/password-reset/request", { email });
+         console.log("SUCCESS");
+      } catch (err) {
+         console.log(err);
+      }
    };
 
    useEffect(() => {
@@ -38,10 +49,10 @@ const ForgotPassword = () => {
                   autoComplete="off"
                />
             </div>
+            <div className="pt-1 mb-4">
+               <button className="btn btn-dark btn-lg btn-block">Submit</button>
+            </div>
             <div className="mt-4 text-center">
-               <div className="pt-1 mb-4">
-                  <button className="btn btn-dark btn-lg btn-block">Submit</button>
-               </div>
                <p className="m-0">Wan't to go back? </p>
                <Link to={ROUTES.LOGIN} className="m-0 btn btn-link">
                   Login Page
