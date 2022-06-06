@@ -28,10 +28,10 @@
             </properties>
         </profile>
         <profile>
-            <id>docker</id>
+            <id>no-tests</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
-                <spring.profiles.active>docker</spring.profiles.active>
+                <spring.profiles.active>no-tests</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
