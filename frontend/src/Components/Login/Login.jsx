@@ -29,17 +29,17 @@ const Login = ({ setAccessToken }) => {
    const getUserToken = async () => {
       try {
          let reposnse = await AxiosInstance.post("/users/login", { email, password });
-         let { data } = reposnse;
-         if (data?.accessToken) {
-            setAccessToken(data.accessToken);
-            localStorage.setItem("accessToken", data.accessToken);
+         let { headers } = reposnse;
+         let token = headers.authorization;
+         if (headers?.authorization) {
+            setAccessToken(token);
+            localStorage.setItem("accessToken", token);
             setSuccessfulLogin("Login Successful, redirecting.");
             redirectToHomePage(1000);
          } else {
             setErrorMsg("Internal error, please try again");
             setLoading(false);
          }
-         console.log(reposnse);
       } catch ({ response }) {
          if (response.status === 403) {
             setErrorMsg("Incorrect username or password");
@@ -50,7 +50,6 @@ const Login = ({ setAccessToken }) => {
          }
          setLoading(false);
          setForgotPassword(true);
-         console.log(response);
       }
    };
 
