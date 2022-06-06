@@ -20,10 +20,19 @@ const ConfirmPassword = () => {
       }, delay);
    };
 
+   const onSuccessfulChange = async () => {
+      try {
+
+      } catch {
+         
+      }
+   };
+
    const onFormSubmit = (e) => {
       e.preventDefault();
       if (password.match(RegEx) && password === confpassword) {
          setSuccessMsg("Password changed successfully");
+         onSuccessfulChange();
          redirectToLoginPage(1500);
       } else {
          setErrorMsg("Passwords do not match");

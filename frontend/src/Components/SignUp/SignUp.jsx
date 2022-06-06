@@ -41,7 +41,7 @@ const SignUp = () => {
             address,
          });
          setErrorMsg("");
-         setSuccessfulRegister("Registration Successful");
+         setSuccessfulRegister("Please confirm your email");
          setButtonText("SUCCESSFUL");
          redirectToLoginPage(2000);
       } catch ({ response }) {

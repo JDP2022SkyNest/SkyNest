@@ -28,7 +28,7 @@ const Login = ({ setAccessToken }) => {
 
    const getUserToken = async () => {
       try {
-         let reposnse = await AxiosInstance.post("/login", { email, password });
+         let reposnse = await AxiosInstance.post("/users/login", { email, password });
          let { data } = reposnse;
          if (data?.accessToken) {
             setAccessToken(data.accessToken);
@@ -37,15 +37,20 @@ const Login = ({ setAccessToken }) => {
             redirectToHomePage(1000);
          } else {
             setErrorMsg("Internal error, please try again");
+            setLoading(false);
          }
+         console.log(reposnse);
       } catch ({ response }) {
-         if (response.status === 400) {
+         if (response.status === 403) {
             setErrorMsg("Incorrect username or password");
          } else if (response.status === 0) {
             setErrorMsg("Server Timeout");
+         } else {
+            setErrorMsg("Unknown Error");
          }
          setLoading(false);
          setForgotPassword(true);
+         console.log(response);
       }
    };
 
