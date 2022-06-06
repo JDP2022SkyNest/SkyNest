@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { pwSuggestion } from "../ReusableComponents/ReusableFunctions";
-import { RegEx } from "../ReusableComponents/ReusableFunctions";
+import { pwSuggestion, RegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
@@ -175,9 +174,9 @@ const SignUp = () => {
                   <div className="form-outline mb-1">
                      <Label>
                         Password
-                        <small className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfpassword)}>
+                        <div className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfpassword)}>
                            Suggest PW?
-                        </small>
+                        </div>
                      </Label>
                      <div className="input-group">
                         <input
