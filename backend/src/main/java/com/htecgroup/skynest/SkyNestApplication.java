@@ -1,10 +1,12 @@
 package com.htecgroup.skynest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.htecgroup.skynest.security.SecurityConstants;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -21,7 +23,21 @@ public class SkyNestApplication {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+        registry
+            .addMapping("/**")
+            .allowedOrigins("http://localhost:3000")
+            .allowedHeaders(
+                SecurityConstants.HEADER_STRING,
+                HttpHeaders.ORIGIN,
+                HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.ACCEPT)
+            .exposedHeaders(
+                SecurityConstants.HEADER_STRING,
+                HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                HttpHeaders.ORIGIN,
+                HttpHeaders.ACCEPT,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD,
+                HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
       }
     };
   }
