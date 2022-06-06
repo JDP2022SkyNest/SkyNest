@@ -87,10 +87,11 @@ public class UserController {
                     @ExampleObject(
                         value =
                             "{\"messages\":[\"This email is already in use\"],"
-                                + " \"status\": \"400\","
+                                + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-03 16:18:12\"}")
                   })
-            })
+            }),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
       })
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
       content =
@@ -249,7 +250,8 @@ public class UserController {
                   mediaType = "application/json",
                   schema = @Schema(implementation = String.class),
                   examples = {@ExampleObject(value = "Access token is invalid")})
-            })
+            }),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
       })
   @PutMapping("/password-reset/confirm")
   public ResponseEntity<String> confirmPasswordReset(
