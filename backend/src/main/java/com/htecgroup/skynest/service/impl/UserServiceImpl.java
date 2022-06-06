@@ -29,10 +29,10 @@ public class UserServiceImpl implements UserService {
   private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
   private static final String SUBJECT_FOR_PASSWORD_RESET = "Password reset for SkyNest";
   private UserRepository userRepository;
+  private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
   private JwtUtils jwtUtils;
-  private RoleService roleService;
   private EmailService emailService;
 
   @Override
