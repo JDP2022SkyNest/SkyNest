@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.UserService;
@@ -40,10 +41,28 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/resendEmail")
+  @PostMapping("/resend-email")
   public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
+    log.info(response);
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/password-reset/request")
+  public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
+    userService.sendPasswordResetEmail(email);
+    String response = "Password reset email sent";
+    log.info(response);
+    return ResponseEntity.ok(response);
+  }
+
+  @PutMapping("/password-reset/confirm")
+  public ResponseEntity<String> confirmPasswordReset(
+      @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
+    String response =
+        userService.resetPassword(
+            userPasswordResetRequest.getToken(), userPasswordResetRequest.getPassword());
     log.info(response);
     return ResponseEntity.ok(response);
   }
