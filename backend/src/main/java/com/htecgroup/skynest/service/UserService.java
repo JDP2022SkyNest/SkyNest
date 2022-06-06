@@ -15,9 +15,12 @@ public interface UserService {
   String confirmEmail(String token);
 
   UserDto enableUser(UserDto userDto);
+
   void sendVerificationEmail(String email);
 
   void sendPasswordResetEmail(String email);
 
   String resetPassword(String token, String password);
+
+  void deleteUser(String uuid);
 }

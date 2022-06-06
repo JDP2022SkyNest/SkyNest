@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,6 +99,12 @@ public class UserServiceImpl implements UserService {
         userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
     userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
     return "Password was successfully reset";
+  }
+
+  @Override
+  public void deleteUser(String uuid) {
+    UUID realUuid = UUID.fromString(uuid);
+    userRepository.deleteById(realUuid);
   }
 
   @Override
