@@ -74,4 +74,12 @@ public class UserController {
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
+
+  @DeleteMapping("/delete")
+  public ResponseEntity<String> deleteUser(@RequestParam String uuid) {
+    userService.deleteUser(uuid);
+    String deleteSuccess = "User was successfully deleted from database";
+    log.info(deleteSuccess);
+    return ResponseEntity.ok(deleteSuccess);
+  }
 }
