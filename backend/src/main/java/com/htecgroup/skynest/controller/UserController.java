@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -69,5 +70,13 @@ public class UserController {
   public String getUser() {
     //  TODO
     return "test";
+  }
+
+  @DeleteMapping("/delete")
+  public ResponseEntity<String> deleteUser(@RequestParam String uuid) {
+    userService.deleteUser(uuid);
+    String deleteSuccess = "User was successfully deleted from database";
+    log.info(deleteSuccess);
+    return ResponseEntity.ok(deleteSuccess);
   }
 }

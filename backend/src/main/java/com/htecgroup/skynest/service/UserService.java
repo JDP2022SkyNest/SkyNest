@@ -17,4 +17,6 @@ public interface UserService {
   void sendPasswordResetEmail(String email);
 
   String resetPassword(String token, String password);
+
+  void deleteUser(String uuid);
 }

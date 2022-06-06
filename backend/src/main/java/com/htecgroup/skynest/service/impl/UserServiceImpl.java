@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -95,6 +97,12 @@ public class UserServiceImpl implements UserService {
         userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
     userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
     return "Password was successfully reset";
+  }
+
+  @Override
+  public void deleteUser(String uuid) {
+    UUID realUuid = UUID.fromString(uuid);
+    userRepository.deleteById(realUuid);
   }
 
   @Override
