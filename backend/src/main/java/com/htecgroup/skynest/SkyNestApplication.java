@@ -1,7 +1,7 @@
 package com.htecgroup.skynest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.security.SecurityConstants;
+import com.htecgroup.skynest.util.JwtUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,12 +27,12 @@ public class SkyNestApplication {
             .addMapping("/**")
             .allowedOrigins("http://localhost:3000")
             .allowedHeaders(
-                SecurityConstants.HEADER_STRING,
+                JwtUtils.HEADER_STRING,
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT)
             .exposedHeaders(
-                SecurityConstants.HEADER_STRING,
+                JwtUtils.HEADER_STRING,
                 HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
                 HttpHeaders.ORIGIN,
                 HttpHeaders.ACCEPT,

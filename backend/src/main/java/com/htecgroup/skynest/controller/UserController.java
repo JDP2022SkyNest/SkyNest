@@ -18,16 +18,21 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.UUID;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.htecgroup.skynest.util.UrlUtil.*;
+
 @RestController
-@RequestMapping("/users")
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@RequestMapping(USERS_CONTROLLER_URL)
 @AllArgsConstructor
 @Log4j2
 @Tag(name = "User API", description = "Operations to manipulate user")
@@ -108,7 +113,7 @@ public class UserController {
                             + "  \"phoneNumber\": \"38166575757\","
                             + "  \"address\": \"Local address\"}")
               }))
-  @PostMapping("/register")
+  @PostMapping(SIGN_UP_URL)
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
@@ -143,7 +148,7 @@ public class UserController {
                   })
             })
       })
-  @GetMapping("/confirm")
+  @GetMapping(CONFIRM_EMAIL_URL)
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
     String response = userService.confirmEmail(token);
     log.info(response);
@@ -173,7 +178,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Failed to send email")})
             })
       })
-  @PostMapping("/resend-email")
+  @PostMapping(RESEND_EMAIL_URL)
   public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
@@ -221,7 +226,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Failed to send email")})
             })
       })
-  @PostMapping("/password-reset/request")
+  @PostMapping(PASSWORD_RESET_REQUEST_URL)
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
     userService.sendPasswordResetEmail(email);
     String response = "Password reset email sent";
@@ -253,7 +258,7 @@ public class UserController {
             }),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  @PutMapping("/password-reset/confirm")
+  @PutMapping(PASSWORD_RESET_CONFIRM_URL)
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
     String response =
@@ -264,14 +269,17 @@ public class UserController {
   }
 
   @Operation(summary = "Get User with that id")
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping
   public List<UserResponse> getUsers() {
+    log.info("User {} accessed getusers", SecurityContextHolder.getContext().getAuthentication());
     List<UserDto> listOfUsers = userService.listAllUsers();
     return listOfUsers.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
 
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @DeleteMapping("/delete/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
     userService.deleteUser(uuid);

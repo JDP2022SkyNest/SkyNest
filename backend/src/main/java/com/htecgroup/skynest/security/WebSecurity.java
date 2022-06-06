@@ -2,6 +2,9 @@ package com.htecgroup.skynest.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.filter.CustomAuthenticationFilter;
+import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
+import com.htecgroup.skynest.service.UserService;
+import com.htecgroup.skynest.util.UrlUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -21,6 +25,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final ObjectMapper objectMapper;
 
+  private final UserService userService;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.cors()
@@ -28,20 +34,22 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
+        .antMatchers(HttpMethod.POST, UrlUtil.POST_URLS_WITHOUT_AUTH)
         .permitAll()
-        .antMatchers(HttpMethod.GET, SecurityConstants.CONFIRM_EMAIL_URL)
+        .antMatchers(HttpMethod.GET, UrlUtil.GET_URLS_WITHOUT_AUTH)
         .permitAll()
-        .antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_REQUEST_URL)
+        .antMatchers(HttpMethod.PUT, UrlUtil.PUT_URLS_WITHOUT_AUTH)
         .permitAll()
-        .antMatchers(HttpMethod.PUT, SecurityConstants.PASSWORD_RESET_CONFIRM_URL)
+        .antMatchers(HttpMethod.DELETE, UrlUtil.DELETE_URLS_WITHOUT_AUTH)
         .permitAll()
-        .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
+        .antMatchers(UrlUtil.ANY_URLS_WITHOUT_AUTH)
         .permitAll()
         .anyRequest()
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
+        .addFilterBefore(
+            new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
@@ -49,8 +57,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   public CustomAuthenticationFilter getAuthenticationFilter() throws Exception {
     final CustomAuthenticationFilter filter =
         new CustomAuthenticationFilter(
-            authenticationManager(), userDetailsService, bCryptPasswordEncoder, objectMapper);
-    filter.setFilterProcessesUrl(SecurityConstants.LOG_IN_URL);
+            authenticationManager(),
+            userDetailsService,
+            bCryptPasswordEncoder,
+            userService,
+            objectMapper);
+    filter.setFilterProcessesUrl(UrlUtil.USERS_CONTROLLER_URL + UrlUtil.LOG_IN_URL);
     return filter;
   }
 

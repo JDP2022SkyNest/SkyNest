@@ -8,7 +8,7 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
-import com.htecgroup.skynest.util.JwtUtils;
+import com.htecgroup.skynest.util.EmailUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class UserServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private RoleRepository roleRepository;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Mock private JwtUtils jwtUtils;
+  @Mock private EmailUtils emailUtils;
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
 
@@ -153,7 +153,7 @@ class UserServiceImplTest {
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
-    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
+    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(disabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(disabledWorkerEntity));
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
@@ -166,7 +166,7 @@ class UserServiceImplTest {
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
-    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
+    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(disabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
 
@@ -196,7 +196,7 @@ class UserServiceImplTest {
   void resetPassword() {
     String expectedResponse = "Password was successfully reset";
 
-    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
+    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(enabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(enabledWorkerEntity));
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);

@@ -3,6 +3,7 @@ package com.htecgroup.skynest.security;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +21,9 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     UserDto userDto = userService.findUserByEmail(username);
-    return new User(userDto.getEmail(), userDto.getEncryptedPassword(), new ArrayList<>());
+    ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    authorities.add(new SimpleGrantedAuthority(userDto.getRole().getName()));
+
+    return new User(userDto.getEmail(), userDto.getEncryptedPassword(), authorities);
   }
 }
