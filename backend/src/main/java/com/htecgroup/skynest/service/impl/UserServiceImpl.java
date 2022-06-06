@@ -89,17 +89,16 @@ public class UserServiceImpl implements UserService {
   @Override
   public String resetPassword(String token, String password) {
     jwtUtils.validateJwtToken(token);
-      String email = jwtUtils.getEmailFromJwtEmailToken(token);
-      UserDto userDto = findUserByEmail(email);
-      UserDto userDtoNewPassword =
-          userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
-      userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
-      return "Password was successfully reset";
+    String email = jwtUtils.getEmailFromJwtEmailToken(token);
+    UserDto userDto = findUserByEmail(email);
+    UserDto userDtoNewPassword =
+        userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
+    userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
+    return "Password was successfully reset";
   }
 
   @Override
   public UserDto findUserByEmail(String email) {
-
     UserEntity userEntity =
         userRepository
             .findUserByEmail(email)
@@ -112,11 +111,11 @@ public class UserServiceImpl implements UserService {
   @Override
   public String confirmEmail(String token) {
     jwtUtils.validateJwtToken(token);
-      String email = jwtUtils.getEmailFromJwtEmailToken(token);
-      UserDto userDto = findUserByEmail(email);
-      UserDto enabledUser = this.enableUser(userDto);
-      userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
-      return "User verified successfully";
+    String email = jwtUtils.getEmailFromJwtEmailToken(token);
+    UserDto userDto = findUserByEmail(email);
+    UserDto enabledUser = this.enableUser(userDto);
+    userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
+    return "User verified successfully";
   }
 
   @Override
