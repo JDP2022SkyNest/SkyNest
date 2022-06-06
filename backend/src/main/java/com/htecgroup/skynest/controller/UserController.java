@@ -169,9 +169,7 @@ public class UserController {
               @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = String.class),
-                  examples = {
-                    @ExampleObject(value = "The email failed to send from the Email server")
-                  })
+                  examples = {@ExampleObject(value = "Failed to send email")})
             })
       })
   @PostMapping("/resend-email")
@@ -182,6 +180,46 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
+  @Operation(summary = "Request for password reset")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Password reset email successfully sent",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Password reset email sent")})
+            }),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Email does not exist",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "This email is not in use")})
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Access token is invalid")})
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Not a valid email address or failed to send email",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Failed to send email")})
+            })
+      })
   @PostMapping("/password-reset/request")
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
     userService.sendPasswordResetEmail(email);
@@ -190,6 +228,29 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
+  // Password was successfully reset
+  @Operation(summary = "Confirm password reset")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Password reset confirmed",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Password was successfully reset")})
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Access token is invalid")})
+            })
+      })
   @PutMapping("/password-reset/confirm")
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
