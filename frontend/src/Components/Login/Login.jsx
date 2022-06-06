@@ -5,6 +5,7 @@ import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
 import ROUTES from "../Routes/ROUTES";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
+import { inputsDisabled } from "../ReusableComponents/ReusableFunctions";
 
 const Login = ({ setAccessToken }) => {
    const [email, setEmail] = useState("");
@@ -17,13 +18,7 @@ const Login = ({ setAccessToken }) => {
 
    const emailRef = useRef();
    const navigate = useNavigate();
-
    const allInputs = document.querySelectorAll("input");
-   const inputsDisabled = (value) => [
-      allInputs.forEach((el) => {
-         el.disabled = value;
-      }),
-   ];
 
    const redirectToHomePage = (delay) => {
       setTimeout(() => {
@@ -64,10 +59,10 @@ const Login = ({ setAccessToken }) => {
 
    const onFormSubmit = async (e) => {
       e.preventDefault();
-      inputsDisabled(true);
+      inputsDisabled(allInputs, true);
       setLoading(true);
       await getUserToken();
-      inputsDisabled(false);
+      inputsDisabled(allInputs, false);
    };
 
    const passwordShowHide = () => {

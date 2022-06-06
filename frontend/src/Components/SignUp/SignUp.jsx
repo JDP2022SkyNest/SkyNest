@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { pwSuggestion, RegEx } from "../ReusableComponents/ReusableFunctions";
+import { pwSuggestion, RegEx, inputsDisabled } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
@@ -22,19 +22,13 @@ const SignUp = () => {
    const [loading, setLoading] = useState(false);
 
    const navigate = useNavigate();
+   const allInputs = document.querySelectorAll("input");
 
    const redirectToLoginPage = (delay) => {
       setTimeout(() => {
          navigate(ROUTES.LOGIN);
       }, delay);
    };
-
-   const allInputs = document.querySelectorAll("input");
-   const inputsDisabled = (value) => [
-      allInputs.forEach((el) => {
-         el.disabled = value;
-      }),
-   ];
 
    const userRegistration = async () => {
       try {
@@ -56,7 +50,7 @@ const SignUp = () => {
          } else if (response.status === 500) {
             setErrorMsg("Internal Server Error");
          } else if (response.status === 0) {
-            setErrorMsg("Server currently offline");
+            setErrorMsg("Server Timeout");
          } else {
             setErrorMsg(response.data.messages);
          }
@@ -66,14 +60,14 @@ const SignUp = () => {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      inputsDisabled(true);
+      inputsDisabled(allInputs, true);
       if (uPassword.match(RegEx) && uPassword === confpassword) {
          setLoading(true);
          await userRegistration();
       } else {
          setErrorMsg("Requirements not met");
       }
-      inputsDisabled(false);
+      inputsDisabled(allInputs, false);
    };
 
    const onSuccessfulValidation = () => {
@@ -101,14 +95,14 @@ const SignUp = () => {
             <div className="row">
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <Label>First Name</Label>
+                     <Label id="firstNameInput">First Name</Label>
                      <input
                         type="name"
                         name="firstName"
                         id="firstNameInput"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="form-control form-control"
+                        className="form-control"
                         required
                         autoComplete="off"
                      />
@@ -116,14 +110,14 @@ const SignUp = () => {
                </div>
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <Label>Last Name</Label>
+                     <Label id="lastNameInput">Last Name</Label>
                      <input
                         type="name"
                         name="lastName"
                         value={surname}
                         onChange={(e) => setSurname(e.target.value)}
                         id="lastNameInput"
-                        className="form-control form-control"
+                        className="form-control"
                         required
                         autoComplete="off"
                      />
@@ -131,20 +125,20 @@ const SignUp = () => {
                </div>
             </div>
             <div className="form-outline mb-1">
-               <Label>Email adress</Label>
+               <Label id="emailInput">Email adress</Label>
                <input
                   type="email"
                   name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   id="emailInput"
-                  className="form-control form-control"
+                  className="form-control"
                   required
                   autoComplete="off"
                />
             </div>
             <div className="form-outline mb-1">
-               <Label>Phone number</Label>
+               <Label id="phoneInput">Phone number</Label>
                <input
                   type="number"
                   name="phoneNumber"
@@ -157,14 +151,14 @@ const SignUp = () => {
                />
             </div>
             <div className="form-outline mb-1">
-               <Label>Home adress</Label>
+               <Label id="adressInput">Home adress</Label>
                <input
                   type="text"
                   name="adress"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   id="adressInput"
-                  className="form-control form-control"
+                  className="form-control"
                   required
                   autoComplete="off"
                />
@@ -172,7 +166,7 @@ const SignUp = () => {
             <div className="row">
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <Label>
+                     <Label id="passwordInput">
                         Password
                         <div className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfpassword)}>
                            Suggest PW?
@@ -185,7 +179,7 @@ const SignUp = () => {
                            value={uPassword}
                            onChange={(e) => setPassword(e.target.value)}
                            id="passwordInput"
-                           className="form-control form-control border-right-0"
+                           className="form-control border-right-0"
                            required
                            autoComplete="off"
                         />
@@ -199,14 +193,14 @@ const SignUp = () => {
                </div>
                <div className="col-md-6">
                   <div className="form-outline mb-1">
-                     <Label>Confirm password</Label>
+                     <Label id="confPasswordInput">Confirm password</Label>
                      <input
                         type={showPassword ? "text" : "password"}
                         name="confPassword"
                         value={confpassword}
                         onChange={(e) => setConfpassword(e.target.value)}
                         id="confPasswordInput"
-                        className="form-control form-control"
+                        className="form-control"
                         required
                         autoComplete="off"
                      />
