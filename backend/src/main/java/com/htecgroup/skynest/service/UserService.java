@@ -13,4 +13,8 @@ public interface UserService {
   UserDto enableUser(UserDto userDto);
 
   void sendVerificationEmail(String email);
+
+  void sendPasswordResetEmail(String email);
+
+  String resetPassword(String token, String password);
 }

@@ -11,7 +11,6 @@ public enum UserExceptionType {
   PHONE_NUMBER_ALREADY_IN_USE("This phone number is already in use", HttpStatus.CONFLICT),
   INVALID_PASSWORD_FORMAT("The password doesn't match the required format", HttpStatus.BAD_REQUEST),
   INVALID_EMAIL_OR_PASSWORD("The email and password are not valid", HttpStatus.BAD_REQUEST),
-
   PASSWORDS_DOES_NOT_MATCH(
       "The provided password doesn't match the username", HttpStatus.EXPECTATION_FAILED),
   EMAIL_FAILED_TO_SEND(
@@ -20,7 +19,9 @@ public enum UserExceptionType {
       "User is already registered, verified and enabled", HttpStatus.INTERNAL_SERVER_ERROR),
   EMAIL_VERIFICATION_TOKEN_FAILED(
       "Jwt token failed the validation. For more information check the logger",
-      HttpStatus.INTERNAL_SERVER_ERROR);
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  EMAIL_NOT_IN_USE("This email is not in use", HttpStatus.BAD_REQUEST),
+  INVALID_TOKEN("Access token is invalid", HttpStatus.FORBIDDEN);
 
   private final String message;
   private final HttpStatus status;

@@ -8,8 +8,7 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
-import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.JwtEmailVerificationUtils;
+import com.htecgroup.skynest.util.JwtUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,12 +34,11 @@ class UserServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private RoleRepository roleRepository;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Mock private JwtEmailVerificationUtils jwtEmailVerificationUtils;
+  @Mock private JwtUtils jwtUtils;
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
 
-  @Spy
-  @InjectMocks private UserServiceImpl userService;
+  @Spy @InjectMocks private UserServiceImpl userService;
 
   private UserEntity enabledWorkerEntity;
   private RoleEntity roleWorkerEntity;
@@ -152,8 +150,7 @@ class UserServiceImplTest {
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
-    when(jwtEmailVerificationUtils.validateJwtToken(anyString())).thenReturn(true);
-    when(jwtEmailVerificationUtils.getEmailFromJwtEmailVerificationToken(anyString()))
+    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(disabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(disabledWorkerEntity));
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
@@ -162,23 +159,27 @@ class UserServiceImplTest {
   }
 
   @Test
-  void confirmEmail_EmailTokenFailed() {
-    when(jwtEmailVerificationUtils.validateJwtToken(anyString())).thenReturn(false);
-
-    Assertions.assertThrows(UserException.class, () -> userService.confirmEmail(anyString()));
-  }
-
-  @Test
   void confirmEmail_UserWithEmailNotFound() {
     UserEntity disabledWorkerEntity = enabledWorkerEntity;
     disabledWorkerEntity.setEnabled(false);
     disabledWorkerEntity.setVerified(false);
-    when(jwtEmailVerificationUtils.validateJwtToken(anyString())).thenReturn(true);
-    when(jwtEmailVerificationUtils.getEmailFromJwtEmailVerificationToken(anyString()))
+    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
         .thenReturn(disabledWorkerEntity.getEmail());
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
 
     Assertions.assertThrows(
         UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
+  }
+
+  @Test
+  void resetPassword() {
+    String expectedResponse = "Password was successfully reset";
+
+    when(jwtUtils.getEmailFromJwtEmailToken(anyString()))
+        .thenReturn(enabledWorkerEntity.getEmail());
+    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(enabledWorkerEntity));
+    when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
+
+    Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
   }
 }

@@ -18,7 +18,7 @@ public class UserDto {
   private LocalDateTime deletedOn;
   private String email;
   private String password;
-  private String encryptedPassword;
+  @With private String encryptedPassword;
   private String name;
   private String surname;
   private String address;
