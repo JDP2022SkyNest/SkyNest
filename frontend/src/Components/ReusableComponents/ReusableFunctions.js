@@ -8,3 +8,9 @@ export const pwSuggestion = (length, func1, func2) => {
       func2(suggestedPw);
    }
 };
+
+export const inputsDisabled = (variable, value) => [
+   variable.forEach((el) => {
+      el.disabled = value;
+   }),
+];
