@@ -1,6 +1,7 @@
 package com.htecgroup.skynest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.htecgroup.skynest.security.SecurityConstants;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,7 +22,11 @@ public class SkyNestApplication {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+        registry
+            .addMapping("/**")
+            .allowedOrigins("http://localhost:3000")
+            .allowedHeaders(SecurityConstants.HEADER_STRING)
+            .exposedHeaders(SecurityConstants.HEADER_STRING);
       }
     };
   }
