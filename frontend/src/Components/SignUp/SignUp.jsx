@@ -204,7 +204,7 @@ const SignUp = () => {
                   <li className={uPassword.match(/([a-z])/) ? "text-success" : ""}>Lowercase Letter</li>
                   <li className={uPassword.match(/([\d])/) ? "text-success" : ""}>Number</li>
                   <li className={uPassword.length >= 8 ? "text-success" : ""}>Length of 8 characters or more</li>
-                  <li className={uPassword === confPassword && uPassword.length > 8 ? "text-success" : ""}>Passwords match</li>
+                  <li className={uPassword === confPassword && uPassword.length > 0 ? "text-success" : ""}>Passwords match</li>
                </ul>
             </small>
             <div className="my-4">
