@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service;
 import com.htecgroup.skynest.model.dto.UserDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
 
@@ -22,5 +23,5 @@ public interface UserService {
 
   String resetPassword(String token, String password);
 
-  void deleteUser(String uuid);
+  void deleteUser(UUID uuid);
 }

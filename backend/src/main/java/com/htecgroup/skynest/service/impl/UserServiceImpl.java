@@ -14,6 +14,7 @@ import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,9 +103,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void deleteUser(String uuid) {
-    UUID realUuid = UUID.fromString(uuid);
-    userRepository.deleteById(realUuid);
+  public void deleteUser(UUID uuid) {
+    if (!userRepository.existsById(uuid)) {
+      throw new UserException(
+          String.format("User with id %s doesn't exist", uuid), HttpStatus.NOT_FOUND);
+    }
+    userRepository.deleteById(uuid);
   }
 
   @Override
