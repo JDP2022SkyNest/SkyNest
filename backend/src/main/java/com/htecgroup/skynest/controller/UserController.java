@@ -77,8 +77,8 @@ public class UserController {
         .collect(Collectors.toList());
   }
 
-  @DeleteMapping("/delete")
-  public ResponseEntity<String> deleteUser(@RequestParam UUID uuid) {
+  @DeleteMapping("/delete/{uuid}")
+  public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
     userService.deleteUser(uuid);
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
