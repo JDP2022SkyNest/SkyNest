@@ -33,7 +33,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         return;
       }
 
-      String authorizationHeader = request.getHeader(JwtUtils.HEADER_STRING);
+      String authorizationHeader = request.getHeader(JwtUtils.AUTH_HEADER);
       if (authorizationHeader == null) {
         filterChain.doFilter(request, response);
         return;

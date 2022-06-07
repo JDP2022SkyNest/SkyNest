@@ -27,12 +27,12 @@ public class SkyNestApplication {
             .addMapping("/**")
             .allowedOrigins("http://localhost:3000")
             .allowedHeaders(
-                JwtUtils.HEADER_STRING,
+                JwtUtils.AUTH_HEADER,
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT)
             .exposedHeaders(
-                JwtUtils.HEADER_STRING,
+                JwtUtils.AUTH_HEADER,
                 HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
                 HttpHeaders.ORIGIN,
                 HttpHeaders.ACCEPT,

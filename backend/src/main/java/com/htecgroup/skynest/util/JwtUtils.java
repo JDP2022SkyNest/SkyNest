@@ -24,7 +24,7 @@ import static java.util.Arrays.stream;
 @Component
 public class JwtUtils {
 
-  public static final String HEADER_STRING = HttpHeaders.AUTHORIZATION;
+  public static final String AUTH_HEADER = HttpHeaders.AUTHORIZATION;
   public static long ACCESS_TOKEN_EXPIRATION_MS;
   public static String TOKEN_PREFIX;
   private static Algorithm ALGORITHM;
