@@ -26,6 +26,7 @@ public class SkyNestApplication {
         registry
             .addMapping("/**")
             .allowedOrigins("http://localhost:3000")
+            .allowedOriginPatterns("http://localhost:3000/*")
             .allowedHeaders(
                 JwtUtils.AUTH_HEADER,
                 HttpHeaders.ORIGIN,
