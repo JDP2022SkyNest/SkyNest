@@ -14,11 +14,13 @@ import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +30,10 @@ public class UserServiceImpl implements UserService {
   private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
   private static final String SUBJECT_FOR_PASSWORD_RESET = "Password reset for SkyNest";
   private UserRepository userRepository;
+  private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
   private JwtUtils jwtUtils;
-  private RoleService roleService;
   private EmailService emailService;
 
   @Override
@@ -98,6 +100,15 @@ public class UserServiceImpl implements UserService {
         userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
     userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
     return "Password was successfully reset";
+  }
+
+  @Override
+  public void deleteUser(UUID uuid) {
+    if (!userRepository.existsById(uuid)) {
+      throw new UserException(
+          String.format("User with id %s doesn't exist", uuid), HttpStatus.NOT_FOUND);
+    }
+    userRepository.deleteById(uuid);
   }
 
   @Override

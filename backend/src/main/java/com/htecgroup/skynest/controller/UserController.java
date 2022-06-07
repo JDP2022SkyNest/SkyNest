@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -73,5 +75,13 @@ public class UserController {
     return listOfUsers.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
+  }
+
+  @DeleteMapping("/delete/{uuid}")
+  public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
+    userService.deleteUser(uuid);
+    String deleteSuccess = "User was successfully deleted from database";
+    log.info(deleteSuccess);
+    return ResponseEntity.ok(deleteSuccess);
   }
 }
