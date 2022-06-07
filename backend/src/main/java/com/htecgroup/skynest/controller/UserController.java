@@ -1,20 +1,17 @@
 package com.htecgroup.skynest.controller;
 
-import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -23,15 +20,17 @@ import java.util.stream.Collectors;
 public class UserController {
 
   private UserService userService;
-  private ModelMapper modelMapper;
 
   @PostMapping("/register")
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
-    UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
+    ResponseEntity<UserResponse> responseEntity = new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+    return responseEntity;
 
-    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
+//    UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
+//
+//    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
   }
 
   @GetMapping("/confirm")
@@ -69,9 +68,10 @@ public class UserController {
 
   @GetMapping
   public List<UserResponse> getUsers() {
-    List<UserDto> listOfUsers = userService.listAllUsers();
-    return listOfUsers.stream()
-        .map(e -> modelMapper.map(e, UserResponse.class))
-        .collect(Collectors.toList());
+    List<UserResponse> listOfUsers = userService.listAllUsers();
+    return listOfUsers;
+//    return listOfUsers.stream()
+//        .map(e -> modelMapper.map(e, UserResponse.class))
+//        .collect(Collectors.toList());
   }
 }

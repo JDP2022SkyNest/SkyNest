@@ -1,16 +1,18 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 
 import java.util.List;
 
 public interface UserService {
 
-  UserDto registerUser(UserDto userDto);
+  UserResponse registerUser(UserRegisterRequest userRegisterRequest);
 
   UserDto findUserByEmail(String email);
 
-  List<UserDto> listAllUsers();
+  List<UserResponse> listAllUsers();
 
   String confirmEmail(String token);
 
