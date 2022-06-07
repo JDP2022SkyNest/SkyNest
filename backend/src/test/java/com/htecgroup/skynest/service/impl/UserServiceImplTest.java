@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -8,6 +9,7 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.util.EmailUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,11 +37,10 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
   @Mock private UserRepository userRepository;
-  @Mock private RoleRepository roleRepository;
+  @Mock private RoleService roleService;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
   @Mock private EmailUtils emailUtils;
   @Spy private ModelMapper modelMapper;
-  @Spy private EmailService emailService;
 
   @Spy @InjectMocks private UserServiceImpl userService;
 
@@ -90,8 +91,7 @@ class UserServiceImplTest {
     UserDto expectedUserDto = new ModelMapper().map(expectedUserEntity, UserDto.class);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(roleRepository.findByName(anyString()))
-        .thenReturn(Optional.of(new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_WORKER)));
+    when(roleService.findByName(anyString())).thenReturn(modelMapper.map(roleWorkerEntity, RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString()))
         .thenReturn(expectedUserDto.getEncryptedPassword());
@@ -108,17 +108,6 @@ class UserServiceImplTest {
   void registerUser_AlreadyExists() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
-
-    UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
-
-    Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
-  }
-
-  @Test
-  void registerUser_RoleNotFound() {
-
-    when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(roleRepository.findByName(anyString())).thenReturn(Optional.empty());
 
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
 
@@ -202,5 +191,30 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
     Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
+  }
+
+  @Test
+  void deleteUser_UserWithIdNotFound(){
+    when(userRepository.existsById(any())).thenReturn(false);
+
+    Assertions.assertThrows(UserException.class, () -> userService.deleteUser(null));
+  }
+
+  @Test
+  void enableUser(){
+    UserDto notEnabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
+    notEnabledUserDto.setEnabled(false);
+    notEnabledUserDto.setVerified(false);
+
+    UserDto verifiedUser = userService.enableUser(notEnabledUserDto);
+
+    Assertions.assertTrue(verifiedUser.getVerified());
+    Assertions.assertTrue(verifiedUser.getEnabled());
+  }
+
+  @Test
+  void enableUser_UserAlreadyEnabled(){
+    UserDto enabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
+    Assertions.assertThrows(UserException.class, () -> userService.enableUser(enabledUserDto));
   }
 }
