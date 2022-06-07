@@ -43,26 +43,24 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
   @Override
   public Authentication attemptAuthentication(
       HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
-    UserLoginRequest credentials;
     try {
-      credentials = objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
-    } catch (IOException e) {
-      log.error("Unable to authenticate, because of Input or Output error", e);
-      throw new UserException(UserExceptionType.INVALID_AUTHENTICATION_FORMAT);
-    }
+      UserLoginRequest credentials =
+          objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
+      UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
+      log.info("The user: {} is trying to authenticate.", userDetails.getUsername());
 
-    UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
-    log.info("The user: {} is trying to authenticate.", userDetails.getUsername());
-    if (!userService.isActive(userDetails.getUsername()))
-      throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
+      if (!userService.isActive(userDetails.getUsername()))
+        throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
 
-    try {
       return authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
               credentials.getEmail(), credentials.getPassword(), userDetails.getAuthorities()));
+
     } catch (BadCredentialsException ex) {
       throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
+    } catch (IOException e) {
+      log.error("Unable to authenticate, because of Input or Output error", e);
+      throw new UserException(UserExceptionType.INVALID_AUTHENTICATION_FORMAT);
     }
   }
 
