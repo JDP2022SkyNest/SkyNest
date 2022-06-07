@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -113,7 +112,7 @@ public class UserController {
                             + "  \"phoneNumber\": \"38166575757\","
                             + "  \"address\": \"Local address\"}")
               }))
-  @PostMapping(SIGN_UP_URL)
+  @PostMapping(REGISTER_URL)
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
@@ -226,7 +225,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Failed to send email")})
             })
       })
-  @PostMapping(PASSWORD_RESET_REQUEST_URL)
+  @PostMapping(PASSWORD_RESET_URL)
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
     userService.sendPasswordResetEmail(email);
     String response = "Password reset email sent";
@@ -258,7 +257,7 @@ public class UserController {
             }),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  @PutMapping(PASSWORD_RESET_CONFIRM_URL)
+  @PutMapping(PASSWORD_RESET_URL)
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
     String response =
@@ -272,13 +271,13 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping
   public List<UserResponse> getUsers() {
-    log.info("User {} accessed getusers", SecurityContextHolder.getContext().getAuthentication());
     List<UserDto> listOfUsers = userService.listAllUsers();
     return listOfUsers.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
 
+  @Operation(summary = "Delete User with that id")
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
