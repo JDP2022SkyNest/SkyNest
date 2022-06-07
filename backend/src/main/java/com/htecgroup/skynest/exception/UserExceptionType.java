@@ -22,7 +22,7 @@ public enum UserExceptionType {
       HttpStatus.INTERNAL_SERVER_ERROR),
   EMAIL_NOT_IN_USE("This email is not in use", HttpStatus.BAD_REQUEST),
   INVALID_TOKEN("Access token is invalid", HttpStatus.FORBIDDEN),
-  USER_NOT_ACTIVE("User is inactive: deleted, disabled, or not verified", HttpStatus.FORBIDDEN),
+  USER_NOT_ACTIVE("User is inactive: deleted, disabled, or not verified", HttpStatus.UNAUTHORIZED),
   ILLEGAL_EMAIL("Could not reach email", HttpStatus.INTERNAL_SERVER_ERROR),
   JWT_ALGORITHM_IS_NULL("JWT algorithm is null", HttpStatus.INTERNAL_SERVER_ERROR),
   INVALID_AUTHENTICATION_FORMAT(
