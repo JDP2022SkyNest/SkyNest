@@ -9,6 +9,7 @@ import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -42,30 +43,27 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
   @Override
   public Authentication attemptAuthentication(
       HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-    UserLoginRequest credentials = new UserLoginRequest();
 
+    UserLoginRequest credentials;
     try {
       credentials = objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
-
     } catch (IOException e) {
       log.error("Unable to authenticate, because of Input or Output error", e);
+      throw new UserException(UserExceptionType.INVALID_AUTHENTICATION_FORMAT);
     }
+
     UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
-    log.info("The user: {} is trying to authenticate.", credentials.getEmail());
-    if (!credentials.getEmail().equals(userDetails.getUsername())) {
-      throw new UserException(UserExceptionType.INVALID_EMAIL_OR_PASSWORD);
-    }
-
-    if (!passwordEncoder.matches(credentials.getPassword(), userDetails.getPassword())) {
-      throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
-    }
-
-    if (!userService.isActive(credentials.getEmail()))
+    log.info("The user: {} is trying to authenticate.", userDetails.getUsername());
+    if (!userService.isActive(userDetails.getUsername()))
       throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
 
-    return authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            credentials.getEmail(), credentials.getPassword(), userDetails.getAuthorities()));
+    try {
+      return authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+              credentials.getEmail(), credentials.getPassword(), userDetails.getAuthorities()));
+    } catch (BadCredentialsException ex) {
+      throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
+    }
   }
 
   @Override

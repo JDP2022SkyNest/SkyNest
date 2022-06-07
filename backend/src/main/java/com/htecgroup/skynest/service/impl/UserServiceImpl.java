@@ -15,7 +15,6 @@ import com.htecgroup.skynest.util.EmailUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -121,8 +120,7 @@ public class UserServiceImpl implements UserService {
     UserEntity userEntity =
         userRepository
             .findUserByEmail(email)
-            .orElseThrow(
-                () -> new UsernameNotFoundException("could not find user with email: " + email));
+            .orElseThrow(() -> new UserException(UserExceptionType.EMAIL_NOT_IN_USE));
 
     return modelMapper.map(userEntity, UserDto.class);
   }

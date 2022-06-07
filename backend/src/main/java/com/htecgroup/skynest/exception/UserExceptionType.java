@@ -24,7 +24,9 @@ public enum UserExceptionType {
   INVALID_TOKEN("Access token is invalid", HttpStatus.FORBIDDEN),
   USER_NOT_ACTIVE("User is inactive: deleted, disabled, or not verified", HttpStatus.FORBIDDEN),
   ILLEGAL_EMAIL("Could not reach email", HttpStatus.INTERNAL_SERVER_ERROR),
-  JWT_ALGORITHM_IS_NULL("JWT algorithm is null", HttpStatus.INTERNAL_SERVER_ERROR);
+  JWT_ALGORITHM_IS_NULL("JWT algorithm is null", HttpStatus.INTERNAL_SERVER_ERROR),
+  INVALID_AUTHENTICATION_FORMAT(
+      "Unable to authenticate, because of Input or Output error", HttpStatus.BAD_REQUEST);
 
   private final String message;
   private final HttpStatus status;
