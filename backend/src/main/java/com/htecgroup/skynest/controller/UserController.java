@@ -24,8 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.htecgroup.skynest.util.UrlUtil.*;
@@ -280,7 +280,7 @@ public class UserController {
   }
 
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
-  @DeleteMapping("/delete/{uuid}")
+  @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
     userService.deleteUser(uuid);
     String deleteSuccess = "User was successfully deleted from database";
