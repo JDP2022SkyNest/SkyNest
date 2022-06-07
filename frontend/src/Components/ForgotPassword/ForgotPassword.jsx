@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import AxiosInstance from "../axios/AxiosInstance";
 import { inputsDisabled } from "../ReusableComponents/ReusableFunctions";
+import LoadingButton from "../Loader/LoadingButton";
 
 const ForgotPassword = () => {
    const [email, setEmail] = useState("");
@@ -77,11 +78,7 @@ const ForgotPassword = () => {
             </div>
             <div className="pt-1 mb-4">
                {loading ? (
-                  <div className="pt-1">
-                     <button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
-                        <span className="spinner-border spinner-border-md"></span>
-                     </button>
-                  </div>
+                  <LoadingButton />
                ) : (
                   <div className="pt-1 mb-4">
                      <button className="btn btn-dark btn-lg btn-block">Submit</button>

@@ -6,6 +6,7 @@ import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import Label from "../ReusableComponents/Label";
 import "./SignUp.css";
+import LoadingButton from "../Loader/LoadingButton";
 
 const SignUp = () => {
    const [name, setName] = useState("");
@@ -226,9 +227,7 @@ const SignUp = () => {
                      {buttonText}
                   </button>
                ) : (
-                  <button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
-                     <span className="spinner-border spinner-border-md"></span>
-                  </button>
+                  <LoadingButton />
                )}
             </div>
             <div className="mt-4 text-center">

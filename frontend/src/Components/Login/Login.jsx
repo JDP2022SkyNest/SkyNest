@@ -6,6 +6,7 @@ import AxiosInstance from "../axios/AxiosInstance";
 import ROUTES from "../Routes/ROUTES";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import { inputsDisabled } from "../ReusableComponents/ReusableFunctions";
+import LoadingButton from "../Loader/LoadingButton";
 
 const Login = ({ setAccessToken }) => {
    const [email, setEmail] = useState("");
@@ -122,11 +123,7 @@ const Login = ({ setAccessToken }) => {
                </small>
             </div>
             {loading ? (
-               <div className="pt-1">
-                  <button className="btn btn-dark btn-lg btn-block d-flex align-items-center justify-content-center" disabled>
-                     <span className="spinner-border spinner-border-md"></span>
-                  </button>
-               </div>
+               <LoadingButton />
             ) : (
                <div className="pt-1 mb-4">
                   <button className="btn btn-dark btn-lg btn-block">Login</button>
