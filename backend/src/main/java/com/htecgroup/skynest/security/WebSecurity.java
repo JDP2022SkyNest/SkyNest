@@ -24,8 +24,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final CustomUserDetailsService userDetailsService;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final ObjectMapper objectMapper;
-
   private final UserService userService;
+  private final CustomAuthorizationFilter customAuthorizationFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -46,7 +46,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
-        .addFilterBefore(getAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
@@ -61,10 +61,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             objectMapper);
     filter.setFilterProcessesUrl(UrlUtil.USERS_CONTROLLER_URL + UrlUtil.LOG_IN_URL);
     return filter;
-  }
-
-  public CustomAuthorizationFilter getAuthorizationFilter() {
-    return new CustomAuthorizationFilter();
   }
 
   @Override
