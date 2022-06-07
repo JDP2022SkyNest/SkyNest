@@ -1,22 +1,9 @@
 import React from "react";
-import CenteredContainer from "../ReusableComponents/CenteredContainer";
+import "..//HomePage/HomePage.css";
+import Navbar from "../Navbar/Navbar";
 
-const HomePage = ({ setAccessToken }) => {
-   const onLogout = () => {
-      localStorage.removeItem("accessToken");
-      setAccessToken("");
-   };
-
-   return (
-      <CenteredContainer>
-         <div className="container text-center">
-            <h1>PLACEHOLDER HOME PAGE</h1>
-            <button className="btn btn-warning" onClick={onLogout}>
-               LOGOUT
-            </button>
-         </div>
-      </CenteredContainer>
-   );
+const HomePage = () => {
+   return <Navbar />;
 };
 
 export default HomePage;

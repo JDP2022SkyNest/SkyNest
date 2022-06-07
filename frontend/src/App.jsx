@@ -7,6 +7,7 @@ import ProtectedRoute from "./Components/Routes/ProtectedRoute";
 import RedirectRoute from "./Components/Routes/RedirectRoute";
 import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
