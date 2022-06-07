@@ -2,7 +2,8 @@ package com.htecgroup.skynest.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UrlUtil {
@@ -31,13 +32,13 @@ public class UrlUtil {
   public static final String[] DELETE_URLS_WITHOUT_AUTH = {};
 
   public static final String[] URLS_WITHOUT_AUTH =
-      ArrayUtils.addAll(
-          ArrayUtils.addAll(
-              ArrayUtils.addAll(
-                  ArrayUtils.addAll(
-                      ArrayUtils.addAll(ANY_URLS_WITHOUT_AUTH, GET_URLS_WITHOUT_AUTH),
-                      POST_URLS_WITHOUT_AUTH),
-                  PUT_URLS_WITHOUT_AUTH),
-              DELETE_URLS_WITHOUT_AUTH),
-          new String[] {USERS_CONTROLLER_URL + LOG_IN_URL});
+      Stream.of(
+              ANY_URLS_WITHOUT_AUTH,
+              GET_URLS_WITHOUT_AUTH,
+              POST_URLS_WITHOUT_AUTH,
+              PUT_URLS_WITHOUT_AUTH,
+              DELETE_URLS_WITHOUT_AUTH,
+              new String[] {USERS_CONTROLLER_URL + LOG_IN_URL})
+          .flatMap(Stream::of)
+          .toArray(String[]::new);
 }

@@ -48,8 +48,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
-        .addFilterBefore(
-            new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(getAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
@@ -64,6 +63,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             objectMapper);
     filter.setFilterProcessesUrl(UrlUtil.USERS_CONTROLLER_URL + UrlUtil.LOG_IN_URL);
     return filter;
+  }
+
+  public CustomAuthorizationFilter getAuthorizationFilter() {
+    return new CustomAuthorizationFilter();
   }
 
   @Override
