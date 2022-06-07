@@ -6,9 +6,7 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
-import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.util.EmailUtils;
 import org.junit.jupiter.api.Assertions;
@@ -91,7 +89,8 @@ class UserServiceImplTest {
     UserDto expectedUserDto = new ModelMapper().map(expectedUserEntity, UserDto.class);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(roleService.findByName(anyString())).thenReturn(modelMapper.map(roleWorkerEntity, RoleDto.class));
+    when(roleService.findByName(anyString()))
+        .thenReturn(modelMapper.map(roleWorkerEntity, RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString()))
         .thenReturn(expectedUserDto.getEncryptedPassword());
@@ -194,14 +193,14 @@ class UserServiceImplTest {
   }
 
   @Test
-  void deleteUser_UserWithIdNotFound(){
+  void deleteUser_UserWithIdNotFound() {
     when(userRepository.existsById(any())).thenReturn(false);
 
     Assertions.assertThrows(UserException.class, () -> userService.deleteUser(null));
   }
 
   @Test
-  void enableUser(){
+  void enableUser() {
     UserDto notEnabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
     notEnabledUserDto.setEnabled(false);
     notEnabledUserDto.setVerified(false);
@@ -213,7 +212,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  void enableUser_UserAlreadyEnabled(){
+  void enableUser_UserAlreadyEnabled() {
     UserDto enabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
     Assertions.assertThrows(UserException.class, () -> userService.enableUser(enabledUserDto));
   }
