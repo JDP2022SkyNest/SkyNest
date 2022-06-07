@@ -25,8 +25,9 @@ import static java.util.Arrays.stream;
 public class JwtUtils {
 
   public static final String AUTH_HEADER = HttpHeaders.AUTHORIZATION;
+  public static final String TOKEN_PREFIX = "Bearer ";
+
   public static long ACCESS_TOKEN_EXPIRATION_MS;
-  public static String TOKEN_PREFIX;
   private static Algorithm ALGORITHM;
 
   public static String generate(
@@ -60,11 +61,6 @@ public class JwtUtils {
   @Value("${jwt.access-expiration-ms}")
   public void setNameStatic(long expirationMs) {
     ACCESS_TOKEN_EXPIRATION_MS = expirationMs;
-  }
-
-  @Value("${jwt.prefix}")
-  public void setTokenPrefix(String prefix) {
-    TOKEN_PREFIX = prefix;
   }
 
   @Value("${jwt.secret}")
