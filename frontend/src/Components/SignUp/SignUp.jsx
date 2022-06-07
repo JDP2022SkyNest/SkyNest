@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { pwSuggestion, RegEx, inputsDisabled } from "../ReusableComponents/ReusableFunctions";
+import { pwSuggestion, inputsDisabled, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
@@ -62,7 +62,7 @@ const SignUp = () => {
    const handleSubmit = async (e) => {
       e.preventDefault();
       inputsDisabled(allInputs, true);
-      if (uPassword.match(RegEx) && uPassword === confpassword) {
+      if (uPassword.match(passwordRegEx) && uPassword === confpassword) {
          setLoading(true);
          await userRegistration();
       } else {
@@ -72,7 +72,7 @@ const SignUp = () => {
    };
 
    const onSuccessfulValidation = () => {
-      if (uPassword.match(RegEx) && uPassword === confpassword) {
+      if (uPassword.match(passwordRegEx) && uPassword === confpassword) {
          return true;
       }
       return false;

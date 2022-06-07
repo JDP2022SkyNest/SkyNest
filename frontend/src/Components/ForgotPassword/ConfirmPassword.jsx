@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Label from "../ReusableComponents/Label";
 import { useNavigate } from "react-router-dom";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
-import { RegEx } from "../ReusableComponents/ReusableFunctions";
+import { passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 
 const ConfirmPassword = () => {
@@ -22,7 +22,7 @@ const ConfirmPassword = () => {
 
    const onFormSubmit = (e) => {
       e.preventDefault();
-      if (password.match(RegEx) && password === confpassword) {
+      if (password.match(passwordRegEx) && password === confpassword) {
          setSuccessMsg("Password changed successfully");
          redirectToLoginPage(1500);
       } else {
@@ -35,7 +35,7 @@ const ConfirmPassword = () => {
    };
 
    const onSuccessfulValidation = () => {
-      if (password.match(RegEx) && password === confpassword) {
+      if (password.match(passwordRegEx) && password === confpassword) {
          return true;
       }
       return false;
