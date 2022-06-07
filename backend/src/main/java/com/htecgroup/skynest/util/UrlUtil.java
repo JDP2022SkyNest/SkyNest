@@ -29,7 +29,6 @@ public class UrlUtil {
     USERS_CONTROLLER_URL + PASSWORD_RESET_URL
   };
   public static final String[] PUT_URLS_WITHOUT_AUTH = {USERS_CONTROLLER_URL + PASSWORD_RESET_URL};
-  public static final String[] DELETE_URLS_WITHOUT_AUTH = {};
 
   public static final String[] URLS_WITHOUT_AUTH =
       Stream.of(
@@ -37,7 +36,6 @@ public class UrlUtil {
               GET_URLS_WITHOUT_AUTH,
               POST_URLS_WITHOUT_AUTH,
               PUT_URLS_WITHOUT_AUTH,
-              DELETE_URLS_WITHOUT_AUTH,
               new String[] {USERS_CONTROLLER_URL + LOG_IN_URL})
           .flatMap(Stream::of)
           .toArray(String[]::new);

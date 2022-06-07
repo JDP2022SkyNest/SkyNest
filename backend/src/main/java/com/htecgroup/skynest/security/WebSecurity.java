@@ -40,8 +40,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers(HttpMethod.PUT, UrlUtil.PUT_URLS_WITHOUT_AUTH)
         .permitAll()
-        .antMatchers(HttpMethod.DELETE, UrlUtil.DELETE_URLS_WITHOUT_AUTH)
-        .permitAll()
         .antMatchers(UrlUtil.ANY_URLS_WITHOUT_AUTH)
         .permitAll()
         .anyRequest()
