@@ -7,7 +7,7 @@ import ROUTES from "../Routes/ROUTES";
 
 const ConfirmPassword = () => {
    const [password, setPassword] = useState("");
-   const [confpassword, setConfpassword] = useState("");
+   const [confPassword, setConfPassword] = useState("");
    const [showPassword, setShowPassword] = useState(false);
    const [errorMsg, setErrorMsg] = useState(false);
    const [successMsg, setSuccessMsg] = useState("");
@@ -20,9 +20,11 @@ const ConfirmPassword = () => {
       }, delay);
    };
 
+   const onSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
+
    const onFormSubmit = (e) => {
       e.preventDefault();
-      if (password.match(passwordRegEx) && password === confpassword) {
+      if (onSuccessfulValidation) {
          setSuccessMsg("Password changed successfully");
          redirectToLoginPage(1500);
       } else {
@@ -32,13 +34,6 @@ const ConfirmPassword = () => {
 
    const passwordShowHide = () => {
       setShowPassword(!showPassword);
-   };
-
-   const onSuccessfulValidation = () => {
-      if (password.match(passwordRegEx) && password === confpassword) {
-         return true;
-      }
-      return false;
    };
 
    return (
@@ -76,8 +71,8 @@ const ConfirmPassword = () => {
                      <input
                         type={showPassword ? "text" : "password"}
                         name="confPassword"
-                        value={confpassword}
-                        onChange={(e) => setConfpassword(e.target.value)}
+                        value={confPassword}
+                        onChange={(e) => setConfPassword(e.target.value)}
                         id="confPasswordInput"
                         className="form-control form-control"
                         required
@@ -86,11 +81,7 @@ const ConfirmPassword = () => {
                   </div>
                </div>
             </div>
-            {onSuccessfulValidation() ? (
-               <button className="mt-5 btn btn-dark btn-lg btn-block">Reset my password</button>
-            ) : (
-               <button className="mt-5 btn btn-dark btn-lg btn-block disabled">Reset my password</button>
-            )}
+            <button className={`mt-5 btn btn-dark btn-lg btn-block ${onSuccessfulValidation ? "" : "disabled"} `}>Reset my password</button>
          </form>
       </CenteredContainer>
    );

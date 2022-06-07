@@ -15,7 +15,7 @@ const SignUp = () => {
    const [phoneNumber, setPhoneNumber] = useState("");
    const [address, setAddress] = useState("");
    const [uPassword, setPassword] = useState("");
-   const [confpassword, setConfpassword] = useState("");
+   const [confPassword, setConfPassword] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [successfulRegister, setSuccessfulRegister] = useState("");
    const [buttonText, setButtonText] = useState("REGISTER");
@@ -59,23 +59,18 @@ const SignUp = () => {
       setLoading(false);
    };
 
+   const onSuccessfulValidation = uPassword.match(passwordRegEx) && uPassword === confPassword;
+
    const handleSubmit = async (e) => {
       e.preventDefault();
       inputsDisabled(allInputs, true);
-      if (uPassword.match(passwordRegEx) && uPassword === confpassword) {
+      if (onSuccessfulValidation) {
          setLoading(true);
          await userRegistration();
       } else {
          setErrorMsg("Requirements not met");
       }
       inputsDisabled(allInputs, false);
-   };
-
-   const onSuccessfulValidation = () => {
-      if (uPassword.match(passwordRegEx) && uPassword === confpassword) {
-         return true;
-      }
-      return false;
    };
 
    const passwordShowHide = () => {
@@ -169,7 +164,7 @@ const SignUp = () => {
                   <div className="form-outline mb-1">
                      <Label id="passwordInput">
                         Password
-                        <div className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfpassword)}>
+                        <div className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfPassword)}>
                            Suggest PW?
                         </div>
                      </Label>
@@ -198,8 +193,8 @@ const SignUp = () => {
                      <input
                         type={showPassword ? "text" : "password"}
                         name="confPassword"
-                        value={confpassword}
-                        onChange={(e) => setConfpassword(e.target.value)}
+                        value={confPassword}
+                        onChange={(e) => setConfPassword(e.target.value)}
                         id="confPasswordInput"
                         className="form-control"
                         required
@@ -215,14 +210,14 @@ const SignUp = () => {
                   <li className={uPassword.match(/([a-z])/) ? "text-success" : ""}>Lowercase Letter</li>
                   <li className={uPassword.match(/([\d])/) ? "text-success" : ""}>Number</li>
                   <li className={uPassword.length >= 8 ? "text-success" : ""}>Length of 8 characters or more</li>
-                  <li className={uPassword === confpassword && uPassword.length > 8 ? "text-success" : ""}>Passwords match</li>
+                  <li className={uPassword === confPassword && uPassword.length > 8 ? "text-success" : ""}>Passwords match</li>
                </ul>
             </small>
             <div className="my-4">
                {!loading ? (
                   <button
-                     className={onSuccessfulValidation() ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
-                     disabled={onSuccessfulValidation() ? false : true}
+                     className={onSuccessfulValidation ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
+                     disabled={onSuccessfulValidation ? false : true}
                   >
                      {buttonText}
                   </button>
