@@ -21,7 +21,10 @@ public class UserExceptionHandler {
   @ExceptionHandler(value = {UserException.class})
   public ResponseEntity<ErrorMessage> handleUserException(UserException ex, WebRequest webRequest) {
     log.error("Handle UserException. Error: {}", ex.getMessage());
-    return ex.asResponseEntity();
+    ErrorMessage errorMessage =
+        new ErrorMessage(
+            ex.getMessage(), ex.getStatus().value(), DateTimeUtil.currentTimeFormatted());
+    return new ResponseEntity<>(errorMessage, ex.getStatus());
   }
 
   @ExceptionHandler(value = {MethodArgumentNotValidException.class})

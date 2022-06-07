@@ -1,10 +1,13 @@
 package com.htecgroup.skynest.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.util.DateTimeUtil;
+import com.htecgroup.skynest.util.ExceptionUtil;
 import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.util.UrlUtil;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -46,10 +49,19 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
       filterChain.doFilter(request, response);
     } catch (UserException ex) {
-      ex.writeToResponse(response);
-    } catch (Exception e) {
-      log.error(e);
-      new ObjectMapper().writeValue(response.getOutputStream(), "Internal Error.");
+      log.error(ex);
+      ErrorMessage errorMessage =
+          new ErrorMessage(
+              ex.getMessage(), ex.getStatus().value(), DateTimeUtil.currentTimeFormatted());
+      ExceptionUtil.writeToResponse(errorMessage, response);
+    } catch (Exception ex) {
+      log.error(ex);
+      ErrorMessage errorMessage =
+          new ErrorMessage(
+              ex.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR.value(),
+              DateTimeUtil.currentTimeFormatted());
+      ExceptionUtil.writeToResponse(errorMessage, response);
     }
   }
 }
