@@ -5,7 +5,6 @@ import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
 import ROUTES from "../Routes/ROUTES";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
-import { inputsDisabled } from "../ReusableComponents/ReusableFunctions";
 import LoadingButton from "../Loader/LoadingButton";
 
 const Login = ({ setAccessToken }) => {
@@ -19,7 +18,6 @@ const Login = ({ setAccessToken }) => {
 
    const emailRef = useRef();
    const navigate = useNavigate();
-   const allInputs = document.querySelectorAll("input");
 
    const redirectToHomePage = (delay) => {
       setTimeout(() => {
@@ -64,10 +62,8 @@ const Login = ({ setAccessToken }) => {
 
    const onFormSubmit = async (e) => {
       e.preventDefault();
-      inputsDisabled(allInputs, true);
       setLoading(true);
       await getUserToken();
-      inputsDisabled(allInputs, false);
    };
 
    const passwordShowHide = () => {
@@ -84,44 +80,46 @@ const Login = ({ setAccessToken }) => {
             <p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successfulLogin ? "alert alert-success text-success text-center" : "d-none"}>{successfulLogin}</p>
-            <div className="form-outline mb-4">
-               <label className="form-label" htmlFor="emailInput">
-                  Email address
-               </label>
-               <input
-                  type="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  ref={emailRef}
-                  id="emailInput"
-                  className={`form-control form-control-lg ${errorMsg ? "border-danger" : null}`}
-                  required
-                  autoComplete="off"
-               />
-            </div>
-            <div className="form-outline mb-4">
-               <label className="form-label" htmlFor="passwordInput">
-                  Password
-               </label>
-               <div className="input-group input-group-lg ">
+            <fieldset disabled={loading ? true : false}>
+               <div className="form-outline mb-4">
+                  <label className="form-label" htmlFor="emailInput">
+                     Email address
+                  </label>
                   <input
-                     type={showPassword ? "text" : "password"}
-                     onChange={(e) => setPassword(e.target.value)}
-                     value={password}
-                     id="passwordInput"
-                     className={`form-control form-control-lg ${errorMsg ? "border-danger" : "border-right-0"}`}
+                     type="email"
+                     onChange={(e) => setEmail(e.target.value)}
+                     value={email}
+                     ref={emailRef}
+                     id="emailInput"
+                     className={`form-control form-control-lg ${errorMsg ? "border-danger" : null}`}
                      required
+                     autoComplete="off"
                   />
-                  <div className="input-group-prepend">
-                     <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
-                        <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
-                     </span>
-                  </div>
                </div>
-               <small className={forgotPassword ? "p-0" : "d-none"}>
-                  <Link to={ROUTES.FORGOTPW}>Forgot Password?</Link>
-               </small>
-            </div>
+               <div className="form-outline mb-4">
+                  <label className="form-label" htmlFor="passwordInput">
+                     Password
+                  </label>
+                  <div className="input-group input-group-lg ">
+                     <input
+                        type={showPassword ? "text" : "password"}
+                        onChange={(e) => setPassword(e.target.value)}
+                        value={password}
+                        id="passwordInput"
+                        className={`form-control form-control-lg ${errorMsg ? "border-danger" : "border-right-0"}`}
+                        required
+                     />
+                     <div className="input-group-prepend">
+                        <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
+                           <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
+                        </span>
+                     </div>
+                  </div>
+                  <small className={forgotPassword ? "p-0" : "d-none"}>
+                     <Link to={ROUTES.FORGOTPW}>Forgot Password?</Link>
+                  </small>
+               </div>
+            </fieldset>
             {loading ? (
                <LoadingButton />
             ) : (

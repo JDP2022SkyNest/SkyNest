@@ -1,7 +1,6 @@
 import password from "secure-random-password";
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-
 export const pwSuggestion = (length, func1, func2) => {
    let suggestedPw = password.randomPassword({ length, characters: [password.lower, password.upper, password.digits] });
    func1(suggestedPw);
@@ -9,9 +8,3 @@ export const pwSuggestion = (length, func1, func2) => {
       func2(suggestedPw);
    }
 };
-
-export const inputsDisabled = (variable, value) => [
-   variable.forEach((el) => {
-      el.disabled = value;
-   }),
-];

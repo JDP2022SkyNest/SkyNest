@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { pwSuggestion, inputsDisabled, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
+import { pwSuggestion, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
@@ -23,7 +23,6 @@ const SignUp = () => {
    const [loading, setLoading] = useState(false);
 
    const navigate = useNavigate();
-   const allInputs = document.querySelectorAll("input");
 
    const redirectToLoginPage = (delay) => {
       setTimeout(() => {
@@ -63,14 +62,12 @@ const SignUp = () => {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      inputsDisabled(allInputs, true);
       if (isSuccessfulValidation) {
          setLoading(true);
          await userRegistration();
       } else {
          setErrorMsg("Requirements not met");
       }
-      inputsDisabled(allInputs, false);
    };
 
    const passwordShowHide = () => {
@@ -88,121 +85,123 @@ const SignUp = () => {
             <p className="mb-4 p-0 text-center text-secondary">Create your account</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successfulRegister ? "alert alert-success text-success text-center" : "d-none"}>{successfulRegister}</p>
-            <div className="row">
-               <div className="col-md-6">
-                  <div className="form-outline mb-1">
-                     <Label id="firstNameInput">First Name</Label>
-                     <input
-                        type="name"
-                        name="firstName"
-                        id="firstNameInput"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="form-control"
-                        required
-                        autoComplete="off"
-                     />
-                  </div>
-               </div>
-               <div className="col-md-6">
-                  <div className="form-outline mb-1">
-                     <Label id="lastNameInput">Last Name</Label>
-                     <input
-                        type="name"
-                        name="lastName"
-                        value={surname}
-                        onChange={(e) => setSurname(e.target.value)}
-                        id="lastNameInput"
-                        className="form-control"
-                        required
-                        autoComplete="off"
-                     />
-                  </div>
-               </div>
-            </div>
-            <div className="form-outline mb-1">
-               <Label id="emailInput">Email adress</Label>
-               <input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  id="emailInput"
-                  className="form-control"
-                  required
-                  autoComplete="off"
-               />
-            </div>
-            <div className="form-outline mb-1">
-               <Label id="phoneInput">Phone number</Label>
-               <input
-                  type="number"
-                  name="phoneNumber"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  id="phoneInput"
-                  className="form-control no-arrow"
-                  required
-                  autoComplete="off"
-               />
-            </div>
-            <div className="form-outline mb-1">
-               <Label id="adressInput">Home adress</Label>
-               <input
-                  type="text"
-                  name="adress"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  id="adressInput"
-                  className="form-control"
-                  required
-                  autoComplete="off"
-               />
-            </div>
-            <div className="row">
-               <div className="col-md-6">
-                  <div className="form-outline mb-1">
-                     <Label id="passwordInput">
-                        Password
-                        <div className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfPassword)}>
-                           Suggest PW?
-                        </div>
-                     </Label>
-                     <div className="input-group">
+            <fieldset disabled={loading ? true : false}>
+               <div className="row">
+                  <div className="col-md-6">
+                     <div className="form-outline mb-1">
+                        <Label id="firstNameInput">First Name</Label>
                         <input
-                           type={showPassword ? "text" : "password"}
-                           name="password"
-                           value={uPassword}
-                           onChange={(e) => setPassword(e.target.value)}
-                           id="passwordInput"
-                           className="form-control border-right-0"
+                           type="name"
+                           name="firstName"
+                           id="firstNameInput"
+                           value={name}
+                           onChange={(e) => setName(e.target.value)}
+                           className="form-control"
                            required
                            autoComplete="off"
                         />
-                        <div className="input-group-prepend">
-                           <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
-                              <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
-                           </span>
-                        </div>
+                     </div>
+                  </div>
+                  <div className="col-md-6">
+                     <div className="form-outline mb-1">
+                        <Label id="lastNameInput">Last Name</Label>
+                        <input
+                           type="name"
+                           name="lastName"
+                           value={surname}
+                           onChange={(e) => setSurname(e.target.value)}
+                           id="lastNameInput"
+                           className="form-control"
+                           required
+                           autoComplete="off"
+                        />
                      </div>
                   </div>
                </div>
-               <div className="col-md-6">
-                  <div className="form-outline mb-1">
-                     <Label id="confPasswordInput">Confirm password</Label>
-                     <input
-                        type={showPassword ? "text" : "password"}
-                        name="confPassword"
-                        value={confPassword}
-                        onChange={(e) => setConfPassword(e.target.value)}
-                        id="confPasswordInput"
-                        className="form-control"
-                        required
-                        autoComplete="off"
-                     />
+               <div className="form-outline mb-1">
+                  <Label id="emailInput">Email adress</Label>
+                  <input
+                     type="email"
+                     name="email"
+                     value={email}
+                     onChange={(e) => setEmail(e.target.value)}
+                     id="emailInput"
+                     className="form-control"
+                     required
+                     autoComplete="off"
+                  />
+               </div>
+               <div className="form-outline mb-1">
+                  <Label id="phoneInput">Phone number</Label>
+                  <input
+                     type="number"
+                     name="phoneNumber"
+                     value={phoneNumber}
+                     onChange={(e) => setPhoneNumber(e.target.value)}
+                     id="phoneInput"
+                     className="form-control no-arrow"
+                     required
+                     autoComplete="off"
+                  />
+               </div>
+               <div className="form-outline mb-1">
+                  <Label id="adressInput">Home adress</Label>
+                  <input
+                     type="text"
+                     name="adress"
+                     value={address}
+                     onChange={(e) => setAddress(e.target.value)}
+                     id="adressInput"
+                     className="form-control"
+                     required
+                     autoComplete="off"
+                  />
+               </div>
+               <div className="row">
+                  <div className="col-md-6">
+                     <div className="form-outline mb-1">
+                        <Label id="passwordInput">
+                           Password
+                           <div className="suggestPwPosition btn-link" onClick={() => pwSuggestion(10, setPassword, setConfPassword)}>
+                              Suggest PW?
+                           </div>
+                        </Label>
+                        <div className="input-group">
+                           <input
+                              type={showPassword ? "text" : "password"}
+                              name="password"
+                              value={uPassword}
+                              onChange={(e) => setPassword(e.target.value)}
+                              id="passwordInput"
+                              className="form-control border-right-0"
+                              required
+                              autoComplete="off"
+                           />
+                           <div className="input-group-prepend">
+                              <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
+                                 <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
+                              </span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div className="col-md-6">
+                     <div className="form-outline mb-1">
+                        <Label id="confPasswordInput">Confirm password</Label>
+                        <input
+                           type={showPassword ? "text" : "password"}
+                           name="confPassword"
+                           value={confPassword}
+                           onChange={(e) => setConfPassword(e.target.value)}
+                           id="confPasswordInput"
+                           className="form-control"
+                           required
+                           autoComplete="off"
+                        />
+                     </div>
                   </div>
                </div>
-            </div>
+            </fieldset>
             <small>
                Password requirements:
                <ul className="mt-2 bt-2 text-danger unordered-list-padding">
