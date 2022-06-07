@@ -45,15 +45,15 @@ const SignUp = () => {
          setSuccessfulRegister("Please confirm your email");
          setButtonText("SUCCESSFUL");
          redirectToLoginPage(2000);
-      } catch ({ response }) {
-         if (response.status === 409) {
+      } catch (err) {
+         if (err.response.status === 409) {
             setErrorMsg("Email aready exists");
-         } else if (response.status === 500) {
+         } else if (err.response.status === 500) {
             setErrorMsg("Internal Server Error");
-         } else if (response.status === 0) {
+         } else if (err.response.status === 0) {
             setErrorMsg("Server Timeout");
          } else {
-            setErrorMsg(response.data.messages);
+            setErrorMsg(err.response.data.messages);
          }
       }
       setLoading(false);

@@ -41,10 +41,10 @@ const Login = ({ setAccessToken }) => {
             setErrorMsg("Internal error, please try again");
             setLoading(false);
          }
-      } catch ({ response }) {
-         if (response.status === 403) {
+      } catch (err) {
+         if (err.response.status === 403) {
             setErrorMsg("Incorrect username or password");
-         } else if (response.status === 0) {
+         } else if (err.response.status === 0) {
             setErrorMsg("Server Timeout");
          } else {
             setErrorMsg("Unknown Error");

@@ -39,8 +39,8 @@ const ForgotPassword = () => {
          await AxiosInstance.post(`/users/password-reset/request?email=${email}`);
          setSuccessMsg("Email has been sent");
          redirectToLoginPage(2000);
-      } catch ({ response }) {
-         if (response.status === 400) {
+      } catch (err) {
+         if (err.response.status === 400) {
             setErorrMsg("Email not found");
          }
          setLoading(false);
