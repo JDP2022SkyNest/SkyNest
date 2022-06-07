@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Label from "../ReusableComponents/Label";
 import { useNavigate } from "react-router-dom";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import { passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
@@ -13,20 +14,13 @@ const ConfirmPassword = () => {
    const [successMsg, setSuccessMsg] = useState("");
 
    const navigate = useNavigate();
-
-   const redirectToLoginPage = (delay) => {
-      setTimeout(() => {
-         navigate(ROUTES.LOGIN);
-      }, delay);
-   };
-
    const isSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
 
    const onFormSubmit = (e) => {
       e.preventDefault();
       if (isSuccessfulValidation) {
          setSuccessMsg("Password changed successfully");
-         redirectToLoginPage(1500);
+         redirectTo(navigate, ROUTES.LOGIN, 1000);
       } else {
          setErrorMsg("Passwords do not match");
       }

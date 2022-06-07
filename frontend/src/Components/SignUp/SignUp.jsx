@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { pwSuggestion, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
@@ -24,12 +25,6 @@ const SignUp = () => {
 
    const navigate = useNavigate();
 
-   const redirectToLoginPage = (delay) => {
-      setTimeout(() => {
-         navigate(ROUTES.LOGIN);
-      }, delay);
-   };
-
    const userRegistration = async () => {
       try {
          await AxiosInstance.post("/users/register", {
@@ -43,7 +38,7 @@ const SignUp = () => {
          setErrorMsg("");
          setSuccessfulRegister("Please confirm your email");
          setButtonText("SUCCESSFUL");
-         redirectToLoginPage(2000);
+         redirectTo(navigate, ROUTES.LOGIN, 2000);
       } catch (err) {
          if (err.response.status === 409) {
             setErrorMsg("Email aready exists");

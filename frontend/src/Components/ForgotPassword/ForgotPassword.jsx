@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ROUTES from "../Routes/ROUTES";
 import { Link, useNavigate } from "react-router-dom";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import AxiosInstance from "../axios/AxiosInstance";
 import LoadingButton from "../Loader/LoadingButton";
@@ -13,12 +14,6 @@ const ForgotPassword = () => {
 
    const emailRef = useRef();
    const navigate = useNavigate();
-
-   const redirectToLoginPage = (delay) => {
-      setTimeout(() => {
-         navigate(ROUTES.LOGIN);
-      }, delay);
-   };
 
    const onEmailChange = (e) => {
       setEmail(e.target.value);
@@ -34,7 +29,7 @@ const ForgotPassword = () => {
       try {
          await AxiosInstance.post(`/users/password-reset/request?email=${email}`);
          setSuccessMsg("Email has been sent");
-         redirectToLoginPage(2000);
+         redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
          if (err.response.status === 400) {
             setErorrMsg("Email not found");
