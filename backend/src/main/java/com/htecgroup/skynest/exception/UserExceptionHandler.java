@@ -20,10 +20,10 @@ public class UserExceptionHandler {
 
   @ExceptionHandler(value = {UserException.class})
   public ResponseEntity<ErrorMessage> handleUserException(UserException ex, WebRequest webRequest) {
+    log.error("Handle UserException. Error: {}", ex.getMessage());
     ErrorMessage errorMessage =
         new ErrorMessage(
             ex.getMessage(), ex.getStatus().value(), DateTimeUtil.currentTimeFormatted());
-    log.error("Handle UserException. Error: ", ex);
     return new ResponseEntity<>(errorMessage, ex.getStatus());
   }
 
@@ -40,7 +40,7 @@ public class UserExceptionHandler {
     ErrorMessage errorMessage =
         new ErrorMessage(
             errors, HttpStatus.BAD_REQUEST.value(), DateTimeUtil.currentTimeFormatted());
-    log.error("Handle MethodArgumentNotValidException. Error: ", ex);
+    log.error("Handle MethodArgumentNotValidException. Error: {}", ex.getMessage());
     return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
   }
 }
