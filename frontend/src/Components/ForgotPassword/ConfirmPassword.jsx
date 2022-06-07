@@ -20,11 +20,11 @@ const ConfirmPassword = () => {
       }, delay);
    };
 
-   const onSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
+   const isSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
 
    const onFormSubmit = (e) => {
       e.preventDefault();
-      if (onSuccessfulValidation) {
+      if (isSuccessfulValidation) {
          setSuccessMsg("Password changed successfully");
          redirectToLoginPage(1500);
       } else {
@@ -81,7 +81,7 @@ const ConfirmPassword = () => {
                   </div>
                </div>
             </div>
-            <button className={`mt-5 btn btn-dark btn-lg btn-block ${onSuccessfulValidation ? "" : "disabled"} `}>Reset my password</button>
+            <button className={`mt-5 btn btn-dark btn-lg btn-block ${isSuccessfulValidation ? "" : "disabled"} `}>Reset my password</button>
          </form>
       </CenteredContainer>
    );

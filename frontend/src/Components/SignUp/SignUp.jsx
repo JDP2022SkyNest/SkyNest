@@ -59,12 +59,12 @@ const SignUp = () => {
       setLoading(false);
    };
 
-   const onSuccessfulValidation = uPassword.match(passwordRegEx) && uPassword === confPassword;
+   const isSuccessfulValidation = uPassword.match(passwordRegEx) && uPassword === confPassword;
 
    const handleSubmit = async (e) => {
       e.preventDefault();
       inputsDisabled(allInputs, true);
-      if (onSuccessfulValidation) {
+      if (isSuccessfulValidation) {
          setLoading(true);
          await userRegistration();
       } else {
@@ -216,8 +216,8 @@ const SignUp = () => {
             <div className="my-4">
                {!loading ? (
                   <button
-                     className={onSuccessfulValidation ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
-                     disabled={onSuccessfulValidation ? false : true}
+                     className={isSuccessfulValidation ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
+                     disabled={isSuccessfulValidation ? false : true}
                   >
                      {buttonText}
                   </button>
