@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -77,7 +78,7 @@ public class UserController {
   }
 
   @DeleteMapping("/delete")
-  public ResponseEntity<String> deleteUser(@RequestParam String uuid) {
+  public ResponseEntity<String> deleteUser(@RequestParam UUID uuid) {
     userService.deleteUser(uuid);
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
