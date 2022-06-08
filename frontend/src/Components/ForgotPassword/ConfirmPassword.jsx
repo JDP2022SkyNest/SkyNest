@@ -28,7 +28,7 @@ const ConfirmPassword = () => {
             password,
          });
          setSuccessMsg("Password changed successfully");
-         // redirectTo(navigate, ROUTES.LOGIN, 1500);
+         redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
          setErrorMsg("Failed");
          console.log(err);
