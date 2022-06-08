@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
@@ -89,8 +90,7 @@ class UserServiceImplTest {
     UserDto expectedUserDto = new ModelMapper().map(expectedUserEntity, UserDto.class);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(roleService.findByName(anyString()))
-        .thenReturn(modelMapper.map(roleWorkerEntity, RoleDto.class));
+    when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString()))
         .thenReturn(expectedUserDto.getEncryptedPassword());
@@ -109,8 +109,10 @@ class UserServiceImplTest {
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
-
-    Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+    String errorMessageExpected = UserExceptionType.EMAIL_ALREADY_IN_USE.getMessage();
+    Exception exceptionThrown =
+        Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+    Assertions.assertEquals(errorMessageExpected, exceptionThrown.getMessage());
   }
 
   @Test
@@ -195,8 +197,8 @@ class UserServiceImplTest {
   @Test
   void deleteUser_UserWithIdNotFound() {
     when(userRepository.existsById(any())).thenReturn(false);
-
-    Assertions.assertThrows(UserException.class, () -> userService.deleteUser(null));
+    UUID uuid = new UUID(123, 321);
+    Assertions.assertThrows(UserException.class, () -> userService.deleteUser(uuid));
   }
 
   @Test
