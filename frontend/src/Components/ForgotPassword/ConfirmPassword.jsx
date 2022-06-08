@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Label from "../ReusableComponents/Label";
-import { useNavigate } from "react-router-dom";
-import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { redirectTo, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
-import { passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
-import { useSearchParams } from "react-router-dom";
 import AxiosInstance from "../axios/AxiosInstance";
 import LoadingButton from "../Loader/LoadingButton";
 
@@ -18,15 +16,14 @@ const ConfirmPassword = () => {
    const [searchParams, setSearchParams] = useSearchParams();
    const [loading, setLoading] = useState(false);
 
-   const pwToken = searchParams.get("token");
-
+   const token = searchParams.get("token");
    const navigate = useNavigate();
    const isSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
 
    const onPwSubmit = async () => {
       try {
          await AxiosInstance.put("/users/password-reset", {
-            token: pwToken,
+            token,
             password,
          });
          setSuccessMsg("Password changed successfully");
@@ -41,11 +38,10 @@ const ConfirmPassword = () => {
    const onFormSubmit = async (e) => {
       e.preventDefault();
       if (isSuccessfulValidation) {
-         console.log(password, pwToken);
          setLoading(true);
          await onPwSubmit();
       } else {
-         setSearchParams({ token: pwToken });
+         setSearchParams({ token });
          setErrorMsg("Passwords do not match");
       }
    };
