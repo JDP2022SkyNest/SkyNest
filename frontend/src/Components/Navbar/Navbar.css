@@ -1,10 +1,18 @@
-
-.navbar {
+.nav {
   background-color: var(--latte);
-  height: 80px;
+   height: 90px;
   display: flex;
   justify-content: start;
   align-items: center;
+}
+.logoImageBrand {
+  position: absolute;
+  width: 70px;
+  margin-left: 6rem;
+}
+.brand {
+  position: absolute;
+  margin-left: 10rem;
 }
 
 .menu-bars {
@@ -12,10 +20,19 @@
   font-size: 2rem;
   background: none;
 }
+.profile {
+  margin-right: 2rem;
+  font-size: 2rem;
+  background: none;
+  color: black;
+}
+.profile a:hover {
+  color: white;
+}
 
 .nav-menu {
   background-color: black;
-  width: 250px;
+  width: 350px;
   height: 100vh;
   display: flex;
   justify-content: center;
