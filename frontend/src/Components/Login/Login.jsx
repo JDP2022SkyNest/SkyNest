@@ -30,6 +30,7 @@ const Login = ({ setAccessToken }) => {
             localStorage.setItem("accessToken", token);
             setSuccessfulLogin("Login Successful, redirecting.");
             redirectTo(navigate, ROUTES.HOME, 1000);
+            setErrorMsg("");
          } else {
             setErrorMsg("Internal error, please try again");
             setLoading(false);
