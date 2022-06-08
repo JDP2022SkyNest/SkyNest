@@ -202,20 +202,20 @@ class UserServiceImplTest {
   }
 
   @Test
-  void enableUser() {
+  void verifyUser() {
     UserDto notEnabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
     notEnabledUserDto.setEnabled(false);
     notEnabledUserDto.setVerified(false);
 
-    UserDto verifiedUser = userService.enableUser(notEnabledUserDto);
+    UserDto verifiedUser = userService.verifyUser(notEnabledUserDto);
 
     Assertions.assertTrue(verifiedUser.getVerified());
     Assertions.assertTrue(verifiedUser.getEnabled());
   }
 
   @Test
-  void enableUser_UserAlreadyEnabled() {
+  void verifyUser_UserAlreadyVerified() {
     UserDto enabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
-    Assertions.assertThrows(UserException.class, () -> userService.enableUser(enabledUserDto));
+    Assertions.assertThrows(UserException.class, () -> userService.verifyUser(enabledUserDto));
   }
 }
