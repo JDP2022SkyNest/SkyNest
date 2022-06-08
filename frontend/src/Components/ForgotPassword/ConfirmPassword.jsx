@@ -27,7 +27,10 @@ const ConfirmPassword = () => {
             token: pwToken,
             password,
          });
+         setSuccessMsg("Password changed successfully");
+         // redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
+         setErrorMsg("Failed");
          console.log(err);
       }
    };
@@ -35,10 +38,8 @@ const ConfirmPassword = () => {
    const onFormSubmit = async (e) => {
       e.preventDefault();
       if (isSuccessfulValidation) {
-         setSuccessMsg("Password changed successfully");
          console.log(password, pwToken);
          await onPwSubmit();
-         // redirectTo(navigate, ROUTES.LOGIN, 1500);
       } else {
          setSearchParams({ token: pwToken });
          setErrorMsg("Passwords do not match");
