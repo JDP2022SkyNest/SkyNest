@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Label from "../ReusableComponents/Label";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { redirectTo, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, passwordRegEx, PasswordRequirements } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
@@ -99,16 +99,7 @@ const ConfirmPassword = () => {
                   </div>
                </div>
             </div>
-            <small>
-               Password requirements:
-               <ul className="mt-2 bt-2 text-danger unordered-list-padding">
-                  <li className={password.match(/([A-Z])/) ? "text-success" : ""}>Uppercase Letter</li>
-                  <li className={password.match(/([a-z])/) ? "text-success" : ""}>Lowercase Letter</li>
-                  <li className={password.match(/([\d])/) ? "text-success" : ""}>Number</li>
-                  <li className={password.length >= 8 ? "text-success" : ""}>Length of 8 characters or more</li>
-                  <li className={password === confPassword && password.length > 0 ? "text-success" : ""}>Passwords match</li>
-               </ul>
-            </small>
+            {PasswordRequirements(password, confPassword)}
             <div className="my-4">
                {!loading ? (
                   <button

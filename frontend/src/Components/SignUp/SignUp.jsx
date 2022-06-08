@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { pwSuggestion, passwordRegEx, redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { pwSuggestion, passwordRegEx, redirectTo, PasswordRequirements } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
@@ -196,16 +196,7 @@ const SignUp = () => {
                   </div>
                </div>
             </fieldset>
-            <small>
-               Password requirements:
-               <ul className="mt-2 bt-2 text-danger unordered-list-padding">
-                  <li className={uPassword.match(/([A-Z])/) ? "text-success" : ""}>Uppercase Letter</li>
-                  <li className={uPassword.match(/([a-z])/) ? "text-success" : ""}>Lowercase Letter</li>
-                  <li className={uPassword.match(/([\d])/) ? "text-success" : ""}>Number</li>
-                  <li className={uPassword.length >= 8 ? "text-success" : ""}>Length of 8 characters or more</li>
-                  <li className={uPassword === confPassword && uPassword.length > 0 ? "text-success" : ""}>Passwords match</li>
-               </ul>
-            </small>
+            {PasswordRequirements(uPassword, confPassword)}
             <div className="my-4">
                {!loading ? (
                   <button
