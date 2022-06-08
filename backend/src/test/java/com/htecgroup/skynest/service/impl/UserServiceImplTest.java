@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -131,6 +132,26 @@ class UserServiceImplTest {
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(enabledWorkerEntity));
 
     UserDto expectedUserDto = userService.findUserByEmail(enabledWorkerEntity.getEmail());
+
+    Assertions.assertEquals(
+        new ModelMapper().map(enabledWorkerEntity, UserDto.class), expectedUserDto);
+  }
+
+  @Test
+  void getUser_IdNotFound() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    UserException ex =
+        Assertions.assertThrows(UserException.class, () -> userService.getUser(UUID.randomUUID()));
+
+    Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
+  }
+
+  @Test
+  void getUser() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
+
+    UserDto expectedUserDto = userService.getUser(enabledWorkerEntity.getId());
 
     Assertions.assertEquals(
         new ModelMapper().map(enabledWorkerEntity, UserDto.class), expectedUserDto);
