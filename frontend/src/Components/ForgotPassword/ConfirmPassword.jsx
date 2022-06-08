@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Label from "../ReusableComponents/Label";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { redirectTo, passwordRegEx, PasswordRequirements } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import LoadingButton from "../Loader/LoadingButton";
+import PasswordRequirements from "../ReusableComponents/PasswordRequirements";
 
 const ConfirmPassword = () => {
    const [password, setPassword] = useState("");

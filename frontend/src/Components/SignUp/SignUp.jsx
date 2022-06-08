@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { pwSuggestion, passwordRegEx, redirectTo, PasswordRequirements } from "../ReusableComponents/ReusableFunctions";
+import { pwSuggestion, passwordRegEx, redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import Label from "../ReusableComponents/Label";
 import "./SignUp.css";
 import LoadingButton from "../Loader/LoadingButton";
+import PasswordRequirements from "../ReusableComponents/PasswordRequirements";
 
 const SignUp = () => {
    const [name, setName] = useState("");
