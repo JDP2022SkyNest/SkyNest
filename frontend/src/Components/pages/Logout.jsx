@@ -1,11 +1,16 @@
 import React from "react";
+import CenteredContainer from "../ReusableComponents/CenteredContainer";
 
-function Logout() {
+const Logout = ({ setAccessToken }) => {
+   const onLogout = () => {
+      localStorage.removeItem("accessToken");
+      setAccessToken("");
+   };
    return (
-      <div className="logout">
-         <h1>Logout</h1>
-      </div>
+      <CenteredContainer>
+         <button className="btn btn-warning" onClick={onLogout}></button>
+      </CenteredContainer>
    );
-}
+};
 
 export default Logout;

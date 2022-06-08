@@ -1,11 +1,8 @@
 import React from "react";
+import CenteredContainer from "../ReusableComponents/CenteredContainer";
 
 function YourProfile() {
-   return (
-      <div className="yourprofile">
-         <h1>YourProfile</h1>
-      </div>
-   );
+   return <CenteredContainer>Your Profile</CenteredContainer>;
 }
 
 export default YourProfile;

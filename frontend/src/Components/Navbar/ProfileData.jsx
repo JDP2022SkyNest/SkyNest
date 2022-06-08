@@ -5,19 +5,19 @@ import * as FiIcons from "react-icons/fi";
 export const ProfileData = [
    {
       title: "Your profile",
-      path: "/",
+      path: "/yourprofile",
       icon: <CgIcons.CgProfile />,
       cName: "nav-text",
    },
    {
       title: "Settings",
-      path: "/Settings",
+      path: "/settings",
       icon: <FiIcons.FiSettings />,
       cName: "nav-text",
    },
    {
       title: "Logout",
-      path: "/Log out",
+      path: "/logout",
       icon: <CgIcons.CgLogOut />,
       cName: "nav-text",
    },
