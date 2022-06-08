@@ -39,6 +39,12 @@ const Login = ({ setAccessToken }) => {
             setErrorMsg("Incorrect username or password");
          } else if (err.response.status === 0) {
             setErrorMsg("Server Timeout");
+         } else if (err.response.status === 400) {
+            setErrorMsg("User doesn't exist");
+         } else if (err.response.status === 401) {
+            setErrorMsg("Email not verified");
+         } else if (err.response.status === 417) {
+            setErrorMsg("Wrong password");
          } else {
             setErrorMsg("Unknown Error");
          }

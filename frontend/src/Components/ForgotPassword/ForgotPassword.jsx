@@ -27,7 +27,7 @@ const ForgotPassword = () => {
 
    const onSuccessfulChange = async () => {
       try {
-         await AxiosInstance.post(`/users/password-reset/request?email=${email}`);
+         await AxiosInstance.post(`/users/password-reset?email=${email}`);
          setSuccessMsg("Email has been sent");
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {

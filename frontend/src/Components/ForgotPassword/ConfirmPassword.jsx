@@ -5,6 +5,8 @@ import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import { passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
+import { useSearchParams } from "react-router-dom";
+import AxiosInstance from "../axios/AxiosInstance";
 
 const ConfirmPassword = () => {
    const [password, setPassword] = useState("");
@@ -12,15 +14,32 @@ const ConfirmPassword = () => {
    const [showPassword, setShowPassword] = useState(false);
    const [errorMsg, setErrorMsg] = useState(false);
    const [successMsg, setSuccessMsg] = useState("");
+   const [searchParams, setSearchParams] = useSearchParams();
+
+   const pwToken = searchParams.get("token");
 
    const navigate = useNavigate();
    const isSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
 
-   const onFormSubmit = (e) => {
+   const onPwSubmit = async () => {
+      try {
+         await AxiosInstance.put("/users/password-reset", {
+            token: pwToken,
+            password,
+         });
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
+   const onFormSubmit = async (e) => {
+      setSearchParams({ token: pwToken });
       e.preventDefault();
       if (isSuccessfulValidation) {
          setSuccessMsg("Password changed successfully");
-         redirectTo(navigate, ROUTES.LOGIN, 1000);
+         console.log(password, pwToken);
+         await onPwSubmit();
+         // redirectTo(navigate, ROUTES.LOGIN, 1500);
       } else {
          setErrorMsg("Passwords do not match");
       }
