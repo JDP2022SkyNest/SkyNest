@@ -20,15 +20,15 @@
     <profiles>
         <profile>
             <id>local</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <spring.profiles.active>local</spring.profiles.active>
             </properties>
         </profile>
         <profile>
             <id>no-tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
                 <spring.profiles.active>no-tests</spring.profiles.active>
