@@ -332,8 +332,9 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
-    UserDto userDto = userService.getUser(uuid);
-    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
+    UserResponse userResponse = userService.getUser(uuid);
+    ResponseEntity<UserResponse> userResponseEntity = new ResponseEntity<>(userResponse, HttpStatus.OK);
+    return userResponseEntity;
   }
 
   @Operation(summary = "Delete User with that id")

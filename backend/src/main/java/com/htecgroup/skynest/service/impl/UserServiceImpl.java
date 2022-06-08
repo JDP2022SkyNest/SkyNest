@@ -120,13 +120,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDto getUser(UUID uuid) {
+  public UserResponse getUser(UUID uuid) {
     UserEntity userEntity =
         userRepository
             .findById(uuid)
             .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
-    return modelMapper.map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserResponse.class);
   }
 
   @Override

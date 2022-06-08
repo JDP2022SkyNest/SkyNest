@@ -29,5 +29,5 @@ public interface UserService {
 
   void deleteUser(UUID uuid);
 
-  UserDto getUser(UUID uuid);
+  UserResponse getUser(UUID uuid);
 }
