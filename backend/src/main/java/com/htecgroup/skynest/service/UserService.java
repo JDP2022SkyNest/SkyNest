@@ -28,4 +28,6 @@ public interface UserService {
   boolean isActive(String email);
 
   void deleteUser(UUID uuid);
+
+  UserDto getUser(UUID uuid);
 }

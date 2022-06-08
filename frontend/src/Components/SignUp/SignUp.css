@@ -4,8 +4,9 @@
 
 .suggestPwPosition {
    position: absolute;
-   right: 2%;
-   top: 3px;
+   right: 7%;
+   top: 12px;
+   font-size: 12px;
 }
 
 .no-arrow {
