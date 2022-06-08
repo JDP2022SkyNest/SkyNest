@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -130,10 +129,12 @@ class UserServiceImplTest {
   void findUserByEmail_NoSuchUser() {
 
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
+    String errorMessageExpected = UserExceptionType.EMAIL_NOT_IN_USE.getMessage();
 
-    Assertions.assertThrows(
-        UsernameNotFoundException.class,
-        () -> userService.findUserByEmail(enabledWorkerEntity.getEmail()));
+    Exception exceptionThrown =
+        Assertions.assertThrows(
+            UserException.class, () -> userService.findUserByEmail(enabledWorkerEntity.getEmail()));
+    Assertions.assertEquals(errorMessageExpected, exceptionThrown.getMessage());
   }
 
   @Test
@@ -149,19 +150,6 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
     Assertions.assertEquals(expectedResponse, userService.confirmEmail(anyString()));
-  }
-
-  @Test
-  void confirmEmail_UserWithEmailNotFound() {
-    UserEntity disabledWorkerEntity = enabledWorkerEntity;
-    disabledWorkerEntity.setEnabled(false);
-    disabledWorkerEntity.setVerified(false);
-    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
-        .thenReturn(disabledWorkerEntity.getEmail());
-    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-
-    Assertions.assertThrows(
-        UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
   }
 
   @Test
@@ -207,6 +195,7 @@ class UserServiceImplTest {
     notEnabledUserDto.setEnabled(false);
     notEnabledUserDto.setVerified(false);
 
+    doReturn(false).when(userService).isActive(anyString());
     UserDto verifiedUser = userService.verifyUser(notEnabledUserDto);
 
     Assertions.assertTrue(verifiedUser.getVerified());
@@ -216,6 +205,7 @@ class UserServiceImplTest {
   @Test
   void verifyUser_UserAlreadyVerified() {
     UserDto enabledUserDto = modelMapper.map(enabledWorkerEntity, UserDto.class);
+    doReturn(true).when(userService).isActive(anyString());
     Assertions.assertThrows(UserException.class, () -> userService.verifyUser(enabledUserDto));
   }
 }
