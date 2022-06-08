@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public void sendPasswordResetEmail(String email) {
     if (!userRepository.existsByEmail(email)) {
-      throw new UserException(UserExceptionType.EMAIL_NOT_IN_USE);
+      throw new UserException(UserExceptionType.USER_NOT_FOUND);
     }
 
     String token = emailUtils.generateJwtEmailToken(email);
@@ -116,11 +116,21 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public UserDto getUser(UUID uuid) {
+    UserEntity userEntity =
+        userRepository
+            .findById(uuid)
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+
+    return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
         userRepository
             .findUserByEmail(email)
-            .orElseThrow(() -> new UserException(UserExceptionType.EMAIL_NOT_IN_USE));
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
     return modelMapper.map(userEntity, UserDto.class);
   }

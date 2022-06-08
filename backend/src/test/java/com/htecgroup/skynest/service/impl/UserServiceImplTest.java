@@ -160,10 +160,30 @@ class UserServiceImplTest {
   }
 
   @Test
+  void getUser_IdNotFound() {
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    UserException ex =
+        Assertions.assertThrows(UserException.class, () -> userService.getUser(UUID.randomUUID()));
+
+    Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
+  }
+
+  @Test
+  void getUser() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
+
+    UserDto expectedUserDto = userService.getUser(enabledWorkerEntity.getId());
+
+    Assertions.assertEquals(
+        new ModelMapper().map(enabledWorkerEntity, UserDto.class), expectedUserDto);
+  }
+
+  @Test
   void findUserByEmail_NoSuchUser() {
 
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-    String expectedErrorMessage = UserExceptionType.EMAIL_NOT_IN_USE.getMessage();
+    String expectedErrorMessage = UserExceptionType.USER_NOT_FOUND.getMessage();
     Exception thrownException =
         Assertions.assertThrows(
             UserException.class, () -> userService.findUserByEmail(enabledWorkerEntity.getEmail()));

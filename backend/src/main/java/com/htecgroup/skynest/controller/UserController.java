@@ -93,7 +93,15 @@ public class UserController {
                                 + " \"timestamp\": \"2022-06-03 16:18:12\"}")
                   })
             }),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
       })
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
       content =
@@ -231,7 +239,6 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  // Password was successfully reset
   @Operation(summary = "Confirm password reset")
   @ApiResponses(
       value = {
@@ -253,7 +260,15 @@ public class UserController {
                   schema = @Schema(implementation = String.class),
                   examples = {@ExampleObject(value = "Access token is invalid")})
             }),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
       })
   @PutMapping(PASSWORD_RESET_URL)
   public ResponseEntity<String> confirmPasswordReset(
@@ -265,7 +280,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @Operation(summary = "Get User with that id")
+  @Operation(summary = "Get Users")
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping
   public List<UserResponse> getUsers() {
@@ -275,7 +290,98 @@ public class UserController {
         .collect(Collectors.toList());
   }
 
+  @Operation(summary = "Get User with that Id")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = UserResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + " \"email\": \"username@gmail.com\","
+                                + "  \"name\": \"Name\","
+                                + "  \"surname\": \"Surname\","
+                                + "  \"phoneNumber\": \"38166575757\","
+                                + "  \"address\": \"Local address\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @GetMapping("/{uuid}")
+  public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
+    UserDto userDto = userService.getUser(uuid);
+    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
+  }
+
   @Operation(summary = "Delete User with that id")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User successfully deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {
+                    @ExampleObject(value = "User was successfully deleted from database")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
