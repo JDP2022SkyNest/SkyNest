@@ -1,7 +1,8 @@
 package com.htecgroup.skynest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.security.SecurityConstants;
+import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
+import com.htecgroup.skynest.util.JwtUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,13 +27,14 @@ public class SkyNestApplication {
         registry
             .addMapping("/**")
             .allowedOrigins("http://localhost:3000")
+            .allowedOriginPatterns("http://localhost:3000/*")
             .allowedHeaders(
-                SecurityConstants.HEADER_STRING,
+                JwtUtils.AUTH_HEADER,
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT)
             .exposedHeaders(
-                SecurityConstants.HEADER_STRING,
+                JwtUtils.AUTH_HEADER,
                 HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
                 HttpHeaders.ORIGIN,
                 HttpHeaders.ACCEPT,
@@ -45,6 +47,11 @@ public class SkyNestApplication {
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public CustomAuthorizationFilter customAuthorizationFilter() {
+    return new CustomAuthorizationFilter();
   }
 
   @Bean

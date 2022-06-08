@@ -5,6 +5,7 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
 
@@ -16,10 +17,15 @@ public interface UserService {
 
   String confirmEmail(String token);
 
-  UserDto enableUser(UserDto userDto);
+  UserDto verifyUser(UserDto userDto);
+
   void sendVerificationEmail(String email);
 
   void sendPasswordResetEmail(String email);
 
   String resetPassword(String token, String password);
+
+  boolean isActive(String email);
+
+  void deleteUser(UUID uuid);
 }
