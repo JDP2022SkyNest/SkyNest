@@ -1,13 +1,14 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
-import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.util.EmailUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -35,15 +35,15 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
   @Mock private UserRepository userRepository;
-  @Mock private RoleRepository roleRepository;
+  @Mock private RoleService roleService;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
   @Mock private EmailUtils emailUtils;
   @Spy private ModelMapper modelMapper;
-  @Spy private EmailService emailService;
 
   @Spy @InjectMocks private UserServiceImpl userService;
 
   private UserEntity enabledWorkerEntity;
+  private UserDto notVerifiedUserDto;
   private RoleEntity roleWorkerEntity;
   private UserRegisterRequest newUserRequest;
 
@@ -53,8 +53,26 @@ class UserServiceImplTest {
     modelMapper = new ModelMapper();
 
     LocalDateTime currentDateTime = LocalDateTime.now();
-
     roleWorkerEntity = new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_WORKER);
+
+    notVerifiedUserDto =
+        new UserDto(
+            UUID.randomUUID(),
+            currentDateTime,
+            currentDateTime,
+            null,
+            "test@test.com",
+            "password",
+            "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW",
+            "Name",
+            "Surname",
+            "Address",
+            "381123456789",
+            false,
+            false,
+            modelMapper.map(roleWorkerEntity, RoleDto.class),
+            null);
+
     enabledWorkerEntity =
         new UserEntity(
             UUID.randomUUID(),
@@ -90,8 +108,7 @@ class UserServiceImplTest {
     UserDto expectedUserDto = new ModelMapper().map(expectedUserEntity, UserDto.class);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(roleRepository.findByName(anyString()))
-        .thenReturn(Optional.of(new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_WORKER)));
+    when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString()))
         .thenReturn(expectedUserDto.getEncryptedPassword());
@@ -105,24 +122,30 @@ class UserServiceImplTest {
   }
 
   @Test
-  void registerUser_AlreadyExists() {
+  void registerUser_AlreadyExistsByEmail() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
+    String expectedErrorMessage = UserExceptionType.EMAIL_ALREADY_IN_USE.getMessage();
 
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
 
-    Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+    Exception thrownException =
+        Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
-  void registerUser_RoleNotFound() {
+  void registerUser_AlreadyExistsByPhone() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(roleRepository.findByName(anyString())).thenReturn(Optional.empty());
+    when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
+    String expectedErrorMessage = UserExceptionType.PHONE_NUMBER_ALREADY_IN_USE.getMessage();
 
     UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
 
-    Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+    Exception thrownException =
+        Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
@@ -140,38 +163,24 @@ class UserServiceImplTest {
   void findUserByEmail_NoSuchUser() {
 
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-
-    Assertions.assertThrows(
-        UsernameNotFoundException.class,
-        () -> userService.findUserByEmail(enabledWorkerEntity.getEmail()));
+    String expectedErrorMessage = UserExceptionType.EMAIL_NOT_IN_USE.getMessage();
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserException.class, () -> userService.findUserByEmail(enabledWorkerEntity.getEmail()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
   void confirmEmail() {
     String expectedResponse = "User verified successfully";
-
-    UserEntity disabledWorkerEntity = enabledWorkerEntity;
-    disabledWorkerEntity.setEnabled(false);
-    disabledWorkerEntity.setVerified(false);
-    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
-        .thenReturn(disabledWorkerEntity.getEmail());
-    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(disabledWorkerEntity));
+    String testEmail = "confirmEmail@email.com";
+    UserDto userMock = mock(UserDto.class);
+    when(emailUtils.getEmailFromJwtEmailToken(anyString())).thenReturn(testEmail);
+    doReturn(userMock).when(userService).findUserByEmail(anyString());
+    doReturn(userMock).when(userService).verifyUser(any());
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
-    Assertions.assertEquals(expectedResponse, userService.confirmEmail(anyString()));
-  }
-
-  @Test
-  void confirmEmail_UserWithEmailNotFound() {
-    UserEntity disabledWorkerEntity = enabledWorkerEntity;
-    disabledWorkerEntity.setEnabled(false);
-    disabledWorkerEntity.setVerified(false);
-    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
-        .thenReturn(disabledWorkerEntity.getEmail());
-    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-
-    Assertions.assertThrows(
-        UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
+    Assertions.assertEquals(expectedResponse, userService.confirmEmail("Token"));
   }
 
   @Test
@@ -202,5 +211,53 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
     Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
+  }
+
+  @Test
+  void verifyEmail() {
+    doReturn(false).when(userService).isActive(anyString());
+    UserDto verifiedUser = userService.verifyUser(notVerifiedUserDto);
+
+    Assertions.assertTrue(verifiedUser.getVerified());
+    Assertions.assertTrue(verifiedUser.getEnabled());
+  }
+
+  @Test
+  void verifyUser_UserAlreadyVerified() {
+    UserDto verifiedUserDto = notVerifiedUserDto.withEnabled(true).withVerified(true);
+    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
+
+    doReturn(true).when(userService).isActive(anyString());
+
+    Exception thrownException =
+        Assertions.assertThrows(UserException.class, () -> userService.verifyUser(verifiedUserDto));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void isActive_True() {
+    UserDto activeUserDto = notVerifiedUserDto.withVerified(true).withEnabled(true);
+    doReturn(activeUserDto).when(userService).findUserByEmail(anyString());
+    boolean returnedValue = userService.isActive(activeUserDto.getEmail());
+    Assertions.assertTrue(returnedValue);
+  }
+
+  @Test
+  void isActive_NotVerifiedUser() {
+    UserDto deletedUserDto = notVerifiedUserDto;
+    deletedUserDto.setDeletedOn(LocalDateTime.now());
+    doReturn(deletedUserDto).when(userService).findUserByEmail(anyString());
+    boolean returnedValue = userService.isActive(deletedUserDto.getEmail());
+    Assertions.assertFalse(returnedValue);
+  }
+
+  @Test
+  void deleteUser_UserDoesNotExist() {
+    when(userRepository.existsById(any())).thenReturn(false);
+    UUID uuid = UUID.randomUUID();
+    String expectedErrorMessage = String.format("User with id %s doesn't exist", uuid);
+    Exception thrownException =
+        Assertions.assertThrows(UserException.class, () -> userService.deleteUser(uuid));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 }
