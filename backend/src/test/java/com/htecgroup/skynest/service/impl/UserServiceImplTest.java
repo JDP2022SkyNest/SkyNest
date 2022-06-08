@@ -5,6 +5,7 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
@@ -104,15 +105,13 @@ class UserServiceImplTest {
     Assertions.assertEquals(expectedUserDto, actualUserDto);
   }*/
 
- /* @Test
+  @Test
   void registerUser_AlreadyExists() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
-    UserDto newUserDto = new ModelMapper().map(newUserRequest, UserDto.class);
-
-    Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
-  }*/
+    Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserRequest));
+  }
 
  /* @Test
   void registerUser_RoleNotFound() {
@@ -174,23 +173,23 @@ class UserServiceImplTest {
         UsernameNotFoundException.class, () -> userService.confirmEmail(anyString()));
   }
 
- /* @Test
+  @Test
   void listAllUsers() {
     List<UserEntity> userEntityList = new ArrayList<>();
     userEntityList.add(enabledWorkerEntity);
     when(userRepository.findAll()).thenReturn(userEntityList);
 
-    List<UserDto> expectedDTOs =
+    List<UserResponse> expectedResponse =
         userEntityList.stream()
-            .map(e -> modelMapper.map(e, UserDto.class))
+            .map(e -> modelMapper.map(e, UserResponse.class))
             .collect(Collectors.toList());
 
-    List<UserDto> returnedDTOs = userService.listAllUsers();
+    List<UserResponse> returnedResponse = userService.listAllUsers();
 
-    Assertions.assertEquals(expectedDTOs.size(), returnedDTOs.size());
-    Assertions.assertEquals(expectedDTOs.get(0), returnedDTOs.get(0));
-    Assertions.assertEquals(expectedDTOs.get(0).getEmail(), returnedDTOs.get(0).getEmail());
-  }*/
+    Assertions.assertEquals(expectedResponse.size(), returnedResponse.size());
+    Assertions.assertEquals(expectedResponse.get(0), returnedResponse.get(0));
+    Assertions.assertEquals(expectedResponse.get(0).getEmail(), returnedResponse.get(0).getEmail());
+  }
 
   @Test
   void resetPassword() {
