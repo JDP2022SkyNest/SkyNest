@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.htecgroup.skynest.util.UrlUtil.*;
 
@@ -113,10 +112,6 @@ public class UserController {
 
     ResponseEntity<UserResponse> responseEntity = new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
     return responseEntity;
-
-//    UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
-//
-//    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
   }
 
   @Operation(summary = "Confirm email")
@@ -271,9 +266,6 @@ public class UserController {
   public List<UserResponse> getUsers() {
     List<UserResponse> listOfUsers = userService.listAllUsers();
     return listOfUsers;
-//    return listOfUsers.stream()
-//        .map(e -> modelMapper.map(e, UserResponse.class))
-//        .collect(Collectors.toList());
   }
 
   @Operation(summary = "Delete User with that id")
