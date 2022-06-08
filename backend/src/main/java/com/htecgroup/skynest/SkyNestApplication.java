@@ -26,6 +26,7 @@ public class SkyNestApplication {
       public void addCorsMappings(CorsRegistry registry) {
         registry
             .addMapping("/**")
+            .allowedMethods("*")
             .allowedOrigins("http://localhost:3000")
             .allowedOriginPatterns("http://localhost:3000/*")
             .allowedHeaders(
