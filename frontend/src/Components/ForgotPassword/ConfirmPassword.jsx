@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Label from "../ReusableComponents/Label";
 import { useNavigate } from "react-router-dom";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
@@ -33,7 +33,6 @@ const ConfirmPassword = () => {
    };
 
    const onFormSubmit = async (e) => {
-      setSearchParams({ token: pwToken });
       e.preventDefault();
       if (isSuccessfulValidation) {
          setSuccessMsg("Password changed successfully");
@@ -41,6 +40,7 @@ const ConfirmPassword = () => {
          await onPwSubmit();
          // redirectTo(navigate, ROUTES.LOGIN, 1500);
       } else {
+         setSearchParams({ token: pwToken });
          setErrorMsg("Passwords do not match");
       }
    };
@@ -48,6 +48,10 @@ const ConfirmPassword = () => {
    const passwordShowHide = () => {
       setShowPassword(!showPassword);
    };
+
+   useEffect(() => {
+      setErrorMsg("");
+   }, [password, confPassword]);
 
    return (
       <CenteredContainer>
@@ -94,7 +98,12 @@ const ConfirmPassword = () => {
                   </div>
                </div>
             </div>
-            <button className={`mt-5 btn btn-dark btn-lg btn-block ${isSuccessfulValidation ? "" : "disabled"} `}>Reset my password</button>
+            <button
+               className={`mt-5 btn btn-dark btn-lg btn-block ${isSuccessfulValidation ? "" : "disabled"}`}
+               disabled={isSuccessfulValidation ? false : true}
+            >
+               Reset my password
+            </button>
          </form>
       </CenteredContainer>
    );
