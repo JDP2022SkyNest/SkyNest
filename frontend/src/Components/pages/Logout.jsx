@@ -8,7 +8,9 @@ const Logout = ({ setAccessToken }) => {
    };
    return (
       <CenteredContainer>
-         <button className="btn btn-warning" onClick={onLogout}></button>
+         <button className="btn btn-warning" onClick={onLogout}>
+            LOGOUT
+         </button>
       </CenteredContainer>
    );
 };

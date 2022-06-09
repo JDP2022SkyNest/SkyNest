@@ -1,8 +1,8 @@
 import React from "react";
 import { Nav } from "react-bootstrap";
 import "./Navbar.css";
-import Sidebar from "../Navbar/Sidebar";
-import Profile from "../Navbar/Profile";
+import Sidebar from "../Sidebar/Sidebar";
+import Profile from "../Profile/Profile";
 import logoImage from "..//Login/assets/logoblackandwhite.svg";
 
 function Navbar() {

@@ -21,6 +21,11 @@
   font-size: 2rem;
   background: none;
 }
+.menu-bars-sidebars {
+  margin-left: 80%;
+  font-size: 2rem;
+  background: none;
+}
 .profile {
   margin-right: 2rem;
   font-size: 2rem;
@@ -54,17 +59,17 @@
   align-items: center;
   padding: 8px 0px 8px 16px;
   list-style: none;
-  height: 60px;
+  height: 40px;
 }
 .logo {
   color: var(--smoke);
-  margin-left: 1rem;
+  margin-left: 2.5rem;
   position: absolute;
-  margin-top: 6rem;
+  margin-top: 22rem;
 }
 .logoImage {
-  margin-left: -2rem;
   position: relative;
+  margin-top: 16rem;
 }
 
 .nav-text a {
