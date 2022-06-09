@@ -58,6 +58,20 @@ public class JwtUtils {
     }
   }
 
+  public static long validFor(String token) {
+    try {
+      DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
+      Date expiresAt = decodedJWT.getExpiresAt();
+      Date now = new Date(System.currentTimeMillis());
+      return (expiresAt.getTime() - now.getTime()) / 1000;
+    } catch (JWTVerificationException e) {
+      return 0;
+    } catch (IllegalArgumentException e) {
+      log.error("JWT algorithm is null: {}", e.getMessage());
+      throw new UserException(UserExceptionType.JWT_ALGORITHM_IS_NULL);
+    }
+  }
+
   @Value("${jwt.access-expiration-ms}")
   public void setNameStatic(long expirationMs) {
     ACCESS_TOKEN_EXPIRATION_MS = expirationMs;
