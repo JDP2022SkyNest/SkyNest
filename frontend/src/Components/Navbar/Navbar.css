@@ -59,7 +59,7 @@
   align-items: center;
   padding: 8px 0px 8px 16px;
   list-style: none;
-  height: 40px;
+  height: 60px;
 }
 .logo {
   color: var(--smoke);
@@ -80,13 +80,17 @@
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 10px;
   border-radius: 4px;
 }
 
 .nav-text a:hover {
   background-color: var(--latte);
   color: black;
+
+}
+.nav-menu-items>li>a:hover svg {
+  filter: brightness(0);
 }
 
 .nav-menu-items {
