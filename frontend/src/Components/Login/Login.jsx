@@ -19,7 +19,6 @@ const Login = ({ setAccessToken }) => {
 
    const emailRef = useRef();
    const navigate = useNavigate();
-   const allInputs = document.querySelectorAll("input");
 
    const getUserToken = async () => {
       try {
