@@ -11,14 +11,15 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.JwtUtils;
+import com.htecgroup.skynest.util.EmailUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +29,10 @@ public class UserServiceImpl implements UserService {
   private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
   private static final String SUBJECT_FOR_PASSWORD_RESET = "Password reset for SkyNest";
   private UserRepository userRepository;
+  private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private JwtUtils jwtUtils;
-  private RoleService roleService;
+  private EmailUtils emailUtils;
   private EmailService emailService;
 
   @Override
@@ -61,16 +62,15 @@ public class UserServiceImpl implements UserService {
   @Override
   public void sendVerificationEmail(String emailAddress) {
     UserDto userDto = this.findUserByEmail(emailAddress);
-    if (userDto != null) {
-      if (userDto.getEnabled() && userDto.getVerified()) {
-        throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
-      }
+
+    if (userDto.getVerified()) {
+      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
     }
 
-    String token = jwtUtils.generateJwtEmailToken(emailAddress);
+    String token = emailUtils.generateJwtEmailToken(emailAddress);
 
-    String confirmationLink = jwtUtils.getEmailConfirmationLink() + token;
-    String emailBody = jwtUtils.buildVerificationEmail(emailAddress, confirmationLink);
+    String confirmationLink = emailUtils.getEmailConfirmationLink() + token;
+    String emailBody = emailUtils.buildVerificationEmail(emailAddress, confirmationLink);
     Email emailToSend = new Email(emailAddress, SUBJECT_FOR_EMAIL_CONFIRMATION, emailBody, true);
     emailService.send(emailToSend);
   }
@@ -78,21 +78,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public void sendPasswordResetEmail(String email) {
     if (!userRepository.existsByEmail(email)) {
-      throw new UserException(UserExceptionType.EMAIL_NOT_IN_USE);
+      throw new UserException(UserExceptionType.USER_NOT_FOUND);
     }
 
-    String token = jwtUtils.generateJwtEmailToken(email);
+    String token = emailUtils.generateJwtEmailToken(email);
 
-    String confirmationLink = jwtUtils.getPasswordResetLink() + token;
-    String emailBody = jwtUtils.buildPasswordResetEmail(email, confirmationLink);
+    String confirmationLink = emailUtils.getPasswordResetLink() + token;
+    String emailBody = emailUtils.buildPasswordResetEmail(email, confirmationLink);
     Email emailToSend = new Email(email, SUBJECT_FOR_PASSWORD_RESET, emailBody, true);
     emailService.send(emailToSend);
   }
 
   @Override
   public String resetPassword(String token, String password) {
-    jwtUtils.validateJwtToken(token);
-    String email = jwtUtils.getEmailFromJwtEmailToken(token);
+    emailUtils.validateJwtToken(token);
+    String email = emailUtils.getEmailFromJwtEmailToken(token);
     UserDto userDto = findUserByEmail(email);
     UserDto userDtoNewPassword =
         userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
@@ -101,12 +101,36 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public boolean isActive(String email) {
+    UserDto userDto = findUserByEmail(email);
+    return userDto.getEnabled() && userDto.getVerified() && userDto.getDeletedOn() == null;
+  }
+
+  @Override
+  public void deleteUser(UUID uuid) {
+    if (!userRepository.existsById(uuid)) {
+      throw new UserException(
+          String.format("User with id %s doesn't exist", uuid), HttpStatus.NOT_FOUND);
+    }
+    userRepository.deleteById(uuid);
+  }
+
+  @Override
+  public UserDto getUser(UUID uuid) {
+    UserEntity userEntity =
+        userRepository
+            .findById(uuid)
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+
+    return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
         userRepository
             .findUserByEmail(email)
-            .orElseThrow(
-                () -> new UsernameNotFoundException("could not find user with email: " + email));
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
     return modelMapper.map(userEntity, UserDto.class);
   }
@@ -121,17 +145,17 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String confirmEmail(String token) {
-    jwtUtils.validateJwtToken(token);
-    String email = jwtUtils.getEmailFromJwtEmailToken(token);
+    emailUtils.validateJwtToken(token);
+    String email = emailUtils.getEmailFromJwtEmailToken(token);
     UserDto userDto = findUserByEmail(email);
-    UserDto enabledUser = this.enableUser(userDto);
+    UserDto enabledUser = this.verifyUser(userDto);
     userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
     return "User verified successfully";
   }
 
   @Override
-  public UserDto enableUser(UserDto userDto) {
-    if (userDto.getVerified() && userDto.getEnabled()) {
+  public UserDto verifyUser(UserDto userDto) {
+    if (isActive(userDto.getEmail())) {
       throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
     }
     return userDto.withEnabled(true).withVerified(true);

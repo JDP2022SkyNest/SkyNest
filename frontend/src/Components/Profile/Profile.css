@@ -13,5 +13,7 @@
  .nav-menu-profile.active {
    right: 0;
    transition: 350ms;
+   border-radius: 1rem;
+   
  }
 

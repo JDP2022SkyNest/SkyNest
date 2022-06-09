@@ -33,6 +33,8 @@ const App = () => {
          <Route path="/yourprofile" exact element={<YourProfile />} />
          <Route path="/settings" exact element={<Settings />} />
          <Route path="/logout" exact element={<Logout />} />
+
+         {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
       </Routes>
    );

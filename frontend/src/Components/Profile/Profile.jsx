@@ -6,6 +6,7 @@ import { ProfileData } from "./ProfileData";
 import "../Navbar/Navbar.css";
 import "./Profile.css";
 import { IconContext } from "react-icons";
+import SearchBar from "../Searchbar/Searchbar";
 
 const Profile = () => {
    const [sidebar, setSidebar] = useState(false);
@@ -13,32 +14,35 @@ const Profile = () => {
    const showSidebar = () => setSidebar(!sidebar);
 
    return (
-      <IconContext.Provider value={sidebar ? { color: "fff" } : { color: "000" }}>
-         <div className="navbar ml-auto profile p-2">
-            <Link to="#" className="ml-auto profile p-2">
-               <CgIcons.CgProfile onClick={showSidebar} />
-            </Link>
-         </div>
-         <nav className={sidebar ? "nav-menu-profile active" : "nav-menu-profile"}>
-            <ul className="nav-menu-items" onClick={showSidebar}>
-               <li className="navbar-toggle ">
-                  <Link to="#" className="menu-bars-sidebars">
-                     <AiIcons.AiOutlineClose />
-                  </Link>
-               </li>
-               {ProfileData.map((item, index) => {
-                  return (
-                     <li key={index} className={item.cName}>
-                        <Link to={item.path}>
-                           {item.icon}
-                           <span>{item.title}</span>
-                        </Link>
-                     </li>
-                  );
-               })}
-            </ul>
-         </nav>
-      </IconContext.Provider>
+      <>
+         <IconContext.Provider value={sidebar ? { color: "fff" } : { color: "000" }}>
+            <div className="navbar ml-auto profile p-2">
+               <Link to="#" className="ml-auto profile p-2">
+                  <CgIcons.CgProfile onClick={showSidebar} />
+               </Link>
+            </div>
+            <SearchBar />
+            <nav className={sidebar ? "nav-menu-profile active" : "nav-menu-profile"}>
+               <ul className="nav-menu-items" onClick={showSidebar}>
+                  <li className="navbar-toggle ">
+                     <Link to="#" className="menu-bars-sidebars">
+                        <AiIcons.AiOutlineClose />
+                     </Link>
+                  </li>
+                  {ProfileData.map((item, index) => {
+                     return (
+                        <li key={index} className={item.cName}>
+                           <Link to={item.path}>
+                              {item.icon}
+                              <span>{item.title}</span>
+                           </Link>
+                        </li>
+                     );
+                  })}
+               </ul>
+            </nav>
+         </IconContext.Provider>
+      </>
    );
 };
 export default Profile;

@@ -1,40 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Label from "../ReusableComponents/Label";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { redirectTo, passwordRegEx } from "../ReusableComponents/ReusableFunctions";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
-import { RegEx } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
+import AxiosInstance from "../axios/AxiosInstance";
+import LoadingButton from "../Loader/LoadingButton";
+import PasswordRequirements from "../ReusableComponents/PasswordRequirements";
 
 const ConfirmPassword = () => {
    const [password, setPassword] = useState("");
-   const [confpassword, setConfpassword] = useState("");
+   const [confPassword, setConfPassword] = useState("");
    const [showPassword, setShowPassword] = useState(false);
    const [errorMsg, setErrorMsg] = useState(false);
    const [successMsg, setSuccessMsg] = useState("");
+   const [searchParams, setSearchParams] = useSearchParams();
+   const [loading, setLoading] = useState(false);
 
+   const token = searchParams.get("token");
    const navigate = useNavigate();
+   const isSuccessfulValidation = password.match(passwordRegEx) && password === confPassword;
 
-   const redirectToLoginPage = (delay) => {
-      setTimeout(() => {
-         navigate(ROUTES.LOGIN);
-      }, delay);
-   };
-
-   const onSuccessfulChange = async () => {
+   const onPwSubmit = async () => {
       try {
-
-      } catch {
-         
+         await AxiosInstance.put("/users/password-reset", {
+            token,
+            password,
+         });
+         setSuccessMsg("Password changed successfully");
+         redirectTo(navigate, ROUTES.LOGIN, 1500);
+      } catch (err) {
+         setErrorMsg("Failed");
+         console.log(err);
       }
+      setLoading(false);
    };
 
-   const onFormSubmit = (e) => {
+   const onFormSubmit = async (e) => {
       e.preventDefault();
-      if (password.match(RegEx) && password === confpassword) {
-         setSuccessMsg("Password changed successfully");
-         onSuccessfulChange();
-         redirectToLoginPage(1500);
+      if (isSuccessfulValidation) {
+         setLoading(true);
+         await onPwSubmit();
       } else {
+         setSearchParams({ token });
          setErrorMsg("Passwords do not match");
       }
    };
@@ -43,12 +51,9 @@ const ConfirmPassword = () => {
       setShowPassword(!showPassword);
    };
 
-   const onSuccessfulValidation = () => {
-      if (password.match(RegEx) && password === confpassword) {
-         return true;
-      }
-      return false;
-   };
+   useEffect(() => {
+      setErrorMsg("");
+   }, [password, confPassword]);
 
    return (
       <CenteredContainer>
@@ -85,8 +90,8 @@ const ConfirmPassword = () => {
                      <input
                         type={showPassword ? "text" : "password"}
                         name="confPassword"
-                        value={confpassword}
-                        onChange={(e) => setConfpassword(e.target.value)}
+                        value={confPassword}
+                        onChange={(e) => setConfPassword(e.target.value)}
                         id="confPasswordInput"
                         className="form-control form-control"
                         required
@@ -95,11 +100,19 @@ const ConfirmPassword = () => {
                   </div>
                </div>
             </div>
-            {onSuccessfulValidation() ? (
-               <button className="mt-5 btn btn-dark btn-lg btn-block">Reset my password</button>
-            ) : (
-               <button className="mt-5 btn btn-dark btn-lg btn-block disabled">Reset my password</button>
-            )}
+            {PasswordRequirements(password, confPassword)}
+            <div className="my-4">
+               {!loading ? (
+                  <button
+                     className={`mt-5 btn btn-dark btn-lg btn-block ${isSuccessfulValidation ? "" : "disabled"}`}
+                     disabled={isSuccessfulValidation ? false : true}
+                  >
+                     Reset my password
+                  </button>
+               ) : (
+                  <LoadingButton />
+               )}
+            </div>
          </form>
       </CenteredContainer>
    );

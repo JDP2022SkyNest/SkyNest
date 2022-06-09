@@ -20,8 +20,13 @@ public enum UserExceptionType {
   EMAIL_VERIFICATION_TOKEN_FAILED(
       "Jwt token failed the validation. For more information check the logger",
       HttpStatus.INTERNAL_SERVER_ERROR),
-  EMAIL_NOT_IN_USE("This email is not in use", HttpStatus.BAD_REQUEST),
-  INVALID_TOKEN("Access token is invalid", HttpStatus.FORBIDDEN);
+  USER_NOT_FOUND("User not found", HttpStatus.NOT_FOUND),
+  INVALID_TOKEN("Access token is invalid", HttpStatus.FORBIDDEN),
+  USER_NOT_ACTIVE("User is inactive: deleted, disabled, or not verified", HttpStatus.UNAUTHORIZED),
+  ILLEGAL_EMAIL("Could not reach email", HttpStatus.INTERNAL_SERVER_ERROR),
+  JWT_ALGORITHM_IS_NULL("JWT algorithm is null", HttpStatus.INTERNAL_SERVER_ERROR),
+  INVALID_AUTHENTICATION_FORMAT(
+      "Unable to authenticate, because of Input or Output error", HttpStatus.BAD_REQUEST);
 
   private final String message;
   private final HttpStatus status;
