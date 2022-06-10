@@ -1,18 +1,14 @@
 package com.htecgroup.skynest.model.email;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class Email {
   String to;
   String subject;
-  String emailBody;
+  String template;
+  String link;
   Boolean html;
-
-  public Email(String to, String subject, String emailBody, Boolean html) {
-    this.to = to;
-    this.subject = subject;
-    this.emailBody = emailBody;
-    this.html = html;
-  }
 }
