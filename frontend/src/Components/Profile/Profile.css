@@ -1,0 +1,18 @@
+.nav-menu-profile {
+   background-color: black;
+   width: 250px;
+   height: 30vh;
+   display: flex;
+   justify-content: center;
+   position: fixed;
+   top: 0;
+   right: -100%;
+   transition: 850ms;
+   padding: 10px;
+ }
+ .nav-menu-profile.active {
+   right: 0;
+   transition: 350ms;
+   border-radius: 1rem;
+   
+ }
