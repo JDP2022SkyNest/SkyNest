@@ -8,6 +8,7 @@ import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
   private ModelMapper modelMapper;
   private EmailUtils emailUtils;
   private EmailService emailService;
+  private CurrentUserService currentUserService;
 
   @Override
   public UserDto registerUser(UserDto userDto) {
@@ -117,6 +119,14 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDto getUser(UUID uuid) {
+
+    String currentRole = currentUserService.getRole();
+    UUID currentUuid = currentUserService.getId();
+
+    if (currentRole.equals(RoleEntity.ROLE_WORKER) && !(currentUuid.equals(uuid))) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+
     UserEntity userEntity =
         userRepository
             .findById(uuid)
