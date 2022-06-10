@@ -35,7 +35,7 @@
    color: white;
  }
  .nav-menu {
-   background-color: black;
+   background-color: #4a4a4a;
    width: 350px;
    height: 100vh;
    display: flex;
@@ -66,6 +66,7 @@
  .logoImage {
    position: relative;
    margin-top: 16rem;
+   filter: brightness(0);
  }
  .nav-text a {
    text-decoration: none;
@@ -89,7 +90,7 @@
    width: 100%;
  }
  .navbar-toggle {
-   background-color: black;
+   background-color: #4a4a4a;
    width: 100%;
    height: 80px;
    display: flex;
