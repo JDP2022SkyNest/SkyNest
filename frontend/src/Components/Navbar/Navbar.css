@@ -15,7 +15,6 @@
    position: absolute;
    margin-left: 10rem;
  }
- 
  .menu-bars {
    margin-left: 2rem;
    font-size: 2rem;
@@ -35,7 +34,6 @@
  .profile a:hover {
    color: white;
  }
- 
  .nav-menu {
    background-color: black;
    width: 350px;
@@ -47,12 +45,10 @@
    left: -100%;
    transition: 850ms;
  }
- 
  .nav-menu.active {
    left: 0;
    transition: 350ms;
  }
- 
  .nav-text {
    display: flex;
    justify-content: start;
@@ -71,7 +67,6 @@
    position: relative;
    margin-top: 16rem;
  }
- 
  .nav-text a {
    text-decoration: none;
    color: var(--smoke);
@@ -83,20 +78,16 @@
    padding: 0 10px;
    border-radius: 4px;
  }
- 
  .nav-text a:hover {
    background-color: var(--latte);
    color: black;
- 
  }
  .nav-menu-items>li>a:hover svg {
    filter: brightness(0);
  }
- 
  .nav-menu-items {
    width: 100%;
  }
- 
  .navbar-toggle {
    background-color: black;
    width: 100%;
@@ -105,7 +96,6 @@
    justify-content: start;
    align-items: center;
  }
- 
  span {
    margin-left: 16px;
  }

@@ -4,7 +4,7 @@ import ROUTES from "../Routes/ROUTES";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import Label from "../ReusableComponents/Label";
 
-function Settings() {
+const Settings = () => {
    return (
       <CenteredContainer>
          <form>
@@ -63,6 +63,6 @@ function Settings() {
          </form>
       </CenteredContainer>
    );
-}
+};
 
 export default Settings;

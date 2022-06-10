@@ -6,7 +6,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import Profile from "../Profile/Profile";
 import logoImage from "..//Login/assets/logoblackandwhite.svg";
 
-function Navbar() {
+const Navbar = () => {
    return (
       <Nav className="navbar d-flex  ">
          <h1 className="brand">Skynest</h1>
@@ -15,6 +15,6 @@ function Navbar() {
          <Profile />
       </Nav>
    );
-}
+};
 
 export default Navbar;

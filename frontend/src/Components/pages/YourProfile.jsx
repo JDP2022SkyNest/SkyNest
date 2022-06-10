@@ -1,8 +1,8 @@
 import React from "react";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 
-function YourProfile() {
+const YourProfile = () => {
    return <CenteredContainer>Your Profile</CenteredContainer>;
-}
+};
 
 export default YourProfile;
