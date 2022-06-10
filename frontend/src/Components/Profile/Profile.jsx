@@ -6,7 +6,6 @@ import { ProfileData } from "./ProfileData";
 import "../Navbar/Navbar.css";
 import "./Profile.css";
 import { IconContext } from "react-icons";
-import SearchBar from "../Searchbar/Searchbar";
 
 const Profile = () => {
    const [sidebar, setSidebar] = useState(false);
@@ -21,7 +20,6 @@ const Profile = () => {
                   <CgIcons.CgProfile onClick={showSidebar} />
                </Link>
             </div>
-            <SearchBar />
             <nav className={sidebar ? "nav-menu-profile active" : "nav-menu-profile"}>
                <ul className="nav-menu-items" onClick={showSidebar}>
                   <li className="navbar-toggle ">
