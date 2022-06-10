@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,11 +20,11 @@ public interface UserService {
 
   UserDto verifyUser(UserDto userDto);
 
-  void sendVerificationEmail(String email);
+  void sendVerificationEmail(String emailAddress);
 
-  void sendPasswordResetEmail(String email);
+  void sendPasswordResetEmail(String emailAddress);
 
-  String resetPassword(String token, String password);
+  String resetPassword(UserPasswordResetRequest userPasswordResetRequest);
 
   boolean isActive(String email);
 
