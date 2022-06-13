@@ -19,10 +19,10 @@ const Profile = () => {
                <CgIcons.CgProfile onClick={showSidebar} />
             </Link>
          </div>
-         <nav className={sidebar ? "nav-menu-profile active" : "nav-menu-profile"}>
-            <ul className="nav-menu-items" onClick={showSidebar}>
-               <li className="navbar-toggle ">
-                  <Link to="#" className="menu-bars-sidebars">
+         <nav className={sidebar ? "navMenuProfile active" : "navMenuProfile"}>
+            <ul className="navMenuItems" onClick={showSidebar}>
+               <li className="navbarToggle">
+                  <Link to="#" className="menuBarsSidebars">
                      <AiIcons.AiOutlineClose />
                   </Link>
                </li>

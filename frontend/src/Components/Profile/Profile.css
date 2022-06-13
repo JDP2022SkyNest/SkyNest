@@ -1,5 +1,5 @@
-.nav-menu-profile {
-   background-color: #4a4a4a;
+.navMenuProfile {
+   background-color: var(--mate-black);
    width: 250px;
    height: 30vh;
    display: flex;
@@ -10,7 +10,7 @@
    transition: 850ms;
    padding: 10px;
  }
- .nav-menu-profile.active {
+ .navMenuProfile.active {
    right: 0;
    transition: 350ms;
    border-radius: 1rem;

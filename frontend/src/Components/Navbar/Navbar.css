@@ -15,12 +15,12 @@
    position: absolute;
    margin-left: 10rem;
  }
- .menu-bars {
+ .menuBars {
    margin-left: 2rem;
    font-size: 2rem;
    background: none;
  }
- .menu-bars-sidebars {
+ .menuBarsSidebars {
    margin-left: 80%;
    font-size: 2rem;
    background: none;
@@ -29,13 +29,13 @@
    margin-right: 2rem;
    font-size: 2rem;
    background: none;
-   color: black;
+   color: var(--mate-black);
  }
  .profile a:hover {
    color: white;
  }
- .nav-menu {
-   background-color: #4a4a4a;
+ .navMenu {
+   background-color: var(--mate-black);
    width: 350px;
    height: 100vh;
    display: flex;
@@ -45,7 +45,7 @@
    left: -100%;
    transition: 850ms;
  }
- .nav-menu.active {
+ .navMenu.active {
    left: 0;
    transition: 350ms;
  }
@@ -81,16 +81,16 @@
  }
  .nav-text a:hover {
    background-color: var(--latte);
-   color: black;
+   color: var(--mate-black);
  }
- .nav-menu-items>li>a:hover svg {
+ .navMenuItems>li>a:hover svg {
    filter: brightness(0);
  }
- .nav-menu-items {
+ .navMenuItems {
    width: 100%;
  }
- .navbar-toggle {
-   background-color: #4a4a4a;
+ .navbarToggle {
+   background-color: var(--mate-black);
    width: 100%;
    height: 80px;
    display: flex;
