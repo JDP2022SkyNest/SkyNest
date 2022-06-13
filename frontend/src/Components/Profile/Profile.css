@@ -15,7 +15,7 @@
    right: 0;
    transition: 350ms;
    border-radius: 1rem;
-   top: 8%;
+   top: 5rem;
  }
  .navbarToggleProfile {
   background-color: var(--mate-black);

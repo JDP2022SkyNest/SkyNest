@@ -1,7 +1,6 @@
 .nav {
    background-color: var(--mate-black);
    height: 80px;
-   display: flex;
    justify-content: start;
    align-items: center;
  }
