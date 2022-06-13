@@ -227,7 +227,6 @@ class UserServiceImplTest {
 
   @Test
   void editUser() {
-    // when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
     UserRegisterRequest expectedUser = new UserRegisterRequest();
     expectedUser.setName("Name2");
     expectedUser.setPassword("123456");
