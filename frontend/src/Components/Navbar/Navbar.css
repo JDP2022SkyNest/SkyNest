@@ -66,9 +66,18 @@
  .logoImage {
    position: relative;
    margin-top: 16rem;
-   filter: brightness(90%);
+   filter: brightness(100%);
    margin-left: -1.5rem;
+   animation: logoRotation 60s linear infinite reverse;
+   transform: scale(0.5)
  }
+ @keyframes logoRotation {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}}
  .nav-text a {
    text-decoration: none;
    color: var(--smoke);
