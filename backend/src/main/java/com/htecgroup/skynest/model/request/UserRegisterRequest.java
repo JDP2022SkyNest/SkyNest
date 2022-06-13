@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.model.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@AllArgsConstructor
 public class UserRegisterRequest {
 
   @NotNull(message = "cannot be null")
