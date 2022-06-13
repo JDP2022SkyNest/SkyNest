@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -156,7 +157,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  void getUser_AccessDenied() {
+  void getUser_WorkerAccessDenied() {
     when(currentUserService.getRole()).thenReturn(enabledWorkerEntity.getRole().getName());
     when(currentUserService.getId()).thenReturn(enabledWorkerEntity.getId());
 
@@ -164,6 +165,17 @@ class UserServiceImplTest {
         Assertions.assertThrows(UserException.class, () -> userService.getUser(UUID.randomUUID()));
 
     Assertions.assertEquals("Access denied", ex.getMessage());
+  }
+
+  @Test
+  void getUser_UserNotFound() {
+    when(currentUserService.getRole()).thenReturn("role_admin");
+    when(currentUserService.getId()).thenReturn(enabledWorkerEntity.getId());
+
+    UserException ex =
+        Assertions.assertThrows(UserException.class, () -> userService.getUser(UUID.randomUUID()));
+
+    Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
   }
 
   @Test

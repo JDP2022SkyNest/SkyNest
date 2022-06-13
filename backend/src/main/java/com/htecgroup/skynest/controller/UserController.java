@@ -321,8 +321,23 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                            "{\"messages\":[\"User not found\"],"
                                 + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
