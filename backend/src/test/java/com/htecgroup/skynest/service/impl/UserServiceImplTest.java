@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -41,10 +40,12 @@ class UserServiceImplTest {
   @Mock private EmailUtils emailUtils;
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
+  @Mock private CurrentUserServiceImpl currentUserService;
 
   @Spy @InjectMocks private UserServiceImpl userService;
 
   private UserEntity enabledWorkerEntity;
+  private UserEntity otherWorkerEntity;
   private RoleEntity roleWorkerEntity;
   private UserRegisterRequest newUserRequest;
 
@@ -57,6 +58,23 @@ class UserServiceImplTest {
 
     roleWorkerEntity = new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_WORKER);
     enabledWorkerEntity =
+        new UserEntity(
+            UUID.randomUUID(),
+            currentDateTime,
+            currentDateTime,
+            null,
+            "test@test.com",
+            "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW",
+            "Name",
+            "Surname",
+            "Address",
+            "381123456789",
+            true,
+            true,
+            roleWorkerEntity,
+            null);
+
+    otherWorkerEntity =
         new UserEntity(
             UUID.randomUUID(),
             currentDateTime,
@@ -138,17 +156,32 @@ class UserServiceImplTest {
   }
 
   @Test
-  void getUser_IdNotFound() {
-    when(userRepository.findById(any())).thenReturn(Optional.empty());
+  void getUser_AccessDenied() {
+    when(currentUserService.getRole()).thenReturn(enabledWorkerEntity.getRole().getName());
+    when(currentUserService.getId()).thenReturn(enabledWorkerEntity.getId());
 
     UserException ex =
         Assertions.assertThrows(UserException.class, () -> userService.getUser(UUID.randomUUID()));
 
-    Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
+    Assertions.assertEquals("Access denied", ex.getMessage());
   }
 
   @Test
-  void getUser() {
+  void getUser_Admin() {
+    when(userRepository.findById(any())).thenReturn(Optional.of(otherWorkerEntity));
+    when(currentUserService.getRole()).thenReturn("role_admin");
+    when(currentUserService.getId()).thenReturn(enabledWorkerEntity.getId());
+
+    UserDto expectedUserDto = userService.getUser(otherWorkerEntity.getId());
+
+    Assertions.assertEquals(
+        new ModelMapper().map(otherWorkerEntity, UserDto.class), expectedUserDto);
+  }
+
+  @Test
+  void getUser_Worker() {
+    when(currentUserService.getRole()).thenReturn(enabledWorkerEntity.getRole().getName());
+    when(currentUserService.getId()).thenReturn(enabledWorkerEntity.getId());
     when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
 
     UserDto expectedUserDto = userService.getUser(enabledWorkerEntity.getId());
