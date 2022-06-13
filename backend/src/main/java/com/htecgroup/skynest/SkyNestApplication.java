@@ -3,6 +3,7 @@ package com.htecgroup.skynest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
 import com.htecgroup.skynest.util.JwtUtils;
+import com.htecgroup.skynest.util.UrlUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,11 +25,15 @@ public class SkyNestApplication {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
+        String publicIp = UrlUtil.SKYNEST_HOST;
+        String frontendPort = String.valueOf(UrlUtil.FRONTEND_PORT);
         registry
             .addMapping("/**")
             .allowedMethods("*")
-            .allowedOrigins("http://localhost:3000")
-            .allowedOriginPatterns("http://localhost:3000/*")
+            .allowedOrigins(
+                "http://localhost:3000", String.format("http://%s:%s", publicIp, frontendPort))
+            .allowedOriginPatterns(
+                "http://localhost:3000/*", String.format("http://%s:%s/*", publicIp, frontendPort))
             .allowedHeaders(
                 JwtUtils.AUTH_HEADER,
                 HttpHeaders.ORIGIN,
