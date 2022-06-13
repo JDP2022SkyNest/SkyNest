@@ -7,6 +7,8 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
@@ -36,7 +38,9 @@ public class UserServiceImpl implements UserService {
   private EmailService emailService;
 
   @Override
-  public UserDto registerUser(UserDto userDto) {
+  public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
+
+    UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
     if (userRepository.existsByEmail(userDto.getEmail())) {
       throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
@@ -56,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     this.sendVerificationEmail(userDto.getEmail());
 
-    return modelMapper.map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserResponse.class);
   }
 
   @Override
@@ -116,13 +120,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDto getUser(UUID uuid) {
+  public UserResponse getUser(UUID uuid) {
     UserEntity userEntity =
         userRepository
             .findById(uuid)
             .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
-    return modelMapper.map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserResponse.class);
   }
 
   @Override
@@ -136,10 +140,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserDto> listAllUsers() {
+  public List<UserResponse> listAllUsers() {
     List<UserEntity> entityList = userRepository.findAll();
     return entityList.stream()
-        .map(e -> modelMapper.map(e, UserDto.class))
+        .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
 

@@ -1,5 +1,3 @@
-/out
-
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -33,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Spring Logs ###
+.log/

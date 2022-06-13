@@ -6,6 +6,7 @@ import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.util.EmailUtils;
@@ -54,21 +55,20 @@ class UserServiceImplTest {
 
     UserEntity expectedUserEntity = UserEntityUtil.getNotVerified();
 
-    UserDto expectedUserDto = new ModelMapper().map(expectedUserEntity, UserDto.class);
+    UserResponse expectedUserResponse =
+        new ModelMapper().map(expectedUserEntity, UserResponse.class);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
-    when(bCryptPasswordEncoder.encode(anyString()))
-        .thenReturn(expectedUserDto.getEncryptedPassword());
+    when(bCryptPasswordEncoder.encode(anyString())).thenReturn("encryptedPassword");
 
     doNothing().when(userService).sendVerificationEmail(anyString());
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
-    UserDto newUserDto = new ModelMapper().map(userRegisterRequest, UserDto.class);
-    UserDto actualUserDto = userService.registerUser(newUserDto);
+    UserResponse actualUserResponse = userService.registerUser(userRegisterRequest);
 
-    Assertions.assertEquals(expectedUserDto, actualUserDto);
+    Assertions.assertEquals(expectedUserResponse, actualUserResponse);
   }
 
   @Test
@@ -78,10 +78,10 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserExceptionType.EMAIL_ALREADY_IN_USE.getMessage();
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
-    UserDto newUserDto = new ModelMapper().map(userRegisterRequest, UserDto.class);
 
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+        Assertions.assertThrows(
+            UserException.class, () -> userService.registerUser(userRegisterRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -93,10 +93,10 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserExceptionType.PHONE_NUMBER_ALREADY_IN_USE.getMessage();
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
-    UserDto newUserDto = new ModelMapper().map(userRegisterRequest, UserDto.class);
 
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserDto));
+        Assertions.assertThrows(
+            UserException.class, () -> userService.registerUser(userRegisterRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -104,10 +104,11 @@ class UserServiceImplTest {
   void findUserByEmail() {
     UserEntity userEntity = UserEntityUtil.getNotVerified();
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(userEntity));
+    UserDto expectedUserDto = new ModelMapper().map(userEntity, UserDto.class);
 
-    UserDto expectedUserDto = userService.findUserByEmail(userEntity.getEmail());
+    UserDto actualUserDto = userService.findUserByEmail(userEntity.getEmail());
 
-    Assertions.assertEquals(new ModelMapper().map(userEntity, UserDto.class), expectedUserDto);
+    Assertions.assertEquals(expectedUserDto, actualUserDto);
   }
 
   @Test
@@ -124,10 +125,11 @@ class UserServiceImplTest {
   void getUser() {
     UserEntity userEntity = UserEntityUtil.getNotVerified();
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+    UserResponse expectedUserResponse = new ModelMapper().map(userEntity, UserResponse.class);
 
-    UserDto expectedUserDto = userService.getUser(userEntity.getId());
+    UserResponse actualUserResponse = userService.getUser(userEntity.getId());
 
-    Assertions.assertEquals(new ModelMapper().map(userEntity, UserDto.class), expectedUserDto);
+    Assertions.assertEquals(expectedUserResponse, actualUserResponse);
   }
 
   @Test
@@ -160,16 +162,16 @@ class UserServiceImplTest {
     userEntityList.add(UserEntityUtil.getVerified());
     when(userRepository.findAll()).thenReturn(userEntityList);
 
-    List<UserDto> expectedDTOs =
+    List<UserResponse> expectedResponse =
         userEntityList.stream()
-            .map(e -> modelMapper.map(e, UserDto.class))
+            .map(e -> modelMapper.map(e, UserResponse.class))
             .collect(Collectors.toList());
 
-    List<UserDto> returnedDTOs = userService.listAllUsers();
+    List<UserResponse> returnedResponse = userService.listAllUsers();
 
-    Assertions.assertEquals(expectedDTOs.size(), returnedDTOs.size());
-    Assertions.assertEquals(expectedDTOs.get(0), returnedDTOs.get(0));
-    Assertions.assertEquals(expectedDTOs.get(0).getEmail(), returnedDTOs.get(0).getEmail());
+    Assertions.assertEquals(expectedResponse.size(), returnedResponse.size());
+    Assertions.assertEquals(expectedResponse.get(0), returnedResponse.get(0));
+    Assertions.assertEquals(expectedResponse.get(0).getEmail(), returnedResponse.get(0).getEmail());
   }
 
   @Test

@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.controller;
 
-import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.htecgroup.skynest.util.UrlUtil.*;
 
@@ -36,7 +33,6 @@ import static com.htecgroup.skynest.util.UrlUtil.*;
 public class UserController {
 
   private UserService userService;
-  private ModelMapper modelMapper;
 
   @Operation(summary = "Register new user")
   @ApiResponses(
@@ -122,9 +118,9 @@ public class UserController {
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
-    UserDto userDto = userService.registerUser(modelMapper.map(userRegisterRequest, UserDto.class));
-
-    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
+    ResponseEntity<UserResponse> responseEntity =
+        new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+    return responseEntity;
   }
 
   @Operation(summary = "Confirm email")
@@ -284,10 +280,8 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping
   public List<UserResponse> getUsers() {
-    List<UserDto> listOfUsers = userService.listAllUsers();
-    return listOfUsers.stream()
-        .map(e -> modelMapper.map(e, UserResponse.class))
-        .collect(Collectors.toList());
+    List<UserResponse> listOfUsers = userService.listAllUsers();
+    return listOfUsers;
   }
 
   @Operation(summary = "Get User with that Id")
@@ -339,8 +333,10 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
-    UserDto userDto = userService.getUser(uuid);
-    return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
+    UserResponse userResponse = userService.getUser(uuid);
+    ResponseEntity<UserResponse> userResponseEntity =
+        new ResponseEntity<>(userResponse, HttpStatus.OK);
+    return userResponseEntity;
   }
 
   @Operation(summary = "Delete User with that id")
