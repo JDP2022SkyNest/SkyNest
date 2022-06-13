@@ -228,14 +228,19 @@ class UserServiceImplTest {
   @Test
   void editUser() {
     UserRegisterRequest expectedUser = new UserRegisterRequest();
+    UUID uuid = UUID.randomUUID();
+    expectedUser.setEmail("test@test.com");
     expectedUser.setName("Name2");
-    expectedUser.setPassword("123456");
     expectedUser.setSurname("Surname2");
-    expectedUser.setAddress("Address");
-    modelMapper.map(expectedUser, enabledWorkerEntity);
+    expectedUser.setAddress("Address2");
 
-    Assertions.assertEquals(expectedUser.getName(), enabledWorkerEntity.getName());
-    Assertions.assertEquals(expectedUser.getEmail(), enabledWorkerEntity.getEmail());
-    Assertions.assertEquals(expectedUser.getSurname(), enabledWorkerEntity.getSurname());
+    when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
+    when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
+    UserResponse userResponse = userService.editUser(expectedUser, uuid);
+
+    Assertions.assertEquals(userResponse.getName(), enabledWorkerEntity.getName());
+    Assertions.assertEquals(userResponse.getEmail(), enabledWorkerEntity.getEmail());
+    Assertions.assertEquals(userResponse.getSurname(), enabledWorkerEntity.getSurname());
+    Assertions.assertEquals(userResponse.getAddress(), enabledWorkerEntity.getAddress());
   }
 }
