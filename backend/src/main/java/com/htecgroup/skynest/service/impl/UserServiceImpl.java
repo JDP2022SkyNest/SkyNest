@@ -133,6 +133,17 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public UserResponse editUser(UserRegisterRequest userEditRequest, UUID uuid) {
+    UserEntity userEntity =
+        userRepository
+            .findById(uuid)
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+    modelMapper.map(userEditRequest, userEntity);
+    userRepository.save(userEntity);
+    return modelMapper.map(userEntity, UserResponse.class);
+  }
+
+  @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
         userRepository

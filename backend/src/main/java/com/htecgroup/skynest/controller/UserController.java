@@ -118,7 +118,8 @@ public class UserController {
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
-    ResponseEntity<UserResponse> responseEntity = new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+    ResponseEntity<UserResponse> responseEntity =
+        new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
     return responseEntity;
   }
 
@@ -333,8 +334,65 @@ public class UserController {
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
     UserResponse userResponse = userService.getUser(uuid);
-    ResponseEntity<UserResponse> userResponseEntity = new ResponseEntity<>(userResponse, HttpStatus.OK);
+    ResponseEntity<UserResponse> userResponseEntity =
+        new ResponseEntity<>(userResponse, HttpStatus.OK);
     return userResponseEntity;
+  }
+
+  @Operation(summary = "Edit User")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Edited User returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = UserResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + " \"email\": \"username@gmail.com\","
+                                + "  \"name\": \"Name\","
+                                + "  \"surname\": \"Surname\","
+                                + "  \"phoneNumber\": \"38166575757\","
+                                + "  \"address\": \"Local address\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @PutMapping("/edit/{uuid}")
+  public ResponseEntity<UserResponse> editUser(
+      @Valid @RequestBody UserRegisterRequest userEditRequest, @PathVariable UUID uuid) {
+    ResponseEntity<UserResponse> responseEntity =
+        new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
+    log.info("User {} is successfully edited.", userEditRequest.getEmail());
+    return responseEntity;
   }
 
   @Operation(summary = "Delete User with that id")
