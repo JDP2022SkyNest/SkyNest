@@ -280,7 +280,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @Operation(summary = "Get Users")
+  @Operation(summary = "Get all users")
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping
   public List<UserResponse> getUsers() {
@@ -290,7 +290,7 @@ public class UserController {
         .collect(Collectors.toList());
   }
 
-  @Operation(summary = "Get User with that Id")
+  @Operation(summary = "Get user with that Id")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -332,7 +332,7 @@ public class UserController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
+                  schema = @Schema(implementation = ErrorMessage.class),
                   examples = {
                     @ExampleObject(
                         value =
@@ -359,7 +359,7 @@ public class UserController {
     return new ResponseEntity<>(modelMapper.map(userDto, UserResponse.class), HttpStatus.OK);
   }
 
-  @Operation(summary = "Delete User with that id")
+  @Operation(summary = "Delete user with that id")
   @ApiResponses(
       value = {
         @ApiResponse(
