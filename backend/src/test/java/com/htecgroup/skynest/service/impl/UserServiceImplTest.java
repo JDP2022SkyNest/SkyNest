@@ -14,7 +14,6 @@ import com.htecgroup.skynest.utils.UserDtoUtil;
 import com.htecgroup.skynest.utils.UserEntityUtil;
 import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -45,18 +43,10 @@ class UserServiceImplTest {
 
   @Spy @InjectMocks private UserServiceImpl userService;
 
-  @BeforeEach
-  void setUp() {
-    modelMapper = new ModelMapper();
-  }
-
   @Test
   void registerUser() {
 
     UserEntity expectedUserEntity = UserEntityUtil.getNotVerified();
-
-    UserResponse expectedUserResponse =
-        new ModelMapper().map(expectedUserEntity, UserResponse.class);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
@@ -68,7 +58,7 @@ class UserServiceImplTest {
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
     UserResponse actualUserResponse = userService.registerUser(userRegisterRequest);
 
-    Assertions.assertEquals(expectedUserResponse, actualUserResponse);
+    this.assertUserEntityAndUserResponse(expectedUserEntity, actualUserResponse);
   }
 
   @Test
@@ -104,11 +94,9 @@ class UserServiceImplTest {
   void findUserByEmail() {
     UserEntity userEntity = UserEntityUtil.getNotVerified();
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(userEntity));
-    UserDto expectedUserDto = new ModelMapper().map(userEntity, UserDto.class);
 
     UserDto actualUserDto = userService.findUserByEmail(userEntity.getEmail());
-
-    Assertions.assertEquals(expectedUserDto, actualUserDto);
+    this.assertUserDtoAndUserEntity(userEntity, actualUserDto);
   }
 
   @Test
@@ -125,11 +113,10 @@ class UserServiceImplTest {
   void getUser() {
     UserEntity userEntity = UserEntityUtil.getNotVerified();
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
-    UserResponse expectedUserResponse = new ModelMapper().map(userEntity, UserResponse.class);
 
     UserResponse actualUserResponse = userService.getUser(userEntity.getId());
 
-    Assertions.assertEquals(expectedUserResponse, actualUserResponse);
+    this.assertUserEntityAndUserResponse(userEntity, actualUserResponse);
   }
 
   @Test
@@ -162,16 +149,12 @@ class UserServiceImplTest {
     userEntityList.add(UserEntityUtil.getVerified());
     when(userRepository.findAll()).thenReturn(userEntityList);
 
-    List<UserResponse> expectedResponse =
-        userEntityList.stream()
-            .map(e -> modelMapper.map(e, UserResponse.class))
-            .collect(Collectors.toList());
+    List<UserEntity> expectedResponse = new ArrayList<>(userEntityList);
 
-    List<UserResponse> returnedResponse = userService.listAllUsers();
+    List<UserResponse> actualResponse = userService.listAllUsers();
 
-    Assertions.assertEquals(expectedResponse.size(), returnedResponse.size());
-    Assertions.assertEquals(expectedResponse.get(0), returnedResponse.get(0));
-    Assertions.assertEquals(expectedResponse.get(0).getEmail(), returnedResponse.get(0).getEmail());
+    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+    this.assertUserEntityAndUserResponse(expectedResponse.get(0), actualResponse.get(0));
   }
 
   @Test
@@ -232,5 +215,37 @@ class UserServiceImplTest {
     Exception thrownException =
         Assertions.assertThrows(UserException.class, () -> userService.deleteUser(uuid));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  private void assertUserEntityAndUserResponse(
+      UserEntity expectedUserEntity, UserResponse actualUserResponse) {
+    Assertions.assertEquals(expectedUserEntity.getId().toString(), actualUserResponse.getId());
+    Assertions.assertEquals(expectedUserEntity.getEmail(), actualUserResponse.getEmail());
+    Assertions.assertEquals(expectedUserEntity.getName(), actualUserResponse.getName());
+    Assertions.assertEquals(expectedUserEntity.getSurname(), actualUserResponse.getSurname());
+    Assertions.assertEquals(expectedUserEntity.getAddress(), actualUserResponse.getAddress());
+    Assertions.assertEquals(
+        expectedUserEntity.getPhoneNumber(), actualUserResponse.getPhoneNumber());
+  }
+
+  private void assertUserDtoAndUserEntity(UserEntity expectedUserEntity, UserDto actualUserDto) {
+    if (expectedUserEntity.getCompany() != null && actualUserDto.getCompany() != null) {
+      Assertions.assertEquals(
+          expectedUserEntity.getCompany().getId(), actualUserDto.getCompany().getId());
+    }
+    Assertions.assertEquals(expectedUserEntity.getId(), actualUserDto.getId());
+    Assertions.assertEquals(expectedUserEntity.getCreatedOn(), actualUserDto.getCreatedOn());
+    Assertions.assertEquals(expectedUserEntity.getModifiedOn(), actualUserDto.getModifiedOn());
+    Assertions.assertEquals(expectedUserEntity.getDeletedOn(), actualUserDto.getDeletedOn());
+    Assertions.assertEquals(expectedUserEntity.getEmail(), actualUserDto.getEmail());
+    Assertions.assertEquals(
+        expectedUserEntity.getEncryptedPassword(), actualUserDto.getEncryptedPassword());
+    Assertions.assertEquals(expectedUserEntity.getName(), actualUserDto.getName());
+    Assertions.assertEquals(expectedUserEntity.getSurname(), actualUserDto.getSurname());
+    Assertions.assertEquals(expectedUserEntity.getAddress(), actualUserDto.getAddress());
+    Assertions.assertEquals(expectedUserEntity.getPhoneNumber(), actualUserDto.getPhoneNumber());
+    Assertions.assertEquals(expectedUserEntity.getVerified(), actualUserDto.getVerified());
+    Assertions.assertEquals(expectedUserEntity.getEnabled(), actualUserDto.getEnabled());
+    Assertions.assertEquals(expectedUserEntity.getRole().getId(), actualUserDto.getRole().getId());
   }
 }
