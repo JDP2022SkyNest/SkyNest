@@ -79,7 +79,7 @@ class InvalidJwtServiceImplTest {
             Collections.singletonList(RoleEntity.ROLE_WORKER));
     validFor = Math.toIntExact(JwtUtils.stillValidForInMs(token) / 1000);
 
-    Optional<InvalidJwtEntity> invalidJwtEntity = invalidJwtService.invalidate(null);
+    Optional<InvalidJwtEntity> invalidJwtEntity = invalidJwtService.invalidate(token);
 
     Assertions.assertTrue(invalidJwtEntity.isEmpty());
 
@@ -99,6 +99,7 @@ class InvalidJwtServiceImplTest {
     Assertions.assertTrue(invalidJwtEntity.isPresent());
     Assertions.assertEquals(token, invalidJwtEntity.get().getToken());
     verify(invalidJwtRepository, times(1)).save(any(InvalidJwtEntity.class), eq(validFor));
+    verify(invalidJwtRepository, times(0)).existsById(anyString());
 
     Optional<InvalidJwtEntity> nextJwtEntity = invalidJwtService.invalidate(token);
 
