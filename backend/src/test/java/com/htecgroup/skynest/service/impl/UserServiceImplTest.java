@@ -115,7 +115,7 @@ class UserServiceImplTest {
     Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserRequest));
   }
 
- /* @Test
+  /* @Test
   void registerUser_RoleNotFound() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
@@ -147,7 +147,7 @@ class UserServiceImplTest {
     Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
   }
 
-/*  @Test
+  /*  @Test
   void getUser() {
     when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
 
@@ -223,5 +223,20 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
     Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
+  }
+
+  @Test
+  void editUser() {
+    // when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
+    UserRegisterRequest expectedUser = new UserRegisterRequest();
+    expectedUser.setName("Name2");
+    expectedUser.setPassword("123456");
+    expectedUser.setSurname("Surname2");
+    expectedUser.setAddress("Address");
+    modelMapper.map(expectedUser, enabledWorkerEntity);
+
+    Assertions.assertEquals(expectedUser.getName(), enabledWorkerEntity.getName());
+    Assertions.assertEquals(expectedUser.getEmail(), enabledWorkerEntity.getEmail());
+    Assertions.assertEquals(expectedUser.getSurname(), enabledWorkerEntity.getSurname());
   }
 }
