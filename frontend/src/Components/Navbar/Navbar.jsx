@@ -8,7 +8,7 @@ import logoImage from "..//Login/assets/logoblackandwhite.svg";
 
 const Navbar = () => {
    return (
-      <Nav className="navbar d-flex  ">
+      <Nav className="navbar d-flex">
          <h1 className="brand">Skynest</h1>
          <img src={logoImage} alt="logo" className="logoImageBrand" />
          <Sidebar />

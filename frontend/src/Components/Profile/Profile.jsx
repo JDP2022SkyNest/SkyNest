@@ -13,17 +13,17 @@ const Profile = () => {
    const showSidebar = () => setSidebar(!sidebar);
 
    return (
-      <IconContext.Provider value={sidebar ? { color: "fff" } : { color: "000" }}>
-         <div className="navbar ml-auto profile p-2">
-            <Link to="#" className="ml-auto profile p-2">
+      <IconContext.Provider value={sidebar}>
+         <div className="navbar ml-auto profile">
+            <Link to="#" className="">
                <CgIcons.CgProfile onClick={showSidebar} />
             </Link>
          </div>
          <nav className={sidebar ? "navMenuProfile active" : "navMenuProfile"}>
             <ul className="navMenuItems" onClick={showSidebar}>
-               <li className="navbarToggle">
+               <li className="navbarToggleProfile">
                   <Link to="#" className="menuBarsSidebars">
-                     <AiIcons.AiOutlineClose />
+                     <AiIcons.AiOutlineCloseCircle />
                   </Link>
                </li>
                {ProfileData.map((item, index) => {
