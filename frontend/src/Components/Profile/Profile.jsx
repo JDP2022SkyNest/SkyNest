@@ -16,7 +16,7 @@ const Profile = () => {
       <IconContext.Provider value={sidebar}>
          <div className="navbar ml-auto profile">
             <Link to="#" className="">
-               <CgIcons.CgProfile onClick={showSidebar} />
+               <AiIcons.AiOutlineUser onClick={showSidebar} />
             </Link>
          </div>
          <nav className={sidebar ? "navMenuProfile active" : "navMenuProfile"}>

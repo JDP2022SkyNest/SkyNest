@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { SidebarData } from "./Sidebardata";
@@ -15,7 +14,7 @@ const Sidebar = () => {
       <IconContext.Provider value={sidebar}>
          <div className="navbar">
             <Link to="#" className="menuBars">
-               <FaIcons.FaBars onClick={showSidebar} />
+               <AiIcons.AiOutlineMenu onClick={showSidebar} />
             </Link>
          </div>
          <nav className={sidebar ? "navMenu active" : "navMenu"}>
