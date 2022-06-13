@@ -31,7 +31,7 @@
             </activation>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
-                <spring.profiles.active>no-tests</spring.profiles.active>
+                <spring.profiles.active>default</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
