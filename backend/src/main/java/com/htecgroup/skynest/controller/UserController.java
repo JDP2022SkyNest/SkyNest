@@ -118,7 +118,8 @@ public class UserController {
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
-    ResponseEntity<UserResponse> responseEntity = new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+    ResponseEntity<UserResponse> responseEntity =
+        new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
     return responseEntity;
   }
 
@@ -333,8 +334,19 @@ public class UserController {
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
     UserResponse userResponse = userService.getUser(uuid);
-    ResponseEntity<UserResponse> userResponseEntity = new ResponseEntity<>(userResponse, HttpStatus.OK);
+    ResponseEntity<UserResponse> userResponseEntity =
+        new ResponseEntity<>(userResponse, HttpStatus.OK);
     return userResponseEntity;
+  }
+
+  @Operation(summary = "Edit User")
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @PutMapping("/edit/{uuid}")
+  public ResponseEntity<UserResponse> editUser(
+      @Valid @RequestBody UserRegisterRequest userEditRequest, @PathVariable UUID uuid) {
+    ResponseEntity<UserResponse> responseEntity =
+        new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
+    return responseEntity;
   }
 
   @Operation(summary = "Delete User with that id")

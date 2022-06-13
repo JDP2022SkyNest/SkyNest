@@ -30,4 +30,6 @@ public interface UserService {
   void deleteUser(UUID uuid);
 
   UserResponse getUser(UUID uuid);
+
+  UserResponse editUser(UserRegisterRequest userEditRequest, UUID uuid);
 }
