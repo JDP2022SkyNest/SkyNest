@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
   @Async
   public void send(Email email) {
     Context context = new Context();
-    context.setVariable("email", email);
+    context.setVariable("args", email.getArgs());
 
     try {
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();

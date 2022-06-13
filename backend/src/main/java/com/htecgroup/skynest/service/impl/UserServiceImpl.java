@@ -7,9 +7,9 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
-import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
@@ -24,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -74,12 +75,15 @@ public class UserServiceImpl implements UserService {
 
     String token = JwtUtils.generateEmailToken(emailAddress, JwtUtils.EMAIL_VERIFICATION_PURPOSE);
 
+    Map<String, String> arguments =
+        Map.of("emailAddress", emailAddress, "link", UrlUtil.getEmailVerificationLink(token));
+
     emailService.send(
         new Email(
             emailAddress,
             EmailUtils.EMAIL_VERIFICATION_SUBJECT,
             EmailUtils.EMAIL_VERIFICATION_TEMPLATE,
-            UrlUtil.getEmailVerificationLink(token),
+            arguments,
             true));
   }
 
@@ -91,12 +95,15 @@ public class UserServiceImpl implements UserService {
 
     String token = JwtUtils.generateEmailToken(emailAddress, JwtUtils.PASSWORD_RESET_PURPOSE);
 
+    Map<String, String> arguments =
+        Map.of("emailAddress", emailAddress, "link", UrlUtil.getPasswordResetLink(token));
+
     emailService.send(
         new Email(
             emailAddress,
             EmailUtils.PASSWORD_RESET_SUBJECT,
             EmailUtils.PASSWORD_RESET_TEMPLATE,
-            UrlUtil.getPasswordResetLink(token),
+            arguments,
             true));
   }
 
