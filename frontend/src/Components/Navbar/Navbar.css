@@ -5,16 +5,12 @@
    align-items: center;
  }
  .logoImageBrand {
-   position: absolute;
    width: 60px;
-   margin-left: 6.5rem;
-   filter: brightness(100);
+   filter: brightness(80);
  }
  .brand {
-   position: absolute;
-   margin-left: 10rem;
-   margin-top: auto;
    color: var(--smoke);
+   margin-top: auto;
  }
  .menuBars {
    margin-left: 2rem;
@@ -44,6 +40,7 @@
    top: 0;
    left: -100%;
    transition: 850ms;
+   z-index: 4;
  }
  .navMenu.active {
    left: 0;

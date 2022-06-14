@@ -1,22 +1,33 @@
 import React from "react";
-import { Nav } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
+import logoImage from "..//Login/assets/logoblackandwhite.svg";
 import "./Navbar.css";
-
 import Sidebar from "../Sidebar/Sidebar";
 import Profile from "../Profile/Profile";
-import SearchBar from "../SearchBar/SearchBar";
-import logoImage from "..//Login/assets/logoblackandwhite.svg";
 
-const Navbar = () => {
+const Header = () => {
    return (
-      <Nav className="navbar navbar-expand-lg d-flex">
-         <h1 className="brand">Skynest</h1>
-         <img src={logoImage} alt="logo" className="logoImageBrand" />
+      <Navbar expand="lg" bg="dark" variant="dark">
          <Sidebar />
-         <SearchBar />
+         <Navbar.Toggle aria-controls="responsive-navbar-nav d-none" />
+
+         <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="me-auto">
+               <Navbar.Brand href="#home">
+                  <img src={logoImage} alt="logo" className="logoImageBrand" />
+               </Navbar.Brand>
+               <Navbar.Brand href="#home" className=" d-flex align-items-center">
+                  <h2 className="brand">SkyNest</h2>
+               </Navbar.Brand>
+            </Nav>
+            <Form className="d-flex">
+               <FormControl type="search" placeholder="Search" className="me-2" aria-label="Search" />
+               <Button variant="outline-secondary">Search</Button>
+            </Form>
+         </Navbar.Collapse>
          <Profile />
-      </Nav>
+      </Navbar>
    );
 };
 
-export default Navbar;
+export default Header;
