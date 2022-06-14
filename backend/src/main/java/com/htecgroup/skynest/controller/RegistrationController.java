@@ -23,7 +23,7 @@ import javax.validation.Valid;
 import static com.htecgroup.skynest.util.UrlUtil.*;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/users")
 @AllArgsConstructor
 @Log4j2
 @Tag(name = "Register API", description = "Operations to register users")
