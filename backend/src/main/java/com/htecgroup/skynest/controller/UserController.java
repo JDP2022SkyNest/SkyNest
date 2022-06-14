@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.controller;
 
-import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.UserService;
@@ -145,10 +145,10 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @PutMapping("/edit/{uuid}")
   public ResponseEntity<UserResponse> editUser(
-      @Valid @RequestBody UserRegisterRequest userEditRequest, @PathVariable UUID uuid) {
+      @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
-    log.info("User {} is successfully edited.", userEditRequest.getEmail());
+    log.info("User is successfully edited.");
     return responseEntity;
   }
 

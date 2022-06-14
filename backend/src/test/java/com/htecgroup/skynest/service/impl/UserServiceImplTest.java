@@ -5,6 +5,7 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.RoleRepository;
@@ -227,9 +228,8 @@ class UserServiceImplTest {
 
   @Test
   void editUser() {
-    UserRegisterRequest expectedUser = new UserRegisterRequest();
+    UserEditRequest expectedUser = new UserEditRequest();
     UUID uuid = UUID.randomUUID();
-    expectedUser.setEmail("test@test.com");
     expectedUser.setName("Name2");
     expectedUser.setSurname("Surname2");
     expectedUser.setAddress("Address2");
@@ -239,7 +239,6 @@ class UserServiceImplTest {
     UserResponse userResponse = userService.editUser(expectedUser, uuid);
 
     Assertions.assertEquals(userResponse.getName(), enabledWorkerEntity.getName());
-    Assertions.assertEquals(userResponse.getEmail(), enabledWorkerEntity.getEmail());
     Assertions.assertEquals(userResponse.getSurname(), enabledWorkerEntity.getSurname());
     Assertions.assertEquals(userResponse.getAddress(), enabledWorkerEntity.getAddress());
   }
