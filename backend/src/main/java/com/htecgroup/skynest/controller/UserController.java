@@ -26,7 +26,7 @@ import java.util.UUID;
 import static com.htecgroup.skynest.util.UrlUtil.*;
 
 @RestController
-@RequestMapping(USERS_CONTROLLER_URL)
+@RequestMapping(USERS_CONTROLLER_PATH)
 @AllArgsConstructor
 @Log4j2
 @Tag(name = "User API", description = "Operations to manipulate user")
@@ -114,11 +114,12 @@ public class UserController {
                             + "  \"phoneNumber\": \"38166575757\","
                             + "  \"address\": \"Local address\"}")
               }))
-  @PostMapping(REGISTER_URL)
+  @PostMapping(REGISTER_PATH)
   public ResponseEntity<UserResponse> registerUser(
       @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
 
-    ResponseEntity<UserResponse> responseEntity = new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+    ResponseEntity<UserResponse> responseEntity =
+        new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
     return responseEntity;
   }
 
@@ -148,7 +149,7 @@ public class UserController {
                   })
             })
       })
-  @GetMapping(CONFIRM_EMAIL_URL)
+  @GetMapping(CONFIRM_EMAIL_PATH)
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
     String response = userService.confirmEmail(token);
     log.info(response);
@@ -178,7 +179,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Failed to send email")})
             })
       })
-  @PostMapping(RESEND_EMAIL_URL)
+  @PostMapping(RESEND_EMAIL_PATH)
   public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
     userService.sendVerificationEmail(email);
     String response = "Email resent successfully";
@@ -226,7 +227,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Failed to send email")})
             })
       })
-  @PostMapping(PASSWORD_RESET_URL)
+  @PostMapping(PASSWORD_RESET_PATH)
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
     userService.sendPasswordResetEmail(email);
     String response = "Password reset email sent";
@@ -265,7 +266,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PutMapping(PASSWORD_RESET_URL)
+  @PutMapping(PASSWORD_RESET_PATH)
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
     String response = userService.resetPassword(userPasswordResetRequest);
@@ -331,7 +332,8 @@ public class UserController {
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
     UserResponse userResponse = userService.getUser(uuid);
-    ResponseEntity<UserResponse> userResponseEntity = new ResponseEntity<>(userResponse, HttpStatus.OK);
+    ResponseEntity<UserResponse> userResponseEntity =
+        new ResponseEntity<>(userResponse, HttpStatus.OK);
     return userResponseEntity;
   }
 

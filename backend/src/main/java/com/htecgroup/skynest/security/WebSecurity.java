@@ -61,7 +61,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             bCryptPasswordEncoder,
             userService,
             objectMapper);
-    filter.setFilterProcessesUrl(UrlUtil.USERS_CONTROLLER_URL + UrlUtil.LOG_IN_URL);
+    filter.setFilterProcessesUrl(UrlUtil.USERS_CONTROLLER_PATH + UrlUtil.LOG_IN_PATH);
     return filter;
   }
 

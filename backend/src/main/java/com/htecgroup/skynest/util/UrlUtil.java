@@ -10,31 +10,34 @@ import java.util.stream.Stream;
 
 @Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UrlUtil {
+public final class UrlUtil {
 
   public static final String SWAGGER_URL = "/v3/api-docs/**";
   public static final String SWAGGER_URL_ALT = "/swagger-ui/**";
 
-  public static final String USERS_CONTROLLER_URL = "/users";
-  public static final String LOG_IN_URL = "/login";
-  public static final String REGISTER_URL = "/register";
-  public static final String CONFIRM_EMAIL_URL = "/confirm";
-  public static final String RESEND_EMAIL_URL = "/resend-email";
-  public static final String PASSWORD_RESET_URL = "/password-reset";
+  public static final String USERS_CONTROLLER_PATH = "/users";
+  public static final String LOG_IN_PATH = "/login";
+  public static final String REGISTER_PATH = "/register";
+  public static final String CONFIRM_EMAIL_PATH = "/confirm";
+  public static final String RESEND_EMAIL_PATH = "/resend-email";
+  public static final String PASSWORD_RESET_PATH = "/password-reset";
 
   public static String BASE_URL_FRONTEND;
+  public static final String CONFIRM_PASSWORD_FRONTEND_PATH = "/confirm-password";
 
   public static final String[] ANY_URLS_WITHOUT_AUTH = {SWAGGER_URL, SWAGGER_URL_ALT};
 
   public static final String[] GET_URLS_WITHOUT_AUTH = {
-    UrlUtil.USERS_CONTROLLER_URL + CONFIRM_EMAIL_URL
+    UrlUtil.USERS_CONTROLLER_PATH + CONFIRM_EMAIL_PATH
   };
   public static final String[] POST_URLS_WITHOUT_AUTH = {
-    USERS_CONTROLLER_URL + REGISTER_URL,
-    USERS_CONTROLLER_URL + RESEND_EMAIL_URL,
-    USERS_CONTROLLER_URL + PASSWORD_RESET_URL
+    USERS_CONTROLLER_PATH + REGISTER_PATH,
+    USERS_CONTROLLER_PATH + RESEND_EMAIL_PATH,
+    USERS_CONTROLLER_PATH + PASSWORD_RESET_PATH
   };
-  public static final String[] PUT_URLS_WITHOUT_AUTH = {USERS_CONTROLLER_URL + PASSWORD_RESET_URL};
+  public static final String[] PUT_URLS_WITHOUT_AUTH = {
+    USERS_CONTROLLER_PATH + PASSWORD_RESET_PATH
+  };
 
   public static final String[] URLS_WITHOUT_AUTH =
       Stream.of(
@@ -42,18 +45,19 @@ public class UrlUtil {
               GET_URLS_WITHOUT_AUTH,
               POST_URLS_WITHOUT_AUTH,
               PUT_URLS_WITHOUT_AUTH,
-              new String[] {USERS_CONTROLLER_URL + LOG_IN_URL})
+              new String[] {USERS_CONTROLLER_PATH + LOG_IN_PATH})
           .flatMap(Stream::of)
           .toArray(String[]::new);
 
   public static String getEmailVerificationLink(String token) {
     return String.format(
         "%s%s%s%s%s",
-        getBaseUrlBackend(), USERS_CONTROLLER_URL, CONFIRM_EMAIL_URL, "?token=", token);
+        getBaseUrlBackend(), USERS_CONTROLLER_PATH, CONFIRM_EMAIL_PATH, "?token=", token);
   }
 
   public static String getPasswordResetLink(String token) {
-    return String.format("%s%s%s%s", BASE_URL_FRONTEND, "/confirm-password", "?token=", token);
+    return String.format(
+        "%s%s%s%s", BASE_URL_FRONTEND, CONFIRM_PASSWORD_FRONTEND_PATH, "?token=", token);
   }
 
   public static String getBaseUrlBackend() {
