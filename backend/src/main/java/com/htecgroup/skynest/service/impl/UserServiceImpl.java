@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
   private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private EmailType emailUtils;
   private EmailService emailService;
 
   @Override

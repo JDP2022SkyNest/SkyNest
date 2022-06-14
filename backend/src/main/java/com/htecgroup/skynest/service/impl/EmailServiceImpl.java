@@ -34,9 +34,9 @@ public class EmailServiceImpl implements EmailService {
     try {
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-      helper.setText(templateEngine.process(email.getTemplate(), context), true);
+      helper.setText(templateEngine.process(email.getEmailType().getTemplate(), context), true);
       helper.setTo(email.getTo());
-      helper.setSubject(email.getSubject());
+      helper.setSubject(email.getEmailType().getSubject());
       javaMailSender.send(mimeMessage);
     } catch (AddressException e) {
       log.error("Illegal mail address", e);
