@@ -7,10 +7,8 @@ import ProtectedRoute from "./Components/Routes/ProtectedRoute";
 import RedirectRoute from "./Components/Routes/RedirectRoute";
 import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
-import YourProfile from "./Components/pages/YourProfile";
-import Settings from "./Components/pages/Settings";
-import Logout from "./Components/pages/Logout";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import AdminPanel from "./Components/AdminPanel/AdminPanel";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -30,9 +28,7 @@ const App = () => {
          <Route path="signup" exact element={<SignUp />} />
          <Route path="forgot-password" exact element={<ForgotPassword />} />
          <Route path="confirm-password" exact element={<ConfirmPassword />} />
-         <Route path="/yourprofile" exact element={<YourProfile />} />
-         <Route path="/settings" exact element={<Settings />} />
-         <Route path="/logout" exact element={<Logout />} />
+         <Route path="admin-panel" exact element={<AdminPanel />} />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
