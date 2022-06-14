@@ -3,7 +3,8 @@ import { Navbar, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
-import { FaCaretLeft } from "react-icons/fa";
+import ReusableModal from "../ReusableComponents/ReusableModal";
+import AdminCarousel from "./AdminCarousel";
 
 const AdminPanelNav = () => {
    const navigate = useNavigate();
@@ -15,14 +16,22 @@ const AdminPanelNav = () => {
             <div className="form-inline my-2 my-lg-0">
                <input className="form-control mr-sm-2" placeholder="Search user" />
             </div>
-            <button
-               onClick={() => {
-                  redirectTo(navigate, ROUTES.HOME);
-               }}
-               className="btn btn-secondary"
-            >
-               <FaCaretLeft className="icon-back-align" /> Go back
-            </button>
+
+            <div className="d-flex">
+               <div className="mr-3 icon-modal-align">
+                  <ReusableModal title="Instructions">
+                     <AdminCarousel />
+                  </ReusableModal>
+               </div>
+               <button
+                  onClick={() => {
+                     redirectTo(navigate, ROUTES.HOME);
+                  }}
+                  className="btn btn-secondary"
+               >
+                  Go back
+               </button>
+            </div>
          </Container>
       </Navbar>
    );

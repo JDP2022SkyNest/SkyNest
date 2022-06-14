@@ -7,6 +7,11 @@ body {
    top:-1px
 }
 
+.icon-modal-align {
+   position: relative;
+   top: 6px;
+}
+
 .users-number-style {
    border-left: 3px solid rgb(201, 98, 98);
    margin-right: 5px;
