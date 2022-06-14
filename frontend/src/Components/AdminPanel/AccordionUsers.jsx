@@ -18,10 +18,11 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
                }}
                className="btn btn-danger"
             >
-               Delete User
+               Delete
             </button>
             {/* This button is still a placeholder, functinality will be added */}
-            <button className="btn btn-primary ml-2">Promote User</button>
+            <button className="btn btn-success ml-2">Promote</button>
+            <button className="btn btn-warning ml-2">Demote</button>
          </Accordion.Body>
       </Accordion.Item>
    );

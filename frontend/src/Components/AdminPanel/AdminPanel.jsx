@@ -5,6 +5,7 @@ import AdminPanelNav from "./AdminPanelNav";
 import AdminCard from "./AdminCard";
 import "./AdminPanel.css";
 import AccordionUsers from "./AccordionUsers";
+import Footer from "../Footer/Footer";
 
 const AdminPanel = () => {
    const [usersData, setUsersData] = useState([]);
@@ -40,6 +41,7 @@ const AdminPanel = () => {
                </div>
             </div>
          </Container>
+         <Footer />
       </div>
    );
 };

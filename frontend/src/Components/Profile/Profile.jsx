@@ -14,14 +14,14 @@ const Profile = () => {
    return (
       <IconContext.Provider value={sidebar}>
          <div className="navbar ml-auto profile">
-            <Link to="#" className="">
+            <Link to="/" className="">
                <AiIcons.AiOutlineUser onClick={showSidebar} />
             </Link>
          </div>
          <nav className={sidebar ? "navMenuProfile active" : "navMenuProfile"}>
             <ul className="navMenuItems" onClick={showSidebar}>
                <li className="navbarToggleProfile">
-                  <Link to="#" className="menuBarsSidebars">
+                  <Link to="/" className="menuBarsSidebars">
                      <AiIcons.AiOutlineCloseCircle />
                   </Link>
                </li>
