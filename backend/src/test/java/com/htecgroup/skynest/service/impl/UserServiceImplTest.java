@@ -10,7 +10,6 @@ import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
-import com.htecgroup.skynest.util.EmailUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,6 @@ class UserServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private RoleRepository roleRepository;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Mock private EmailUtils emailUtils;
   @Spy private ModelMapper modelMapper;
   @Spy private EmailService emailService;
 
@@ -115,7 +113,7 @@ class UserServiceImplTest {
     Assertions.assertThrows(UserException.class, () -> userService.registerUser(newUserRequest));
   }
 
- /* @Test
+  /* @Test
   void registerUser_RoleNotFound() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
@@ -147,7 +145,7 @@ class UserServiceImplTest {
     Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
   }
 
-/*  @Test
+  /*  @Test
   void getUser() {
     when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
 

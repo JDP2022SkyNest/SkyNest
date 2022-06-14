@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.model.email;
 
+import com.htecgroup.skynest.util.EmailType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,8 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class Email {
   String to;
-  String subject;
-  String template;
+  EmailType emailType;
   Map<String, String> args;
   Boolean html;
 }
