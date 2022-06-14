@@ -1,11 +1,16 @@
 import React from "react";
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
+import { Navbar, Nav, Form, FormControl, Button } from "react-bootstrap";
 import logoImage from "..//Login/assets/logoblackandwhite.svg";
 import "./Navbar.css";
 import Sidebar from "../Sidebar/Sidebar";
 import Profile from "../Profile/Profile";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { useNavigate } from "react-router-dom";
+import ROUTES from "../Routes/ROUTES";
 
 const Header = () => {
+   const navigate = useNavigate();
+
    return (
       <Navbar expand="lg" bg="dark" variant="dark">
          <Sidebar />
@@ -24,6 +29,15 @@ const Header = () => {
                <FormControl type="search" placeholder="Search" className="me-2" aria-label="Search" />
                <Button variant="outline-secondary">Search</Button>
             </Form>
+            <Button
+               onClick={() => {
+                  redirectTo(navigate, ROUTES.ADMIN, 1);
+               }}
+               className="ml-3"
+               variant="outline-danger"
+            >
+               Admin Panel
+            </Button>
          </Navbar.Collapse>
          <Profile />
       </Navbar>

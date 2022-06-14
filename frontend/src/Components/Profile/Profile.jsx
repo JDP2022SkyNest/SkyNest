@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import * as AiIcons from "react-icons/ai";
-import * as CgIcons from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { ProfileData } from "./ProfileData";
 import "../Navbar/Navbar.css";
