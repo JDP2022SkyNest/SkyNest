@@ -4,7 +4,6 @@ import logoImage from "..//Login/assets/logoblackandwhite.svg";
 import "..//Header/Header.css";
 import Sidebar from "../Sidebar/Sidebar";
 import Profile from "../Profile/Profile";
-import SearchBar from "../SearchBar/SearchBar";
 
 const Header = () => {
    return (
@@ -18,7 +17,6 @@ const Header = () => {
                <h2 className="brand">SkyNest</h2>
             </Navbar.Brand>
          </Nav>
-         <SearchBar />
          <Profile />
       </Navbar>
    );

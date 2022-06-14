@@ -1,8 +1,5 @@
 .nav {
    background-color: var(--mate-black);
-   height: 80px;
-   justify-content: start;
-   align-items: center;
  } 
  .logoImageBrand {
    width: 60px;
@@ -14,10 +11,7 @@
    margin-top: auto;
  }
  .menuBars {
-   margin-left: 2rem;
-   margin-bottom: 0.5rem;
    font-size: 1.7rem;
-   background: none;
    color: var(--smoke);
  }
  .menuBars:hover {
