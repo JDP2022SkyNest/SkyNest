@@ -26,7 +26,7 @@ import static com.htecgroup.skynest.util.UrlUtil.*;
 @RequestMapping("/users")
 @AllArgsConstructor
 @Log4j2
-@Tag(name = "Register API", description = "Operations to register users")
+@Tag(name = "Register API", description = "Operations related to register of users")
 public class RegistrationController {
   private UserService userService;
 
