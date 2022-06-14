@@ -217,6 +217,18 @@ class UserServiceImplTest {
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
+  @Test
+  void editUser() {
+    UserRegisterRequest editedUser = UserRegisterRequestUtil.edit();
+    UserEntity userEntityThatShouldBeEdited = UserEntityUtil.getVerified();
+
+    when(userRepository.findById(any())).thenReturn(Optional.of(userEntityThatShouldBeEdited));
+    when(userRepository.save(any())).thenReturn(userEntityThatShouldBeEdited);
+    UserResponse userResponse = userService.editUser(editedUser, UUID.randomUUID());
+
+    this.assertUserEntityAndUserResponse(userEntityThatShouldBeEdited, userResponse);
+  }
+
   private void assertUserEntityAndUserResponse(
       UserEntity expectedUserEntity, UserResponse actualUserResponse) {
     Assertions.assertEquals(expectedUserEntity.getId().toString(), actualUserResponse.getId());
