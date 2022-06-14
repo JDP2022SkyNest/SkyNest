@@ -7,6 +7,7 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
@@ -133,7 +134,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse editUser(UserRegisterRequest userEditRequest, UUID uuid) {
+  public UserResponse editUser(UserEditRequest userEditRequest, UUID uuid) {
     UserEntity userEntity =
         userRepository
             .findById(uuid)
