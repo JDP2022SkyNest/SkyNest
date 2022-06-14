@@ -28,12 +28,12 @@ public class JwtUtils {
   public static final String TOKEN_PREFIX = "Bearer ";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
-  private static Algorithm ALGORITHM;
+  public static Algorithm ALGORITHM;
 
   public static String generate(
-      String userName, long msUntilExpiration, String claimName, List<String> claims) {
+      String subject, long msUntilExpiration, String claimName, List<String> claims) {
     return JWT.create()
-        .withSubject(userName)
+        .withSubject(subject)
         .withExpiresAt(new Date(System.currentTimeMillis() + msUntilExpiration))
         .withClaim(claimName, claims)
         .sign(ALGORITHM);
@@ -52,6 +52,20 @@ public class JwtUtils {
     } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
       throw new UserException(UserExceptionType.INVALID_TOKEN);
+    } catch (IllegalArgumentException e) {
+      log.error("JWT algorithm is null: {}", e.getMessage());
+      throw new UserException(UserExceptionType.JWT_ALGORITHM_IS_NULL);
+    }
+  }
+
+  public static long stillValidForInMs(String token) {
+    try {
+      DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
+      Date expiresAt = decodedJWT.getExpiresAt();
+      Date now = new Date(System.currentTimeMillis());
+      return expiresAt.getTime() - now.getTime();
+    } catch (JWTVerificationException e) {
+      return 0;
     } catch (IllegalArgumentException e) {
       log.error("JWT algorithm is null: {}", e.getMessage());
       throw new UserException(UserExceptionType.JWT_ALGORITHM_IS_NULL);
