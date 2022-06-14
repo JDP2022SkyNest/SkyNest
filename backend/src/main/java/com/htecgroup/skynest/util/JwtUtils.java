@@ -74,16 +74,12 @@ public class JwtUtils {
         .sign(ALGORITHM);
   }
 
-  public static void validateEmailToken(String token, String purpose) {
+  public static String validateEmailToken(String token, String purpose) {
     try {
       Verification verification = JWT.require(ALGORITHM);
-      Date expiresAt = verification.build().verify(token).getExpiresAt();
-      JWTVerifier verifier =
-          verification
-              .acceptExpiresAt(expiresAt.getTime())
-              .withClaim(EMAIL_TOKEN_CLAIM, purpose)
-              .build();
-      verifier.verify(token);
+      JWTVerifier verifier = verification.withClaim(EMAIL_TOKEN_CLAIM, purpose).build();
+      DecodedJWT decodedJWT = verifier.verify(token);
+      return decodedJWT.getSubject();
     } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
       throw new UserException(UserExceptionType.INVALID_TOKEN);
@@ -93,8 +89,12 @@ public class JwtUtils {
     }
   }
 
-  public static String getEmailFromJwtEmailToken(String token) {
-    return JWT.require(ALGORITHM).build().verify(token).getSubject();
+  public static String validatePasswordResetToken(String token) {
+    return validateEmailToken(token, JwtUtils.PASSWORD_RESET_PURPOSE);
+  }
+
+  public static String validateEmailVerificationToken(String token) {
+    return validateEmailToken(token, JwtUtils.EMAIL_VERIFICATION_PURPOSE);
   }
 
   @Value("${jwt.access-expiration-ms}")

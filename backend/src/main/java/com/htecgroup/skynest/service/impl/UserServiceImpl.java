@@ -14,7 +14,7 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.EmailUtils;
+import com.htecgroup.skynest.util.EmailType;
 import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.util.UrlUtil;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
   private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private EmailUtils emailUtils;
+  private EmailType emailUtils;
   private EmailService emailService;
 
   @Override
@@ -78,13 +78,7 @@ public class UserServiceImpl implements UserService {
     Map<String, String> arguments =
         Map.of("emailAddress", emailAddress, "link", UrlUtil.getEmailVerificationLink(token));
 
-    emailService.send(
-        new Email(
-            emailAddress,
-            EmailUtils.EMAIL_VERIFICATION_SUBJECT,
-            EmailUtils.EMAIL_VERIFICATION_TEMPLATE,
-            arguments,
-            true));
+    emailService.send(new Email(emailAddress, EmailType.EMAIL_VERIFICATION, arguments, true));
   }
 
   @Override
@@ -98,20 +92,12 @@ public class UserServiceImpl implements UserService {
     Map<String, String> arguments =
         Map.of("emailAddress", emailAddress, "link", UrlUtil.getPasswordResetLink(token));
 
-    emailService.send(
-        new Email(
-            emailAddress,
-            EmailUtils.PASSWORD_RESET_SUBJECT,
-            EmailUtils.PASSWORD_RESET_TEMPLATE,
-            arguments,
-            true));
+    emailService.send(new Email(emailAddress, EmailType.PASSWORD_RESET, arguments, true));
   }
 
   @Override
   public String resetPassword(UserPasswordResetRequest userPasswordResetRequest) {
-    JwtUtils.validateEmailToken(
-        userPasswordResetRequest.getToken(), JwtUtils.PASSWORD_RESET_PURPOSE);
-    String email = JwtUtils.getEmailFromJwtEmailToken(userPasswordResetRequest.getToken());
+    String email = JwtUtils.validatePasswordResetToken(userPasswordResetRequest.getToken());
     UserDto userDto = findUserByEmail(email);
     UserDto userDtoNewPassword =
         userDto.withEncryptedPassword(
@@ -165,8 +151,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String confirmEmail(String token) {
-    JwtUtils.validateEmailToken(token, JwtUtils.EMAIL_VERIFICATION_PURPOSE);
-    String email = JwtUtils.getEmailFromJwtEmailToken(token);
+    String email = JwtUtils.validateEmailVerificationToken(token);
     UserDto userDto = findUserByEmail(email);
     UserDto enabledUser = this.verifyUser(userDto);
     userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
