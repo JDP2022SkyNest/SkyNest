@@ -12,7 +12,7 @@ const AdminPanelNav = () => {
    return (
       <Navbar bg="dark" variant="dark">
          <Container>
-            <Navbar.Brand className="text-danger d-none d-md-block">Admin Panel</Navbar.Brand>
+            <Navbar.Brand className="text-white d-none d-md-block">Admin Panel</Navbar.Brand>
             <div className="form-inline my-2 my-lg-0">
                <input className="form-control mr-sm-2" placeholder="Search user" />
             </div>
