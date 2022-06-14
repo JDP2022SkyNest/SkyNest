@@ -16,19 +16,19 @@ const AdminCarousel = () => {
          <Carousel.Item>
             <img className="d-block w-100" src={First} alt="First slide" />
             <Carousel.Caption>
-               <h3 className="text-dark">List of All users</h3>
+               <h3 className="text-dark bg-white p-1 rounded border border-dark">List of All users</h3>
             </Carousel.Caption>
          </Carousel.Item>
          <Carousel.Item>
             <img className="d-block w-100" src={Second} alt="Second slide" />
             <Carousel.Caption>
-               <h3 className="text-dark">Secect a user</h3>
+               <h3 className="text-dark bg-white p-2 rounded border border-dark">Select a user</h3>
             </Carousel.Caption>
          </Carousel.Item>
          <Carousel.Item>
             <img className="d-block w-100" src={Third} alt="Third slide" />
             <Carousel.Caption>
-               <h3 className="text-dark">Delete, Promote or Demote Them</h3>
+               <h3 className="text-dark bg-white p-1 rounded border border-dark">Delete, Promote or Demote Them</h3>
             </Carousel.Caption>
          </Carousel.Item>
       </Carousel>
