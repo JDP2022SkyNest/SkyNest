@@ -3,10 +3,11 @@
    height: 80px;
    justify-content: start;
    align-items: center;
- }
+ } 
  .logoImageBrand {
    width: 60px;
    filter: brightness(80);
+   margin-right: -15px;
  }
  .brand {
    color: var(--smoke);
@@ -15,13 +16,13 @@
  .menuBars {
    margin-left: 2rem;
    margin-bottom: 0.5rem;
-   font-size: 1.5rem;
+   font-size: 1.7rem;
    background: none;
    color: var(--smoke);
  }
  .menuBars:hover {
   color: var(--smoke);
-}
+ }
  .menuBarsSidebars {
    margin-left: 80%;
    font-size: 2rem;
@@ -30,7 +31,7 @@
  }
  .menuBarsSidebars:hover {
   color: var(--smoke);
-}
+ }
  .navMenu {
    background-color: var(--mate-black);
    width: 300px;
@@ -48,7 +49,7 @@
  }
  .nav-text {
    display: flex;
-   justify-content: start;
+   justify-content: flex-start;
    list-style: none;
    height: 50px;
    margin-left: -32px;
@@ -67,13 +68,13 @@
    animation: logoRotation 60s linear infinite reverse;
    transform: scale(0.5)
  }
- @keyframes logoRotation {
+  @keyframes logoRotation {
 	from {
 		transform: rotate(0deg);
 	}
 	to {
 		transform: rotate(360deg);
-	}}
+  	}}
  .nav-text a {
    text-decoration: none;
    color: var(--smoke);
@@ -86,8 +87,7 @@
  }
  .nav-text a:hover {
    background-color: var(--smoke);
-   color: var(--mate-black);
- }
+   color: var(--mate-black);  }
  .navMenuItems {
    width: 100%;
  }
@@ -96,9 +96,38 @@
    width: 100%;
    height: 80px;
    display: flex;
-   justify-content: start;
+   justify-content: flex-start;
    align-items: center;
  }
  span {
    margin-left: 16px;
  }
+ @media only screen and (max-width: 600px) {
+  .navMenu {
+    width: 5rem;
+  }
+  .navMenu span {
+    display: none;
+  }
+  .logoImage {
+    display: none;
+  }
+  .menuBarsSidebars svg {
+    margin-left:-30px ;
+  }
+  .navMenu.active>ul>li {
+  margin-left:-10px ;
+  }
+  .menuBars {
+    margin-left: 0;
+  }
+}
+@media only screen and (max-width: 1200px) {
+  .logoImageBrand {
+    display: none;
+  }
+  .brand {
+    display: none;
+  }
+}
+  

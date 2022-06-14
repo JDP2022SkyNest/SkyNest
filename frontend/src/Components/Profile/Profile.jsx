@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import * as AiIcons from "react-icons/ai";
-import * as CgIcons from "react-icons/cg";
 import { Link } from "react-router-dom";
 import { ProfileData } from "./ProfileData";
-import "../Navbar/Navbar.css";
+import "../Header/Header.css";
 import "./Profile.css";
 import { IconContext } from "react-icons";
 
@@ -15,7 +14,7 @@ const Profile = () => {
    return (
       <IconContext.Provider value={sidebar}>
          <div className="navbar ml-auto profile">
-            <Link to="#" className="">
+            <Link to="#" className="menuBars">
                <AiIcons.AiOutlineUser onClick={showSidebar} />
             </Link>
          </div>

@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import * as AiIcons from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { SidebarData } from "./Sidebardata";
-import "../Navbar/Navbar.css";
+import "../Header/Header.css";
 import { IconContext } from "react-icons";
-import logoImage from "..//Login/assets/logoblackandwhite.svg";
 
 const Sidebar = () => {
    const [sidebar, setSidebar] = useState(false);
@@ -35,8 +34,6 @@ const Sidebar = () => {
                      </li>
                   );
                })}
-
-               <img src={logoImage} alt="logo" className="logoImage" />
             </ul>
          </nav>
       </IconContext.Provider>

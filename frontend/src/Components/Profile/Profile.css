@@ -1,27 +1,28 @@
 .navMenuProfile {
    background-color: var(--mate-black);
-   width: 250px;
-   height: 22vh;
+   width: 230px;
+   min-height: 22vh;
    display: flex;
    justify-content: center;
    position: fixed;
    top: -100%;
    right: 0;
    transition: 850ms;
-   margin: 4px;
+   margin-top: 3px;
    box-shadow: 0 10px 30px 0 var(--mate-black);
+   z-index: 4;
  }
  .navMenuProfile.active {
    right: 0;
    transition: 350ms;
    border-radius: 1rem;
-   top: 5rem;
+   top: 1rem;
  }
  .navbarToggleProfile {
   background-color: var(--mate-black);
   width: 100%;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 }
  .profile {
@@ -37,3 +38,8 @@
 .profile a:hover {
   color: var(--smoke);
  }
+ @media only screen and (max-width: 600px) {
+  .navMenuProfile { 
+    width: 200px;
+  }
+}
