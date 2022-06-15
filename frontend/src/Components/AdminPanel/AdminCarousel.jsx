@@ -13,22 +13,22 @@ const AdminCarousel = () => {
 
    return (
       <Carousel activeIndex={index} onSelect={handleSelect} variant="dark">
-         <Carousel.Item interval={1600}>
+         <Carousel.Item interval={2500}>
             <img className="d-block w-100" src={First} alt="First slide" />
             <Carousel.Caption>
-               <h3 className="text-dark bg-white p-1 rounded border border-dark">List of All users</h3>
+               <h3 className="text-dark bg-white p-1 rounded border border-dark">1 - List of All users</h3>
             </Carousel.Caption>
          </Carousel.Item>
-         <Carousel.Item interval={1600}>
+         <Carousel.Item interval={2500}>
             <img className="d-block w-100" src={Second} alt="Second slide" />
             <Carousel.Caption>
-               <h3 className="text-dark bg-white p-2 rounded border border-dark">Select a user</h3>
+               <h3 className="text-dark bg-white p-2 rounded border border-dark">2 - Select a user</h3>
             </Carousel.Caption>
          </Carousel.Item>
-         <Carousel.Item interval={1600}>
+         <Carousel.Item interval={2500}>
             <img className="d-block w-100" src={Third} alt="Third slide" />
             <Carousel.Caption>
-               <h3 className="text-dark bg-white p-1 rounded border border-dark">Delete, Promote or Demote Them</h3>
+               <h3 className="text-dark bg-white p-1 rounded border border-dark">3 - Delete, Promote or Demote Them</h3>
             </Carousel.Caption>
          </Carousel.Item>
       </Carousel>
