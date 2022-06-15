@@ -1,13 +1,18 @@
 package com.htecgroup.skynest.filter;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.security.CustomAuthenticationToken;
+import com.htecgroup.skynest.security.CustomUserDetailsService;
 import com.htecgroup.skynest.util.DateTimeUtil;
 import com.htecgroup.skynest.util.ExceptionUtil;
 import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.util.UrlUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,7 +24,10 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @Log4j2
+@AllArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+
+  private CustomUserDetailsService customUserDetailsService;
 
   @Override
   protected void doFilterInternal(
@@ -45,7 +53,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
       }
 
       String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
-      SecurityContextHolder.getContext().setAuthentication(JwtUtils.getFrom(token));
+      UsernamePasswordAuthenticationToken authToken = JwtUtils.getFrom(token);
+      LoggedUserDto loggedUserDto =
+          (LoggedUserDto)
+              customUserDetailsService.loadUserByUsername(authToken.getPrincipal().toString());
+      CustomAuthenticationToken customAuthenticationToken =
+          new CustomAuthenticationToken(loggedUserDto, loggedUserDto.getAuthorities());
+      SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
 
       filterChain.doFilter(request, response);
     } catch (UserException ex) {

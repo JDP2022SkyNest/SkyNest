@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -120,10 +122,11 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto getUser(UUID uuid) {
 
-    String currentRole = currentUserService.getRole();
-    UUID currentUuid = currentUserService.getId();
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    String loggedUserRole = new ArrayList<>(loggedUserDto.getAuthorities()).get(0).toString();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
 
-    if (currentRole.equals(RoleEntity.ROLE_WORKER) && !(currentUuid.equals(uuid))) {
+    if (loggedUserRole.equals(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
       throw new UserException("Access denied", HttpStatus.FORBIDDEN);
     }
 

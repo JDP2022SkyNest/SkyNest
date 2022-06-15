@@ -54,7 +54,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
       return authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
-              credentials.getEmail(), credentials.getPassword(), userDetails.getAuthorities()));
+              userDetails.getUsername(), credentials.getPassword(), userDetails.getAuthorities()));
 
     } catch (BadCredentialsException ex) {
       throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);

@@ -1,16 +1,8 @@
 package com.htecgroup.skynest.service;
 
-import org.springframework.security.core.Authentication;
-
-import java.util.UUID;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 
 public interface CurrentUserService {
 
-  Authentication getAuthentication();
-
-  String getEmail();
-
-  String getRole();
-
-  UUID getId();
+  LoggedUserDto getLoggedUser();
 }
