@@ -5,7 +5,9 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.RoleRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
@@ -246,16 +248,16 @@ class UserServiceImplTest {
     userEntityList.add(enabledWorkerEntity);
     when(userRepository.findAll()).thenReturn(userEntityList);
 
-    List<UserDto> expectedDTOs =
+    List<UserResponse> expectedResponse =
         userEntityList.stream()
-            .map(e -> modelMapper.map(e, UserDto.class))
+            .map(e -> modelMapper.map(e, UserResponse.class))
             .collect(Collectors.toList());
 
-    List<UserDto> returnedDTOs = userService.listAllUsers();
+    List<UserResponse> returnedResponse = userService.listAllUsers();
 
-    Assertions.assertEquals(expectedDTOs.size(), returnedDTOs.size());
-    Assertions.assertEquals(expectedDTOs.get(0), returnedDTOs.get(0));
-    Assertions.assertEquals(expectedDTOs.get(0).getEmail(), returnedDTOs.get(0).getEmail());
+    Assertions.assertEquals(expectedResponse.size(), returnedResponse.size());
+    Assertions.assertEquals(expectedResponse.get(0), returnedResponse.get(0));
+    Assertions.assertEquals(expectedResponse.get(0).getEmail(), returnedResponse.get(0).getEmail());
   }
 
   @Test
@@ -268,5 +270,22 @@ class UserServiceImplTest {
     when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
 
     Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
+  }
+
+  @Test
+  void editUser() {
+    UserEditRequest expectedUser = new UserEditRequest();
+    UUID uuid = UUID.randomUUID();
+    expectedUser.setName("Name2");
+    expectedUser.setSurname("Surname2");
+    expectedUser.setAddress("Address2");
+
+    when(userRepository.findById(any())).thenReturn(Optional.of(enabledWorkerEntity));
+    when(userRepository.save(any())).thenReturn(enabledWorkerEntity);
+    UserResponse userResponse = userService.editUser(expectedUser, uuid);
+
+    Assertions.assertEquals(userResponse.getName(), enabledWorkerEntity.getName());
+    Assertions.assertEquals(userResponse.getSurname(), enabledWorkerEntity.getSurname());
+    Assertions.assertEquals(userResponse.getAddress(), enabledWorkerEntity.getAddress());
   }
 }

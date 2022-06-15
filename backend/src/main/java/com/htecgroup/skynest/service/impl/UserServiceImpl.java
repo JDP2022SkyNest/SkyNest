@@ -8,6 +8,9 @@ import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserEditRequest;
+import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.EmailService;
@@ -40,7 +43,9 @@ public class UserServiceImpl implements UserService {
   private CurrentUserService currentUserService;
 
   @Override
-  public UserDto registerUser(UserDto userDto) {
+  public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
+
+    UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
     if (userRepository.existsByEmail(userDto.getEmail())) {
       throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
@@ -55,12 +60,15 @@ public class UserServiceImpl implements UserService {
     userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
     userDto.setVerified(false);
     userDto.setEnabled(false);
+    userDto.setName(userDto.getName().trim());
+    userDto.setSurname(userDto.getSurname().trim());
+    userDto.setAddress(userDto.getAddress().trim());
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
     this.sendVerificationEmail(userDto.getEmail());
 
-    return modelMapper.map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserResponse.class);
   }
 
   @Override
@@ -120,7 +128,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDto getUser(UUID uuid) {
+  public UserResponse getUser(UUID uuid) {
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     String loggedUserRole = new ArrayList<>(loggedUserDto.getAuthorities()).get(0).toString();
@@ -135,7 +143,18 @@ public class UserServiceImpl implements UserService {
             .findById(uuid)
             .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
-    return modelMapper.map(userEntity, UserDto.class);
+    return modelMapper.map(userEntity, UserResponse.class);
+  }
+
+  @Override
+  public UserResponse editUser(UserEditRequest userEditRequest, UUID uuid) {
+    UserEntity userEntity =
+        userRepository
+            .findById(uuid)
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+    modelMapper.map(userEditRequest, userEntity);
+    userRepository.save(userEntity);
+    return modelMapper.map(userEntity, UserResponse.class);
   }
 
   @Override
@@ -149,10 +168,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserDto> listAllUsers() {
+  public List<UserResponse> listAllUsers() {
     List<UserEntity> entityList = userRepository.findAll();
     return entityList.stream()
-        .map(e -> modelMapper.map(e, UserDto.class))
+        .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
 

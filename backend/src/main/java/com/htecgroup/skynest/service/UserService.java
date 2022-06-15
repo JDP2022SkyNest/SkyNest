@@ -1,17 +1,20 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.request.UserEditRequest;
+import com.htecgroup.skynest.model.request.UserRegisterRequest;
+import com.htecgroup.skynest.model.response.UserResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
 
-  UserDto registerUser(UserDto userDto);
+  UserResponse registerUser(UserRegisterRequest userRegisterRequest);
 
   UserDto findUserByEmail(String email);
 
-  List<UserDto> listAllUsers();
+  List<UserResponse> listAllUsers();
 
   String confirmEmail(String token);
 
@@ -27,5 +30,7 @@ public interface UserService {
 
   void deleteUser(UUID uuid);
 
-  UserDto getUser(UUID uuid);
+  UserResponse getUser(UUID uuid);
+
+  UserResponse editUser(UserEditRequest userEditRequest, UUID uuid);
 }
