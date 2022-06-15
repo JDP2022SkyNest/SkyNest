@@ -28,7 +28,7 @@ const Login = ({ setAccessToken }) => {
          if (headers?.authorization) {
             setAccessToken(token);
             localStorage.setItem("accessToken", token);
-            setSuccessfulLogin("Login Successful.");
+            setSuccessfulLogin("Login Successful");
             redirectTo(navigate, ROUTES.HOME, 1000);
             setErrorMsg("");
          } else {

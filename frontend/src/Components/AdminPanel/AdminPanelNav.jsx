@@ -18,7 +18,7 @@ const AdminPanelNav = ({ setSearchTerm }) => {
             </div>
 
             <div className="d-flex">
-               <div className="mr-1 mr-sm-3 icon-modal-align">
+               <div className="mr-2 mr-sm-3 icon-modal-align">
                   <ReusableModal title="Instructions">
                      <AdminCarousel />
                   </ReusableModal>

@@ -13,7 +13,7 @@ const AdminPanel = () => {
    const [searchTerm, setSearchTerm] = useState("");
    const accessToken = localStorage.accessToken;
 
-   const timeNow = new Date().toLocaleDateString();
+   const time = new Date();
 
    useEffect(() => {
       getAllUsers(accessToken, setUsersData, setErrorMsg);
@@ -33,7 +33,7 @@ const AdminPanel = () => {
    ));
 
    return (
-      <div>
+      <div className="admin-page-body">
          <AdminPanelNav setSearchTerm={setSearchTerm} />
          <Container>
             <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>{errorMsg}</p>
@@ -42,7 +42,7 @@ const AdminPanel = () => {
                   <AdminCard title="Total Users:" body={usersData.length} color={"danger"} />
                </div>
                <div className="col-lg-2 d-none d-lg-block">
-                  <AdminCard title="More Info:" body={timeNow} color={"secondary"} />
+                  <AdminCard title={"Info:"} body={time.toLocaleDateString()} color={"secondary"} centered={"text-center"} />
                </div>
                <div className="col-12 col-sm-6 col-lg-3 offset-lg-0">
                   <AdminCard title="Filtered Users:" body={filterUsers.length} color={"primary"} />

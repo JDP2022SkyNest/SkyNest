@@ -1,15 +1,34 @@
 import React from "react";
-import "..//HomePage/HomePage.css";
 import Footer from "../Footer/Footer";
-import Header from "../Navbar/Navbar";
-import CenteredContainer from "..//ReusableComponents/CenteredContainer";
+import { Navbar, Container } from "react-bootstrap";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import ROUTES from "../Routes/ROUTES";
+import { useNavigate } from "react-router-dom";
+import User from "./User";
 
-const HomePage = () => {
+const HomePage = ({ setAccessToken }) => {
+   const navigate = useNavigate();
    return (
       <>
-         <Header />
-         <CenteredContainer>HOMEPAGE</CenteredContainer>
-         <Footer />
+         <Navbar bg="dark" variant="dark">
+            <Container>
+               <Navbar.Brand className="text-white d-flex">
+                  SKY-NEST <span className="ml-2 d-none d-md-block">/ Placeholder home page</span>
+               </Navbar.Brand>
+               <div className="d-flex">
+                  <button
+                     onClick={() => {
+                        redirectTo(navigate, ROUTES.ADMIN, 1);
+                     }}
+                     className="btn btn-danger mr-3"
+                  >
+                     Admin Panel
+                  </button>
+                  <User setAccessToken={setAccessToken} />
+               </div>
+            </Container>
+         </Navbar>
+         <Footer />;
       </>
    );
 };
