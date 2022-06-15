@@ -10,15 +10,12 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.AuthService;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.EmailType;
+import com.htecgroup.skynest.util.EmailUtil;
 import com.htecgroup.skynest.util.JwtUtils;
-import com.htecgroup.skynest.util.UrlUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -68,11 +65,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     String token = JwtUtils.generateEmailVerificationToken(emailAddress);
+    Email email = EmailUtil.createVerificationEmail(userDto, token);
 
-    Map<String, String> arguments =
-        Map.of("name", userDto.getName(), "link", UrlUtil.getEmailVerificationLink(token));
-
-    emailService.send(new Email(emailAddress, EmailType.EMAIL_VERIFICATION, arguments, true));
+    emailService.send(email);
   }
 
   @Override
@@ -84,10 +79,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     String token = JwtUtils.generatePasswordResetToken(emailAddress);
+    Email email = EmailUtil.createPasswordResetEmail(userDto, token);
 
-    Map<String, String> arguments =
-        Map.of("name", userDto.getName(), "link", UrlUtil.getPasswordResetLink(token));
-
-    emailService.send(new Email(emailAddress, EmailType.PASSWORD_RESET, arguments, true));
+    emailService.send(email);
   }
 }
