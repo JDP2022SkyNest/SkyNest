@@ -8,10 +8,22 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
             <div className="users-number-style">{index + 1}</div> - {elem.name} {elem.surname}
          </Accordion.Header>
          <Accordion.Body>
-            <p>Email: {elem.email}</p>
-            <p>Phone Number: {elem.phoneNumber}</p>
-            <p>Address: {elem.address}</p>
-            <p>User ID: {elem.id}</p>
+            <p>
+               <span className="font-weight-bold">Email: </span>
+               {elem.email}
+            </p>
+            <p>
+               <span className="font-weight-bold">Phone Number: </span>
+               {elem.phoneNumber}
+            </p>
+            <p>
+               <span className="font-weight-bold">Address: </span>
+               {elem.address}
+            </p>
+            <p>
+               <span className="text-warning font-weight-bold">User ID: </span>
+               {elem.id}
+            </p>
             <button
                onClick={() => {
                   deleteUser(accessToken, elem.id);
