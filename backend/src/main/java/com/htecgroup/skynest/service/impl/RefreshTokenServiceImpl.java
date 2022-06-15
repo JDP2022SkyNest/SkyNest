@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.htecgroup.skynest.util.JwtUtils.ACCESS_TOKEN_EXPIRATION_MS;
 import static com.htecgroup.skynest.util.JwtUtils.ALGORITHM;
@@ -35,8 +37,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String username = decodedJWT.getSubject();
         String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
 
+        // TODO: somehow get the authorities to pass them inside the token
+        UserDto userDto = userService.findUserByEmail(username);
+        List<String> authorities = new ArrayList<>();
+        authorities.add(userDto.getRole().toString());
+
         String access_token =
-            JwtUtils.generate(username, ACCESS_TOKEN_EXPIRATION_MS, "roles", new ArrayList<>());
+            JwtUtils.generate(username, ACCESS_TOKEN_EXPIRATION_MS, "roles", authorities);
         response.addHeader(
             JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, access_token));
         response.addHeader(
