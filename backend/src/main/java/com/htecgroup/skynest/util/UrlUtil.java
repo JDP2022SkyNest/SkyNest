@@ -2,12 +2,10 @@ package com.htecgroup.skynest.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Component
 public class UrlUtil {
 
   public static final String SWAGGER_URL = "/v3/api-docs/**";
