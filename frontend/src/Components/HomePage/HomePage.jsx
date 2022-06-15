@@ -1,21 +1,35 @@
 import React from "react";
-import CenteredContainer from "../ReusableComponents/CenteredContainer";
+import Footer from "../Footer/Footer";
+import { Navbar, Container } from "react-bootstrap";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import ROUTES from "../Routes/ROUTES";
+import { useNavigate } from "react-router-dom";
+import User from "./User";
 
 const HomePage = ({ setAccessToken }) => {
-   const onLogout = () => {
-      localStorage.removeItem("accessToken");
-      setAccessToken("");
-   };
-
+   const navigate = useNavigate();
    return (
-      <CenteredContainer>
-         <div className="container text-center">
-            <h1>PLACEHOLDER HOME PAGE</h1>
-            <button className="btn btn-warning" onClick={onLogout}>
-               LOGOUT
-            </button>
-         </div>
-      </CenteredContainer>
+      <>
+         <Navbar bg="dark" variant="dark">
+            <Container>
+               <Navbar.Brand className="text-white d-flex">
+                  SKY-NEST <span className="ml-2 d-none d-md-block">/ Placeholder home page</span>
+               </Navbar.Brand>
+               <div className="d-flex">
+                  <button
+                     onClick={() => {
+                        redirectTo(navigate, ROUTES.ADMIN, 1);
+                     }}
+                     className="btn btn-danger mr-3"
+                  >
+                     Admin Panel
+                  </button>
+                  <User setAccessToken={setAccessToken} />
+               </div>
+            </Container>
+         </Navbar>
+         <Footer />;
+      </>
    );
 };
 
