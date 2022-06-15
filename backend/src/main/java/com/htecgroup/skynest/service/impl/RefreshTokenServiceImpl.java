@@ -8,14 +8,11 @@ import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 import static com.htecgroup.skynest.util.JwtUtils.ACCESS_TOKEN_EXPIRATION_MS;
 import static com.htecgroup.skynest.util.JwtUtils.ALGORITHM;
@@ -37,14 +34,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(refresh_token);
         String username = decodedJWT.getSubject();
         String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-        User user = modelMapper.map(userService.findUserByEmail(username), User.class);
-        List<String> authorities =
-            user.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
 
         String access_token =
-            JwtUtils.generate(user.getUsername(), ACCESS_TOKEN_EXPIRATION_MS, "roles", authorities);
+            JwtUtils.generate(username, ACCESS_TOKEN_EXPIRATION_MS, "roles", new ArrayList<>());
         response.addHeader(
             JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, access_token));
         response.addHeader(
