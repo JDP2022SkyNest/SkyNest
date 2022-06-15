@@ -4,6 +4,7 @@ import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
+import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import static com.htecgroup.skynest.util.UrlUtil.*;
@@ -29,6 +32,7 @@ import static com.htecgroup.skynest.util.UrlUtil.*;
 @Tag(name = "Register API", description = "Operations related to register of users")
 public class RegistrationController {
   private UserService userService;
+  private RefreshTokenService refreshTokenService;
 
   @Operation(summary = "Register new user")
   @ApiResponses(
@@ -270,5 +274,10 @@ public class RegistrationController {
             userPasswordResetRequest.getToken(), userPasswordResetRequest.getPassword());
     log.info(response);
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/token/refresh")
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    refreshTokenService.refreshToken(request, response);
   }
 }

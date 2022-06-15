@@ -21,7 +21,8 @@ public class UrlUtil {
   public static final String[] ANY_URLS_WITHOUT_AUTH = {SWAGGER_URL, SWAGGER_URL_ALT};
 
   public static final String[] GET_URLS_WITHOUT_AUTH = {
-    UrlUtil.USERS_CONTROLLER_URL + CONFIRM_EMAIL_URL
+    UrlUtil.USERS_CONTROLLER_URL + CONFIRM_EMAIL_URL,
+    UrlUtil.USERS_CONTROLLER_URL + "/token/refresh"
   };
   public static final String[] POST_URLS_WITHOUT_AUTH = {
     USERS_CONTROLLER_URL + REGISTER_URL,

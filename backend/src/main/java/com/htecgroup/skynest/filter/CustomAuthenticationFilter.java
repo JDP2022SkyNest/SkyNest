@@ -81,8 +81,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     String token =
         JwtUtils.generate(
             user.getUsername(), JwtUtils.ACCESS_TOKEN_EXPIRATION_MS, "roles", authorities);
+    String refresh_token =
+        JwtUtils.generate(
+            user.getUsername(), JwtUtils.REFRESH_TOKEN_EXPIRATION_MS, "roles", authorities);
 
     response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
+    response.addHeader(
+        "refresh-token", String.format("%s%s", JwtUtils.TOKEN_PREFIX, refresh_token));
     log.info("Jwt token successfully created for user: {}", user.getUsername());
 
     log.info("{} is successfully logged in.", user.getUsername());

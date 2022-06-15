@@ -28,6 +28,7 @@ public class JwtUtils {
   public static final String TOKEN_PREFIX = "Bearer ";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
+  public static long REFRESH_TOKEN_EXPIRATION_MS;
   public static Algorithm ALGORITHM;
 
   public static String generate(
@@ -75,6 +76,11 @@ public class JwtUtils {
   @Value("${jwt.access-expiration-ms}")
   public void setNameStatic(long expirationMs) {
     ACCESS_TOKEN_EXPIRATION_MS = expirationMs;
+  }
+
+  @Value("${jwt.refresh-expiration-ms}")
+  public void setNameStaticRefresh(long expirationMs) {
+    REFRESH_TOKEN_EXPIRATION_MS = expirationMs;
   }
 
   @Value("${jwt.secret}")
