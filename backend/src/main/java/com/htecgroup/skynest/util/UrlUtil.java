@@ -2,7 +2,6 @@ package com.htecgroup.skynest.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
@@ -42,23 +41,4 @@ public class UrlUtil {
               new String[] {USERS_CONTROLLER_URL + LOG_IN_URL})
           .flatMap(Stream::of)
           .toArray(String[]::new);
-
-  public static String SKYNEST_HOST;
-  public static int BACKEND_PORT;
-  public static int FRONTEND_PORT;
-
-  @Value("${skynest.host}")
-  public void setServerHostname(String host) {
-    SKYNEST_HOST = host;
-  }
-
-  @Value("${backend.port}")
-  public void setServerHostname(int port) {
-    BACKEND_PORT = port;
-  }
-
-  @Value("${frontend.port}")
-  public void setFrontendPort(int port) {
-    FRONTEND_PORT = port;
-  }
 }
