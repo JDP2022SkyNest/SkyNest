@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,8 +31,8 @@ public class UserEntity implements Serializable {
   private String surname;
   private String address;
   private String phoneNumber;
-  private Boolean verified;
-  private Boolean enabled;
+  @With private Boolean verified;
+  @With private Boolean enabled;
 
   @ManyToOne
   @JoinColumn(name = "role_id", nullable = false)
