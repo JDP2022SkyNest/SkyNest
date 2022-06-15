@@ -31,12 +31,12 @@ public class JwtUtils {
   public static final String TOKEN_PREFIX = "Bearer ";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
-  public static long EMAIL_TOKEN_EXPIRATION_MS;
+  private static long EMAIL_TOKEN_EXPIRATION_MS;
   private static Algorithm ALGORITHM;
 
   private static final String EMAIL_TOKEN_CLAIM = "Email Token";
-  public static final String EMAIL_VERIFICATION_PURPOSE = "verification";
-  public static final String PASSWORD_RESET_PURPOSE = "password reset";
+  private static final String EMAIL_VERIFICATION_PURPOSE = "verification";
+  private static final String PASSWORD_RESET_PURPOSE = "password reset";
 
   public static String generate(
       String userName, long msUntilExpiration, String claimName, List<String> claims) {
@@ -89,12 +89,20 @@ public class JwtUtils {
     }
   }
 
-  public static String validatePasswordResetToken(String token) {
+  public static String getValidatedPasswordResetTokenContext(String token) {
     return validateEmailToken(token, JwtUtils.PASSWORD_RESET_PURPOSE);
   }
 
-  public static String validateEmailVerificationToken(String token) {
+  public static String getValidatedEmailVerificationTokenContext(String token) {
     return validateEmailToken(token, JwtUtils.EMAIL_VERIFICATION_PURPOSE);
+  }
+
+  public static String generatePasswordResetToken(String emailAddress) {
+    return generateEmailToken(emailAddress, PASSWORD_RESET_PURPOSE);
+  }
+
+  public static String generateEmailVerificationToken(String emailAddress) {
+    return generateEmailToken(emailAddress, EMAIL_VERIFICATION_PURPOSE);
   }
 
   @Value("${jwt.access-expiration-ms}")
