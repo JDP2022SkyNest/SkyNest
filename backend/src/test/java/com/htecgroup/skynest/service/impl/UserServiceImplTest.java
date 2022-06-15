@@ -5,12 +5,14 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.util.EmailUtils;
 import com.htecgroup.skynest.utils.UserDtoUtil;
+import com.htecgroup.skynest.utils.UserEditRequestUtil;
 import com.htecgroup.skynest.utils.UserEntityUtil;
 import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
 import org.junit.jupiter.api.Assertions;
@@ -219,8 +221,8 @@ class UserServiceImplTest {
 
   @Test
   void editUser() {
-    UserRegisterRequest editedUser = UserRegisterRequestUtil.edit();
     UserEntity userEntityThatShouldBeEdited = UserEntityUtil.getVerified();
+    UserEditRequest editedUser = UserEditRequestUtil.get();
 
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntityThatShouldBeEdited));
     when(userRepository.save(any())).thenReturn(userEntityThatShouldBeEdited);

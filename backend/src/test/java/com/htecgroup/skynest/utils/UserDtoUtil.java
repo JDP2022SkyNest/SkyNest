@@ -19,8 +19,8 @@ public class UserDtoUtil extends BasicUtil {
         surname,
         address,
         phoneNumber,
-        true,
-        true,
+        false,
+        false,
         roleWorkerDto,
         null);
   }
