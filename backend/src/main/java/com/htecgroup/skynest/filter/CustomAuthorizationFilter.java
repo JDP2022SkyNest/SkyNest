@@ -55,6 +55,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
       if (invalidJwtService.isInvalid(token)) {
         filterChain.doFilter(request, response);
+        log.info("Token is invalid, because it's present in invalidated tokens database.");
         return;
       }
 
