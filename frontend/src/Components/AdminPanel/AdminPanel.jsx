@@ -19,7 +19,14 @@ const AdminPanel = () => {
       getAllUsers(accessToken, setUsersData, setErrorMsg);
    }, [accessToken]);
 
-   const filterUsers = usersData.filter((user) => user.name.includes(searchTerm));
+   const filterUsers = usersData.filter(
+      (user) =>
+         user.name.includes(searchTerm) ||
+         user.surname.includes(searchTerm) ||
+         user.email.includes(searchTerm) ||
+         user.address.includes(searchTerm) ||
+         user.phoneNumber.includes(searchTerm)
+   );
 
    const allUsers = filterUsers.map((elem, index) => (
       <AccordionUsers elem={elem} index={index} deleteUser={deleteUser} key={elem.id} accessToken={accessToken} />
