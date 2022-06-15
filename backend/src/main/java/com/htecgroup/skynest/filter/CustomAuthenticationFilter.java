@@ -47,10 +47,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       UserLoginRequest credentials =
           objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
       UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
-      log.info(
-          "User {} is trying to authenticate from address {}",
-          userDetails.getUsername(),
-          request.getRemoteAddr());
+      log.info("The user: {} is trying to authenticate.", userDetails.getUsername());
 
       if (!userService.isActive(userDetails.getUsername()))
         throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
