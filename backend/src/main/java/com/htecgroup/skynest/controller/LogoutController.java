@@ -37,15 +37,6 @@ public class LogoutController {
                   schema = @Schema(implementation = String.class),
                   examples = {@ExampleObject(value = "Logout successful")})
             }),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Logout - provided token failed validation, algorithm is null",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "JWT algorithm is null")})
-            })
       })
   @PostMapping
   public ResponseEntity<String> logout(HttpServletRequest request) {
