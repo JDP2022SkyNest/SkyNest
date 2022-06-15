@@ -7,14 +7,11 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEditRequest implements Serializable {
-
-  private static final long serialVersionUID = 4902753726120970185L;
+public class UserEditRequest {
 
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 50, message = "length cannot be over 50")

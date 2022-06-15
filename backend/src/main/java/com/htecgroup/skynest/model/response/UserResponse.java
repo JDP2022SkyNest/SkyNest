@@ -2,11 +2,8 @@ package com.htecgroup.skynest.model.response;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class UserResponse implements Serializable {
-  private static final long serialVersionUID = 5751953598376992303L;
+public class UserResponse {
   private String id;
   private String email;
   private String name;
