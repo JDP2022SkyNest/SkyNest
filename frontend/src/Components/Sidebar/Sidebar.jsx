@@ -3,6 +3,7 @@ import * as AiIcons from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { SidebarData } from "./Sidebardata";
 import "../Header/Header.css";
+import "../Sidebar/Sidebar.css";
 import { IconContext } from "react-icons";
 
 const Sidebar = () => {

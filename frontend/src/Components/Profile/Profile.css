@@ -12,20 +12,20 @@
    box-shadow: 0 10px 30px 0 var(--mate-black);
    z-index: 4;
  }
- .navMenuProfile.active {
+.navMenuProfile.active {
    right: 0;
    transition: 350ms;
    border-radius: 1rem;
    top: 1rem;
  }
- .navbarToggleProfile {
+.navbarToggleProfile {
   background-color: var(--mate-black);
   width: 100%;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
- .profile {
+.profile {
   margin-right: 2rem;
   font-size: 2rem;
   background: none;

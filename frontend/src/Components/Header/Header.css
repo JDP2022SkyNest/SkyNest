@@ -81,7 +81,8 @@
  }
  .nav-text a:hover {
    background-color: var(--smoke);
-   color: var(--mate-black);  }
+   color: var(--mate-black);  
+ }
  .navMenuItems {
    width: 100%;
  }

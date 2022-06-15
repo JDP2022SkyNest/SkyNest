@@ -1,0 +1,10 @@
+ .menuBarsSidebars {
+   margin-left: 80%;
+   font-size: 2rem;
+   background: none;
+   color: var(--smoke);
+ }
+ .menuBarsSidebars:hover {
+  color: var(--smoke);
+ }
+ 
