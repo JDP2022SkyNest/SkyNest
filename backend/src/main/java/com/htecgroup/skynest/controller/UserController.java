@@ -4,6 +4,7 @@ import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
+import com.htecgroup.skynest.service.AuthService;
 import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,6 +34,7 @@ import static com.htecgroup.skynest.util.UrlUtil.*;
 public class UserController {
 
   private UserService userService;
+  private AuthService authService;
 
   @Operation(summary = "Register new user")
   @ApiResponses(
@@ -120,6 +122,7 @@ public class UserController {
 
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+    authService.sendVerificationEmail(userRegisterRequest.getEmail());
     return responseEntity;
   }
 
@@ -151,7 +154,7 @@ public class UserController {
       })
   @GetMapping(CONFIRM_EMAIL_PATH)
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
-    String response = userService.confirmEmail(token);
+    String response = authService.confirmEmail(token);
     log.info(response);
     return ResponseEntity.ok(response);
   }
@@ -181,7 +184,7 @@ public class UserController {
       })
   @PostMapping(RESEND_EMAIL_PATH)
   public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
-    userService.sendVerificationEmail(email);
+    authService.sendVerificationEmail(email);
     String response = "Email resent successfully";
     log.info(response);
     return ResponseEntity.ok(response);
@@ -229,7 +232,7 @@ public class UserController {
       })
   @PostMapping(PASSWORD_RESET_PATH)
   public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
-    userService.sendPasswordResetEmail(email);
+    authService.sendPasswordResetEmail(email);
     String response = "Password reset email sent";
     log.info(response);
     return ResponseEntity.ok(response);
@@ -269,7 +272,7 @@ public class UserController {
   @PutMapping(PASSWORD_RESET_PATH)
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
-    String response = userService.resetPassword(userPasswordResetRequest);
+    String response = authService.resetPassword(userPasswordResetRequest);
     log.info(response);
     return ResponseEntity.ok(response);
   }
