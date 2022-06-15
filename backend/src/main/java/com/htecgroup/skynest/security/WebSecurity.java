@@ -7,7 +7,6 @@ import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.UrlUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,11 +35,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers(HttpMethod.POST, UrlUtil.POST_URLS_WITHOUT_AUTH)
-        .permitAll()
-        .antMatchers(HttpMethod.GET, UrlUtil.GET_URLS_WITHOUT_AUTH)
-        .permitAll()
-        .antMatchers(HttpMethod.PUT, UrlUtil.PUT_URLS_WITHOUT_AUTH)
+        .antMatchers("/public/**")
         .permitAll()
         .antMatchers(UrlUtil.ANY_URLS_WITHOUT_AUTH)
         .permitAll()
@@ -61,7 +56,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             bCryptPasswordEncoder,
             userService,
             objectMapper);
-    filter.setFilterProcessesUrl(UrlUtil.USERS_CONTROLLER_URL + UrlUtil.LOG_IN_URL);
+    filter.setFilterProcessesUrl("/public" + UrlUtil.LOG_IN_URL);
     return filter;
   }
 
