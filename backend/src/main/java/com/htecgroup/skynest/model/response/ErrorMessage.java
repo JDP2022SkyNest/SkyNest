@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ErrorMessage {
+
   private List<String> messages;
   private int status;
   private String timestamp;
