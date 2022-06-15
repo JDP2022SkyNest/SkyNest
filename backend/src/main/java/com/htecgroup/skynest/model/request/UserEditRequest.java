@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.model.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -7,6 +8,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@AllArgsConstructor
 public class UserEditRequest {
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 50, message = "length cannot be over 50")
