@@ -276,6 +276,39 @@ public class RegistrationController {
     return ResponseEntity.ok(response);
   }
 
+  @Operation(summary = "Request for token refresh")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "new access token successfully sent",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Password reset email sent")})
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Access token is invalid")})
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {
+                    @ExampleObject(value = "Failed to send new access and refresh tokens")
+                  })
+            })
+      })
   @GetMapping("/token/refresh")
   public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
     refreshTokenService.refreshToken(request, response);
