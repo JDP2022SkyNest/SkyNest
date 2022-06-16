@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/users/logout")
+@RequestMapping("/auth/logout")
 @AllArgsConstructor
 @Tag(name = "Logout API", description = "Operations related to logout of users")
 @Log4j2
@@ -45,8 +45,6 @@ public class LogoutController {
     String authorizationHeader = request.getHeader(JwtUtils.AUTH_HEADER);
     String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
     invalidJwtService.invalidate(token);
-    String response = "User logged out successfully";
-    log.info(response);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok("User logged out successfully");
   }
 }
