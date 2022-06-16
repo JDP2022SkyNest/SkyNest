@@ -20,6 +20,5 @@ export const ProfileData = [
       path: "/",
       icon: <CgIcons.CgLogOut />,
       cName: "nav-text",
-      onclick: alert("Hello, How are you?"),
    },
 ];
