@@ -3,6 +3,7 @@ import AxiosInstance from "../axios/AxiosInstance";
 
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 export const emailRegEx = /^[a-zA-Z0-9_+&*-]{1,64}(?:\.[a-zA-Z0-9_+&*-]+){0,64}@(?:[a-zA-Z0-9-]+\.){1,255}[a-zA-Z]{2,7}$/;
+const elem = document.documentElement;
 
 export const pwSuggestion = (length, func1, func2) => {
    let suggestedPw = password.randomPassword({ length, characters: [password.lower, password.upper, password.digits] });
@@ -41,5 +42,15 @@ export const deleteUser = async (accessToken, id) => {
       console.log("User Deleted");
    } catch (err) {
       console.log(err);
+   }
+};
+
+export const openFullscreen = () => {
+   if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+   } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+   } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
    }
 };
