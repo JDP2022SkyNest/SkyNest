@@ -2,22 +2,23 @@ package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.htecgroup.skynest.util.JwtUtils.ACCESS_TOKEN_EXPIRATION_MS;
 import static com.htecgroup.skynest.util.JwtUtils.ALGORITHM;
+import static java.util.Arrays.stream;
 
 @Service
 @AllArgsConstructor
@@ -35,15 +36,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String refresh_token = header.substring("Bearer ".length());
         DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(refresh_token);
         String username = decodedJWT.getSubject();
-        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
 
-        // TODO: somehow get the authorities to pass them inside the token
-        UserDto userDto = userService.findUserByEmail(username);
-        List<String> authorities = new ArrayList<>();
-        authorities.add(userDto.getRole().toString());
+        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+        List<SimpleGrantedAuthority> authorities =
+            stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<String> auth =
+            authorities.stream().map(SimpleGrantedAuthority::toString).collect(Collectors.toList());
 
         String access_token =
-            JwtUtils.generate(username, ACCESS_TOKEN_EXPIRATION_MS, "roles", authorities);
+            JwtUtils.generate(username, ACCESS_TOKEN_EXPIRATION_MS, "roles", auth);
         response.addHeader(
             JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, access_token));
         response.addHeader(
