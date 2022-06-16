@@ -139,6 +139,9 @@ public class UserServiceImpl implements UserService {
         userRepository
             .findById(uuid)
             .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+    userEditRequest.setName(userEditRequest.getName().trim());
+    userEditRequest.setSurname(userEditRequest.getSurname().trim());
+    userEditRequest.setAddress(userEditRequest.getAddress().trim());
     modelMapper.map(userEditRequest, userEntity);
     userRepository.save(userEntity);
     return modelMapper.map(userEntity, UserResponse.class);
