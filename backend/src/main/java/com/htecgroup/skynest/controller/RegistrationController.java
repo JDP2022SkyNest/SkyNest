@@ -52,7 +52,8 @@ public class RegistrationController {
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\"}")
+                                + "  \"address\": \"Local address\","
+                                + "  \"roleName\": \"role_worker\"}")
                   })
             }),
         @ApiResponse(
@@ -149,7 +150,7 @@ public class RegistrationController {
                   })
             })
       })
-  @GetMapping(CONFIRM_EMAIL_URL)
+  @PostMapping(CONFIRM_EMAIL_URL)
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
     String response = userService.confirmEmail(token);
     log.info(response);
