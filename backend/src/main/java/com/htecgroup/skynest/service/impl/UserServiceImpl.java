@@ -16,7 +16,6 @@ import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.EmailUtil;
-import com.htecgroup.skynest.util.EmailUtils;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -38,7 +37,6 @@ public class UserServiceImpl implements UserService {
   private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private EmailUtils emailUtils;
   private EmailService emailService;
 
   @Override
