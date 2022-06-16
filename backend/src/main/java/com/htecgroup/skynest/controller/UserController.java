@@ -28,12 +28,12 @@ import static com.htecgroup.skynest.util.UrlUtil.USERS_CONTROLLER_URL;
 @RequestMapping(USERS_CONTROLLER_URL)
 @AllArgsConstructor
 @Log4j2
-@Tag(name = "User API", description = "Operations to manipulate user")
+@Tag(name = "User API", description = "User-related operations")
 public class UserController {
 
   private UserService userService;
 
-  @Operation(summary = "Get Users")
+  @Operation(summary = "Get all users")
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping
   public List<UserResponse> getUsers() {
@@ -41,7 +41,7 @@ public class UserController {
     return listOfUsers;
   }
 
-  @Operation(summary = "Get User with that Id")
+  @Operation(summary = "Get user with given uuid")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -96,7 +96,7 @@ public class UserController {
     return userResponseEntity;
   }
 
-  @Operation(summary = "Edit User")
+  @Operation(summary = "Edit user with given uuid")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -152,7 +152,7 @@ public class UserController {
     return responseEntity;
   }
 
-  @Operation(summary = "Delete User with that id")
+  @Operation(summary = "Delete user with given uuid")
   @ApiResponses(
       value = {
         @ApiResponse(
