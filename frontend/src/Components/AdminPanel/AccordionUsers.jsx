@@ -9,7 +9,9 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
          <Accordion.Header>
             <div className="users-number-style">{index + 1}</div> - {elem.name} {elem.surname}{" "}
             <span
-               className={`ml-1 badge bg-${userRoleName === "admin" ? "danger" : "secondary rounded-pill font-weight-normal "} py-1 users-badge-align`}
+               className={`ml-1 badge bg-${
+                  userRoleName === "admin" ? "danger" : "secondary rounded-pill font-weight-normal "
+               } py-1 users-badge-align`}
             >
                {userRoleName}
             </span>
