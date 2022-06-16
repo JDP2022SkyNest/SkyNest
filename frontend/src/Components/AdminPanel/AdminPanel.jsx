@@ -25,7 +25,8 @@ const AdminPanel = () => {
          user.surname.includes(searchTerm) ||
          user.email.includes(searchTerm) ||
          user.address.includes(searchTerm) ||
-         user.phoneNumber.includes(searchTerm)
+         user.phoneNumber.includes(searchTerm) ||
+         user.roleName.includes(searchTerm)
    );
 
    const allUsers = filterUsers.map((elem, index) => (
