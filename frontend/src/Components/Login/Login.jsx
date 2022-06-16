@@ -18,6 +18,7 @@ const Login = ({ setAccessToken }) => {
    const [forgotPassword, setForgotPassword] = useState(false);
    const [searchParams, setSearchParams] = useSearchParams();
    const [infoMsg, setInfoMsg] = useState("");
+   const [resendEmail, setResendEmail] = useState(false);
 
    const emailRef = useRef();
    const navigate = useNavigate();
@@ -58,7 +59,7 @@ const Login = ({ setAccessToken }) => {
 
    useEffect(() => {
       if (token) {
-         emailVerification(token, setSuccessfulLogin, setErrorMsg, setInfoMsg, setSearchParams);
+         emailVerification(token, setSuccessfulLogin, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
       }
       // eslint-disable-next-line
    }, [token]);
@@ -107,6 +108,9 @@ const Login = ({ setAccessToken }) => {
                      required
                      autoComplete="off"
                   />
+                  <small className={resendEmail ? "p-0" : "d-none"}>
+                     <Link to={ROUTES.RESEND}>Resend Email?</Link>
+                  </small>
                </div>
                <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="passwordInput">

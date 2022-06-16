@@ -46,7 +46,7 @@ export const deleteUser = async (accessToken, id) => {
    }
 };
 
-export const emailVerification = async (token, success, error, info, setparams) => {
+export const emailVerification = async (token, success, error, info, setparams, resendEmail) => {
    info("Verifying in proggress");
    try {
       await AxiosInstance.get(`/public/confirm?token=${token}`);
@@ -56,6 +56,7 @@ export const emailVerification = async (token, success, error, info, setparams) 
          success("Email already verified");
       } else if (err.response.status === 403) {
          error("Token expired");
+         resendEmail(true);
       } else {
          error(err.response.data.messages);
       }
