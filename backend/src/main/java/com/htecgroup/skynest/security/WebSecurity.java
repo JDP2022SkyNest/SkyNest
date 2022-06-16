@@ -34,9 +34,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .csrf()
         .disable()
         .authorizeRequests()
-        .antMatchers("/public/**")
-        .permitAll()
-        .antMatchers(UrlUtil.ANY_URLS_WITHOUT_AUTH)
+        .antMatchers(String.format("%s/**", UrlUtil.PUBLIC_CONTROLLER_URL))
         .permitAll()
         .anyRequest()
         .authenticated()
@@ -55,7 +53,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             bCryptPasswordEncoder,
             userService,
             objectMapper);
-    filter.setFilterProcessesUrl("/public" + UrlUtil.LOG_IN_URL);
+    filter.setFilterProcessesUrl(
+        String.format("%s%s", UrlUtil.PUBLIC_CONTROLLER_URL, UrlUtil.LOG_IN_URL));
     return filter;
   }
 

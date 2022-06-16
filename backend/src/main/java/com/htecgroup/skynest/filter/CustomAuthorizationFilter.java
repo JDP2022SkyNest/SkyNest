@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 @Log4j2
 @AllArgsConstructor
@@ -35,8 +34,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     try {
-      if (Arrays.stream(UrlUtil.URLS_WITHOUT_AUTH)
-          .anyMatch(url -> url.equals(request.getServletPath()))) {
+      if (request
+          .getServletPath()
+          .startsWith(String.format("%s/", UrlUtil.PUBLIC_CONTROLLER_URL))) {
         filterChain.doFilter(request, response);
         return;
       }

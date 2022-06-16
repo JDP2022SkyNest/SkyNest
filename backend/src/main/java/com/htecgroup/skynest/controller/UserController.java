@@ -28,20 +28,58 @@ import static com.htecgroup.skynest.util.UrlUtil.USERS_CONTROLLER_URL;
 @RequestMapping(USERS_CONTROLLER_URL)
 @AllArgsConstructor
 @Log4j2
-@Tag(name = "User API", description = "Operations to manipulate user")
+@Tag(name = "User API", description = "User-related operations")
 public class UserController {
 
   private UserService userService;
 
   @Operation(summary = "Get all users")
-  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Users returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = UserResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"email\": \"username@gmail.com\","
+                                + "\"name\": \"Name\","
+                                + "\"surname\": \"Surname\","
+                                + "\"phoneNumber\": \"38166575757\","
+                                + "\"address\": \"Local address\","
+                                + "\"roleName\": \"role_admin\"},"
+                                + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
+                                + "\"email\": \"username123@gmail.com\","
+                                + "\"name\": \"Name\","
+                                + "\"surname\": \"Surname\","
+                                + "\"phoneNumber\": \"38166676767\","
+                                + "\"address\": \"Local address\","
+                                + "\"roleName\": \"role_worker\"}]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @GetMapping
   public List<UserResponse> getUsers() {
     List<UserResponse> listOfUsers = userService.listAllUsers();
     return listOfUsers;
   }
 
-  @Operation(summary = "Get user with that Id")
+  @Operation(summary = "Get user with given uuid")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -59,7 +97,8 @@ public class UserController {
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\"}")
+                                + "  \"address\": \"Local address\","
+                                + "  \"roleName\": \"role_worker\"}")
                   })
             }),
         @ApiResponse(
@@ -112,7 +151,7 @@ public class UserController {
     return userResponseEntity;
   }
 
-  @Operation(summary = "Edit User")
+  @Operation(summary = "Edit user with given uuid")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -130,7 +169,8 @@ public class UserController {
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\"}")
+                                + "  \"address\": \"Local address\","
+                                + "  \"roleName\": \"role_worker\"}")
                   })
             }),
         @ApiResponse(
@@ -168,7 +208,7 @@ public class UserController {
     return responseEntity;
   }
 
-  @Operation(summary = "Delete user with that id")
+  @Operation(summary = "Delete user with given uuid")
   @ApiResponses(
       value = {
         @ApiResponse(
