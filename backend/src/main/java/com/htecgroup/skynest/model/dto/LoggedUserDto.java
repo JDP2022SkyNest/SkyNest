@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -38,5 +39,10 @@ public class LoggedUserDto extends User {
     this.name = name;
     this.surname = surname;
     this.company = company;
+  }
+
+  public boolean hasRole(String roleName) {
+    String actualRole = new ArrayList<>((this.getAuthorities())).get(0).toString();
+    return actualRole.equals(roleName);
   }
 }

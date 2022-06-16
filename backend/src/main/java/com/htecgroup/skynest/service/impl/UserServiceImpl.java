@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -131,10 +130,9 @@ public class UserServiceImpl implements UserService {
   public UserResponse getUser(UUID uuid) {
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    String loggedUserRole = new ArrayList<>(loggedUserDto.getAuthorities()).get(0).toString();
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
-    if (loggedUserRole.equals(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
+    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
       throw new UserException("Access denied", HttpStatus.FORBIDDEN);
     }
 
