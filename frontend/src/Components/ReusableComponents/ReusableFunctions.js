@@ -47,6 +47,24 @@ export const deleteUser = async (accessToken, id) => {
    }
 };
 
+export const emailVerification = async (token, success, error, info, setparams) => {
+   info("Verifying in proggress");
+   try {
+      await AxiosInstance.get(`/public/confirm?token=${token}`);
+      success("Email Verified");
+   } catch (err) {
+      if (err.response.status === 500) {
+         success("Email already verified");
+      } else if (err.response.status === 403) {
+         error("Token expired");
+      } else {
+         error(err.response.data.messages);
+      }
+   }
+   info("");
+   setparams("");
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
