@@ -1,23 +1,35 @@
 import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Container } from "react-bootstrap";
+import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import ROUTES from "../Routes/ROUTES";
+import { useNavigate } from "react-router-dom";
 import logoImage from "..//Login/assets/logoblackandwhite.svg";
 import "..//Header/Header.css";
 import Sidebar from "../Sidebar/Sidebar";
 import Profile from "../Profile/Profile";
 
-const Header = () => {
+const Header = ({ setAccessToken }) => {
+   const navigate = useNavigate();
    return (
-      <Navbar className="fixed-top d-flex" expand="lg" bg="dark" variant="dark">
-         <Sidebar />
-         <Nav className="me-auto">
-            <Navbar.Brand href="#home">
-               <img src={logoImage} alt="logo" className="logoImageBrand" />
+      <Navbar bg="dark" variant="dark">
+         <Container>
+            <Sidebar />
+            <Navbar.Brand href="#home" className="d-flex align-items-center me-auto">
+               <img src={logoImage} alt="logo" className="logo-image-brand" />
+               <h3 className="brand">SkyNest</h3>
             </Navbar.Brand>
-            <Navbar.Brand href="#home" className="d-flex align-items-center">
-               <h2 className="brand">SkyNest</h2>
-            </Navbar.Brand>
-         </Nav>
-         <Profile />
+            <div className="d-flex">
+               <button
+                  onClick={() => {
+                     redirectTo(navigate, ROUTES.ADMIN, 1);
+                  }}
+                  className="btn btn-danger mr-3"
+               >
+                  Admin Panel
+               </button>
+               <Profile setAccessToken={setAccessToken} />
+            </div>
+         </Container>
       </Navbar>
    );
 };

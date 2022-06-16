@@ -22,7 +22,7 @@ const Login = ({ setAccessToken }) => {
 
    const getUserToken = async () => {
       try {
-         let reposnse = await AxiosInstance.post("/users/login", { email, password });
+         let reposnse = await AxiosInstance.post("/public/login", { email, password });
          let { headers } = reposnse;
          let token = headers.authorization;
          if (headers?.authorization) {

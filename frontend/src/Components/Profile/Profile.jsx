@@ -1,43 +1,36 @@
-import React, { useState } from "react";
+import React from "react";
 import * as AiIcons from "react-icons/ai";
-import { Link } from "react-router-dom";
-import { ProfileData } from "./ProfileData";
+import * as CgIcons from "react-icons/cg";
+import * as FiIcons from "react-icons/fi";
+import { DropdownButton, Dropdown } from "react-bootstrap";
 import "../Header/Header.css";
 import "./Profile.css";
-import { IconContext } from "react-icons";
 
-const Profile = () => {
-   const [sidebar, setSidebar] = useState(false);
-
-   const showSidebar = () => setSidebar(!sidebar);
-
+const Profile = ({ setAccessToken }) => {
+   const userLogout = () => {
+      localStorage.removeItem("accessToken");
+      setAccessToken("");
+   };
    return (
-      <IconContext.Provider value={sidebar}>
-         <div className="navbar ml-auto profile">
-            <Link to="#" className="menuBars">
-               <AiIcons.AiOutlineUser onClick={showSidebar} />
-            </Link>
-         </div>
-         <nav className={sidebar ? "navMenuProfile active" : "navMenuProfile"}>
-            <ul className="navMenuItems" onClick={showSidebar}>
-               <li className="navbarToggleProfile">
-                  <Link to="#" className="menuBarsSidebars">
-                     <AiIcons.AiOutlineCloseCircle />
-                  </Link>
-               </li>
-               {ProfileData.map((item, index) => {
-                  return (
-                     <li key={index} className={item.cName}>
-                        <Link to={item.path}>
-                           {item.icon}
-                           <span>{item.title}</span>
-                        </Link>
-                     </li>
-                  );
-               })}
-            </ul>
-         </nav>
-      </IconContext.Provider>
+      <div className="nav-menu-profile">
+         <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" variant="dark">
+            <Dropdown.Item eventKey="1">
+               <CgIcons.CgProfile className="mr-2" />
+               Profile
+            </Dropdown.Item>
+            <Dropdown.Item eventKey="2">
+               <FiIcons.FiSettings className="mr-2" />
+               Settings
+            </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={userLogout} eventKey="3">
+               <div>
+                  <CgIcons.CgLogOut className="mr-2" />
+                  Logout
+               </div>
+            </Dropdown.Item>
+         </DropdownButton>
+      </div>
    );
 };
 export default Profile;
