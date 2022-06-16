@@ -25,7 +25,7 @@ public class CustomAuthenticationToken extends UsernamePasswordAuthenticationTok
   }
 
   @Override
-  public Object getPrincipal() {
+  public LoggedUserDto getPrincipal() {
     return loggedUserDto;
   }
 }
