@@ -9,6 +9,7 @@ import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
+import ResendEmail from "./Components/ResendEmail/ResendEmail";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -28,6 +29,7 @@ const App = () => {
          <Route path="signup" exact element={<SignUp />} />
          <Route path="forgot-password" exact element={<ForgotPassword />} />
          <Route path="confirm-password" exact element={<ConfirmPassword />} />
+         <Route path="resend-email" exact element={<ResendEmail />} />
          <Route path="admin-panel" exact element={<AdminPanel />} />
 
          {/* Other Paths */}
