@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
+import com.htecgroup.skynest.service.LoginAttemptService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -33,21 +33,28 @@ import java.util.stream.Collectors;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private final AuthenticationManager authenticationManager;
+
   private final UserDetailsService userDetailsService;
-  private final PasswordEncoder passwordEncoder;
 
   private final UserService userService;
 
   private final ObjectMapper objectMapper;
 
+  private final LoginAttemptService loginAttemptService;
+
   @Override
   public Authentication attemptAuthentication(
       HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    String email = "";
     try {
       UserLoginRequest credentials =
           objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
       UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
       log.info("The user: {} is trying to authenticate.", userDetails.getUsername());
+      email = userDetails.getUsername();
+
+      if (loginAttemptService.hasTooManyAttempts(userDetails.getUsername()))
+        throw new UserException(UserExceptionType.TOO_MANY_LOGIN_ATTEMPTS);
 
       if (!userService.isActive(userDetails.getUsername()))
         throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
@@ -57,6 +64,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
               credentials.getEmail(), credentials.getPassword(), userDetails.getAuthorities()));
 
     } catch (BadCredentialsException ex) {
+      loginAttemptService.saveUnsuccessfulAttempt(email);
       throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
     } catch (IOException e) {
       log.error("Unable to authenticate, because of Input or Output error", e);
