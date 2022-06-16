@@ -23,7 +23,7 @@ const ConfirmPassword = () => {
 
    const onPwSubmit = async () => {
       try {
-         await AxiosInstance.put("/users/password-reset", {
+         await AxiosInstance.put("/public/password-reset", {
             token,
             password,
          });

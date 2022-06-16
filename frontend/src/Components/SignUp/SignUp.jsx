@@ -27,7 +27,7 @@ const SignUp = () => {
 
    const userRegistration = async () => {
       try {
-         await AxiosInstance.post("/users/register", {
+         await AxiosInstance.post("/public/register", {
             email,
             password: uPassword,
             name,
@@ -114,7 +114,7 @@ const SignUp = () => {
                   </div>
                </div>
                <div className="form-outline mb-1">
-                  <Label id="emailInput">Email adress</Label>
+                  <Label id="emailInput">Email address</Label>
                   <input
                      type="email"
                      name="email"
@@ -140,13 +140,13 @@ const SignUp = () => {
                   />
                </div>
                <div className="form-outline mb-1">
-                  <Label id="adressInput">Home adress</Label>
+                  <Label id="addressInput">Home address</Label>
                   <input
                      type="text"
-                     name="adress"
+                     name="address"
                      value={address}
                      onChange={(e) => setAddress(e.target.value)}
-                     id="adressInput"
+                     id="addressInput"
                      className="form-control"
                      required
                      autoComplete="off"

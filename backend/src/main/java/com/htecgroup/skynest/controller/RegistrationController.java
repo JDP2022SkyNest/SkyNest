@@ -23,14 +23,14 @@ import javax.validation.Valid;
 import static com.htecgroup.skynest.util.UrlUtil.*;
 
 @RestController
-@RequestMapping("/public")
+@RequestMapping(PUBLIC_CONTROLLER_URL)
 @AllArgsConstructor
 @Log4j2
-@Tag(name = "Register API", description = "Operations related to register of Users")
+@Tag(name = "Registration API", description = "Operations related to user registration")
 public class RegistrationController {
   private UserService userService;
 
-  @Operation(summary = "Register new user")
+  @Operation(summary = "Register a new user")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -145,14 +145,14 @@ public class RegistrationController {
                   })
             })
       })
-  @GetMapping(CONFIRM_EMAIL_URL)
+  @PostMapping(CONFIRM_EMAIL_URL)
   public ResponseEntity<String> confirmEmail(@RequestParam String token) {
     String response = userService.confirmEmail(token);
     log.info(response);
     return ResponseEntity.ok(response);
   }
 
-  @Operation(summary = "Resend email for verification")
+  @Operation(summary = "Resend verification email")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -183,7 +183,7 @@ public class RegistrationController {
     return ResponseEntity.ok(response);
   }
 
-  @Operation(summary = "Request for password reset")
+  @Operation(summary = "Request password reset")
   @ApiResponses(
       value = {
         @ApiResponse(
