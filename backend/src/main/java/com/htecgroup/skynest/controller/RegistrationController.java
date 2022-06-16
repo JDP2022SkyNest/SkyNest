@@ -48,7 +48,8 @@ public class RegistrationController {
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\"}")
+                                + "  \"address\": \"Local address\","
+                                + "  \"roleName\": \"role_worker\"}")
                   })
             }),
         @ApiResponse(
