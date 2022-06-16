@@ -156,6 +156,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.5</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/htecgroup/skynest/model/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/filter/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/security/**/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
