@@ -2,10 +2,13 @@ import React from "react";
 import { Accordion } from "react-bootstrap";
 
 const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
+   const userRoleName = elem.roleName.slice(5);
+
    return (
       <Accordion.Item eventKey={index}>
          <Accordion.Header>
-            <div className="users-number-style">{index + 1}</div> - {elem.name} {elem.surname}
+            <div className="users-number-style">{index + 1}</div> - {elem.name} {elem.surname}{" "}
+            <span className={`ml-1 badge bg-${userRoleName === "admin" ? "danger" : "secondary"} py-1 users-badge-align`}>{userRoleName}</span>
          </Accordion.Header>
          <Accordion.Body>
             <p>
