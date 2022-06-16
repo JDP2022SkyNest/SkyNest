@@ -159,7 +159,7 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
-  @PutMapping("/edit/{uuid}")
+  @PutMapping("/{uuid}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
     ResponseEntity<UserResponse> responseEntity =
