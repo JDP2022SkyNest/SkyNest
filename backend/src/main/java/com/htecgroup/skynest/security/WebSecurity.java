@@ -3,7 +3,6 @@ package com.htecgroup.skynest.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.filter.CustomAuthenticationFilter;
 import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
-import com.htecgroup.skynest.service.InvalidJwtService;
 import com.htecgroup.skynest.service.LoginAttemptService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.UrlUtil;
@@ -29,7 +28,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final ObjectMapper objectMapper;
   private final UserService userService;
   private final LoginAttemptService loginAttemptService;
-  private final InvalidJwtService invalidJwtService;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -63,7 +61,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   public CustomAuthorizationFilter getAuthorizationFilter() {
-    return new CustomAuthorizationFilter(invalidJwtService, userDetailsService);
+    return new CustomAuthorizationFilter(userDetailsService);
   }
 
   @Override
