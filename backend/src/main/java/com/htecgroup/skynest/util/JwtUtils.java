@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
@@ -38,9 +39,14 @@ public class JwtUtils {
   public static Algorithm ALGORITHM;
 
   public static String generate(
-      String subject, long msUntilExpiration, String claimName, List<String> claims) {
+      String subject,
+      Map<String, String> payload,
+      long msUntilExpiration,
+      String claimName,
+      List<String> claims) {
     return JWT.create()
         .withSubject(subject)
+        .withPayload(payload)
         .withExpiresAt(new Date(System.currentTimeMillis() + msUntilExpiration))
         .withClaim(claimName, claims)
         .sign(ALGORITHM);

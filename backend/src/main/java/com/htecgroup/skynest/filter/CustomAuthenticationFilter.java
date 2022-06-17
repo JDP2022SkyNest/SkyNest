@@ -3,6 +3,7 @@ package com.htecgroup.skynest.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
 import com.htecgroup.skynest.service.LoginAttemptService;
 import com.htecgroup.skynest.service.UserService;
@@ -14,8 +15,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @AllArgsConstructor
 @Log4j2
@@ -80,15 +79,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       Authentication authentication)
       throws IOException, ServletException {
 
-    User user = (User) authentication.getPrincipal();
+    LoggedUserDto user = (LoggedUserDto) authentication.getPrincipal();
+    List<String> authorities = user.getRoleNames();
 
-    List<String> authorities =
-        user.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.toList());
+    Map<String, String> payload = Map.of("uuid", user.getUuid().toString());
     String token =
         JwtUtils.generate(
-            user.getUsername(), JwtUtils.ACCESS_TOKEN_EXPIRATION_MS, "roles", authorities);
+            user.getUsername(), payload, JwtUtils.ACCESS_TOKEN_EXPIRATION_MS, "roles", authorities);
 
     response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
     log.info("Jwt token successfully created for user: {}", user.getUsername());
