@@ -1,7 +1,6 @@
 package com.htecgroup.skynest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,11 +19,6 @@ public class SkyNestApplication {
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public CustomAuthorizationFilter customAuthorizationFilter() {
-    return new CustomAuthorizationFilter();
   }
 
   @Bean
