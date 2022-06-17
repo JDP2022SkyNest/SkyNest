@@ -10,6 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -20,16 +22,23 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
   private JavaMailSender javaMailSender;
+  private TemplateEngine templateEngine;
 
   @Override
   @Async
   public void send(Email email) {
+    Context context = new Context();
+    context.setVariable("args", email.getArgs());
+    String template = email.getEmailType().getTemplate();
+    String subject = email.getEmailType().getSubject();
+    String emailText = templateEngine.process(template, context);
+
     try {
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-      helper.setText(email.getEmailBody(), email.getHtml());
+      helper.setText(emailText, email.getHtml());
       helper.setTo(email.getTo());
-      helper.setSubject(email.getSubject());
+      helper.setSubject(subject);
       javaMailSender.send(mimeMessage);
     } catch (AddressException e) {
       log.error("Illegal mail address", e);

@@ -1,16 +1,18 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.util.EmailUtils;
+import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.utils.UserDtoUtil;
 import com.htecgroup.skynest.utils.UserEditRequestUtil;
 import com.htecgroup.skynest.utils.UserEntityUtil;
@@ -40,7 +42,6 @@ class UserServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private RoleService roleService;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Mock private EmailUtils emailUtils;
   @Spy private ModelMapper modelMapper;
 
   @Spy @InjectMocks private UserServiceImpl userService;
@@ -136,13 +137,14 @@ class UserServiceImplTest {
   void confirmEmail() {
     String expectedResponse = "User verified successfully";
     String testEmail = "confirmEmail@email.com";
+    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
+    String token = JwtUtils.generateEmailVerificationToken(testEmail);
     UserDto userMock = mock(UserDto.class);
-    when(emailUtils.getEmailFromJwtEmailToken(anyString())).thenReturn(testEmail);
     doReturn(userMock).when(userService).findUserByEmail(anyString());
     doReturn(userMock).when(userService).verifyUser(any());
     when(userRepository.save(any())).thenReturn(mock(UserEntity.class));
 
-    Assertions.assertEquals(expectedResponse, userService.confirmEmail("Token"));
+    Assertions.assertEquals(expectedResponse, userService.confirmEmail(token));
   }
 
   @Test
@@ -162,13 +164,19 @@ class UserServiceImplTest {
   @Test
   void resetPassword() {
     String expectedResponse = "Password was successfully reset";
+    String testEmail = "confirmEmail@email.com";
     UserEntity verifiedUserEntity = UserEntityUtil.getVerified();
-    when(emailUtils.getEmailFromJwtEmailToken(anyString()))
-        .thenReturn(verifiedUserEntity.getEmail());
+    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
+    String token = JwtUtils.generatePasswordResetToken(testEmail);
+
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(verifiedUserEntity));
     when(userRepository.save(any())).thenReturn(verifiedUserEntity);
 
-    Assertions.assertEquals(expectedResponse, userService.resetPassword(anyString(), anyString()));
+    UserPasswordResetRequest userPasswordResetRequest = new UserPasswordResetRequest();
+    userPasswordResetRequest.setToken(token);
+    userPasswordResetRequest.setPassword("NewPassword123");
+
+    Assertions.assertEquals(expectedResponse, userService.resetPassword(userPasswordResetRequest));
   }
 
   @Test
