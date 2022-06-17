@@ -270,9 +270,7 @@ public class RegistrationController {
   @PutMapping(PASSWORD_RESET_URL)
   public ResponseEntity<String> confirmPasswordReset(
       @Valid @RequestBody UserPasswordResetRequest userPasswordResetRequest) {
-    String response =
-        userService.resetPassword(
-            userPasswordResetRequest.getToken(), userPasswordResetRequest.getPassword());
+    String response = userService.resetPassword(userPasswordResetRequest);
     log.info(response);
     return ResponseEntity.ok(response);
   }

@@ -1,14 +1,17 @@
 package com.htecgroup.skynest.util;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -26,9 +29,13 @@ public class JwtUtils {
 
   public static final String AUTH_HEADER = HttpHeaders.AUTHORIZATION;
   public static final String TOKEN_PREFIX = "Bearer ";
+  private static final String EMAIL_TOKEN_CLAIM = "Email token";
+  private static final String PASSWORD_RESET_PURPOSE = "password reset";
+  private static final String EMAIL_VERIFICATION_PURPOSE = "verification";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
   public static long REFRESH_TOKEN_EXPIRATION_MS;
+  public static long EMAIL_TOKEN_EXPIRATION_MS;
   public static Algorithm ALGORITHM;
 
   public static String generate(
@@ -73,8 +80,47 @@ public class JwtUtils {
     }
   }
 
+  public static String generateEmailToken(String email, String purpose) {
+    return JWT.create()
+        .withSubject(email)
+        .withExpiresAt(new Date(System.currentTimeMillis() + EMAIL_TOKEN_EXPIRATION_MS))
+        .withClaim(EMAIL_TOKEN_CLAIM, purpose)
+        .sign(ALGORITHM);
+  }
+
+  public static String validateEmailToken(String token, String purpose) {
+    try {
+      Verification verification = JWT.require(ALGORITHM);
+      JWTVerifier verifier = verification.withClaim(EMAIL_TOKEN_CLAIM, purpose).build();
+      DecodedJWT decodedJWT = verifier.verify(token);
+      return decodedJWT.getSubject();
+    } catch (JWTVerificationException e) {
+      log.error("Invalid JWT token: {}", e.getMessage());
+      throw new UserException(UserExceptionType.INVALID_TOKEN);
+    } catch (IllegalArgumentException e) {
+      log.error("JWT claims string is empty: {}", e.getMessage());
+      throw new UserException("Access token is missing", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  public static String getValidatedPasswordResetTokenContext(String token) {
+    return validateEmailToken(token, JwtUtils.PASSWORD_RESET_PURPOSE);
+  }
+
+  public static String getValidatedEmailVerificationTokenContext(String token) {
+    return validateEmailToken(token, JwtUtils.EMAIL_VERIFICATION_PURPOSE);
+  }
+
+  public static String generatePasswordResetToken(String emailAddress) {
+    return generateEmailToken(emailAddress, PASSWORD_RESET_PURPOSE);
+  }
+
+  public static String generateEmailVerificationToken(String emailAddress) {
+    return generateEmailToken(emailAddress, EMAIL_VERIFICATION_PURPOSE);
+  }
+
   @Value("${jwt.access-expiration-ms}")
-  public void setNameStatic(long expirationMs) {
+  private void setAccessTokenExpirationMs(long expirationMs) {
     ACCESS_TOKEN_EXPIRATION_MS = expirationMs;
   }
 
@@ -83,8 +129,13 @@ public class JwtUtils {
     REFRESH_TOKEN_EXPIRATION_MS = expirationMs;
   }
 
+  @Value("${jwt.email-expiration-ms}")
+  private void setEmailTokenExpirationMs(long expirationMs) {
+    EMAIL_TOKEN_EXPIRATION_MS = expirationMs;
+  }
+
   @Value("${jwt.secret}")
-  public void setAlgorithm(String secret) {
+  private void setAlgorithm(String secret) {
     ALGORITHM = Algorithm.HMAC512(secret);
   }
 }
