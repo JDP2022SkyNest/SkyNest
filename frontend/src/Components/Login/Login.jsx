@@ -14,7 +14,7 @@ const Login = ({ setAccessToken }) => {
    const [errorMsg, setErrorMsg] = useState("");
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
-   const [successfulLogin, setSuccessfulLogin] = useState("");
+   const [successMsg, setSuccessMsg] = useState("");
    const [forgotPassword, setForgotPassword] = useState(false);
    const [searchParams, setSearchParams] = useSearchParams();
    const [infoMsg, setInfoMsg] = useState("");
@@ -32,7 +32,7 @@ const Login = ({ setAccessToken }) => {
          if (headers?.authorization) {
             setAccessToken(token);
             localStorage.setItem("accessToken", token);
-            setSuccessfulLogin("Login Successful");
+            setSuccessMsg("Login Successful");
             redirectTo(navigate, ROUTES.HOME, 1000);
             setErrorMsg("");
          } else {
@@ -54,13 +54,13 @@ const Login = ({ setAccessToken }) => {
          }
          setLoading(false);
          setForgotPassword(true);
-         setSuccessfulLogin("");
+         setSuccessMsg("");
       }
    };
 
    useEffect(() => {
       if (token) {
-         emailVerification(token, setSuccessfulLogin, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
+         emailVerification(token, setSuccessMsg, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
       }
       // eslint-disable-next-line
    }, [token]);
@@ -93,7 +93,7 @@ const Login = ({ setAccessToken }) => {
             <p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
             <p className={infoMsg ? "alert alert-info text-info text-center" : "d-none"}>{infoMsg}</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
-            <p className={successfulLogin ? "alert alert-success text-success text-center" : "d-none"}>{successfulLogin}</p>
+            <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
             <fieldset disabled={loading}>
                <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="emailInput">
