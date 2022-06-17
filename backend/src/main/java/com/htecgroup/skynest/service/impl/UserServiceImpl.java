@@ -9,6 +9,7 @@ import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
@@ -16,7 +17,8 @@ import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.EmailUtils;
+import com.htecgroup.skynest.util.EmailUtil;
+import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -37,7 +39,6 @@ public class UserServiceImpl implements UserService {
   private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private EmailUtils emailUtils;
   private EmailService emailService;
   private CurrentUserService currentUserService;
 
@@ -72,41 +73,40 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void sendVerificationEmail(String emailAddress) {
-    UserDto userDto = this.findUserByEmail(emailAddress);
+    UserDto userDto = findUserByEmail(emailAddress);
 
     if (userDto.getVerified()) {
       throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
     }
 
-    String token = emailUtils.generateJwtEmailToken(emailAddress);
+    String token = JwtUtils.generateEmailVerificationToken(emailAddress);
+    Email email = EmailUtil.createVerificationEmail(userDto, token);
 
-    String confirmationLink = emailUtils.getEmailConfirmationLink() + token;
-    String emailBody = emailUtils.buildVerificationEmail(emailAddress, confirmationLink);
-    Email emailToSend = new Email(emailAddress, SUBJECT_FOR_EMAIL_CONFIRMATION, emailBody, true);
-    emailService.send(emailToSend);
+    emailService.send(email);
   }
 
   @Override
-  public void sendPasswordResetEmail(String email) {
-    if (!userRepository.existsByEmail(email)) {
+  public void sendPasswordResetEmail(String emailAddress) {
+    UserDto userDto = findUserByEmail(emailAddress);
+
+    if (!userRepository.existsByEmail(emailAddress)) {
       throw new UserException(UserExceptionType.USER_NOT_FOUND);
     }
 
-    String token = emailUtils.generateJwtEmailToken(email);
+    String token = JwtUtils.generatePasswordResetToken(emailAddress);
+    Email email = EmailUtil.createPasswordResetEmail(userDto, token);
 
-    String confirmationLink = emailUtils.getPasswordResetLink() + token;
-    String emailBody = emailUtils.buildPasswordResetEmail(email, confirmationLink);
-    Email emailToSend = new Email(email, SUBJECT_FOR_PASSWORD_RESET, emailBody, true);
-    emailService.send(emailToSend);
+    emailService.send(email);
   }
 
   @Override
-  public String resetPassword(String token, String password) {
-    emailUtils.validateJwtToken(token);
-    String email = emailUtils.getEmailFromJwtEmailToken(token);
+  public String resetPassword(UserPasswordResetRequest userPasswordResetRequest) {
+    String email =
+        JwtUtils.getValidatedPasswordResetTokenContext(userPasswordResetRequest.getToken());
     UserDto userDto = findUserByEmail(email);
     UserDto userDtoNewPassword =
-        userDto.withEncryptedPassword(bCryptPasswordEncoder.encode(password));
+        userDto.withEncryptedPassword(
+            bCryptPasswordEncoder.encode(userPasswordResetRequest.getPassword()));
     userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
     return "Password was successfully reset";
   }
@@ -178,8 +178,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public String confirmEmail(String token) {
-    emailUtils.validateJwtToken(token);
-    String email = emailUtils.getEmailFromJwtEmailToken(token);
+    String email = JwtUtils.getValidatedEmailVerificationTokenContext(token);
     UserDto userDto = findUserByEmail(email);
     UserDto enabledUser = this.verifyUser(userDto);
     userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
