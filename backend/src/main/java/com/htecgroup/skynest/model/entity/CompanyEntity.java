@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,7 +28,14 @@ public class CompanyEntity implements Serializable {
   private LocalDateTime modifiedOn;
 
   private LocalDateTime deletedOn;
+
+  private String pib;
   private String name;
   private String address;
   private String domain;
+  private String phoneNumber;
+
+  @ManyToOne
+  @JoinColumn(name = "tier_id", nullable = false)
+  private TierEntity tier;
 }
