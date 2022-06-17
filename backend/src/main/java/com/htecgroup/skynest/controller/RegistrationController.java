@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -309,7 +308,10 @@ public class RegistrationController {
             })
       })
   @GetMapping("/token/refresh")
-  public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
-    refreshTokenService.refreshToken(request, response);
+  public void refreshToken(
+      @RequestHeader("refresh-token") String refresh_token, HttpServletResponse response) {
+    String token = refreshTokenService.refreshToken(refresh_token);
+    response.addHeader("Authorization", token);
+    response.addHeader("refresh_token", refresh_token);
   }
 }
