@@ -34,7 +34,45 @@ public class UserController {
   private UserService userService;
 
   @Operation(summary = "Get all users")
-  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Users returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = UserResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"email\": \"username@gmail.com\","
+                                + "\"name\": \"Name\","
+                                + "\"surname\": \"Surname\","
+                                + "\"phoneNumber\": \"38166575757\","
+                                + "\"address\": \"Local address\","
+                                + "\"roleName\": \"role_admin\"},"
+                                + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
+                                + "\"email\": \"username123@gmail.com\","
+                                + "\"name\": \"Name\","
+                                + "\"surname\": \"Surname\","
+                                + "\"phoneNumber\": \"38166676767\","
+                                + "\"address\": \"Local address\","
+                                + "\"roleName\": \"role_worker\"}]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @GetMapping
   public List<UserResponse> getUsers() {
     List<UserResponse> listOfUsers = userService.listAllUsers();
@@ -59,7 +97,8 @@ public class UserController {
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\"}")
+                                + "  \"address\": \"Local address\","
+                                + "  \"roleName\": \"role_worker\"}")
                   })
             }),
         @ApiResponse(
@@ -72,8 +111,23 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                            "{\"messages\":[\"User not found\"],"
                                 + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
@@ -87,7 +141,8 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @PreAuthorize(
+      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
     UserResponse userResponse = userService.getUser(uuid);
@@ -114,7 +169,8 @@ public class UserController {
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\"}")
+                                + "  \"address\": \"Local address\","
+                                + "  \"roleName\": \"role_worker\"}")
                   })
             }),
         @ApiResponse(

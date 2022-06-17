@@ -36,14 +36,14 @@ public class LogoutController {
               @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Logout successful")})
+                  examples = {@ExampleObject(value = "true")})
             }),
       })
   @PostMapping
-  public ResponseEntity<String> logout(
+  public ResponseEntity<Boolean> logout(
       @RequestHeader(name = "Authorization") String authorizationHeader) {
     String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
     invalidJwtService.invalidate(token);
-    return ResponseEntity.ok("User logged out successfully");
+    return ResponseEntity.ok(true);
   }
 }

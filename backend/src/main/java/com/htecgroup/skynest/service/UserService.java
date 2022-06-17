@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserEditRequest;
+import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 
@@ -24,7 +25,7 @@ public interface UserService {
 
   void sendPasswordResetEmail(String email);
 
-  String resetPassword(String token, String password);
+  String resetPassword(UserPasswordResetRequest userPasswordResetRequest);
 
   boolean isActive(String email);
 

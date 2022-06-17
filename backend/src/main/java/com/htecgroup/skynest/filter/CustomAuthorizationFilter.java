@@ -1,15 +1,19 @@
 package com.htecgroup.skynest.filter;
 
 import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.security.CustomAuthenticationToken;
+import com.htecgroup.skynest.security.CustomUserDetailsService;
 import com.htecgroup.skynest.service.InvalidJwtService;
 import com.htecgroup.skynest.util.DateTimeUtil;
 import com.htecgroup.skynest.util.ExceptionUtil;
 import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.util.UrlUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,13 +24,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Log4j2
+@AllArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
   // I'm using @Autowired because using constructor DI doesn't work.
   // I think it has something to do with the way CustomAuthorizationFilter is defined as a bean in
   // the application class, as it calls the NoArgsConstructor and the dependencies are not loaded.
   // This way the service is autowired and it works.
-  @Autowired private InvalidJwtService invalidJwtService;
+  private InvalidJwtService invalidJwtService;
+
+  private CustomUserDetailsService customUserDetailsService;
 
   @Override
   protected void doFilterInternal(
@@ -61,6 +68,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
       }
 
       SecurityContextHolder.getContext().setAuthentication(JwtUtils.getFrom(token));
+      UsernamePasswordAuthenticationToken authToken = JwtUtils.getFrom(token);
+      LoggedUserDto loggedUserDto =
+          (LoggedUserDto)
+              customUserDetailsService.loadUserByUsername(authToken.getPrincipal().toString());
+      CustomAuthenticationToken customAuthenticationToken =
+          new CustomAuthenticationToken(loggedUserDto, loggedUserDto.getAuthorities());
+      SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
 
       filterChain.doFilter(request, response);
     } catch (UserException ex) {

@@ -3,6 +3,8 @@ package com.htecgroup.skynest.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.filter.CustomAuthenticationFilter;
 import com.htecgroup.skynest.filter.CustomAuthorizationFilter;
+import com.htecgroup.skynest.service.InvalidJwtService;
+import com.htecgroup.skynest.service.LoginAttemptService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.UrlUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final ObjectMapper objectMapper;
   private final UserService userService;
-  private final CustomAuthorizationFilter customAuthorizationFilter;
+  private final LoginAttemptService loginAttemptService;
+  private final InvalidJwtService invalidJwtService;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -41,7 +44,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
-        .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(getAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
@@ -51,12 +54,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         new CustomAuthenticationFilter(
             authenticationManager(),
             userDetailsService,
-            bCryptPasswordEncoder,
             userService,
-            objectMapper);
+            objectMapper,
+            loginAttemptService);
     filter.setFilterProcessesUrl(
         String.format("%s%s", UrlUtil.PUBLIC_CONTROLLER_URL, UrlUtil.LOG_IN_URL));
     return filter;
+  }
+
+  public CustomAuthorizationFilter getAuthorizationFilter() {
+    return new CustomAuthorizationFilter(invalidJwtService, userDetailsService);
   }
 
   @Override
