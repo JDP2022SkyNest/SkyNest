@@ -25,6 +25,9 @@ import java.io.IOException;
 @Log4j2
 @AllArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+  private InvalidJwtService invalidJwtService;
+
+  private CustomUserDetailsService customUserDetailsService;
 
   private CustomUserDetailsService customUserDetailsService;
 
@@ -51,7 +54,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         return;
       }
-
       String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
       UsernamePasswordAuthenticationToken authToken = JwtUtils.getFrom(token);
       LoggedUserDto loggedUserDto =
