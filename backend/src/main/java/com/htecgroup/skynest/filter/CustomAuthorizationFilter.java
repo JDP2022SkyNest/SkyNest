@@ -28,10 +28,7 @@ import java.io.IOException;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
   private InvalidJwtService invalidJwtService;
-
   private CustomUserDetailsService customUserDetailsService;
-
-
 
   @Override
   protected void doFilterInternal(
@@ -57,6 +54,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         return;
       }
       String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
+      if (invalidJwtService.isInvalid(token)) {
+        filterChain.doFilter(request, response);
+        log.info(
+            "Token {} is invalid, because it's present in invalidated tokens database.", token);
+        return;
+      }
+
+      SecurityContextHolder.getContext().setAuthentication(JwtUtils.getFrom(token));
       UsernamePasswordAuthenticationToken authToken = JwtUtils.getFrom(token);
       LoggedUserDto loggedUserDto =
           (LoggedUserDto)
