@@ -10,7 +10,7 @@ import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
 import ResendEmail from "./Components/ResendEmail/ResendEmail";
-import NoTokenRoute from "./Components/Routes/NoTokenRoute";
+import NoToken from "./Components/Routes/NoToken";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -30,45 +30,45 @@ const App = () => {
             path="login"
             exact
             element={
-               <NoTokenRoute accessToken={accessToken}>
+               <NoToken accessToken={accessToken}>
                   <Login setAccessToken={setAccessToken} />
-               </NoTokenRoute>
+               </NoToken>
             }
          />
          <Route
             path="signup"
             exact
             element={
-               <NoTokenRoute accessToken={accessToken}>
+               <NoToken accessToken={accessToken}>
                   <SignUp />
-               </NoTokenRoute>
+               </NoToken>
             }
          />
          <Route
             path="forgot-password"
             exact
             element={
-               <NoTokenRoute accessToken={accessToken}>
+               <NoToken accessToken={accessToken}>
                   <ForgotPassword />
-               </NoTokenRoute>
+               </NoToken>
             }
          />
          <Route
             path="confirm-password"
             exact
             element={
-               <NoTokenRoute accessToken={accessToken}>
+               <NoToken accessToken={accessToken}>
                   <ConfirmPassword />
-               </NoTokenRoute>
+               </NoToken>
             }
          />
          <Route
             path="resend-email"
             exact
             element={
-               <NoTokenRoute accessToken={accessToken}>
+               <NoToken accessToken={accessToken}>
                   <ResendEmail />
-               </NoTokenRoute>
+               </NoToken>
             }
          />
          <Route
