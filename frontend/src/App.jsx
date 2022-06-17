@@ -44,9 +44,33 @@ const App = () => {
                </NoTokenRoute>
             }
          />
-         <Route path="forgot-password" exact element={<ForgotPassword />} />
-         <Route path="confirm-password" exact element={<ConfirmPassword />} />
-         <Route path="resend-email" exact element={<ResendEmail />} />
+         <Route
+            path="forgot-password"
+            exact
+            element={
+               <NoTokenRoute accessToken={accessToken}>
+                  <ForgotPassword />
+               </NoTokenRoute>
+            }
+         />
+         <Route
+            path="confirm-password"
+            exact
+            element={
+               <NoTokenRoute accessToken={accessToken}>
+                  <ConfirmPassword />
+               </NoTokenRoute>
+            }
+         />
+         <Route
+            path="resend-email"
+            exact
+            element={
+               <NoTokenRoute accessToken={accessToken}>
+                  <ResendEmail />
+               </NoTokenRoute>
+            }
+         />
          <Route
             path="admin-panel"
             exact
