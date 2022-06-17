@@ -26,11 +26,6 @@ import java.io.IOException;
 @Log4j2
 @AllArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-
-  // I'm using @Autowired because using constructor DI doesn't work.
-  // I think it has something to do with the way CustomAuthorizationFilter is defined as a bean in
-  // the application class, as it calls the NoArgsConstructor and the dependencies are not loaded.
-  // This way the service is autowired and it works.
   private InvalidJwtService invalidJwtService;
 
   private CustomUserDetailsService customUserDetailsService;
