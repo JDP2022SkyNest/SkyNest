@@ -28,7 +28,7 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
       stateToChange(response.data);
    } catch (err) {
       if (err.response.status === 403) {
-         messageToShow("Access token expired");
+         messageToShow("Access denied");
       } else {
          messageToShow(err.data.messages);
       }
@@ -49,7 +49,7 @@ export const deleteUser = async (accessToken, id) => {
 export const emailVerification = async (token, success, error, info, setparams, resendEmail) => {
    info("Verifying in proggress");
    try {
-      await AxiosInstance.get(`/public/confirm?token=${token}`);
+      await AxiosInstance.post(`/public/confirm?token=${token}`);
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 500) {

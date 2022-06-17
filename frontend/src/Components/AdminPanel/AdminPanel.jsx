@@ -40,9 +40,6 @@ const AdminPanel = () => {
          {usersData ? (
             <>
                <Container>
-                  <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>
-                     {errorMsg}
-                  </p>
                   <div className="row">
                      <div className="col-12 col-sm-6 col-lg-3 offset-lg-2">
                         <AdminCard title="Total Users:" body={usersData.length} color={"info"} />
@@ -59,6 +56,9 @@ const AdminPanel = () => {
                         <Accordion className="shadow">{allUsers}</Accordion>
                      </div>
                   </div>
+                  <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>
+                     {errorMsg}
+                  </p>
                </Container>
                <Footer />
             </>
