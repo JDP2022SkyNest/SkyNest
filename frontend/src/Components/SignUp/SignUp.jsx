@@ -81,7 +81,7 @@ const SignUp = () => {
             <p className="mb-4 p-0 text-center text-secondary">Create your account</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successfulRegister ? "alert alert-success text-success text-center" : "d-none"}>{successfulRegister}</p>
-            <fieldset disabled={loading ? true : false}>
+            <fieldset disabled={loading}>
                <div className="row">
                   <div className="col-md-6">
                      <div className="form-outline mb-1">

@@ -94,7 +94,7 @@ const Login = ({ setAccessToken }) => {
             <p className={infoMsg ? "alert alert-info text-info text-center" : "d-none"}>{infoMsg}</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successfulLogin ? "alert alert-success text-success text-center" : "d-none"}>{successfulLogin}</p>
-            <fieldset disabled={loading ? true : false}>
+            <fieldset disabled={loading}>
                <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="emailInput">
                      Email address

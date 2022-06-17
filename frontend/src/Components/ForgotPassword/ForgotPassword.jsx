@@ -57,7 +57,7 @@ const ForgotPassword = () => {
       <CenteredContainer>
          <form onSubmit={onFormSubmit}>
             <h5 className="mb-4 p-0 text-center text-dark">Please enter your e-mail</h5>
-            <fieldset disabled={loading ? true : false}>
+            <fieldset disabled={loading}>
                <div className="form-outline mb-4">
                   <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
                   <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
