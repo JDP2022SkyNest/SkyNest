@@ -8,7 +8,7 @@ import LoadingButton from "../Loader/LoadingButton";
 
 const ForgotPassword = () => {
    const [email, setEmail] = useState("");
-   const [errorMsg, setErorrMsg] = useState("");
+   const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
 
@@ -32,9 +32,10 @@ const ForgotPassword = () => {
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
          if (err.response.status === 500) {
-            setErorrMsg("User already verified");
+            setErrorMsg("User already verified");
          } else {
-            setErorrMsg(err.response.data.messages);
+            setErrorMsg(err.response.data.messages);
+            setErrorMsg(err.response.status);
          }
          setLoading(false);
       }
@@ -45,7 +46,7 @@ const ForgotPassword = () => {
    }, []);
 
    useEffect(() => {
-      setErorrMsg("");
+      setErrorMsg("");
    }, [email]);
 
    return (

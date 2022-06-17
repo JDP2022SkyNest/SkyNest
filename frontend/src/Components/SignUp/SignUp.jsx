@@ -41,13 +41,14 @@ const SignUp = () => {
          redirectTo(navigate, ROUTES.LOGIN, 2000);
       } catch (err) {
          if (err.response.status === 409) {
-            setErrorMsg("Email aready exists");
+            setErrorMsg("Email or phone number in use");
          } else if (err.response.status === 500) {
             setErrorMsg("Internal Server Error");
          } else if (err.response.status === 0) {
             setErrorMsg("Server Timeout");
          } else {
             setErrorMsg(err.response.data.messages);
+            console.log(err.response.status);
          }
       }
       setLoading(false);

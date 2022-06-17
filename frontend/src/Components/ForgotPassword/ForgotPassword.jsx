@@ -8,7 +8,7 @@ import LoadingButton from "../Loader/LoadingButton";
 
 const ForgotPassword = () => {
    const [email, setEmail] = useState("");
-   const [errorMsg, setErorrMsg] = useState("");
+   const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,14 @@ const ForgotPassword = () => {
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
          if (err.response.status === 400) {
-            setErorrMsg("Email not found");
+            setErrorMsg("Email not found");
+         } else if (err.response.status === 403) {
+            setErrorMsg("Access token is invalid");
+         } else if (err.response.status === 500) {
+            setErrorMsg("Failed to send email");
+         } else {
+            setErrorMsg(err.response.data.messages);
+            setErrorMsg(err.response.status);
          }
          setLoading(false);
       }
@@ -43,7 +50,7 @@ const ForgotPassword = () => {
    }, []);
 
    useEffect(() => {
-      setErorrMsg("");
+      setErrorMsg("");
    }, [email]);
 
    return (

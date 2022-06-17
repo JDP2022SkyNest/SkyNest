@@ -49,7 +49,8 @@ const Login = ({ setAccessToken }) => {
          } else if (err.response.status === 417) {
             setErrorMsg("Wrong password");
          } else {
-            setErrorMsg("Unknown Error");
+            setErrorMsg(err.response.data.messages);
+            console.log(err.response.status);
          }
          setLoading(false);
          setForgotPassword(true);
