@@ -250,7 +250,7 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
     userService.deleteUser(uuid);
