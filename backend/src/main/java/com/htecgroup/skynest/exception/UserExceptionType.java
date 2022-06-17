@@ -27,7 +27,8 @@ public enum UserExceptionType {
   JWT_ALGORITHM_IS_NULL("JWT algorithm is null", HttpStatus.INTERNAL_SERVER_ERROR),
   INVALID_AUTHENTICATION_FORMAT(
       "Unable to authenticate, because of Input or Output error", HttpStatus.BAD_REQUEST),
-  TOO_MANY_LOGIN_ATTEMPTS("Too many login attempts. Try again later.", HttpStatus.FORBIDDEN);
+  TOO_MANY_LOGIN_ATTEMPTS("Too many login attempts. Try again later.", HttpStatus.FORBIDDEN),
+  REFRESH_TOKEN_IS_MISSING("Refresh token is missing !", HttpStatus.BAD_REQUEST);
 
   private final String message;
   private final HttpStatus status;

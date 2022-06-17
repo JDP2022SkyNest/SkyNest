@@ -3,6 +3,7 @@ package com.htecgroup.skynest.controller;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
+import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +34,7 @@ import static com.htecgroup.skynest.util.UrlUtil.USERS_CONTROLLER_URL;
 public class UserController {
 
   private UserService userService;
+  private RefreshTokenService refreshTokenService;
 
   @Operation(summary = "Get all users")
   @ApiResponses(
@@ -254,5 +257,46 @@ public class UserController {
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
     return ResponseEntity.ok(deleteSuccess);
+  }
+
+  @Operation(summary = "Request for token refresh")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "new access token successfully sent",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Password reset email sent")})
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Access token is invalid")})
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {
+                    @ExampleObject(value = "Failed to send new access and refresh tokens")
+                  })
+            })
+      })
+  @GetMapping("/token/refresh")
+  public void refreshToken(
+      @RequestHeader("refresh-token") String refresh_token, HttpServletResponse response) {
+    String token = refreshTokenService.refreshToken(refresh_token);
+    response.addHeader("Authorization", "Bearer " + token);
+    response.addHeader("refresh_token", refresh_token);
   }
 }
