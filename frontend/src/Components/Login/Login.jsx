@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { redirectTo, emailVerification } from "../ReusableComponents/ReusableFunctions";
 import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
@@ -14,11 +14,15 @@ const Login = ({ setAccessToken }) => {
    const [errorMsg, setErrorMsg] = useState("");
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
-   const [successfulLogin, setSuccessfulLogin] = useState("");
+   const [successMsg, setSuccessMsg] = useState("");
    const [forgotPassword, setForgotPassword] = useState(false);
+   const [searchParams, setSearchParams] = useSearchParams();
+   const [infoMsg, setInfoMsg] = useState("");
+   const [resendEmail, setResendEmail] = useState(false);
 
    const emailRef = useRef();
    const navigate = useNavigate();
+   const token = searchParams.get("token");
 
    const getUserToken = async () => {
       try {
@@ -28,7 +32,7 @@ const Login = ({ setAccessToken }) => {
          if (headers?.authorization) {
             setAccessToken(token);
             localStorage.setItem("accessToken", token);
-            setSuccessfulLogin("Login Successful");
+            setSuccessMsg("Login Successful");
             redirectTo(navigate, ROUTES.HOME, 1000);
             setErrorMsg("");
          } else {
@@ -45,12 +49,21 @@ const Login = ({ setAccessToken }) => {
          } else if (err.response.status === 417) {
             setErrorMsg("Wrong password");
          } else {
-            setErrorMsg("Unknown Error");
+            setErrorMsg(err.response.data.messages);
+            console.log(err.response.status);
          }
          setLoading(false);
          setForgotPassword(true);
+         setSuccessMsg("");
       }
    };
+
+   useEffect(() => {
+      if (token) {
+         emailVerification(token, setSuccessMsg, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
+      }
+      // eslint-disable-next-line
+   }, [token]);
 
    useEffect(() => {
       emailRef.current.focus();
@@ -78,9 +91,10 @@ const Login = ({ setAccessToken }) => {
             </div>
             <h1 className="mt-2 text-center">SKY-NEST</h1>
             <p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
+            <p className={infoMsg ? "alert alert-info text-info text-center" : "d-none"}>{infoMsg}</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
-            <p className={successfulLogin ? "alert alert-success text-success text-center" : "d-none"}>{successfulLogin}</p>
-            <fieldset disabled={loading ? true : false}>
+            <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
+            <fieldset disabled={loading}>
                <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="emailInput">
                      Email address
@@ -95,6 +109,9 @@ const Login = ({ setAccessToken }) => {
                      required
                      autoComplete="off"
                   />
+                  <small className={resendEmail ? "p-0" : "d-none"}>
+                     <Link to={ROUTES.RESEND}>Resend Email?</Link>
+                  </small>
                </div>
                <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="passwordInput">

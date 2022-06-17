@@ -28,7 +28,7 @@ const HomePage = ({ setAccessToken }) => {
                </div>
             </Container>
          </Navbar>
-         <Footer />;
+         <Footer />
       </>
    );
 };
