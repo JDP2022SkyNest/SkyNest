@@ -16,7 +16,9 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -39,6 +41,7 @@ class InvalidJwtServiceImplTest {
     token =
         JwtUtils.generate(
             "ivan.fajgelj@htecgroup.com",
+            Map.of("uuid", UUID.randomUUID().toString()),
             JwtUtils.ACCESS_TOKEN_EXPIRATION_MS,
             "roles",
             Collections.singletonList(RoleEntity.ROLE_WORKER));
@@ -74,6 +77,7 @@ class InvalidJwtServiceImplTest {
     token =
         JwtUtils.generate(
             "ivan.fajgelj@htecgroup.com",
+            Map.of("uuid", UUID.randomUUID().toString()),
             JwtUtils.ACCESS_TOKEN_EXPIRATION_MS,
             "roles",
             Collections.singletonList(RoleEntity.ROLE_WORKER));
