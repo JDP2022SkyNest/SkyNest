@@ -27,7 +27,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final ObjectMapper objectMapper;
   private final UserService userService;
-  private final CustomAuthorizationFilter customAuthorizationFilter;
   private final LoginAttemptService loginAttemptService;
 
   @Override
