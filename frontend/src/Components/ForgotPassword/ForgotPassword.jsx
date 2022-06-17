@@ -34,7 +34,7 @@ const ForgotPassword = () => {
          if (err.response.status === 400) {
             setErrorMsg("Email not found");
          } else if (err.response.status === 403) {
-            setErrorMsg("Access token is invalid");
+            setErrorMsg("You're not authoraized");
          } else if (err.response.status === 500) {
             setErrorMsg("Failed to send email");
          } else {
