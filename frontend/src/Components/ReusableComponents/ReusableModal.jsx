@@ -19,7 +19,7 @@ const ReusableModal = ({ title = "Default Title", children }) => {
             </IconContext.Provider>
          </div>
 
-         <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+         <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} className={"mt-2"}>
             <Modal.Header closeButton>
                <Modal.Title>{title}</Modal.Title>
             </Modal.Header>

@@ -33,6 +33,8 @@ const ForgotPassword = () => {
       } catch (err) {
          if (err.response.status === 500) {
             setErrorMsg("User already verified");
+         } else if (err.response.status === 404) {
+            setErrorMsg("User doesn't exist");
          } else {
             setErrorMsg(err.response.data.messages);
             setErrorMsg(err.response.status);
