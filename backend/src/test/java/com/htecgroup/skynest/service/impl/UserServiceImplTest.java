@@ -12,8 +12,10 @@ import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.util.JwtUtils;
-import com.htecgroup.skynest.utils.*;
+import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
+import com.htecgroup.skynest.utils.UserEditRequestUtil;
+import com.htecgroup.skynest.utils.UserEntityUtil;
+import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -184,6 +186,14 @@ class UserServiceImplTest {
     Exception thrownException =
         Assertions.assertThrows(UserException.class, () -> userService.deleteUser(uuid));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void deleteUser_ShouldCallDeleteUser() {
+    when(userRepository.existsById(any())).thenReturn(true);
+    UUID uuid = UUID.randomUUID();
+    userService.deleteUser(uuid);
+    verify(userRepository).deleteById(uuid);
   }
 
   @Test
