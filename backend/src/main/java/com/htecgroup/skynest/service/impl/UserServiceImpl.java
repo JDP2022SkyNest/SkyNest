@@ -5,20 +5,15 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
-import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
-import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.EmailUtil;
-import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -33,13 +28,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private static final String SUBJECT_FOR_EMAIL_CONFIRMATION = "Confirm your email for SkyNest";
-  private static final String SUBJECT_FOR_PASSWORD_RESET = "Password reset for SkyNest";
   private UserRepository userRepository;
   private RoleService roleService;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
-  private EmailService emailService;
   private CurrentUserService currentUserService;
 
   @Override
@@ -66,55 +58,7 @@ public class UserServiceImpl implements UserService {
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
-    this.sendVerificationEmail(userDto.getEmail());
-
     return modelMapper.map(userEntity, UserResponse.class);
-  }
-
-  @Override
-  public void sendVerificationEmail(String emailAddress) {
-    UserDto userDto = findUserByEmail(emailAddress);
-
-    if (userDto.getVerified()) {
-      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
-    }
-
-    String token = JwtUtils.generateEmailVerificationToken(emailAddress);
-    Email email = EmailUtil.createVerificationEmail(userDto, token);
-
-    emailService.send(email);
-  }
-
-  @Override
-  public void sendPasswordResetEmail(String emailAddress) {
-    UserDto userDto = findUserByEmail(emailAddress);
-
-    if (!userRepository.existsByEmail(emailAddress)) {
-      throw new UserException(UserExceptionType.USER_NOT_FOUND);
-    }
-
-    String token = JwtUtils.generatePasswordResetToken(emailAddress);
-    Email email = EmailUtil.createPasswordResetEmail(userDto, token);
-
-    emailService.send(email);
-  }
-
-  @Override
-  public String resetPassword(UserPasswordResetRequest userPasswordResetRequest) {
-    String email =
-        JwtUtils.getValidatedPasswordResetTokenContext(userPasswordResetRequest.getToken());
-    UserDto userDto = findUserByEmail(email);
-    UserDto userDtoNewPassword =
-        userDto.withEncryptedPassword(
-            bCryptPasswordEncoder.encode(userPasswordResetRequest.getPassword()));
-    userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
-    return "Password was successfully reset";
-  }
-
-  @Override
-  public boolean isActive(String email) {
-    UserDto userDto = findUserByEmail(email);
-    return userDto.getEnabled() && userDto.getVerified() && userDto.getDeletedOn() == null;
   }
 
   @Override
@@ -174,22 +118,5 @@ public class UserServiceImpl implements UserService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public String confirmEmail(String token) {
-    String email = JwtUtils.getValidatedEmailVerificationTokenContext(token);
-    UserDto userDto = findUserByEmail(email);
-    UserDto enabledUser = this.verifyUser(userDto);
-    userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
-    return "User verified successfully";
-  }
-
-  @Override
-  public UserDto verifyUser(UserDto userDto) {
-    if (isActive(userDto.getEmail())) {
-      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
-    }
-    return userDto.withEnabled(true).withVerified(true);
   }
 }
