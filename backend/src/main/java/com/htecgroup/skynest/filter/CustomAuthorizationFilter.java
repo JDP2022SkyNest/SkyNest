@@ -5,6 +5,7 @@ import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.security.CustomAuthenticationToken;
 import com.htecgroup.skynest.security.CustomUserDetailsService;
+import com.htecgroup.skynest.service.InvalidJwtService;
 import com.htecgroup.skynest.util.DateTimeUtil;
 import com.htecgroup.skynest.util.ExceptionUtil;
 import com.htecgroup.skynest.util.JwtUtils;
@@ -25,11 +26,12 @@ import java.io.IOException;
 @Log4j2
 @AllArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+
   private InvalidJwtService invalidJwtService;
 
   private CustomUserDetailsService customUserDetailsService;
 
-  private CustomUserDetailsService customUserDetailsService;
+
 
   @Override
   protected void doFilterInternal(
