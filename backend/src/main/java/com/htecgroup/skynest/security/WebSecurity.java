@@ -27,7 +27,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
   private final ObjectMapper objectMapper;
   private final UserService userService;
-  private final CustomAuthorizationFilter customAuthorizationFilter;
   private final LoginAttemptService loginAttemptService;
 
   @Override
@@ -43,7 +42,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         .addFilter(getAuthenticationFilter())
-        .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(getAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
@@ -59,6 +58,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     filter.setFilterProcessesUrl(
         String.format("%s%s", UrlUtil.PUBLIC_CONTROLLER_URL, UrlUtil.LOG_IN_URL));
     return filter;
+  }
+
+  public CustomAuthorizationFilter getAuthorizationFilter() {
+    return new CustomAuthorizationFilter(userDetailsService);
   }
 
   @Override

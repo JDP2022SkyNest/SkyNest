@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
@@ -12,6 +13,7 @@ import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
@@ -38,6 +40,7 @@ public class UserServiceImpl implements UserService {
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private ModelMapper modelMapper;
   private EmailService emailService;
+  private CurrentUserService currentUserService;
 
   @Override
   public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
@@ -125,6 +128,14 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse getUser(UUID uuid) {
+
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+
     UserEntity userEntity =
         userRepository
             .findById(uuid)
