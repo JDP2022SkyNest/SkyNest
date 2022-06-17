@@ -10,6 +10,7 @@ import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
 import ResendEmail from "./Components/ResendEmail/ResendEmail";
+import NoTokenRoute from "./Components/Routes/NoTokenRoute";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -25,12 +26,36 @@ const App = () => {
                </ProtectedRoute>
             }
          />
-         <Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
-         <Route path="signup" exact element={<SignUp />} />
+         <Route
+            path="login"
+            exact
+            element={
+               <NoTokenRoute accessToken={accessToken}>
+                  <Login setAccessToken={setAccessToken} />
+               </NoTokenRoute>
+            }
+         />
+         <Route
+            path="signup"
+            exact
+            element={
+               <NoTokenRoute accessToken={accessToken}>
+                  <SignUp />
+               </NoTokenRoute>
+            }
+         />
          <Route path="forgot-password" exact element={<ForgotPassword />} />
          <Route path="confirm-password" exact element={<ConfirmPassword />} />
          <Route path="resend-email" exact element={<ResendEmail />} />
-         <Route path="admin-panel" exact element={<AdminPanel />} />
+         <Route
+            path="admin-panel"
+            exact
+            element={
+               <ProtectedRoute accessToken={accessToken}>
+                  <AdminPanel />
+               </ProtectedRoute>
+            }
+         />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
