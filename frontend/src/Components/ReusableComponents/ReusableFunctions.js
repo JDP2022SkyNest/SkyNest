@@ -59,6 +59,7 @@ export const emailVerification = async (token, success, error, info, setparams, 
          resendEmail(true);
       } else {
          error(err.response.data.messages);
+         console.log(err.response.status);
       }
    }
    info("");

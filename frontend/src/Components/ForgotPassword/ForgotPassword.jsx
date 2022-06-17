@@ -39,7 +39,7 @@ const ForgotPassword = () => {
             setErrorMsg("Failed to send email");
          } else {
             setErrorMsg(err.response.data.messages);
-            setErrorMsg(err.response.status);
+            console.log(err.response.status);
          }
          setLoading(false);
       }

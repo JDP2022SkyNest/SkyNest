@@ -37,7 +37,7 @@ const ForgotPassword = () => {
             setErrorMsg("User doesn't exist");
          } else {
             setErrorMsg(err.response.data.messages);
-            setErrorMsg(err.response.status);
+            console.log(err.response.status);
          }
          setLoading(false);
       }
