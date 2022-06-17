@@ -1,7 +1,7 @@
 import React from "react";
 import { Accordion } from "react-bootstrap";
 
-const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
+const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change }) => {
    const userRoleName = elem.roleName.slice(5);
 
    return (
@@ -43,8 +43,9 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
                </div>
                <div>
                   <button
-                     onClick={() => {
-                        deleteUser(accessToken, elem.id);
+                     onClick={async () => {
+                        await deleteUser(accessToken, elem.id);
+                        setChange(!change);
                      }}
                      className="btn btn-danger"
                   >

@@ -12,13 +12,14 @@ const AdminPanel = () => {
    const [usersData, setUsersData] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
+   const [change, setChange] = useState(false);
    const accessToken = localStorage.accessToken;
 
    const time = new Date();
 
    useEffect(() => {
       getAllUsers(accessToken, setUsersData, setErrorMsg);
-   }, [accessToken]);
+   }, [accessToken, change]);
 
    const filterUsers = usersData.filter(
       (user) =>
@@ -31,7 +32,15 @@ const AdminPanel = () => {
    );
 
    const allUsers = filterUsers.map((elem, index) => (
-      <AccordionUsers elem={elem} index={index} deleteUser={deleteUser} key={elem.id} accessToken={accessToken} />
+      <AccordionUsers
+         elem={elem}
+         index={index}
+         deleteUser={deleteUser}
+         key={elem.id}
+         accessToken={accessToken}
+         setChange={setChange}
+         change={change}
+      />
    ));
 
    return (
