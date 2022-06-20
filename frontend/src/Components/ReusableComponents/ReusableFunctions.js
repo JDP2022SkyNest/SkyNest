@@ -21,28 +21,18 @@ export const redirectTo = (func, path, delay) => {
    }, delay);
 };
 
-export const getUserData = (accessToken, roleState, idState) => {
+export const getUserData = (accessToken,stateToChange) => {
    if (accessToken) {
       const token = accessToken.slice(7);
       const decoded = jwt_decode(token);
-      roleState(decoded.roles[0]);
-      idState(decoded.uuid);
       console.log(decoded);
+      if (decoded.roles[0] === "role_admin") {
+         stateToChange("admin");
+      } else {
+         stateToChange("");
+      }
    }
-};
-
-export const getPersonalData = async (userID, accessToken, stateToChange, error) => {
-   try {
-      let response = await AxiosInstance.get(`/users/${userID}`, {
-         headers: { Authorization: accessToken },
-      });
-      console.log(response.data);
-      stateToChange(response.data);
-   } catch (err) {
-      console.log(err);
-      error("Token Expired");
-   }
-};
+}
 
 export const getAllUsers = async (accessToken, stateToChange, messageToShow) => {
    try {
@@ -70,10 +60,10 @@ export const deleteUser = async (accessToken, id) => {
    }
 };
 
-export const emailVerification = async (accessToken, success, error, info, setparams, resendEmail) => {
+export const emailVerification = async (token, success, error, info, setparams, resendEmail) => {
    info("Verifying in proggress");
    try {
-      await AxiosInstance.post(`/public/confirm?token=${accessToken}`);
+      await AxiosInstance.post(`/public/confirm?token=${token}`);
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 500) {
@@ -88,22 +78,6 @@ export const emailVerification = async (accessToken, success, error, info, setpa
    }
    info("");
    setparams("");
-};
-
-export const onUserLogout = async (accessToken, localStorageItem, stateToChange) => {
-   try {
-      await AxiosInstance.post(
-         `/auth/logout`,
-         {},
-         {
-            headers: { Authorization: accessToken },
-         }
-      );
-      localStorage.removeItem(localStorageItem);
-      stateToChange("");
-   } catch (err) {
-      console.log(err);
-   }
 };
 
 export const openFullscreen = () => {

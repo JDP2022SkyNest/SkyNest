@@ -18,10 +18,9 @@ import UserInfo from "./Components/ReusableComponents/UserInfo";
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
    const [userRole, setUserRole] = useState("");
-   const [userID, setUserID] = useState("");
 
    useEffect(() => {
-      getUserData(accessToken, setUserRole, setUserID);
+      getUserData(accessToken, setUserRole);
    }, [accessToken]);
 
    return (
@@ -84,20 +83,12 @@ const App = () => {
             path="admin-panel"
             exact
             element={
-               <AdminRoute userRole={userRole} accessToken={accessToken} setUserID={setUserID}>
+               <AdminRoute userRole={userRole}>
                   <AdminPanel />
                </AdminRoute>
             }
          />
-         <Route
-            path="user-info"
-            exact
-            element={
-               <ProtectedRoute accessToken={accessToken}>
-                  <UserInfo userID={userID} />
-               </ProtectedRoute>
-            }
-         />
+         <Route path="user-info" exact element={<UserInfo />} />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />

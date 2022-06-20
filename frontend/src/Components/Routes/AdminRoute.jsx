@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import ROUTES from "./ROUTES";
 
 const AdminRoute = ({ userRole, children }) => {
-   if (userRole === "role_admin") {
+   if (userRole === "admin") {
       return children;
    }
    return <Navigate to={ROUTES.HOME} />;
