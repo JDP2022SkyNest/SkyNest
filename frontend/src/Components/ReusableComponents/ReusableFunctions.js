@@ -1,5 +1,6 @@
 import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
+import jwt_decode from "jwt-decode";
 
 // eslint-disable-next-line
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
@@ -19,6 +20,19 @@ export const redirectTo = (func, path, delay) => {
       func(path);
    }, delay);
 };
+
+export const getUserData = (accessToken,stateToChange) => {
+   if (accessToken) {
+      const token = accessToken.slice(7);
+      const decoded = jwt_decode(token);
+      console.log(decoded);
+      if (decoded.roles[0] === "role_admin") {
+         stateToChange("admin");
+      } else {
+         stateToChange("");
+      }
+   }
+}
 
 export const getAllUsers = async (accessToken, stateToChange, messageToShow) => {
    try {
