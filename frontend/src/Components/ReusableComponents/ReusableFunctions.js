@@ -1,9 +1,8 @@
 import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
 
-export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 // eslint-disable-next-line
-export const passwordRegx1 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
+export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
 export const emailRegEx = /^[a-zA-Z0-9_+&*-]{1,64}(?:\.[a-zA-Z0-9_+&*-]+){0,64}@(?:[a-zA-Z0-9-]+\.){1,255}[a-zA-Z]{2,7}$/;
 const elem = document.documentElement;
 
@@ -29,7 +28,7 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
       stateToChange(response.data);
    } catch (err) {
       if (err.response.status === 403) {
-         messageToShow("Access token expired");
+         messageToShow("Access denied");
       } else {
          messageToShow(err.data.messages);
       }
@@ -45,6 +44,26 @@ export const deleteUser = async (accessToken, id) => {
    } catch (err) {
       console.log(err);
    }
+};
+
+export const emailVerification = async (token, success, error, info, setparams, resendEmail) => {
+   info("Verifying in proggress");
+   try {
+      await AxiosInstance.post(`/public/confirm?token=${token}`);
+      success("Email Verified");
+   } catch (err) {
+      if (err.response.status === 500) {
+         success("Email already verified");
+      } else if (err.response.status === 403) {
+         error("Token expired");
+         resendEmail(true);
+      } else {
+         error(err.response.data.messages);
+         console.log(err.response.status);
+      }
+   }
+   info("");
+   setparams("");
 };
 
 export const openFullscreen = () => {

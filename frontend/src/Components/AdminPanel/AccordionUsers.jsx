@@ -1,7 +1,10 @@
 import React from "react";
+import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 
-const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
+const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change }) => {
+   const [youSure, setYouSure] = useState(false);
+
    const userRoleName = elem.roleName.slice(5);
 
    return (
@@ -32,20 +35,30 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken }) => {
                {elem.address}
             </p>
             <p>
-               <span className="text-warning font-weight-bold">User ID: </span>
+               <span className="font-weight-bold">User ID: </span>
                {elem.id}
             </p>
-            <button
-               onClick={() => {
-                  deleteUser(accessToken, elem.id);
-               }}
-               className="btn btn-danger"
-            >
-               Delete
-            </button>
-            {/* This button is still a placeholder, functinality will be added */}
-            <button className="btn btn-success ml-2">Promote</button>
-            <button className="btn btn-warning ml-2">Demote</button>
+            <div className="d-flex justify-content-between">
+               <div>
+                  {/* This button is still a placeholder, functinality will be added */}
+                  <button className="btn btn-info text-white">Promote</button>
+                  <button className="btn btn-primary ml-2">Demote</button>
+               </div>
+               <div>
+                  <button
+                     onClick={async () => {
+                        setYouSure(!youSure);
+                        if (youSure) {
+                           await deleteUser(accessToken, elem.id);
+                           setChange(!change);
+                        }
+                     }}
+                     className={`btn btn-${!youSure ? "danger" : "warning"}`}
+                  >
+                     {!youSure ? "Delete" : "You sure?"}
+                  </button>
+               </div>
+            </div>
          </Accordion.Body>
       </Accordion.Item>
    );

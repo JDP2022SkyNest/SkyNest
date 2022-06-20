@@ -30,8 +30,14 @@ const ConfirmPassword = () => {
          setSuccessMsg("Password changed successfully");
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
-         setErrorMsg("Failed");
-         console.log(err);
+         if (err.response.status === 403) {
+            setErrorMsg("Access token is invalid");
+         } else if (err.response.status === 500) {
+            setErrorMsg("Internal Server Error");
+         } else {
+            setErrorMsg(err.response.data.messages);
+            console.log(err.response.status);
+         }
       }
       setLoading(false);
    };

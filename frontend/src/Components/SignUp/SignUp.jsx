@@ -18,7 +18,7 @@ const SignUp = () => {
    const [uPassword, setPassword] = useState("");
    const [confPassword, setConfPassword] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
-   const [successfulRegister, setSuccessfulRegister] = useState("");
+   const [successMsg, setSuccesMsg] = useState("");
    const [buttonText, setButtonText] = useState("REGISTER");
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
@@ -36,18 +36,19 @@ const SignUp = () => {
             address,
          });
          setErrorMsg("");
-         setSuccessfulRegister("Please confirm your email");
+         setSuccesMsg("Please confirm your email");
          setButtonText("SUCCESSFUL");
          redirectTo(navigate, ROUTES.LOGIN, 2000);
       } catch (err) {
          if (err.response.status === 409) {
-            setErrorMsg("Email aready exists");
+            setErrorMsg("Email or phone number in use");
          } else if (err.response.status === 500) {
             setErrorMsg("Internal Server Error");
          } else if (err.response.status === 0) {
             setErrorMsg("Server Timeout");
          } else {
             setErrorMsg(err.response.data.messages);
+            console.log(err.response.status);
          }
       }
       setLoading(false);
@@ -79,8 +80,8 @@ const SignUp = () => {
             <h2 className="text-center">SKY-NEST</h2>
             <p className="mb-4 p-0 text-center text-secondary">Create your account</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
-            <p className={successfulRegister ? "alert alert-success text-success text-center" : "d-none"}>{successfulRegister}</p>
-            <fieldset disabled={loading ? true : false}>
+            <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
+            <fieldset disabled={loading}>
                <div className="row">
                   <div className="col-md-6">
                      <div className="form-outline mb-1">

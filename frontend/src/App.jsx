@@ -9,6 +9,8 @@ import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
+import ResendEmail from "./Components/ResendEmail/ResendEmail";
+import NoToken from "./Components/Routes/NoToken";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -24,11 +26,60 @@ const App = () => {
                </ProtectedRoute>
             }
          />
-         <Route path="login" exact element={<Login setAccessToken={setAccessToken} />} />
-         <Route path="signup" exact element={<SignUp />} />
-         <Route path="forgot-password" exact element={<ForgotPassword />} />
-         <Route path="confirm-password" exact element={<ConfirmPassword />} />
-         <Route path="admin-panel" exact element={<AdminPanel />} />
+         <Route
+            path="login"
+            exact
+            element={
+               <NoToken accessToken={accessToken}>
+                  <Login setAccessToken={setAccessToken} />
+               </NoToken>
+            }
+         />
+         <Route
+            path="signup"
+            exact
+            element={
+               <NoToken accessToken={accessToken}>
+                  <SignUp />
+               </NoToken>
+            }
+         />
+         <Route
+            path="forgot-password"
+            exact
+            element={
+               <NoToken accessToken={accessToken}>
+                  <ForgotPassword />
+               </NoToken>
+            }
+         />
+         <Route
+            path="confirm-password"
+            exact
+            element={
+               <NoToken accessToken={accessToken}>
+                  <ConfirmPassword />
+               </NoToken>
+            }
+         />
+         <Route
+            path="resend-email"
+            exact
+            element={
+               <NoToken accessToken={accessToken}>
+                  <ResendEmail />
+               </NoToken>
+            }
+         />
+         <Route
+            path="admin-panel"
+            exact
+            element={
+               <ProtectedRoute accessToken={accessToken}>
+                  <AdminPanel />
+               </ProtectedRoute>
+            }
+         />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />

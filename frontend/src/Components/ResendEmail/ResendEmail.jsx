@@ -27,16 +27,14 @@ const ForgotPassword = () => {
 
    const onSuccessfulChange = async () => {
       try {
-         await AxiosInstance.post(`/public/password-reset?email=${email}`);
+         await AxiosInstance.post(`/public/resend-email?email=${email}`);
          setSuccessMsg("Email has been sent");
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
-         if (err.response.status === 400) {
-            setErrorMsg("Email not found");
-         } else if (err.response.status === 403) {
-            setErrorMsg("You're not authoraized");
-         } else if (err.response.status === 500) {
-            setErrorMsg("Failed to send email");
+         if (err.response.status === 500) {
+            setErrorMsg("User already verified");
+         } else if (err.response.status === 404) {
+            setErrorMsg("User doesn't exist");
          } else {
             setErrorMsg(err.response.data.messages);
             console.log(err.response.status);
