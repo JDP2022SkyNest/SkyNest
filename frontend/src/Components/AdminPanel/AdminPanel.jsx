@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Accordion, Container } from "react-bootstrap";
 import { getAllUsers, deleteUser } from "../ReusableComponents/ReusableFunctions";
-import AdminPanelNav from "./AdminPanelNav";
 import AdminCard from "./AdminCard";
 import "./AdminPanel.css";
 import AccordionUsers from "./AccordionUsers";
 import Footer from "../Footer/Footer";
 import LoaderAnimation from "../Loader/LoaderAnimation";
+import NavbarPanel from "../ReusableComponents/NavbarPanel";
+import ReusableModal from "../ReusableComponents/ReusableModal";
+import AdminCarousel from "./AdminCarousel";
+import ROUTES from "../Routes/ROUTES";
 
 const AdminPanel = () => {
    const [usersData, setUsersData] = useState([]);
@@ -45,7 +48,11 @@ const AdminPanel = () => {
 
    return (
       <div className="admin-page-body">
-         <AdminPanelNav setSearchTerm={setSearchTerm} />
+         <NavbarPanel name="Admin Panel" searchBar={true} path={ROUTES.HOME} setSearchTerm={setSearchTerm}>
+            <ReusableModal title="Instructions">
+               <AdminCarousel />
+            </ReusableModal>
+         </NavbarPanel>
          {usersData ? (
             <>
                <Container>
