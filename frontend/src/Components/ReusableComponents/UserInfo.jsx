@@ -1,11 +1,12 @@
 import React from "react";
 import Footer from "../Footer/Footer";
-import AdminPanelNav from "../AdminPanel/AdminPanelNav";
+import NavbarPanel from "../ReusableComponents/NavbarPanel";
+import ROUTES from "../Routes/ROUTES";
 
 const UserInfo = () => {
    return (
       <section>
-         <AdminPanelNav />
+         <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
          <div className="container py-5">
             <div className="row">
                <div className="col-lg-4">
