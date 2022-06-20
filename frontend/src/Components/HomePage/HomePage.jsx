@@ -20,7 +20,7 @@ const HomePage = ({ setAccessToken, userRole }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className={userRole === "admin" ? `btn btn-danger mr-3` : "d-none"}
+                     className={userRole === "role_admin" ? `btn btn-danger mr-3` : "d-none"}
                   >
                      Admin Panel
                   </button>
