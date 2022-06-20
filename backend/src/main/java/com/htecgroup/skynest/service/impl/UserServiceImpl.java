@@ -129,13 +129,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse getUser(UUID uuid) {
 
-    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UUID loggedUserUuid = loggedUserDto.getUuid();
-
-    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
-      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
-    }
-
     UserEntity userEntity =
         userRepository
             .findById(uuid)
@@ -191,5 +184,14 @@ public class UserServiceImpl implements UserService {
       throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
     }
     return userDto.withEnabled(true).withVerified(true);
+  }
+
+  public void authorizeAccessToUserDetailsWith(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
   }
 }

@@ -15,10 +15,6 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.util.JwtUtils;
-import com.htecgroup.skynest.utils.UserDtoUtil;
-import com.htecgroup.skynest.utils.UserEditRequestUtil;
-import com.htecgroup.skynest.utils.UserEntityUtil;
-import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -108,47 +104,56 @@ class UserServiceImplTest {
   @Test
   void getUser_IdNotFound() {
     when(userRepository.findById(any())).thenReturn(Optional.empty());
-    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
     UUID uuid = UUID.randomUUID();
 
     UserException ex =
         Assertions.assertThrows(UserException.class, () -> userService.getUser(uuid));
 
     Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
+    verify(userRepository, times(1)).findById(any());
   }
 
   @Test
-  void getUser_WorkerAccessDenied() {
+  void authorizeUser_WorkerAccessDenied() {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     UUID uuid = UUID.randomUUID();
 
     UserException ex =
-        Assertions.assertThrows(UserException.class, () -> userService.getUser(uuid));
+        Assertions.assertThrows(
+            UserException.class, () -> userService.authorizeAccessToUserDetailsWith(uuid));
 
     Assertions.assertEquals("Access denied", ex.getMessage());
+    verify(currentUserService, times(1)).getLoggedUser();
   }
 
   @Test
-  void getUser_Admin() {
+  void authorizeUser_Admin() {
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
+    UUID uuid = UUID.randomUUID();
+
+    Assertions.assertDoesNotThrow(() -> userService.authorizeAccessToUserDetailsWith(uuid));
+    verify(currentUserService, times(1)).getLoggedUser();
+  }
+
+  @Test
+  void authorizeUser_Worker() {
+    LoggedUserDto currentUser = LoggedUserDtoUtil.getLoggedWorkerUser();
+    when(currentUserService.getLoggedUser()).thenReturn(currentUser);
+    UUID uuid = currentUser.getUuid();
+
+    Assertions.assertDoesNotThrow(() -> userService.authorizeAccessToUserDetailsWith(uuid));
+    verify(currentUserService, times(1)).getLoggedUser();
+  }
+
+  @Test
+  void getUser() {
     UserEntity userEntity = UserEntityUtil.getNotVerified();
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
-    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
 
     UserResponse actualUserResponse = userService.getUser(userEntity.getId());
 
     this.assertUserEntityAndUserResponse(userEntity, actualUserResponse);
-  }
-
-  @Test
-  void getUser_Worker() {
-    UserEntity userEntity = UserEntityUtil.getNotVerified();
-    when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
-    LoggedUserDto loggedUserDto = LoggedUserDtoUtil.getLoggedWorkerUser();
-    when(currentUserService.getLoggedUser()).thenReturn(loggedUserDto);
-
-    UserResponse actualUserResponse = userService.getUser(loggedUserDto.getUuid());
-
-    this.assertUserEntityAndUserResponse(userEntity, actualUserResponse);
+    verify(userRepository, times(1)).findById(any());
   }
 
   @Test
