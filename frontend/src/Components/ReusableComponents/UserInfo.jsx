@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
+import { getPersonalData } from "./ReusableFunctions";
 
-const UserInfo = () => {
+const UserInfo = ({ userID }) => {
+   const [userData, setUserData] = useState();
+   const [errorMsg, setErrorMsg] = useState("");
+   const accessToken = localStorage.accessToken;
+
+   const role = userData?.roleName.slice(5).toUpperCase();
+
+   useEffect(() => {
+      if (userID) {
+         getPersonalData(userID, accessToken, setUserData, setErrorMsg);
+      }
+   }, [userID]);
+
    return (
       <section>
          <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
          <div className="container py-5">
+            <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <div className="row">
                <div className="col-lg-4">
                   <div className="card mb-4">
@@ -18,9 +33,11 @@ const UserInfo = () => {
                            className="rounded-circle img-fluid"
                            style={{ width: "150px" }}
                         />
-                        <h5 className="my-3">John Smith</h5>
+                        <h5 className="my-3">
+                           {userData?.name} {userData?.surname}
+                        </h5>
                         <p className="text-muted mb-1">Full Stack Developer</p>
-                        <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                        <p className={`text-${role === "ADMIN" ? "danger" : "mutted"} mb-4`}>{role}</p>
                         <div className="d-flex justify-content-center mb-2">
                            <button type="button" className="btn btn-primary">
                               Follow
@@ -36,23 +53,23 @@ const UserInfo = () => {
                         <ul className="list-group list-group-flush rounded-3">
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
                               <i className="fas fa-globe fa-lg text-warning" />
-                              <p className="mb-0">https://mdbootstrap.com</p>
+                              <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
                               <i className="fab fa-github fa-lg" style={{ color: "#333333" }} />
-                              <p className="mb-0">mdbootstrap</p>
+                              <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
                               <i className="fab fa-twitter fa-lg" style={{ color: "#55acee" }} />
-                              <p className="mb-0">@mdbootstrap</p>
+                              <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
                               <i className="fab fa-instagram fa-lg" style={{ color: "#ac2bac" }} />
-                              <p className="mb-0">mdbootstrap</p>
+                              <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
                               <i className="fab fa-facebook-f fa-lg" style={{ color: "#3b5998" }} />
-                              <p className="mb-0">mdbootstrap</p>
+                              <p className="mb-0">Placeholder</p>
                            </li>
                         </ul>
                      </div>
@@ -63,10 +80,19 @@ const UserInfo = () => {
                      <div className="card-body">
                         <div className="row">
                            <div className="col-sm-3">
-                              <p className="mb-0">Full Name</p>
+                              <p className="mb-0">Name</p>
                            </div>
                            <div className="col-sm-9">
-                              <p className="text-muted mb-0">Johnatan Smith</p>
+                              <p className="text-muted mb-0">{userData?.name}</p>
+                           </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                           <div className="col-sm-3">
+                              <p className="mb-0">Last Name</p>
+                           </div>
+                           <div className="col-sm-9">
+                              <p className="text-muted mb-0">{userData?.surname}</p>
                            </div>
                         </div>
                         <hr />
@@ -75,7 +101,7 @@ const UserInfo = () => {
                               <p className="mb-0">Email</p>
                            </div>
                            <div className="col-sm-9">
-                              <p className="text-muted mb-0">example@example.com</p>
+                              <p className="text-muted mb-0">{userData?.email}</p>
                            </div>
                         </div>
                         <hr />
@@ -84,16 +110,7 @@ const UserInfo = () => {
                               <p className="mb-0">Phone</p>
                            </div>
                            <div className="col-sm-9">
-                              <p className="text-muted mb-0">(097) 234-5678</p>
-                           </div>
-                        </div>
-                        <hr />
-                        <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">Mobile</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">(098) 765-4321</p>
+                              <p className="text-muted mb-0">{userData?.phoneNumber}</p>
                            </div>
                         </div>
                         <hr />
@@ -102,7 +119,16 @@ const UserInfo = () => {
                               <p className="mb-0">Address</p>
                            </div>
                            <div className="col-sm-9">
-                              <p className="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                              <p className="text-muted mb-0">{userData?.address}</p>
+                           </div>
+                        </div>
+                        <hr />
+                        <div className="row">
+                           <div className="col-sm-3">
+                              <p className="mb-0">ID:</p>
+                           </div>
+                           <div className="col-sm-9">
+                              <p className="text-muted mb-0">{userData?.id}</p>
                            </div>
                         </div>
                      </div>
