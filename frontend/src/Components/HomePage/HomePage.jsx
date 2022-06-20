@@ -1,20 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import { useNavigate } from "react-router-dom";
-import User from "./User";
+import Profile from "./Profile";
+import ToolBar from "./ToolBar";
+import SideBar from "./SideBar";
+import BackDrop from "./BackDrop";
+import "./HomePage.css";
 
 const HomePage = ({ setAccessToken }) => {
    const navigate = useNavigate();
+   const [sidebar, setSidebar] = useState(false);
+   const toggleSidebar = () => {
+      setSidebar((prevState) => !prevState);
+   };
+
    return (
       <>
-         <Navbar bg="dark" variant="dark">
+         <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
+         <Navbar className="header">
             <Container>
-               <Navbar.Brand className="text-white d-flex">
-                  SKY-NEST <span className="ml-2 d-none d-md-block">/ Placeholder home page</span>
-               </Navbar.Brand>
+               <ToolBar openSidebar={toggleSidebar} />
+               <span className="mr-auto d-none d-md-block tool-bar">SkyNest </span>
                <div className="d-flex">
                   <button
                      onClick={() => {
@@ -24,10 +33,11 @@ const HomePage = ({ setAccessToken }) => {
                   >
                      Admin Panel
                   </button>
-                  <User setAccessToken={setAccessToken} />
+                  <Profile setAccessToken={setAccessToken} />
                </div>
             </Container>
          </Navbar>
+         <SideBar sidebar={sidebar} />
          <Footer />
       </>
    );
