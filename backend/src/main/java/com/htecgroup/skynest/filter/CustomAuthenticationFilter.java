@@ -82,9 +82,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     LoggedUserDto user = (LoggedUserDto) authentication.getPrincipal();
     List<String> authorities = user.getRoleNames();
 
-    JwtObject jwtObject = new JwtObject();
-    jwtObject.setUuid(user.getUuid());
-    jwtObject.setEmail(user.getUsername());
+    JwtObject jwtObject = new JwtObject(user.getUuid(), user.getUsername());
 
     String token = JwtUtils.generateAccessToken(jwtObject, authorities);
 

@@ -40,7 +40,7 @@ public class JwtUtils {
   public static long EMAIL_TOKEN_EXPIRATION_MS;
   public static Algorithm ALGORITHM;
 
-  public static String generate(
+  private static String generate(
       JwtObject jwtObject, long msUntilExpiration, String claimName, List<String> claims) {
     return JWT.create()
         .withSubject(jwtObject.getEmail())
@@ -123,7 +123,7 @@ public class JwtUtils {
   }
 
   public static String generateAccessToken(JwtObject jwtObject, List<String> claims) {
-    return generate(jwtObject, JwtUtils.ACCESS_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
+    return generate(jwtObject, ACCESS_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
   }
 
   @Value("${jwt.access-expiration-ms}")
