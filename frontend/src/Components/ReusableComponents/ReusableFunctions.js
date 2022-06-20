@@ -21,18 +21,27 @@ export const redirectTo = (func, path, delay) => {
    }, delay);
 };
 
-export const getUserData = (accessToken,stateToChange) => {
+export const getUserData = (accessToken, roleState, idState) => {
    if (accessToken) {
       const token = accessToken.slice(7);
       const decoded = jwt_decode(token);
-      console.log(decoded);
-      if (decoded.roles[0] === "role_admin") {
-         stateToChange("admin");
-      } else {
-         stateToChange("");
-      }
+      roleState(decoded.roles[0]);
+      idState(decoded.uuid);
    }
-}
+};
+
+export const getPersonalData = async (userID, accessToken, stateToChange, error) => {
+   try {
+      let response = await AxiosInstance.get(`/users/${userID}`, {
+         headers: { Authorization: accessToken },
+      });
+      console.log(response.data);
+      stateToChange(response.data);
+   } catch (err) {
+      console.log(err);
+      error("Token Expired");
+   }
+};
 
 export const getAllUsers = async (accessToken, stateToChange, messageToShow) => {
    try {
