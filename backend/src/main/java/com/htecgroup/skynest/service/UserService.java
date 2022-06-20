@@ -34,4 +34,6 @@ public interface UserService {
   UserResponse getUser(UUID uuid);
 
   UserResponse editUser(UserEditRequest userEditRequest, UUID uuid);
+
+  void authorizeAccessToUserDetailsWith(UUID uuid);
 }
