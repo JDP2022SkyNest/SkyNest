@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
@@ -28,20 +30,24 @@ import static java.util.Arrays.stream;
 public class JwtUtils {
 
   public static final String AUTH_HEADER = HttpHeaders.AUTHORIZATION;
+
+  public static final String REFRESH_TOKEN_HEADER = "refresh-token";
   public static final String TOKEN_PREFIX = "Bearer ";
   private static final String EMAIL_TOKEN_CLAIM = "Email token";
   private static final String PASSWORD_RESET_PURPOSE = "password reset";
   private static final String EMAIL_VERIFICATION_PURPOSE = "verification";
+  private static final String CLAIM_NAME = "roles";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
   public static long REFRESH_TOKEN_EXPIRATION_MS;
   public static long EMAIL_TOKEN_EXPIRATION_MS;
   public static Algorithm ALGORITHM;
 
-  public static String generate(
-      String subject, long msUntilExpiration, String claimName, List<String> claims) {
+  private static String generate(
+      JwtObject jwtObject, long msUntilExpiration, String claimName, List<String> claims) {
     return JWT.create()
-        .withSubject(subject)
+        .withSubject(jwtObject.getEmail())
+        .withPayload(Map.of("uuid", jwtObject.getUuid().toString()))
         .withExpiresAt(new Date(System.currentTimeMillis() + msUntilExpiration))
         .withClaim(claimName, claims)
         .sign(ALGORITHM);
@@ -117,6 +123,14 @@ public class JwtUtils {
 
   public static String generateEmailVerificationToken(String emailAddress) {
     return generateEmailToken(emailAddress, EMAIL_VERIFICATION_PURPOSE);
+  }
+
+  public static String generateAccessToken(JwtObject jwtObject, List<String> claims) {
+    return generate(jwtObject, ACCESS_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
+  }
+
+  public static String generateRefreshToken(JwtObject jwtObject, List<String> claims) {
+    return generate(jwtObject, ACCESS_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
   }
 
   @Value("${jwt.access-expiration-ms}")

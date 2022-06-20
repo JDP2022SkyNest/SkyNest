@@ -5,6 +5,7 @@ import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
+import com.htecgroup.skynest.util.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -296,7 +297,8 @@ public class UserController {
   public void refreshToken(
       @RequestHeader("refresh-token") String refresh_token, HttpServletResponse response) {
     String token = refreshTokenService.refreshToken(refresh_token);
-    response.addHeader("Authorization", "Bearer " + token);
-    response.addHeader("refresh_token", refresh_token);
+    response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
+    response.addHeader(
+        JwtUtils.REFRESH_TOKEN_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
   }
 }
