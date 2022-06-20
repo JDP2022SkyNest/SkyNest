@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./Components/HomePage/HomePage";
 import Login from "./Components/Login/Login";
@@ -11,9 +11,17 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
 import ResendEmail from "./Components/ResendEmail/ResendEmail";
 import NoToken from "./Components/Routes/NoToken";
+import AdminRoute from "./Components/Routes/AdminRoute";
+import { getUserData } from "./Components/ReusableComponents/ReusableFunctions";
+import UserInfo from "./Components/ReusableComponents/UserInfo";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
+   const [userRole, setUserRole] = useState("");
+
+   useEffect(() => {
+      getUserData(accessToken, setUserRole);
+   }, [accessToken]);
 
    return (
       <Routes>
@@ -22,7 +30,7 @@ const App = () => {
             exact
             element={
                <ProtectedRoute accessToken={accessToken}>
-                  <HomePage setAccessToken={setAccessToken} />
+                  <HomePage setAccessToken={setAccessToken} userRole={userRole} />
                </ProtectedRoute>
             }
          />
@@ -75,11 +83,12 @@ const App = () => {
             path="admin-panel"
             exact
             element={
-               <ProtectedRoute accessToken={accessToken}>
+               <AdminRoute userRole={userRole}>
                   <AdminPanel />
-               </ProtectedRoute>
+               </AdminRoute>
             }
          />
+         <Route path="user-info" exact element={<UserInfo />} />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />

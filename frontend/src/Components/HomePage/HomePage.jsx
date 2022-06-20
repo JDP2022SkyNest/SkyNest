@@ -6,7 +6,7 @@ import ROUTES from "../Routes/ROUTES";
 import { useNavigate } from "react-router-dom";
 import User from "./User";
 
-const HomePage = ({ setAccessToken }) => {
+const HomePage = ({ setAccessToken, userRole }) => {
    const navigate = useNavigate();
    return (
       <>
@@ -20,7 +20,7 @@ const HomePage = ({ setAccessToken }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className="btn btn-danger mr-3"
+                     className={userRole === "admin" ? `btn btn-danger mr-3` : "d-none"}
                   >
                      Admin Panel
                   </button>
