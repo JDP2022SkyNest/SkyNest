@@ -7,5 +7,6 @@
 - <code>stop-and-clean-all</code> combines <code>stop-all</code> and <code>clean-all</code>
 - <code>clear-mysql</code> stops/deletes the MySQL container, deletes MySQL's data <code>.db_data/mysql/</code> and prunes everything
 - <code>clear-cassandra</code> does the same as <code>clear-mysql</code>, but for Cassandra
+- <code>change-user-role</code> changes a user's role based on input
 
 Pruning/cleaning does not clear the databases. To clear the databases, use the clear scripts or delete <code>.db_data/</code> manually.
