@@ -24,7 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
   @Override
   public String refreshToken(String refresh_token) {
-    if (refresh_token != null && refresh_token.startsWith("Bearer ")) {
+    if (refresh_token != null && refresh_token.startsWith(JwtUtils.TOKEN_PREFIX)) {
       try {
         LoggedUserDto loggedUserDto = (LoggedUserDto) currentUserService.getLoggedUser();
         List<String> authorities = loggedUserDto.getRoleNames();
