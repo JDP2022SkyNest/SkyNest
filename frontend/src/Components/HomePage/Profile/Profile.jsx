@@ -3,7 +3,7 @@ import * as AiIcons from "react-icons/ai";
 import * as CgIcons from "react-icons/cg";
 import * as FiIcons from "react-icons/fi";
 import { DropdownButton, Dropdown } from "react-bootstrap";
-import { openFullscreen } from "../ReusableComponents/ReusableFunctions";
+import { openFullscreen } from "../../ReusableComponents/ReusableFunctions";
 import "./Profile.css";
 
 const Profile = ({ setAccessToken }) => {

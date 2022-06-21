@@ -3,8 +3,8 @@ import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 import * as IoIcons from "react-icons/io";
 import * as BiIcons from "react-icons/bi";
-import "../HomePage/SideBar.css";
-import Logo from "../Login/assets/logoblackandwhite.svg";
+import "./SideBar.css";
+import Logo from "./assets/logoblackandwhite.svg";
 
 const SideBar = ({ sidebar }) => {
    return (

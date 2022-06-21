@@ -1,6 +1,6 @@
 import React from "react";
 
-import "../HomePage/BackDrop.css";
+import "./BackDrop.css";
 
 const BackDrop = ({ sidebar, closeSidebar }) => {
    return <div className={sidebar ? "back-drop back-drop-open" : "back-drop"} onClick={closeSidebar}></div>;

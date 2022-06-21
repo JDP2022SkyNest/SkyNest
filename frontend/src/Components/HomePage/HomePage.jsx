@@ -4,10 +4,10 @@ import { Navbar, Container } from "react-bootstrap";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import { useNavigate } from "react-router-dom";
-import Profile from "./Profile";
-import ToolBar from "./ToolBar";
-import SideBar from "./SideBar";
-import BackDrop from "./BackDrop";
+import Profile from "../HomePage/Profile/Profile";
+import ToolBar from "../HomePage/ToolBar/ToolBar";
+import SideBar from "../HomePage/SideBar/SideBar";
+import BackDrop from "../HomePage/BackDrop/BackDrop";
 import "./HomePage.css";
 
 const HomePage = ({ setAccessToken }) => {
@@ -29,7 +29,7 @@ const HomePage = ({ setAccessToken }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className="btn mr-3"
+                     className="btn mr-3 admin"
                   >
                      Admin Panel
                   </button>

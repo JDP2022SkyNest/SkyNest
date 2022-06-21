@@ -16,7 +16,7 @@
    display: flex;
    align-items: center;
    gap: 1rem;
-   font-weight: 300;
+  
 }
 .side-bar li:hover {
    background-color: var(--smoke);
@@ -27,4 +27,12 @@
 }
 .logo-sidebar {
    margin-top:  40vh;
+}
+.side-bar-admin li:hover {
+   background-color: var(--gold);
+   color: var(--mate-black);
+}
+.logo-sidebar-admin {
+   margin-top:  40vh;
+   filter: sepia(100);
 }

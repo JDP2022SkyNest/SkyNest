@@ -1,6 +1,6 @@
 import React from "react";
 import * as AiIcons from "react-icons/ai";
-import "../HomePage/ToolBar.css";
+import "./ToolBar.css";
 
 const ToolBar = ({ openSidebar }) => {
    return (
