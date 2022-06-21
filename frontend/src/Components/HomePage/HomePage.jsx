@@ -1,21 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
-import User from "./User";
+import Profile from "../HomePage/Profile/Profile";
+import ToolBar from "../HomePage/ToolBar/ToolBar";
+import SideBar from "../HomePage/SideBar/SideBar";
+import BackDrop from "../HomePage/BackDrop/BackDrop";
+import "./HomePage.css";
 
 const HomePage = ({ setAccessToken, userRole }) => {
    const navigate = useNavigate();
+   const [sidebar, setSidebar] = useState(false);
+   const toggleSidebar = () => {
+      setSidebar((prevState) => !prevState);
+   };
+
    return (
       <>
-         <Navbar bg="dark" variant="dark">
+         <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
+         <Navbar className="header">
             <Container>
-               <Navbar.Brand className="text-white d-flex">
-                  SKY-NEST <span className="ml-2 d-none d-md-block">/ Placeholder home page</span>
-               </Navbar.Brand>
+               <ToolBar openSidebar={toggleSidebar} />
+               <span className="mr-auto d-none d-md-block tool-bar">SkyNest </span>
                <div className="d-flex">
                   <button
                      onClick={() => {
@@ -25,10 +34,17 @@ const HomePage = ({ setAccessToken, userRole }) => {
                   >
                      Admin Panel
                   </button>
-                  <User setAccessToken={setAccessToken} />
+                  <Profile setAccessToken={setAccessToken} />
                </div>
             </Container>
          </Navbar>
+         <SideBar sidebar={sidebar} />
+         <div className="container mt-5">
+            <div>
+               Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint
+               illum, quasi molestias neque, earum incidunt voluptate eum iusto aperiam. Pariatur, impedit.
+            </div>
+         </div>
          <Footer />
       </>
    );
