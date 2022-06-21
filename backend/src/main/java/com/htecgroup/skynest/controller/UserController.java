@@ -298,7 +298,7 @@ public class UserController {
       })
   @GetMapping("/token/refresh")
   public void refreshToken(
-      @RequestHeader("refresh-token") String refresh_token, HttpServletResponse response) {
+      @RequestHeader("Authorization") String refresh_token, HttpServletResponse response) {
     String token = refreshTokenService.refreshToken(refresh_token);
     response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
     response.addHeader(
