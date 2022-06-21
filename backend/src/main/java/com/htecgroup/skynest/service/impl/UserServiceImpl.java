@@ -194,4 +194,16 @@ public class UserServiceImpl implements UserService {
       throw new UserException("Access denied", HttpStatus.FORBIDDEN);
     }
   }
+
+  public void authorizeAccessToAdminDetailsWith(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    String accessedUserRole = getUser(uuid).getRoleName();
+
+    if (loggedUserDto.hasRole(RoleEntity.ROLE_ADMIN)
+        && (accessedUserRole.equals(RoleEntity.ROLE_ADMIN))) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+  }
 }

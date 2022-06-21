@@ -205,6 +205,7 @@ public class UserController {
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
     userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.authorizeAccessToAdminDetailsWith(uuid);
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
     log.info("User is successfully edited.");
