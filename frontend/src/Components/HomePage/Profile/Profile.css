@@ -1,10 +1,12 @@
 .dropdown-menu a{
    color: var(--smoke);
 }
+
 .dropdown-menu a:hover{
    background-color: var(--smoke) !important;
    color: var(--mate-black) !important;
 }
+
 .dropdown-menu-admin a:hover{
    background-color: var(--gold) !important;
    color: var(--mate-black) !important;
