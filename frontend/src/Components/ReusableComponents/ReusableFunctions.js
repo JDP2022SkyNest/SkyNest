@@ -27,7 +27,6 @@ export const getUserData = (accessToken, roleState, idState) => {
       const decoded = jwt_decode(token);
       roleState(decoded.roles[0]);
       idState(decoded.uuid);
-      console.log(decoded);
    }
 };
 

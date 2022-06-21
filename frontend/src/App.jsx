@@ -98,6 +98,7 @@ const App = () => {
                </ProtectedRoute>
             }
          />
+         <Route path="user-info" exact element={<UserInfo userID={userID} />} />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
