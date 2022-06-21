@@ -38,7 +38,7 @@ const HomePage = ({ setAccessToken }) => {
             </Container>
          </Navbar>
          <SideBar sidebar={sidebar} />
-         <div className="container">
+         <div className="container mt-5">
             <div>
                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint
                illum, quasi molestias neque, earum incidunt voluptate eum iusto aperiam. Pariatur, impedit.
