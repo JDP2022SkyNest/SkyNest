@@ -253,7 +253,7 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
-    userService.authorizeDeleteUserDetailsWith(uuid);
+    userService.authorizeDeleteUserWith(uuid);
     userService.deleteUser(uuid);
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);

@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void authorizeDeleteUserDetailsWith(UUID uuid) {
+  public void authorizeDeleteUserWith(UUID uuid) {
     try {
       authorizeEditUserDetailsWith(uuid);
     } catch (UserException userException) {

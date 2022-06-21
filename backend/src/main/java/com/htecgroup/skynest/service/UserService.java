@@ -39,5 +39,5 @@ public interface UserService {
 
   void authorizeEditUserDetailsWith(UUID uuid);
 
-  void authorizeDeleteUserDetailsWith(UUID uuid);
+  void authorizeDeleteUserWith(UUID uuid);
 }
