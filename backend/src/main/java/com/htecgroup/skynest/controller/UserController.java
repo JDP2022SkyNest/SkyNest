@@ -145,6 +145,7 @@ public class UserController {
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
+    userService.authorizeAccessToUserDetailsWith(uuid);
     UserResponse userResponse = userService.getUser(uuid);
     ResponseEntity<UserResponse> userResponseEntity =
         new ResponseEntity<>(userResponse, HttpStatus.OK);
@@ -198,10 +199,12 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @PreAuthorize(
+      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @PutMapping("/{uuid}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
+    userService.authorizeAccessToUserDetailsWith(uuid);
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
     log.info("User is successfully edited.");
