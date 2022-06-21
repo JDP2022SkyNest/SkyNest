@@ -45,10 +45,6 @@ public class AuthServiceImpl implements AuthService {
   public void sendPasswordResetEmail(String emailAddress) {
     UserDto userDto = userService.findUserByEmail(emailAddress);
 
-    if (!userRepository.existsByEmail(emailAddress)) {
-      throw new UserException(UserExceptionType.USER_NOT_FOUND);
-    }
-
     String token = JwtUtils.generatePasswordResetToken(emailAddress);
     Email email = EmailUtil.createPasswordResetEmail(userDto, token);
 
