@@ -120,7 +120,7 @@ class UserServiceImplTest {
 
     UserException ex =
         Assertions.assertThrows(
-            UserException.class, () -> userService.authorizeAccessToUserDetailsWith(uuid));
+            UserException.class, () -> userService.authorizeViewUserDetailsWith(uuid));
 
     Assertions.assertEquals("Access denied", ex.getMessage());
     verify(currentUserService, times(1)).getLoggedUser();
@@ -131,7 +131,7 @@ class UserServiceImplTest {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
     UUID uuid = UUID.randomUUID();
 
-    Assertions.assertDoesNotThrow(() -> userService.authorizeAccessToUserDetailsWith(uuid));
+    Assertions.assertDoesNotThrow(() -> userService.authorizeViewUserDetailsWith(uuid));
     verify(currentUserService, times(1)).getLoggedUser();
   }
 
@@ -141,7 +141,7 @@ class UserServiceImplTest {
     when(currentUserService.getLoggedUser()).thenReturn(currentUser);
     UUID uuid = currentUser.getUuid();
 
-    Assertions.assertDoesNotThrow(() -> userService.authorizeAccessToUserDetailsWith(uuid));
+    Assertions.assertDoesNotThrow(() -> userService.authorizeViewUserDetailsWith(uuid));
     verify(currentUserService, times(1)).getLoggedUser();
   }
 

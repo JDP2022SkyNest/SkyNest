@@ -145,7 +145,7 @@ public class UserController {
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.authorizeViewUserDetailsWith(uuid);
     UserResponse userResponse = userService.getUser(uuid);
     ResponseEntity<UserResponse> userResponseEntity =
         new ResponseEntity<>(userResponse, HttpStatus.OK);
@@ -204,8 +204,8 @@ public class UserController {
   @PutMapping("/{uuid}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
-    userService.authorizeAccessToAdminDetailsWith(uuid);
+    userService.authorizeViewUserDetailsWith(uuid);
+    userService.authorizeEditUserDetailsWith(uuid);
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
     log.info("User is successfully edited.");
