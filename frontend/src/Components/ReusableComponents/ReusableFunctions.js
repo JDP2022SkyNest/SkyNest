@@ -27,6 +27,7 @@ export const getUserData = (accessToken, roleState, idState) => {
       const decoded = jwt_decode(token);
       roleState(decoded.roles[0]);
       idState(decoded.uuid);
+      console.log(decoded);
    }
 };
 
@@ -69,10 +70,10 @@ export const deleteUser = async (accessToken, id) => {
    }
 };
 
-export const emailVerification = async (token, success, error, info, setparams, resendEmail) => {
+export const emailVerification = async (accessToken, success, error, info, setparams, resendEmail) => {
    info("Verifying in proggress");
    try {
-      await AxiosInstance.post(`/public/confirm?token=${token}`);
+      await AxiosInstance.post(`/public/confirm?token=${accessToken}`);
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 500) {
@@ -87,6 +88,17 @@ export const emailVerification = async (token, success, error, info, setparams, 
    }
    info("");
    setparams("");
+};
+
+export const onUserLogout = async (accessToken) => {
+   try {
+      await AxiosInstance.post(`/auth/logout`, {
+         "Content-type": "application/x-www-form-urlencoded",
+         headers: { Authorization: accessToken },
+      });
+   } catch (err) {
+      console.log(err);
+   }
 };
 
 export const openFullscreen = () => {
