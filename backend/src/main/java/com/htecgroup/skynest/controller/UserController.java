@@ -204,7 +204,6 @@ public class UserController {
   @PutMapping("/{uuid}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
-    userService.authorizeViewUserDetailsWith(uuid);
     userService.authorizeEditUserDetailsWith(uuid);
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
