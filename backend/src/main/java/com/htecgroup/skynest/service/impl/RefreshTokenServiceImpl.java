@@ -5,6 +5,7 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.InvalidJwtService;
 import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
@@ -19,11 +20,14 @@ import java.util.List;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
   private CurrentUserService currentUserService;
+  private InvalidJwtService invalidJwtService;
 
   @Override
-  public String refreshToken(String refreshToken) {
+  public String refreshToken(String refreshToken, String invalidToken) {
     if (refreshToken != null && refreshToken.startsWith(JwtUtils.TOKEN_PREFIX)) {
       try {
+        String tokenForInvalidation = invalidToken.replace(JwtUtils.TOKEN_PREFIX, "");
+        invalidJwtService.invalidate(tokenForInvalidation);
         LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
         List<String> authorities = loggedUserDto.getRoleNames();
 

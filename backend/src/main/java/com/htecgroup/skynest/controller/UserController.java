@@ -298,10 +298,12 @@ public class UserController {
       })
   @GetMapping("/token/refresh")
   public void refreshToken(
-      @RequestHeader("Authorization") String refresh_token, HttpServletResponse response) {
-    String token = refreshTokenService.refreshToken(refresh_token);
+      @RequestHeader("Authorization") String refresh_token,
+      @RequestHeader("invalidToken") String invalid_token,
+      HttpServletResponse response) {
+    String token = refreshTokenService.refreshToken(refresh_token, invalid_token);
     response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
     response.addHeader(
-        JwtUtils.REFRESH_TOKEN_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
+        JwtUtils.REFRESH_TOKEN_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, refresh_token));
   }
 }
