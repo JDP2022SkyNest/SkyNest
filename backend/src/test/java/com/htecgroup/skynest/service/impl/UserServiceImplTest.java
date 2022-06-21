@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -8,7 +7,6 @@ import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
-import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
@@ -26,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,8 +51,6 @@ class UserServiceImplTest {
     when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(bCryptPasswordEncoder.encode(anyString())).thenReturn("encryptedPassword");
-
-    doNothing().when(userService).sendVerificationEmail(anyString());
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
     UserResponse actualUserResponse = userService.registerUser(userRegisterRequest);
@@ -193,20 +188,6 @@ class UserServiceImplTest {
   }
 
   @Test
-  void confirmEmail() {
-    String expectedResponse = "User verified successfully";
-    String testEmail = "confirmEmail@email.com";
-    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
-    String token = JwtUtils.generateEmailVerificationToken(testEmail);
-    UserDto userMock = mock(UserDto.class);
-    doReturn(userMock).when(userService).findUserByEmail(anyString());
-    doReturn(userMock).when(userService).verifyUser(any());
-    when(userRepository.save(any())).thenReturn(mock(UserEntity.class));
-
-    Assertions.assertEquals(expectedResponse, userService.confirmEmail(token));
-  }
-
-  @Test
   void listAllUsers() {
     List<UserEntity> userEntityList = new ArrayList<>();
     userEntityList.add(UserEntityUtil.getVerified());
@@ -218,62 +199,6 @@ class UserServiceImplTest {
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertUserEntityAndUserResponse(expectedResponse.get(0), actualResponse.get(0));
-  }
-
-  @Test
-  void resetPassword() {
-    String expectedResponse = "Password was successfully reset";
-    String testEmail = "confirmEmail@email.com";
-    UserEntity verifiedUserEntity = UserEntityUtil.getVerified();
-    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
-    String token = JwtUtils.generatePasswordResetToken(testEmail);
-
-    when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(verifiedUserEntity));
-    when(userRepository.save(any())).thenReturn(verifiedUserEntity);
-
-    UserPasswordResetRequest userPasswordResetRequest = new UserPasswordResetRequest();
-    userPasswordResetRequest.setToken(token);
-    userPasswordResetRequest.setPassword("NewPassword123");
-
-    Assertions.assertEquals(expectedResponse, userService.resetPassword(userPasswordResetRequest));
-  }
-
-  @Test
-  void verifyEmail() {
-    doReturn(false).when(userService).isActive(anyString());
-    UserDto verifiedUser = userService.verifyUser(UserDtoUtil.getNotVerified());
-
-    Assertions.assertTrue(verifiedUser.getVerified());
-    Assertions.assertTrue(verifiedUser.getEnabled());
-  }
-
-  @Test
-  void verifyUser_UserAlreadyVerified() {
-    UserDto verifiedUserDto = UserDtoUtil.getVerified();
-    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
-
-    doReturn(true).when(userService).isActive(anyString());
-
-    Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> userService.verifyUser(verifiedUserDto));
-    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
-  }
-
-  @Test
-  void isActive_True() {
-    UserDto verifiedUserDto = UserDtoUtil.getVerified();
-    doReturn(verifiedUserDto).when(userService).findUserByEmail(anyString());
-    boolean returnedValue = userService.isActive(verifiedUserDto.getEmail());
-    Assertions.assertTrue(returnedValue);
-  }
-
-  @Test
-  void isActive_NotVerifiedUser() {
-    UserDto deletedUserDto = UserDtoUtil.getNotVerified();
-    deletedUserDto.setDeletedOn(LocalDateTime.now());
-    doReturn(deletedUserDto).when(userService).findUserByEmail(anyString());
-    boolean returnedValue = userService.isActive(deletedUserDto.getEmail());
-    Assertions.assertFalse(returnedValue);
   }
 
   @Test
