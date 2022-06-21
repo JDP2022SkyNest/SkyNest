@@ -24,8 +24,6 @@ const App = () => {
       getUserData(accessToken, setUserRole, setUserID);
    }, [accessToken]);
 
-   console.log(userID);
-
    return (
       <Routes>
          <Route
@@ -91,7 +89,15 @@ const App = () => {
                </AdminRoute>
             }
          />
-         <Route path="user-info" exact element={<UserInfo userID={userID} />} />
+         <Route
+            path="user-info"
+            exact
+            element={
+               <ProtectedRoute accessToken={accessToken}>
+                  <UserInfo userID={userID} />
+               </ProtectedRoute>
+            }
+         />
 
          {/* Other Paths */}
          <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
