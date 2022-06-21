@@ -2,8 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import ROUTES from "./ROUTES";
 
-const AdminRoute = ({ children }) => {
-   const userRole = localStorage.USER_ROLE;
+const AdminRoute = ({ userRole, children }) => {
    if (userRole === "role_admin") {
       return children;
    }
