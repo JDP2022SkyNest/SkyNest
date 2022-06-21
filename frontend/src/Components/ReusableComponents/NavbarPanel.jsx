@@ -10,14 +10,11 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children }) => {
       <Navbar bg="dark" variant="dark">
          <Container>
             <Navbar.Brand className="text-white d-none d-md-block">{name}</Navbar.Brand>
-            {searchBar ? (
+            {searchBar && (
                <div className="form-inline my-2 my-lg-0">
                   <input onChange={(e) => setSearchTerm(e.target.value)} className="form-control mr-sm-2" placeholder="Search user" />
                </div>
-            ) : (
-               ""
             )}
-
             <div className="d-flex">
                <div className="mr-2 mr-sm-3 icon-modal-align">{children}</div>
                <button

@@ -7,7 +7,7 @@ const UserCardDetails = ({ info, result, horLine = true }) => {
             <div className="col-sm-3">{info}</div>
             <div className="col-sm-9 text-mutted">{result}</div>
          </div>
-         {horLine ? <hr /> : ""}
+         {horLine && <hr />}
       </>
    );
 };

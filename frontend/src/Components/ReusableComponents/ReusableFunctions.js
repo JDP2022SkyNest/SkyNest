@@ -97,11 +97,11 @@ export const onUserLogout = async (accessToken, stateToChange) => {
             headers: { Authorization: accessToken },
          }
       );
-      localStorage.clear();
-      stateToChange("");
    } catch (err) {
-      console.log(err);
+      console.error("Token already expired", err);
    }
+   localStorage.clear();
+   stateToChange("");
 };
 
 export const openFullscreen = () => {
