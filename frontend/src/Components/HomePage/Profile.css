@@ -1,11 +1,8 @@
-.profile {
-   background-color: var(--mate-black);
-   color: var(--smoke);
-}
 .dropdown-menu a{
    color: var(--smoke);
 }
-.profile li:hover {
-   background-color: var(--smoke);
-   color: var(--mate-black);
+.dropdown-menu a:hover{
+   background-color: var(--smoke) !important;
+   color: var(--mate-black) !important;
 }
+

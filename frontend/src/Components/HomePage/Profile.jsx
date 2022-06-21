@@ -13,7 +13,14 @@ const Profile = ({ setAccessToken }) => {
    };
 
    return (
-      <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" className="profile" variant="dark">
+      <DropdownButton
+         align="end"
+         title={<AiIcons.AiOutlineUser />}
+         id="dropdown-menu-align-end"
+         className="profile"
+         variant="dark"
+         menuVariant="dark"
+      >
          <div className="profile">
             <Dropdown.Item eventKey="1">
                <CgIcons.CgProfile className="mr-2" />

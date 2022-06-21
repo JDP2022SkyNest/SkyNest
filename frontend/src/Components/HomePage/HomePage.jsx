@@ -29,7 +29,7 @@ const HomePage = ({ setAccessToken }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className="btn btn-danger mr-3"
+                     className="btn mr-3"
                   >
                      Admin Panel
                   </button>
@@ -38,6 +38,12 @@ const HomePage = ({ setAccessToken }) => {
             </Container>
          </Navbar>
          <SideBar sidebar={sidebar} />
+         <div className="container">
+            <div>
+               Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint
+               illum, quasi molestias neque, earum incidunt voluptate eum iusto aperiam. Pariatur, impedit.
+            </div>
+         </div>
          <Footer />
       </>
    );
