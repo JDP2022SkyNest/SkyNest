@@ -145,7 +145,7 @@ public class UserController {
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.authorizeViewUserDetailsWith(uuid);
     UserResponse userResponse = userService.getUser(uuid);
     ResponseEntity<UserResponse> userResponseEntity =
         new ResponseEntity<>(userResponse, HttpStatus.OK);
@@ -204,7 +204,7 @@ public class UserController {
   @PutMapping("/{uuid}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.authorizeViewUserDetailsWith(uuid);
     ResponseEntity<UserResponse> responseEntity =
         new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
     log.info("User is successfully edited.");
@@ -253,6 +253,7 @@ public class UserController {
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
+    userService.authorizeDeleteUserDetailsWith(uuid);
     userService.deleteUser(uuid);
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);

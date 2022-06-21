@@ -186,12 +186,33 @@ public class UserServiceImpl implements UserService {
     return userDto.withEnabled(true).withVerified(true);
   }
 
-  public void authorizeAccessToUserDetailsWith(UUID uuid) {
+  public void authorizeViewUserDetailsWith(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+
+    if (!loggedUserDto.equals(uuid) && loggedUserDto.hasRole(RoleEntity.ROLE_WORKER)) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @Override
+  public void authorizeEditUserDetailsWith(UUID uuid) {
+    authorizeViewUserDetailsWith(uuid);
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
-    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
+    String accessUserRole = getUser(uuid).getRoleName();
+
+    if (!loggedUserUuid.equals(uuid) && accessUserRole.equals(RoleEntity.ROLE_ADMIN)) {
       throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @Override
+  public void authorizeDeleteUserDetailsWith(UUID uuid) {
+    try {
+      authorizeEditUserDetailsWith(uuid);
+    } catch (UserException userException) {
+      throw new UserException(UserExceptionType.INVALID_DELETE_ATTEMPT);
     }
   }
 }
