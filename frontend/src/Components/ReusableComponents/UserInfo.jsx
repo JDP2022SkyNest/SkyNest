@@ -4,6 +4,7 @@ import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
 import { getPersonalData } from "./ReusableFunctions";
+import "./UserInfo.css";
 
 const UserInfo = ({ userID }) => {
    const [userData, setUserData] = useState();
@@ -16,6 +17,7 @@ const UserInfo = ({ userID }) => {
       if (userID) {
          getPersonalData(userID, accessToken, setUserData, setErrorMsg);
       }
+      // eslint-disable-next-line
    }, [userID]);
 
    return (
@@ -30,8 +32,7 @@ const UserInfo = ({ userID }) => {
                         <img
                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
                            alt="avatar"
-                           className="rounded-circle img-fluid"
-                           style={{ width: "150px" }}
+                           className="rounded-circle img-fluid avatar-icon-width"
                         />
                         <h5 className="my-3">
                            {userData?.name} {userData?.surname}
@@ -39,10 +40,10 @@ const UserInfo = ({ userID }) => {
                         <p className="text-muted mb-1">Full Stack Developer</p>
                         <p className={`text-${role === "ADMIN" ? "danger" : "mutted"} mb-4`}>{role}</p>
                         <div className="d-flex justify-content-center mb-2">
-                           <button type="button" className="btn btn-primary">
+                           <button type="button" className={`btn btn-${role === "ADMIN" ? "danger" : "primary"}`}>
                               Follow
                            </button>
-                           <button type="button" className="btn btn-outline-primary ms-1">
+                           <button type="button" className={`btn btn-outline-${role === "ADMIN" ? "danger" : "primary"} ms-1`}>
                               Message
                            </button>
                         </div>
@@ -56,19 +57,19 @@ const UserInfo = ({ userID }) => {
                               <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-github fa-lg" style={{ color: "#333333" }} />
+                              <i className="fab fa-github fa-lg github-icon-color" />
                               <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-twitter fa-lg" style={{ color: "#55acee" }} />
+                              <i className="fab fa-twitter fa-lg twitter-icon-color" />
                               <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-instagram fa-lg" style={{ color: "#ac2bac" }} />
+                              <i className="fab fa-instagram fa-lg instagram-icon-color" />
                               <p className="mb-0">Placeholder</p>
                            </li>
                            <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-facebook-f fa-lg" style={{ color: "#3b5998" }} />
+                              <i className="fab fa-facebook-f fa-lg facebook-icon-color" />
                               <p className="mb-0">Placeholder</p>
                            </li>
                         </ul>
@@ -79,57 +80,33 @@ const UserInfo = ({ userID }) => {
                   <div className="card mb-4 shadow">
                      <div className="card-body">
                         <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">Name</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">{userData?.name}</p>
-                           </div>
+                           <div className="col-sm-3">Name:</div>
+                           <div className="col-sm-9 text-mutted">{userData?.name}</div>
                         </div>
                         <hr />
                         <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">Last Name</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">{userData?.surname}</p>
-                           </div>
+                           <div className="col-sm-3">Last Name:</div>
+                           <div className="col-sm-9 text-mutted">{userData?.surname}</div>
                         </div>
                         <hr />
                         <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">Email</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">{userData?.email}</p>
-                           </div>
+                           <div className="col-sm-3">Email:</div>
+                           <div className="col-sm-9 text-mutted">{userData?.email}</div>
                         </div>
                         <hr />
                         <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">Phone</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">{userData?.phoneNumber}</p>
-                           </div>
+                           <div className="col-sm-3">Phone Number:</div>
+                           <div className="col-sm-9 text-mutted">{userData?.phoneNumber}</div>
                         </div>
                         <hr />
                         <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">Address</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">{userData?.address}</p>
-                           </div>
+                           <div className="col-sm-3">Address:</div>
+                           <div className="col-sm-9 text-mutted">{userData?.address}</div>
                         </div>
                         <hr />
                         <div className="row">
-                           <div className="col-sm-3">
-                              <p className="mb-0">ID:</p>
-                           </div>
-                           <div className="col-sm-9">
-                              <p className="text-muted mb-0">{userData?.id}</p>
-                           </div>
+                           <div className="col-sm-3">ID:</div>
+                           <div className="col-sm-9 text-mutted">{userData?.id}</div>
                         </div>
                      </div>
                   </div>
