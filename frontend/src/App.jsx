@@ -24,6 +24,8 @@ const App = () => {
       getUserData(accessToken, setUserRole, setUserID);
    }, [accessToken]);
 
+   console.log(userID);
+
    return (
       <Routes>
          <Route
