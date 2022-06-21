@@ -90,12 +90,17 @@ export const emailVerification = async (accessToken, success, error, info, setpa
    setparams("");
 };
 
-export const onUserLogout = async (accessToken) => {
+export const onUserLogout = async (accessToken, localStorageItem, stateToChange) => {
    try {
-      await AxiosInstance.post(`/auth/logout`, {
-         "Content-type": "application/x-www-form-urlencoded",
-         headers: { Authorization: accessToken },
-      });
+      await AxiosInstance.post(
+         `/auth/logout`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      localStorage.removeItem(localStorageItem);
+      stateToChange("");
    } catch (err) {
       console.log(err);
    }

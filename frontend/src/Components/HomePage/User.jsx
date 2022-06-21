@@ -8,11 +8,6 @@ const User = ({ setAccessToken }) => {
    const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
-   // const userLogout = () => {
-   //    localStorage.removeItem("accessToken");
-   //    setAccessToken("");
-   // };
-
    return (
       <DropdownButton align="end" title="User" id="dropdown-menu-align-end" variant="secondary">
          <Dropdown.Item
@@ -30,8 +25,7 @@ const User = ({ setAccessToken }) => {
          <Dropdown.Divider />
          <Dropdown.Item
             onClick={() => {
-               console.log(accessToken);
-               onUserLogout(accessToken);
+               onUserLogout(accessToken, "accessToken", setAccessToken);
             }}
             eventKey="4"
          >
