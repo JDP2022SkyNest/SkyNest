@@ -6,8 +6,8 @@ import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
+import com.htecgroup.skynest.service.AuthService;
 import com.htecgroup.skynest.service.LoginAttemptService;
-import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,13 +32,9 @@ import java.util.List;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private final AuthenticationManager authenticationManager;
-
   private final UserDetailsService userDetailsService;
-
-  private final UserService userService;
-
+  private final AuthService authService;
   private final ObjectMapper objectMapper;
-
   private final LoginAttemptService loginAttemptService;
 
   @Override
@@ -55,7 +51,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       if (loginAttemptService.hasTooManyAttempts(userDetails.getUsername()))
         throw new UserException(UserExceptionType.TOO_MANY_LOGIN_ATTEMPTS);
 
-      if (!userService.isActive(userDetails.getUsername()))
+      if (!authService.isActive(userDetails.getUsername()))
         throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
 
       return authenticationManager.authenticate(
