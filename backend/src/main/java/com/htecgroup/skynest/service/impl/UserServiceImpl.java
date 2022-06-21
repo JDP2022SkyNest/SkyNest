@@ -112,4 +112,13 @@ public class UserServiceImpl implements UserService {
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
+
+  public void authorizeAccessToUserDetailsWith(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+  }
 }
