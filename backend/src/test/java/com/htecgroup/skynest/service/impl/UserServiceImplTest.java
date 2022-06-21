@@ -114,7 +114,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  void authorizeUser_WorkerAccessDenied() {
+  void authorizeViewUserDetailsWith_WorkerAccessDenied() {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     UUID uuid = UUID.randomUUID();
 
@@ -127,7 +127,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  void authorizeUser_Admin() {
+  void authorizeViewUserDetailsWith_Admin() {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
     UUID uuid = UUID.randomUUID();
 
@@ -136,13 +136,38 @@ class UserServiceImplTest {
   }
 
   @Test
-  void authorizeUser_Worker() {
+  void authorizeViewUserDetailsWith_Worker() {
     LoggedUserDto currentUser = LoggedUserDtoUtil.getLoggedWorkerUser();
     when(currentUserService.getLoggedUser()).thenReturn(currentUser);
     UUID uuid = currentUser.getUuid();
 
     Assertions.assertDoesNotThrow(() -> userService.authorizeViewUserDetailsWith(uuid));
     verify(currentUserService, times(1)).getLoggedUser();
+  }
+
+  @Test
+  void authorizeEditUserDetailsWith_AdminAccessDenied() {
+    LoggedUserDto currentUser = LoggedUserDtoUtil.getLoggedAdminUser();
+    when(currentUserService.getLoggedUser()).thenReturn(currentUser);
+    when(userRepository.findById(any())).thenReturn(Optional.of(UserEntityUtil.getAdmin()));
+
+    UserException ex =
+        Assertions.assertThrows(
+            UserException.class, () -> userService.authorizeEditUserDetailsWith(UUID.randomUUID()));
+
+    Assertions.assertEquals("Access denied", ex.getMessage());
+    verify(currentUserService, times(2)).getLoggedUser();
+  }
+
+  @Test
+  void authorizeEditUserDetailsWith_AdminEditHisDetails() {
+    LoggedUserDto currentUser = LoggedUserDtoUtil.getLoggedAdminUser();
+    when(currentUserService.getLoggedUser()).thenReturn(currentUser);
+    when(userRepository.findById(any())).thenReturn(Optional.of(UserEntityUtil.getAdmin()));
+    UUID uuid = currentUser.getUuid();
+
+    Assertions.assertDoesNotThrow(() -> userService.authorizeEditUserDetailsWith(uuid));
+    verify(currentUserService, times(2)).getLoggedUser();
   }
 
   @Test
