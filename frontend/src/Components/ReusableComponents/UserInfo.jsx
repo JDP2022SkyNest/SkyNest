@@ -3,13 +3,14 @@ import { useEffect } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
+import SOCIALS from "./UserSocialInfo";
 import { getPersonalData } from "./ReusableFunctions";
+import UserCardDetails from "./UserCardDetails";
 import "./UserInfo.css";
 
-const UserInfo = ({ userID }) => {
+const UserInfo = ({ userID, accessToken }) => {
    const [userData, setUserData] = useState();
    const [errorMsg, setErrorMsg] = useState("");
-   const accessToken = localStorage.accessToken;
 
    const role = userData?.roleName.slice(5).toUpperCase();
 
@@ -52,26 +53,14 @@ const UserInfo = ({ userID }) => {
                   <div className="card mb-4 mb-lg-0 shadow">
                      <div className="card-body p-0">
                         <ul className="list-group list-group-flush rounded-3">
-                           <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fas fa-globe fa-lg text-warning" />
-                              <p className="mb-0">Placeholder</p>
-                           </li>
-                           <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-github fa-lg github-icon-color" />
-                              <p className="mb-0">Placeholder</p>
-                           </li>
-                           <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-twitter fa-lg twitter-icon-color" />
-                              <p className="mb-0">Placeholder</p>
-                           </li>
-                           <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-instagram fa-lg instagram-icon-color" />
-                              <p className="mb-0">Placeholder</p>
-                           </li>
-                           <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                              <i className="fab fa-facebook-f fa-lg facebook-icon-color" />
-                              <p className="mb-0">Placeholder</p>
-                           </li>
+                           {SOCIALS.map((item, index) => {
+                              return (
+                                 <li key={index} className="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <i className={item.classId} />
+                                    <p className="mb-0">{item.title}</p>
+                                 </li>
+                              );
+                           })}
                         </ul>
                      </div>
                   </div>
@@ -79,35 +68,12 @@ const UserInfo = ({ userID }) => {
                <div className="col-lg-8">
                   <div className="card mb-4 shadow">
                      <div className="card-body">
-                        <div className="row">
-                           <div className="col-sm-3">Name:</div>
-                           <div className="col-sm-9 text-mutted">{userData?.name}</div>
-                        </div>
-                        <hr />
-                        <div className="row">
-                           <div className="col-sm-3">Last Name:</div>
-                           <div className="col-sm-9 text-mutted">{userData?.surname}</div>
-                        </div>
-                        <hr />
-                        <div className="row">
-                           <div className="col-sm-3">Email:</div>
-                           <div className="col-sm-9 text-mutted">{userData?.email}</div>
-                        </div>
-                        <hr />
-                        <div className="row">
-                           <div className="col-sm-3">Phone Number:</div>
-                           <div className="col-sm-9 text-mutted">{userData?.phoneNumber}</div>
-                        </div>
-                        <hr />
-                        <div className="row">
-                           <div className="col-sm-3">Address:</div>
-                           <div className="col-sm-9 text-mutted">{userData?.address}</div>
-                        </div>
-                        <hr />
-                        <div className="row">
-                           <div className="col-sm-3">ID:</div>
-                           <div className="col-sm-9 text-mutted">{userData?.id}</div>
-                        </div>
+                        <UserCardDetails info="Name:" result={userData?.name} />
+                        <UserCardDetails info="Last Name:" result={userData?.surname} />
+                        <UserCardDetails info="Email:" result={userData?.email} />
+                        <UserCardDetails info="Phone Number:" result={userData?.phoneNumber} />
+                        <UserCardDetails info="Address:" result={userData?.address} />
+                        <UserCardDetails info="ID:" result={userData?.id} horLine={false} />
                      </div>
                   </div>
                </div>

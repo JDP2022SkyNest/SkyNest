@@ -25,7 +25,7 @@ const User = ({ setAccessToken }) => {
          <Dropdown.Divider />
          <Dropdown.Item
             onClick={() => {
-               onUserLogout(accessToken, "accessToken", setAccessToken);
+               onUserLogout(accessToken, setAccessToken);
             }}
             eventKey="4"
          >

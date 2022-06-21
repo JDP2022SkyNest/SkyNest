@@ -3,6 +3,7 @@ import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
+import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
 import User from "./User";
 
@@ -20,7 +21,7 @@ const HomePage = ({ setAccessToken, userRole }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className={userRole === "role_admin" ? `btn btn-danger mr-3` : "d-none"}
+                     className={userRole === ROLE.ADMIN ? `btn btn-danger mr-3` : "d-none"}
                   >
                      Admin Panel
                   </button>

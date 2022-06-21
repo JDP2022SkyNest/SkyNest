@@ -35,7 +35,6 @@ export const getPersonalData = async (userID, accessToken, stateToChange, error)
       let response = await AxiosInstance.get(`/users/${userID}`, {
          headers: { Authorization: accessToken },
       });
-      console.log(response.data);
       stateToChange(response.data);
    } catch (err) {
       console.log(err);
@@ -89,7 +88,7 @@ export const emailVerification = async (accessToken, success, error, info, setpa
    setparams("");
 };
 
-export const onUserLogout = async (accessToken, localStorageItem, stateToChange) => {
+export const onUserLogout = async (accessToken, stateToChange) => {
    try {
       await AxiosInstance.post(
          `/auth/logout`,
@@ -98,7 +97,7 @@ export const onUserLogout = async (accessToken, localStorageItem, stateToChange)
             headers: { Authorization: accessToken },
          }
       );
-      localStorage.removeItem(localStorageItem);
+      localStorage.clear();
       stateToChange("");
    } catch (err) {
       console.log(err);
