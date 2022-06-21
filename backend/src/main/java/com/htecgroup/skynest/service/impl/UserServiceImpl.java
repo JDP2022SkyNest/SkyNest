@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.LoginException;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -98,9 +99,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
-        userRepository
-            .findUserByEmail(email)
-            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+        userRepository.findUserByEmail(email).orElseThrow(() -> LoginException.USER_NOT_FOUND);
 
     return modelMapper.map(userEntity, UserDto.class);
   }

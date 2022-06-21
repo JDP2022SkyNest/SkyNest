@@ -11,8 +11,8 @@ public enum UserExceptionType {
   PHONE_NUMBER_ALREADY_IN_USE("This phone number is already in use", HttpStatus.CONFLICT),
   INVALID_PASSWORD_FORMAT("The password doesn't match the required format", HttpStatus.BAD_REQUEST),
   INVALID_EMAIL_OR_PASSWORD("The email and password are not valid", HttpStatus.BAD_REQUEST),
-  PASSWORDS_DOES_NOT_MATCH(
-      "The provided password doesn't match the username", HttpStatus.EXPECTATION_FAILED),
+  // PASSWORDS_DOES_NOT_MATCH(
+  // "The provided password doesn't match the username", HttpStatus.EXPECTATION_FAILED),
   EMAIL_FAILED_TO_SEND(
       "The email failed to send from the Email server", HttpStatus.INTERNAL_SERVER_ERROR),
   USER_ALREADY_REGISTERED(
@@ -22,7 +22,8 @@ public enum UserExceptionType {
       HttpStatus.INTERNAL_SERVER_ERROR),
   USER_NOT_FOUND("User not found", HttpStatus.NOT_FOUND),
   INVALID_TOKEN("Access token is invalid", HttpStatus.FORBIDDEN),
-  USER_NOT_ACTIVE("User is inactive: deleted, disabled, or not verified", HttpStatus.UNAUTHORIZED),
+  // USER_NOT_ACTIVE("User is inactive: deleted, disabled, or not verified",
+  // HttpStatus.UNAUTHORIZED),
   ILLEGAL_EMAIL("Could not reach email", HttpStatus.INTERNAL_SERVER_ERROR),
   JWT_ALGORITHM_IS_NULL("JWT algorithm is null", HttpStatus.INTERNAL_SERVER_ERROR),
   INVALID_AUTHENTICATION_FORMAT(
