@@ -60,7 +60,7 @@ public class RefreshController {
                   })
             })
       })
-  @GetMapping("/token/refresh")
+  @GetMapping()
   public void refreshToken(
       @RequestHeader("Authorization") String access_token,
       @RequestHeader("RefreshToken") String refresh_token,
