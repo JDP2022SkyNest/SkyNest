@@ -4,7 +4,7 @@ import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
 import SOCIALS from "./UserSocialInfo";
-import { getPersonalData } from "./ReusableFunctions";
+import { getPersonalData } from "../ReusableComponents/ReusableFunctions";
 import UserCardDetails from "./UserCardDetails";
 import "./UserInfo.css";
 
