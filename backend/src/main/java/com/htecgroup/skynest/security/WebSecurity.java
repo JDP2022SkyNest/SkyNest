@@ -42,6 +42,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers(String.format("%s/**", UrlUtil.PUBLIC_CONTROLLER_URL))
         .permitAll()
+        .antMatchers("/token/refresh")
+        .permitAll()
         .anyRequest()
         .authenticated()
         .and()

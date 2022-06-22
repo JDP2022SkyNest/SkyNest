@@ -5,7 +5,6 @@ import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
-import com.htecgroup.skynest.util.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -261,49 +259,5 @@ public class UserController {
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
     return ResponseEntity.ok(deleteSuccess);
-  }
-
-  @Operation(summary = "Request for token refresh")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "new access token successfully sent",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Password reset email sent")})
-            }),
-        @ApiResponse(
-            responseCode = "403",
-            description = "Access denied",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Access token is invalid")})
-            }),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Internal Server Error",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {
-                    @ExampleObject(value = "Failed to send new access and refresh tokens")
-                  })
-            })
-      })
-  @GetMapping("/token/refresh")
-  public void refreshToken(
-      @RequestHeader("Authorization") String refresh_token,
-      @RequestHeader("invalidToken") String invalid_token,
-      HttpServletResponse response) {
-    String token = refreshTokenService.refreshToken(refresh_token, invalid_token);
-    response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
-    response.addHeader(
-        JwtUtils.REFRESH_TOKEN_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, refresh_token));
   }
 }

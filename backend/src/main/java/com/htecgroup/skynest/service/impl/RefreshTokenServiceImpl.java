@@ -33,9 +33,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         JwtObject jwtObject = new JwtObject(loggedUserDto.getUuid(), loggedUserDto.getUsername());
 
-        String accessToken = JwtUtils.generateAccessToken(jwtObject, authorities);
+        String newAccessToken = JwtUtils.generateAccessToken(jwtObject, authorities);
 
-        return accessToken;
+        return newAccessToken;
       } catch (Exception exception) {
         log.error(exception.getMessage(), exception);
       }
