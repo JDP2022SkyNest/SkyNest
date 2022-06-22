@@ -6,7 +6,7 @@ const ToolBar = ({ openSidebar }) => {
    return (
       <div className="tool-bar">
          <div className="burger" onClick={openSidebar}>
-            <AiIcons.AiOutlineMenu />
+            <AiIcons.AiOutlineMenu className="burger-icon" />
          </div>
       </div>
    );

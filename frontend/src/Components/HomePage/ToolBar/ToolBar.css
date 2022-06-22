@@ -1,7 +1,11 @@
 .tool-bar {
-   color: var(--mate-black);
    display: flex;
    gap: 1rem;
    align-items: center;
    padding: 1rem;
+}
+
+.burger-icon {
+   position: relative;
+   top: -2px;
 }

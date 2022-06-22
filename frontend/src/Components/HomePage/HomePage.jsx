@@ -3,6 +3,7 @@ import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
+import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
 import Profile from "../HomePage/Profile/Profile";
 import ToolBar from "../HomePage/ToolBar/ToolBar";
@@ -10,7 +11,7 @@ import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
 import "./HomePage.css";
 
-const HomePage = ({ setAccessToken }) => {
+const HomePage = ({ setAccessToken, userRole }) => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(false);
    const toggleSidebar = () => {
@@ -20,16 +21,16 @@ const HomePage = ({ setAccessToken }) => {
    return (
       <>
          <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
-         <Navbar className="header">
+         <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="mr-auto d-none d-md-block tool-bar">SkyNest </span>
+               <span className="text-white d-none mr-auto d-md-block navbar-brand tool-bar">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className="btn mr-3 admin"
+                     className={userRole === ROLE.ADMIN ? `btn btn-danger mr-3` : "d-none"}
                   >
                      Admin Panel
                   </button>
