@@ -21,10 +21,10 @@ const HomePage = ({ setAccessToken, userRole }) => {
    return (
       <>
          <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
-         <Navbar className="header">
+         <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="mr-auto d-none d-md-block tool-bar">SkyNest </span>
+               <span className="text-white d-none mr-auto d-md-block navbar-brand tool-bar">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {

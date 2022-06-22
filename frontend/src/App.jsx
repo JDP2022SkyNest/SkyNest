@@ -13,7 +13,7 @@ import ResendEmail from "./Components/ResendEmail/ResendEmail";
 import NoToken from "./Components/Routes/NoToken";
 import AdminRoute from "./Components/Routes/AdminRoute";
 import { getUserData } from "./Components/ReusableComponents/ReusableFunctions";
-import UserInfo from "./Components/ReusableComponents/UserInfo";
+import UserInfo from "./Components/UserInfo/UserInfo";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -94,7 +94,7 @@ const App = () => {
             exact
             element={
                <ProtectedRoute accessToken={accessToken}>
-               <UserInfo userID={userID} accessToken={accessToken} />
+                  <UserInfo userID={userID} accessToken={accessToken} />
                </ProtectedRoute>
             }
          />
