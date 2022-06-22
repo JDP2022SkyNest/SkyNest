@@ -9,4 +9,9 @@
   --latte: #ebe7e8;
   --gold: #8e710c;
   --mate-black: #2C2F33;
+  --header-height: 2.5rem;
+  --nav-width: 68px;
+  --normal-font-size: 1rem;
+  --z-fixed: 100;
 }
+
