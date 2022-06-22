@@ -53,7 +53,7 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
                            setChange(!change);
                         }
                      }}
-                     className={`btn btn-${!youSure ? "danger" : "warning"}`}
+                     className={`btn btn-${!youSure ? "danger" : "dark"}`}
                   >
                      {!youSure ? "Delete" : "You sure?"}
                   </button>

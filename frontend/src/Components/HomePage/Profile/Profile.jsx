@@ -3,14 +3,14 @@ import * as AiIcons from "react-icons/ai";
 import * as CgIcons from "react-icons/cg";
 import * as FiIcons from "react-icons/fi";
 import { DropdownButton, Dropdown } from "react-bootstrap";
-import { openFullscreen } from "../../ReusableComponents/ReusableFunctions";
+import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponents/ReusableFunctions";
+import { useNavigate } from "react-router-dom";
+import ROUTES from "../../Routes/ROUTES";
 import "./Profile.css";
 
 const Profile = ({ setAccessToken }) => {
-   const userLogout = () => {
-      localStorage.removeItem("accessToken");
-      setAccessToken("");
-   };
+   const accessToken = localStorage.accessToken;
+   const navigate = useNavigate();
 
    return (
       <DropdownButton
@@ -18,11 +18,17 @@ const Profile = ({ setAccessToken }) => {
          title={<AiIcons.AiOutlineUser />}
          id="dropdown-menu-align-end"
          className="profile"
-         variant="dark"
+         variant="secondary"
          menuVariant="dark"
       >
          <div className="profile">
-            <Dropdown.Item eventKey="1">
+            <Dropdown.Item
+               onClick={() => {
+                  redirectTo(navigate, ROUTES.USERINFO, 1);
+               }}
+               className="mr-2"
+               eventKey="1"
+            >
                <CgIcons.CgProfile className="mr-2" />
                Profile
             </Dropdown.Item>
@@ -36,8 +42,13 @@ const Profile = ({ setAccessToken }) => {
                Fullscreen
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={userLogout} eventKey="4">
-               <div>
+            <Dropdown.Item
+               onClick={() => {
+                  onUserLogout(accessToken, setAccessToken);
+               }}
+               eventKey="4"
+            >
+               <div className="text-danger">
                   <CgIcons.CgLogOut className="mr-2" />
                   Logout
                </div>

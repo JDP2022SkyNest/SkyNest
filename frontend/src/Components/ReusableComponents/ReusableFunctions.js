@@ -1,5 +1,6 @@
 import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
+import jwt_decode from "jwt-decode";
 
 // eslint-disable-next-line
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
@@ -18,6 +19,27 @@ export const redirectTo = (func, path, delay) => {
    setTimeout(() => {
       func(path);
    }, delay);
+};
+
+export const getUserData = (accessToken, roleState, idState) => {
+   if (accessToken) {
+      const token = accessToken.slice(7);
+      const decoded = jwt_decode(token);
+      roleState(decoded.roles[0]);
+      idState(decoded.uuid);
+   }
+};
+
+export const getPersonalData = async (userID, accessToken, stateToChange, error) => {
+   try {
+      let response = await AxiosInstance.get(`/users/${userID}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      console.log(err);
+      error("Token Expired");
+   }
 };
 
 export const getAllUsers = async (accessToken, stateToChange, messageToShow) => {
@@ -46,10 +68,10 @@ export const deleteUser = async (accessToken, id) => {
    }
 };
 
-export const emailVerification = async (token, success, error, info, setparams, resendEmail) => {
+export const emailVerification = async (accessToken, success, error, info, setparams, resendEmail) => {
    info("Verifying in proggress");
    try {
-      await AxiosInstance.post(`/public/confirm?token=${token}`);
+      await AxiosInstance.post(`/public/confirm?token=${accessToken}`);
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 500) {
@@ -64,6 +86,22 @@ export const emailVerification = async (token, success, error, info, setparams, 
    }
    info("");
    setparams("");
+};
+
+export const onUserLogout = async (accessToken, stateToChange) => {
+   try {
+      await AxiosInstance.post(
+         `/auth/logout`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+   } catch (err) {
+      console.error("Token already expired", err);
+   }
+   localStorage.clear();
+   stateToChange("");
 };
 
 export const openFullscreen = () => {
