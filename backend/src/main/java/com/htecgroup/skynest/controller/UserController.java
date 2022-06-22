@@ -3,7 +3,6 @@ package com.htecgroup.skynest.controller;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
-import com.htecgroup.skynest.service.RefreshTokenService;
 import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +32,6 @@ import static com.htecgroup.skynest.util.UrlUtil.USERS_CONTROLLER_URL;
 public class UserController {
 
   private UserService userService;
-  private RefreshTokenService refreshTokenService;
 
   @Operation(summary = "Get all users")
   @ApiResponses(
