@@ -29,7 +29,7 @@ const SideBar = ({ sidebar }) => {
             <FaIcons.FaEnvelopeOpenText />
             Placeholder
          </li>
-         <img src={Logo} alt="logo" className="logo-sidebar" />
+         {/* <img src={Logo} alt="logo" className="logo-sidebar" /> */}
       </div>
    );
 };

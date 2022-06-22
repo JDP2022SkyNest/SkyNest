@@ -133,7 +133,12 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
             <version>2.7.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>3.8.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -162,6 +167,17 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.5</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/htecgroup/skynest/repository/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/properties/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/exception/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/model/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/controller/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/util/**/*</exclude>
+                        <exclude>com/htecgroup/skynest/security/**/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
