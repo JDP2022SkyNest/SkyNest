@@ -130,7 +130,7 @@ public class JwtUtils {
   }
 
   public static String generateRefreshToken(JwtObject jwtObject, List<String> claims) {
-    return generate(jwtObject, ACCESS_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
+    return generate(jwtObject, REFRESH_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
   }
 
   @Value("${jwt.access-expiration-ms}")

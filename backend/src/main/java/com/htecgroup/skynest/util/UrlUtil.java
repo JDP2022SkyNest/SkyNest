@@ -16,6 +16,8 @@ public class UrlUtil {
   public static final String RESEND_EMAIL_URL = "/resend-email";
   public static final String PASSWORD_RESET_URL = "/password-reset";
 
+  public static final String REFRESH_TOKEN = "/token/refresh";
+
   public static String EMAIL_VERIFICATION_URL;
   public static String PASSWORD_RESET_FRONTEND_URL;
 

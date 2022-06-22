@@ -43,7 +43,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         return;
       }
 
-      String authorizationHeader = request.getHeader(JwtUtils.AUTH_HEADER);
+      String authorizationHeader = "";
+      if (request.getServletPath().startsWith(UrlUtil.REFRESH_TOKEN)) {
+        authorizationHeader = request.getHeader(JwtUtils.REFRESH_TOKEN_HEADER);
+      } else {
+        authorizationHeader = request.getHeader(JwtUtils.AUTH_HEADER);
+      }
+
       if (authorizationHeader == null) {
         filterChain.doFilter(request, response);
         return;
@@ -53,6 +59,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         return;
       }
+
       String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
       if (invalidJwtService.isInvalid(token)) {
         filterChain.doFilter(request, response);

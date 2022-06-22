@@ -62,12 +62,11 @@ public class RefreshController {
       })
   @GetMapping()
   public void refreshToken(
-      @RequestHeader("Authorization") String access_token,
-      @RequestHeader("RefreshToken") String refresh_token,
+      @RequestHeader(JwtUtils.AUTH_HEADER) String access_token,
+      @RequestHeader(JwtUtils.REFRESH_TOKEN_HEADER) String refresh_token,
       HttpServletResponse response) {
     String token = refreshTokenService.refreshToken(refresh_token, access_token);
     response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
-    response.addHeader(
-        JwtUtils.REFRESH_TOKEN_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, refresh_token));
+    response.addHeader(JwtUtils.REFRESH_TOKEN_HEADER, refresh_token);
   }
 }
