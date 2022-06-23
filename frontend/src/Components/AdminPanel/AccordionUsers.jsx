@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 
-const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change }) => {
+const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change, userID }) => {
    const [youSure, setYouSure] = useState(false);
 
    const userRoleName = elem.roleName.slice(5);
@@ -20,6 +20,7 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
             >
                {userRoleName}
             </span>
+            <span className="badge bg-primary ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
          </Accordion.Header>
          <Accordion.Body>
             <p>

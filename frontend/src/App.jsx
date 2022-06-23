@@ -84,8 +84,8 @@ const App = () => {
             path="admin-panel"
             exact
             element={
-               <AdminRoute userRole={userRole} accessToken={accessToken} setUserID={setUserID}>
-                  <AdminPanel />
+               <AdminRoute userRole={userRole} accessToken={accessToken}>
+                  <AdminPanel userID={userID} />
                </AdminRoute>
             }
          />

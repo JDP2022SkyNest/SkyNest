@@ -29,7 +29,8 @@
 }
 
 .logo-sidebar {
-   margin-top:  40vh;
+   margin-top:  35vh;
+   animation: logoRotation 60s linear infinite reverse;
 }
 
 .side-bar-admin li:hover {
@@ -38,6 +39,16 @@
 }
 
 .logo-sidebar-admin {
-   margin-top:  40vh;
+   margin-top:  35vh;
    filter: sepia(100);
+   animation: logoRotation 60s linear infinite reverse;
+}
+
+@keyframes logoRotation {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
