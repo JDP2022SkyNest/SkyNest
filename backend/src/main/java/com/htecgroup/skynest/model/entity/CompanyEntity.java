@@ -32,8 +32,8 @@ public class CompanyEntity implements Serializable {
   private String pib;
   private String name;
   private String address;
-  private String domain;
   private String phoneNumber;
+  private String email;
 
   @ManyToOne
   @JoinColumn(name = "tier_id", nullable = false)
