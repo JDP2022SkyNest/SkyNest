@@ -4,11 +4,11 @@ import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
 import SOCIALS from "./UserSocialInfo";
-import { getPersonalData, editUserData } from "../ReusableComponents/ReusableFunctions";
+import { getPersonalData, editUserData, onUserLogout } from "../ReusableComponents/ReusableFunctions";
 import UserCardDetails from "./UserCardDetails";
 import "./UserInfo.css";
 
-const UserInfo = ({ userID, accessToken }) => {
+const UserInfo = ({ userID, accessToken, setAccessToken }) => {
    const [userData, setUserData] = useState();
    const [clonedData, setClonedData] = useState();
    const [errorMsg, setErrorMsg] = useState("");
@@ -85,10 +85,16 @@ const UserInfo = ({ userID, accessToken }) => {
                               }}
                               className={`btn btn-${role === "ADMIN" ? "danger" : "primary"}`}
                            >
-                              Edit
+                              {edit ? "Cancel" : "Edit"}
                            </button>
-                           <button type="button" className={`btn btn-outline-${role === "ADMIN" ? "danger" : "primary"} ms-1`}>
-                              Message
+                           <button
+                              onClick={() => {
+                                 onUserLogout(accessToken, setAccessToken);
+                              }}
+                              type="button"
+                              className={`btn btn-outline-${role === "ADMIN" ? "danger" : "primary"} ms-1`}
+                           >
+                              Logout
                            </button>
                         </div>
                      </div>
