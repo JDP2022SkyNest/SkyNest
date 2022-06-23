@@ -9,7 +9,11 @@ import Logo from "./assets/logoblackandwhite.svg";
 
 const SideBar = ({ sidebar, userRole }) => {
    return (
-      <div className={sidebar && userRole === ROLE.ADMIN ? "side-bar side-bar-admin side-bar-open" : "side-bar"}>
+      <div
+         className={`${sidebar && userRole === ROLE.ADMIN ? "side-bar side-bar-admin side-bar-open" : "side-bar"} ${
+            sidebar && userRole === ROLE.WORKER ? "side-bar side-bar-open" : "side-bar"
+         }`}
+      >
          <li>
             <AiIcons.AiFillHome />
             Home
