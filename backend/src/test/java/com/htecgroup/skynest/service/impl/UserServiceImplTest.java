@@ -1,8 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.AuthException;
-import com.htecgroup.skynest.exception.RegisterException;
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserNotFoundException;
+import com.htecgroup.skynest.exception.auth.AuthException;
+import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
+import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -65,13 +66,13 @@ class UserServiceImplTest {
   void registerUser_AlreadyExistsByEmail() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
-    String expectedErrorMessage = RegisterException.EMAIL_IN_USE.getMessage();
+    String expectedErrorMessage = new EmailAlreadyInUseException().getMessage();
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
 
     Exception thrownException =
         Assertions.assertThrows(
-            RegisterException.class, () -> userService.registerUser(userRegisterRequest));
+            EmailAlreadyInUseException.class, () -> userService.registerUser(userRegisterRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -80,13 +81,14 @@ class UserServiceImplTest {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
-    String expectedErrorMessage = RegisterException.PHONE_NUMBER_IN_USE.getMessage();
+    String expectedErrorMessage = new PhoneNumberAlreadyInUseException().getMessage();
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
 
     Exception thrownException =
         Assertions.assertThrows(
-            RegisterException.class, () -> userService.registerUser(userRegisterRequest));
+            PhoneNumberAlreadyInUseException.class,
+            () -> userService.registerUser(userRegisterRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -104,10 +106,10 @@ class UserServiceImplTest {
     when(userRepository.findById(any())).thenReturn(Optional.empty());
     UUID uuid = UUID.randomUUID();
 
-    UserException ex =
-        Assertions.assertThrows(UserException.class, () -> userService.getUser(uuid));
+    UserNotFoundException ex =
+        Assertions.assertThrows(UserNotFoundException.class, () -> userService.getUser(uuid));
 
-    Assertions.assertEquals(UserException.USER_NOT_FOUND.getMessage(), ex.getMessage());
+    Assertions.assertEquals(new UserNotFoundException().getMessage(), ex.getMessage());
     verify(userRepository, times(1)).findById(any());
   }
 
@@ -158,10 +160,10 @@ class UserServiceImplTest {
   void findUserByEmail_NoSuchUser() {
 
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-    String expectedErrorMessage = UserException.USER_NOT_FOUND.getMessage();
+    String expectedErrorMessage = new UserNotFoundException().getMessage();
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class, () -> userService.findUserByEmail("email@email.com"));
+            UserNotFoundException.class, () -> userService.findUserByEmail("email@email.com"));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -185,7 +187,7 @@ class UserServiceImplTest {
     UUID uuid = UUID.randomUUID();
     String expectedErrorMessage = "User not found";
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> userService.deleteUser(uuid));
+        Assertions.assertThrows(UserNotFoundException.class, () -> userService.deleteUser(uuid));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 

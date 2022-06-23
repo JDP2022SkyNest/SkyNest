@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.EmailException;
+import com.htecgroup.skynest.exception.email.NonExistingEmailAddressException;
+import com.htecgroup.skynest.exception.email.SendingEmailFailedException;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.service.EmailService;
 import lombok.AllArgsConstructor;
@@ -41,10 +42,10 @@ public class EmailServiceImpl implements EmailService {
       javaMailSender.send(mimeMessage);
     } catch (AddressException e) {
       log.error("Illegal mail address", e);
-      throw EmailException.NON_EXISTING_EMAIL_ADDRESS;
+      throw new NonExistingEmailAddressException();
     } catch (MessagingException messagingException) {
       log.error("Failed to send email", messagingException);
-      throw EmailException.SENDING_EMAIL_FAILED;
+      throw new SendingEmailFailedException();
     }
   }
 }

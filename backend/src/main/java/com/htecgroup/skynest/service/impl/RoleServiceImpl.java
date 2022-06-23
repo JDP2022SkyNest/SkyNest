@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.RoleException;
+import com.htecgroup.skynest.exception.role.RoleNotFoundException;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
@@ -18,8 +18,7 @@ public class RoleServiceImpl implements RoleService {
 
   @Override
   public RoleDto findByName(String name) {
-    RoleEntity roleEntity =
-        roleRepository.findByName(name).orElseThrow(() -> RoleException.ROLE_NOT_FOUND);
+    RoleEntity roleEntity = roleRepository.findByName(name).orElseThrow(RoleNotFoundException::new);
     return modelMapper.map(roleEntity, RoleDto.class);
   }
 }

@@ -1,7 +1,10 @@
 package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.exception.LoginException;
+import com.htecgroup.skynest.exception.login.EmailNotVerifiedException;
+import com.htecgroup.skynest.exception.login.IOErrorException;
+import com.htecgroup.skynest.exception.login.TooManyAttemptsException;
+import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
@@ -48,9 +51,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       email = userDetails.getUsername();
 
       if (loginAttemptService.hasTooManyAttempts(userDetails.getUsername()))
-        throw LoginException.TOO_MANY_ATTEMPTS;
+        throw new TooManyAttemptsException();
 
-      if (!authService.isActive(userDetails.getUsername())) throw LoginException.EMAIL_NOT_VERIFIED;
+      if (!authService.isActive(userDetails.getUsername())) throw new EmailNotVerifiedException();
 
       return authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
@@ -58,10 +61,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     } catch (BadCredentialsException ex) {
       loginAttemptService.saveUnsuccessfulAttempt(email);
-      throw LoginException.WRONG_PASSWORD;
+      throw new WrongPasswordException();
     } catch (IOException e) {
       log.error("Unable to authenticate, because of Input or Output error", e);
-      throw LoginException.IO_ERROR;
+      throw new IOErrorException();
     }
   }
 

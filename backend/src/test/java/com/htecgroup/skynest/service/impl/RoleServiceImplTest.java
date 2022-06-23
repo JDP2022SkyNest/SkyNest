@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.RoleException;
+import com.htecgroup.skynest.exception.role.RoleException;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.repository.RoleRepository;

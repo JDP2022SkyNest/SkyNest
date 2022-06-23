@@ -1,8 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.AuthException;
-import com.htecgroup.skynest.exception.RegisterException;
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserNotFoundException;
+import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
+import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
+import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -40,10 +41,10 @@ public class UserServiceImpl implements UserService {
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
     if (userRepository.existsByEmail(userDto.getEmail())) {
-      throw RegisterException.EMAIL_IN_USE;
+      throw new EmailAlreadyInUseException();
     }
     if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
-      throw RegisterException.PHONE_NUMBER_IN_USE;
+      throw new PhoneNumberAlreadyInUseException();
     }
     String roleName = RoleEntity.ROLE_WORKER;
     RoleDto roleDto = roleService.findByName(roleName);
@@ -64,23 +65,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public void deleteUser(UUID uuid) {
     if (!userRepository.existsById(uuid)) {
-      throw UserException.USER_NOT_FOUND;
+      throw new UserNotFoundException();
     }
     userRepository.deleteById(uuid);
   }
 
   @Override
   public UserResponse getUser(UUID uuid) {
-    UserEntity userEntity =
-        userRepository.findById(uuid).orElseThrow(() -> UserException.USER_NOT_FOUND);
+    UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
 
     return modelMapper.map(userEntity, UserResponse.class);
   }
 
   @Override
   public UserResponse editUser(UserEditRequest userEditRequest, UUID uuid) {
-    UserEntity userEntity =
-        userRepository.findById(uuid).orElseThrow(() -> UserException.USER_NOT_FOUND);
+    UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
     userEditRequest.setName(userEditRequest.getName().trim());
     userEditRequest.setSurname(userEditRequest.getSurname().trim());
     userEditRequest.setAddress(userEditRequest.getAddress().trim());
@@ -92,7 +91,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
-        userRepository.findUserByEmail(email).orElseThrow(() -> UserException.USER_NOT_FOUND);
+        userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
     return modelMapper.map(userEntity, UserDto.class);
   }
 
@@ -109,7 +108,7 @@ public class UserServiceImpl implements UserService {
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
     if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
-      throw AuthException.FORBIDDEN_FOR_WORKER;
+      throw new ForbiddenForWorkerException();
     }
   }
 }
