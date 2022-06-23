@@ -16,12 +16,17 @@ const AdminPanel = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
    const [change, setChange] = useState(false);
+   const [loading, setLoading] = useState(false);
    const accessToken = localStorage.accessToken;
 
    const time = new Date();
 
    useEffect(() => {
-      getAllUsers(accessToken, setUsersData, setErrorMsg);
+      (async function loading() {
+         setLoading(true);
+         await getAllUsers(accessToken, setUsersData, setErrorMsg);
+         setLoading(false);
+      })();
    }, [accessToken, change]);
 
    const filterUsers = usersData.filter(
@@ -53,36 +58,34 @@ const AdminPanel = () => {
                <AdminCarousel />
             </ReusableModal>
          </NavbarPanel>
-         {usersData ? (
-            <>
-               <Container>
-                  <div className="row">
-                     <div className="col-12 col-sm-6 col-lg-3 offset-lg-2">
-                        <AdminCard title="Total Users:" body={usersData.length} color={"info"} />
-                     </div>
-                     <div className="col-lg-2 d-none d-lg-block">
-                        <AdminCard title={"Info:"} body={time.toLocaleDateString()} color={"secondary"} centered={"text-center"} />
-                     </div>
-                     <div className="col-12 col-sm-6 col-lg-3 offset-lg-0">
-                        <AdminCard title="Filtered Users:" body={filterUsers.length} color={"primary"} />
-                     </div>
+         {!loading ? (
+            <Container>
+               <div className="row">
+                  <div className="col-12 col-sm-6 col-lg-3 offset-lg-2">
+                     <AdminCard title="Total Users:" body={usersData.length} color={"info"} />
                   </div>
-                  <div className="row">
-                     <div className="col-12 col-lg-8 offset-lg-2">
-                        <Accordion className="shadow">{allUsers}</Accordion>
-                     </div>
+                  <div className="col-lg-2 d-none d-lg-block">
+                     <AdminCard title={"Info:"} body={time.toLocaleDateString()} color={"secondary"} centered={"text-center"} />
                   </div>
-                  <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>
-                     {errorMsg}
-                  </p>
-               </Container>
-               <Footer />
-            </>
+                  <div className="col-12 col-sm-6 col-lg-3 offset-lg-0">
+                     <AdminCard title="Filtered Users:" body={filterUsers.length} color={"primary"} />
+                  </div>
+               </div>
+               <div className="row">
+                  <div className="col-12 col-lg-8 offset-lg-2">
+                     <Accordion className="shadow">{allUsers}</Accordion>
+                  </div>
+               </div>
+               <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>
+                  {errorMsg}
+               </p>
+            </Container>
          ) : (
-            <div className="row mt-5">
+            <div className="mt-5">
                <LoaderAnimation />
             </div>
          )}
+         <Footer />
       </div>
    );
 };
