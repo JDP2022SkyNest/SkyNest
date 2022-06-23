@@ -1,19 +1,12 @@
 package com.htecgroup.skynest.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@AllArgsConstructor
-public class UserException extends RuntimeException {
-
-  private static final long serialVersionUID = 2371435714335613721L;
-  private final String message;
-  private final HttpStatus status;
-
-  public UserException(UserExceptionType userExceptionType) {
-    message = userExceptionType.getMessage();
-    status = userExceptionType.getStatus();
+public class UserException extends CustomException {
+  private UserException(String message, HttpStatus status) {
+    super(message, status);
   }
+
+  public static final UserException USER_NOT_FOUND =
+      new UserException("User not found", HttpStatus.NOT_FOUND);
 }

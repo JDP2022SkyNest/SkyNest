@@ -1,7 +1,8 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.AuthException;
+import com.htecgroup.skynest.exception.RegisterException;
 import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -64,13 +65,13 @@ class UserServiceImplTest {
   void registerUser_AlreadyExistsByEmail() {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(true);
-    String expectedErrorMessage = UserExceptionType.EMAIL_ALREADY_IN_USE.getMessage();
+    String expectedErrorMessage = RegisterException.EMAIL_IN_USE.getMessage();
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
 
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class, () -> userService.registerUser(userRegisterRequest));
+            RegisterException.class, () -> userService.registerUser(userRegisterRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -79,13 +80,13 @@ class UserServiceImplTest {
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
-    String expectedErrorMessage = UserExceptionType.PHONE_NUMBER_ALREADY_IN_USE.getMessage();
+    String expectedErrorMessage = RegisterException.PHONE_NUMBER_IN_USE.getMessage();
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
 
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class, () -> userService.registerUser(userRegisterRequest));
+            RegisterException.class, () -> userService.registerUser(userRegisterRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -106,7 +107,7 @@ class UserServiceImplTest {
     UserException ex =
         Assertions.assertThrows(UserException.class, () -> userService.getUser(uuid));
 
-    Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND.getMessage(), ex.getMessage());
+    Assertions.assertEquals(UserException.USER_NOT_FOUND.getMessage(), ex.getMessage());
     verify(userRepository, times(1)).findById(any());
   }
 
@@ -115,11 +116,11 @@ class UserServiceImplTest {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     UUID uuid = UUID.randomUUID();
 
-    UserException ex =
+    AuthException ex =
         Assertions.assertThrows(
-            UserException.class, () -> userService.authorizeAccessToUserDetailsWith(uuid));
+            AuthException.class, () -> userService.authorizeAccessToUserDetailsWith(uuid));
 
-    Assertions.assertEquals("Access denied", ex.getMessage());
+    Assertions.assertEquals("A worked can only view his/hers account details", ex.getMessage());
     verify(currentUserService, times(1)).getLoggedUser();
   }
 
@@ -157,7 +158,7 @@ class UserServiceImplTest {
   void findUserByEmail_NoSuchUser() {
 
     when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-    String expectedErrorMessage = UserExceptionType.USER_NOT_FOUND.getMessage();
+    String expectedErrorMessage = UserException.USER_NOT_FOUND.getMessage();
     Exception thrownException =
         Assertions.assertThrows(
             UserException.class, () -> userService.findUserByEmail("email@email.com"));
@@ -182,7 +183,7 @@ class UserServiceImplTest {
   void deleteUser_UserDoesNotExist() {
     when(userRepository.existsById(any())).thenReturn(false);
     UUID uuid = UUID.randomUUID();
-    String expectedErrorMessage = String.format("User with id %s doesn't exist", uuid);
+    String expectedErrorMessage = "User not found";
     Exception thrownException =
         Assertions.assertThrows(UserException.class, () -> userService.deleteUser(uuid));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());

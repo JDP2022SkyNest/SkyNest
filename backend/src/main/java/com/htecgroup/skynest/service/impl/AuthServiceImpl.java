@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.RegisterException;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -32,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
     UserDto userDto = userService.findUserByEmail(emailAddress);
 
     if (userDto.getVerified()) {
-      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
+      throw RegisterException.USER_ALREADY_VERIFIED;
     }
 
     String token = JwtUtils.generateEmailVerificationToken(emailAddress);
@@ -67,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
   public String confirmEmail(String token) {
     String email = JwtUtils.getValidatedEmailVerificationTokenContext(token);
     UserDto userDto = userService.findUserByEmail(email);
-    UserDto enabledUser = this.verifyUser(userDto);
+    UserDto enabledUser = verifyUser(userDto);
     userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
     return "User verified successfully";
   }
@@ -81,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public UserDto verifyUser(UserDto userDto) {
     if (isActive(userDto.getEmail())) {
-      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
+      throw RegisterException.USER_ALREADY_VERIFIED;
     }
     return userDto.withEnabled(true).withVerified(true);
   }

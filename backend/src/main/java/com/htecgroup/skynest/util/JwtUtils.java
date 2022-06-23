@@ -6,13 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.JwtException;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -62,10 +60,10 @@ public class JwtUtils {
       return new UsernamePasswordAuthenticationToken(username, null, authorities);
     } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
-      throw new UserException(UserExceptionType.INVALID_TOKEN);
+      throw JwtException.INVALID_SESSION_TOKEN;
     } catch (IllegalArgumentException e) {
       log.error("JWT algorithm is null: {}", e.getMessage());
-      throw new UserException(UserExceptionType.JWT_ALGORITHM_IS_NULL);
+      throw JwtException.INVALID_ALGORITHM;
     }
   }
 
@@ -79,7 +77,7 @@ public class JwtUtils {
       return 0;
     } catch (IllegalArgumentException e) {
       log.error("JWT algorithm is null: {}", e.getMessage());
-      throw new UserException(UserExceptionType.JWT_ALGORITHM_IS_NULL);
+      throw JwtException.INVALID_ALGORITHM;
     }
   }
 
@@ -99,10 +97,10 @@ public class JwtUtils {
       return decodedJWT.getSubject();
     } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
-      throw new UserException(UserExceptionType.INVALID_TOKEN);
+      throw JwtException.INVALID_EMAIL_TOKEN;
     } catch (IllegalArgumentException e) {
       log.error("JWT claims string is empty: {}", e.getMessage());
-      throw new UserException("Access token is missing", HttpStatus.BAD_REQUEST);
+      throw JwtException.INVALID_ALGORITHM;
     }
   }
 

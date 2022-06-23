@@ -2,8 +2,6 @@ package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htecgroup.skynest.exception.LoginException;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
@@ -21,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.security.auth.login.LoginException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +50,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       if (loginAttemptService.hasTooManyAttempts(userDetails.getUsername()))
         throw LoginException.TOO_MANY_ATTEMPTS;
 
-      if (!userService.isActive(userDetails.getUsername())) throw LoginException.EMAIL_NOT_VERIFIED;
+      if (!authService.isActive(userDetails.getUsername())) throw LoginException.EMAIL_NOT_VERIFIED;
 
       return authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
@@ -64,7 +61,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       throw LoginException.WRONG_PASSWORD;
     } catch (IOException e) {
       log.error("Unable to authenticate, because of Input or Output error", e);
-      throw new UserException(UserExceptionType.INVALID_AUTHENTICATION_FORMAT);
+      throw LoginException.IO_ERROR;
     }
   }
 
