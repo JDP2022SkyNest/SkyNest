@@ -24,7 +24,7 @@ const HomePage = ({ setAccessToken, userRole }) => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="text-white d-none mr-auto d-md-block navbar-brand tool-bar">SkyNest</span>
+               <span className="d-none mr-auto d-md-block navbar-brand text-light">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {
