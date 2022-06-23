@@ -24,21 +24,21 @@ const HomePage = ({ setAccessToken, userRole }) => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="text-white d-none mr-auto d-md-block navbar-brand tool-bar">SkyNest</span>
+               <span className="d-none mr-auto d-md-block navbar-brand text-light">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className={userRole === ROLE.ADMIN ? `btn btn-danger mr-3` : "d-none"}
+                     className={userRole === ROLE.ADMIN ? `btn admin mr-3` : "d-none"}
                   >
                      Admin Panel
                   </button>
-                  <Profile setAccessToken={setAccessToken} />
+                  <Profile setAccessToken={setAccessToken} userRole={userRole} />
                </div>
             </Container>
          </Navbar>
-         <SideBar sidebar={sidebar} />
+         <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container mt-5">
             <div>
                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint

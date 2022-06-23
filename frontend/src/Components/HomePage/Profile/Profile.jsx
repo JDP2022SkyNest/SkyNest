@@ -6,22 +6,16 @@ import { DropdownButton, Dropdown } from "react-bootstrap";
 import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
 import ROUTES from "../../Routes/ROUTES";
+import ROLE from "..//../Roles/Roles";
 import "./Profile.css";
 
-const Profile = ({ setAccessToken }) => {
+const Profile = ({ setAccessToken, userRole }) => {
    const accessToken = localStorage.accessToken;
    const navigate = useNavigate();
 
    return (
-      <DropdownButton
-         align="end"
-         title={<AiIcons.AiOutlineUser />}
-         id="dropdown-menu-align-end"
-         className="profile"
-         variant="secondary"
-         menuVariant="dark"
-      >
-         <div className="profile">
+      <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" variant="secondary" menuVariant="dark">
+         <div className={userRole === ROLE.ADMIN ? "dropdown-menu-admin" : "dropdown-menu-worker"}>
             <Dropdown.Item
                onClick={() => {
                   redirectTo(navigate, ROUTES.USERINFO, 1);
@@ -48,7 +42,7 @@ const Profile = ({ setAccessToken }) => {
                }}
                eventKey="4"
             >
-               <div className="text-danger">
+               <div>
                   <CgIcons.CgLogOut className="mr-2" />
                   Logout
                </div>
