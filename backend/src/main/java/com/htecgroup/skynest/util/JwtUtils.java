@@ -72,6 +72,21 @@ public class JwtUtils {
     }
   }
 
+  public static String getUsernameFromRefreshToken(String token) {
+    DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
+
+    String username = decodedJWT.getSubject();
+    return username;
+  }
+
+  public static Collection<SimpleGrantedAuthority> getAuthoritiesFromRefreshToken(String token) {
+    DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
+    String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+    Collection<SimpleGrantedAuthority> authorities =
+        stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    return authorities;
+  }
+
   public static long stillValidForInMs(String token) {
     try {
       DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
