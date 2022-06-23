@@ -36,8 +36,12 @@ const UserInfo = ({ userID, accessToken }) => {
    const onUserInfoChanged = async () => {
       console.table(clonedData);
       console.log(userData.id);
-      await editUserData(userData?.id, clonedData, setSuccessMsg, setErrorMsg);
+      await editUserData(userData?.id, clonedData, setSuccessMsg, setErrorMsg, refreshTheData);
       setEdit(false);
+   };
+
+   const refreshTheData = async () => {
+      await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
    };
 
    useEffect(() => {

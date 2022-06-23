@@ -57,7 +57,7 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
    }
 };
 
-export const editUserData = async (id, payload, success, error) => {
+export const editUserData = async (id, payload, success, error, func) => {
    try {
       await AxiosInstance.put(`/users/${id}`, {
          name: payload.name,
@@ -70,6 +70,7 @@ export const editUserData = async (id, payload, success, error) => {
       console.error(err);
       error("Failed to update profile");
    }
+   func();
 };
 
 export const deleteUser = async (accessToken, id) => {
