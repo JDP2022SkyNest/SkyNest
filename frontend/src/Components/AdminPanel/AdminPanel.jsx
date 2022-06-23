@@ -11,7 +11,7 @@ import ReusableModal from "../ReusableComponents/ReusableModal";
 import AdminCarousel from "./AdminCarousel";
 import ROUTES from "../Routes/ROUTES";
 
-const AdminPanel = () => {
+const AdminPanel = ({ userID }) => {
    const [usersData, setUsersData] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
@@ -48,6 +48,7 @@ const AdminPanel = () => {
          accessToken={accessToken}
          setChange={setChange}
          change={change}
+         userID={userID}
       />
    ));
 
