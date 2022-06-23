@@ -30,15 +30,15 @@ const HomePage = ({ setAccessToken, userRole }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className={userRole === ROLE.ADMIN ? `btn btn-danger mr-3` : "d-none"}
+                     className={userRole === ROLE.ADMIN ? `btn admin mr-3` : "d-none"}
                   >
                      Admin Panel
                   </button>
-                  <Profile setAccessToken={setAccessToken} />
+                  <Profile setAccessToken={setAccessToken} userRole={userRole} />
                </div>
             </Container>
          </Navbar>
-         <SideBar sidebar={sidebar} />
+         <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container mt-5">
             <div>
                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint
