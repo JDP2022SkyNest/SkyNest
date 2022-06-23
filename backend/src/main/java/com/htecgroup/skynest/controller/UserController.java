@@ -264,7 +264,7 @@ public class UserController {
   public ResponseEntity<Boolean> changePassword(
       @Valid @RequestBody UserChangePasswordRequest userChangePasswordRequest,
       @PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.authorizeAccessForChangePassword(uuid);
     userService.changePassword(userChangePasswordRequest, uuid);
     return ResponseEntity.ok(true);
   }

@@ -26,4 +26,6 @@ public interface UserService {
   void authorizeAccessToUserDetailsWith(UUID uuid);
 
   void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid);
+
+  void authorizeAccessForChangePassword(UUID uuid);
 }

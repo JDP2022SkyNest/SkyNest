@@ -123,6 +123,15 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  public void authorizeAccessForChangePassword(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    if (!(loggedUserUuid.equals(uuid))) {
+      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
+    }
+  }
+
   @Override
   public void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid) {
     UserEntity userEntity =
