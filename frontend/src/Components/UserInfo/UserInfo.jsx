@@ -34,9 +34,7 @@ const UserInfo = ({ userID, accessToken }) => {
    };
 
    const onUserInfoChanged = async () => {
-      console.table(clonedData);
-      console.log(userData.id);
-      await editUserData(userData?.id, clonedData, setSuccessMsg, setErrorMsg, refreshTheData);
+      await editUserData(accessToken, userData?.id, clonedData, setSuccessMsg, setErrorMsg, refreshTheData);
       setEdit(false);
    };
 
@@ -62,7 +60,7 @@ const UserInfo = ({ userID, accessToken }) => {
    return (
       <section>
          <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
-         <div className="container py-5">
+         <div className="container py-3">
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
             <div className="row">
