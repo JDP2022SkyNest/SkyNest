@@ -23,11 +23,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
   private InvalidJwtService invalidJwtService;
 
   @Override
-  public String refreshToken(String refreshToken, String invalidToken) {
+  public String refreshToken(String refreshToken) {
     if (refreshToken != null && refreshToken.startsWith(JwtUtils.TOKEN_PREFIX)) {
       try {
-        String tokenForInvalidation = invalidToken.replace(JwtUtils.TOKEN_PREFIX, "");
-        invalidJwtService.invalidate(tokenForInvalidation);
         LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
         List<String> authorities = loggedUserDto.getRoleNames();
 
@@ -42,6 +40,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     } else {
       throw new UserException(UserExceptionType.REFRESH_TOKEN_IS_MISSING);
     }
-    return "";
+    return null;
   }
 }

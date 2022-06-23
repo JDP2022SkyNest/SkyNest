@@ -43,13 +43,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         return;
       }
 
-      String authorizationHeader;
-      if (request.getServletPath().startsWith(UrlUtil.REFRESH_TOKEN)) {
-        authorizationHeader = request.getHeader(JwtUtils.REFRESH_TOKEN_HEADER);
-      } else {
-        authorizationHeader = request.getHeader(JwtUtils.AUTH_HEADER);
-      }
-
+      String authorizationHeader = request.getHeader(JwtUtils.AUTH_HEADER);
       if (authorizationHeader == null) {
         filterChain.doFilter(request, response);
         return;
