@@ -7,6 +7,7 @@ import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
@@ -120,5 +121,21 @@ public class UserServiceImpl implements UserService {
     if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
       throw new UserException("Access denied", HttpStatus.FORBIDDEN);
     }
+  }
+
+  @Override
+  public void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid) {
+    UserEntity userEntity =
+        userRepository
+            .findById(uuid)
+            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+    if (!bCryptPasswordEncoder.matches(
+        userChangePasswordRequest.getOldPassword(), userEntity.getEncryptedPassword())) {
+      throw new UserException(UserExceptionType.OLD_PASSWORD_IS_INCORRECT);
+    }
+    String encryptedNewPassword =
+        bCryptPasswordEncoder.encode(userChangePasswordRequest.getNewPassword());
+    UserEntity changedPasswordEntity = userEntity.withEncryptedPassword(encryptedNewPassword);
+    userRepository.save(changedPasswordEntity);
   }
 }

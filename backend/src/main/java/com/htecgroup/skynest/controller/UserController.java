@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
@@ -257,5 +258,14 @@ public class UserController {
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
     return ResponseEntity.ok(deleteSuccess);
+  }
+
+  @PostMapping("/password-change/{uuid}")
+  public ResponseEntity<Boolean> changePassword(
+      @Valid @RequestBody UserChangePasswordRequest userChangePasswordRequest,
+      @PathVariable UUID uuid) {
+    userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.changePassword(userChangePasswordRequest, uuid);
+    return ResponseEntity.ok(true);
   }
 }

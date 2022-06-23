@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
@@ -23,4 +24,6 @@ public interface UserService {
   UserResponse editUser(UserEditRequest userEditRequest, UUID uuid);
 
   void authorizeAccessToUserDetailsWith(UUID uuid);
+
+  void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid);
 }
