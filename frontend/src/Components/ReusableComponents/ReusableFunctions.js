@@ -57,14 +57,20 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
    }
 };
 
-export const editUserData = async (id, payload, success, error, func) => {
+export const editUserData = async (accessToken, id, payload, success, error, func) => {
    try {
-      await AxiosInstance.put(`/users/${id}`, {
-         name: payload.name,
-         surname: payload.surname,
-         phoneNumber: payload.phoneNumber,
-         address: payload.address,
-      });
+      await AxiosInstance.put(
+         `/users/${id}`,
+         {
+            name: payload.name,
+            surname: payload.surname,
+            phoneNumber: payload.phoneNumber,
+            address: payload.address,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
       success("Profile Updated");
    } catch (err) {
       console.error(err);
