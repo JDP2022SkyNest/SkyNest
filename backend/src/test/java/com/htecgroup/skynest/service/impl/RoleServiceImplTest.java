@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.role.RoleException;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.repository.RoleRepository;
@@ -29,9 +29,9 @@ class RoleServiceImplTest {
   void when_NotExistingName_findByName_ShouldThrowUserException() {
     String name = "ExampleName";
     when(roleRepository.findByName(name)).thenReturn(Optional.empty());
-    String expectedErrorMessage = String.format("Role %s not found.", name);
+    String expectedErrorMessage = "User role doesn't exist";
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> roleService.findByName(name));
+        Assertions.assertThrows(RoleException.class, () -> roleService.findByName(name));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 

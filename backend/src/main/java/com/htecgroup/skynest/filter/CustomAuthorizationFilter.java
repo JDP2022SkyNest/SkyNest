@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.filter;
 
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.security.CustomAuthenticationToken;
@@ -71,7 +71,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
       SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
 
       filterChain.doFilter(request, response);
-    } catch (UserException ex) {
+    } catch (UserNotFoundException ex) {
       log.error(ex);
       ErrorMessage errorMessage =
           new ErrorMessage(
