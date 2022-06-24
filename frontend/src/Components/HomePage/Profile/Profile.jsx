@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import * as AiIcons from "react-icons/ai";
 import * as CgIcons from "react-icons/cg";
-import * as FiIcons from "react-icons/fi";
-import { DropdownButton, Dropdown } from "react-bootstrap";
+import { DropdownButton, Dropdown, Modal, Form, Button } from "react-bootstrap";
 import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
 import ROUTES from "../../Routes/ROUTES";
@@ -11,7 +10,12 @@ import "./Profile.css";
 
 const Profile = ({ setAccessToken, userRole }) => {
    const accessToken = localStorage.accessToken;
+   const [show, setShow] = useState(false);
+
    const navigate = useNavigate();
+
+   const handleClose = () => setShow(false);
+   const handleShow = () => setShow(true);
 
    return (
       <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" variant="secondary" menuVariant="dark">
@@ -24,12 +28,38 @@ const Profile = ({ setAccessToken, userRole }) => {
                eventKey="1"
             >
                <CgIcons.CgProfile className="mr-2" />
-               Profile
+               Your Profile
             </Dropdown.Item>
-            <Dropdown.Item eventKey="2">
-               <FiIcons.FiSettings className="mr-2" />
-               Settings
+            <Dropdown.Item eventKey="2" onClick={handleShow}>
+               <AiIcons.AiOutlineUnlock className="mr-2" />
+               Change Password
             </Dropdown.Item>
+            <Modal show={show} onHide={handleClose}>
+               <Modal.Header closeButton>
+                  <Modal.Title>Change Your Password</Modal.Title>
+               </Modal.Header>
+               <Modal.Body>
+                  <Form>
+                     <Form.Group className="mb-3" controlId="ControlInput1">
+                        <Form.Label>Please Enter your current Password:*</Form.Label>
+                        <Form.Control type="email" placeholder="Password" autoFocus />
+                     </Form.Group>
+                     <Form.Group className="mb-3" controlId="ControlInput2">
+                        <Form.Label>New Password:*</Form.Label>
+                        <Form.Control type="email" autoFocus />
+                     </Form.Group>
+                     <Form.Group className="mb-3" controlId="ControlInput3">
+                        <Form.Label>Re-enter New Password:*</Form.Label>
+                        <Form.Control type="email" autoFocus />
+                     </Form.Group>
+                  </Form>
+               </Modal.Body>
+               <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose}>
+                     Save Changes
+                  </Button>
+               </Modal.Footer>
+            </Modal>
             <Dropdown.Divider />
             <Dropdown.Item onClick={openFullscreen} eventKey="3">
                <AiIcons.AiOutlineFullscreen className="mr-2" />
