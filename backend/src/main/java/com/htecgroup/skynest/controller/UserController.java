@@ -309,6 +309,21 @@ public class UserController {
                                 + " \"status\": \"401\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The provided current password is incorrect",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"The provided current password is incorrect\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
             })
       })
   @PreAuthorize(
@@ -319,6 +334,7 @@ public class UserController {
       @PathVariable UUID uuid) {
     userService.authorizeAccessForChangePassword(uuid);
     userService.changePassword(userChangePasswordRequest, uuid);
+    log.info("User with id {} successfully changed their password", uuid);
     return ResponseEntity.ok(true);
   }
 }

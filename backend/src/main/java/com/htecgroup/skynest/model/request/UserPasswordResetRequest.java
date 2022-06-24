@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.model.request;
 
+import com.htecgroup.skynest.util.RegexUtil;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -11,9 +12,6 @@ public class UserPasswordResetRequest {
   private String token;
 
   @NotNull(message = "cannot be null")
-  @Pattern(
-      regexp =
-          "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#&()–\\[{}\\]:\\-;',?|/*%~$_^+=<>\\s]{8,50}",
-      message = "format not valid")
+  @Pattern(regexp = RegexUtil.PASSWORD_FORMAT_REGEX, message = "format not valid")
   private String password;
 }

@@ -13,12 +13,12 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,13 +31,12 @@ public class UserServiceImpl implements UserService {
 
   private UserRepository userRepository;
   private RoleService roleService;
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private PasswordEncoderService passwordEncoderService;
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
 
   @Override
   public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
-
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
     if (userRepository.existsByEmail(userDto.getEmail())) {
@@ -50,7 +49,7 @@ public class UserServiceImpl implements UserService {
     RoleDto roleDto = roleService.findByName(roleName);
     userDto.setRole(roleDto);
 
-    userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+    userDto.setEncryptedPassword(passwordEncoderService.encode(userDto.getPassword()));
     userDto.setVerified(false);
     userDto.setEnabled(false);
     userDto.setName(userDto.getName().trim());
@@ -73,13 +72,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse getUser(UUID uuid) {
-
-    UserEntity userEntity =
-        userRepository
-            .findById(uuid)
-            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
-
-    return modelMapper.map(userEntity, UserResponse.class);
+    UserDto userDto = findUserById(uuid);
+    return modelMapper.map(userDto, UserResponse.class);
   }
 
   @Override
@@ -133,18 +127,24 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid) {
+  public UserDto findUserById(UUID uuid) {
     UserEntity userEntity =
         userRepository
             .findById(uuid)
             .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
-    if (!bCryptPasswordEncoder.matches(
-        userChangePasswordRequest.getOldPassword(), userEntity.getEncryptedPassword())) {
+    return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    if (!passwordEncoderService.matches(
+        userChangePasswordRequest.getCurrentPassword(), userDto.getEncryptedPassword())) {
       throw new UserException(UserExceptionType.OLD_PASSWORD_IS_INCORRECT);
     }
     String encryptedNewPassword =
-        bCryptPasswordEncoder.encode(userChangePasswordRequest.getNewPassword());
-    UserEntity changedPasswordEntity = userEntity.withEncryptedPassword(encryptedNewPassword);
-    userRepository.save(changedPasswordEntity);
+        passwordEncoderService.encode(userChangePasswordRequest.getNewPassword());
+    UserDto changedPasswordDto = userDto.withEncryptedPassword(encryptedNewPassword);
+    userRepository.save(modelMapper.map(changedPasswordDto, UserEntity.class));
   }
 }

@@ -13,8 +13,7 @@ public enum UserExceptionType {
   INVALID_EMAIL_OR_PASSWORD("The email and password are not valid", HttpStatus.BAD_REQUEST),
   PASSWORDS_DOES_NOT_MATCH(
       "The provided password doesn't match the username", HttpStatus.EXPECTATION_FAILED),
-  OLD_PASSWORD_IS_INCORRECT(
-      "The provided old password is incorrect", HttpStatus.EXPECTATION_FAILED),
+  OLD_PASSWORD_IS_INCORRECT("The provided current password is incorrect", HttpStatus.UNAUTHORIZED),
   EMAIL_FAILED_TO_SEND(
       "The email failed to send from the Email server", HttpStatus.INTERNAL_SERVER_ERROR),
   USER_ALREADY_REGISTERED(

@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.model.request;
 
+import com.htecgroup.skynest.util.RegexUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,18 +16,12 @@ import javax.validation.constraints.Size;
 public class UserRegisterRequest {
 
   @NotNull(message = "cannot be null")
-  @Pattern(
-      message = "format is not valid",
-      regexp =
-          "[a-zA-Z0-9_+&*-]{1,64}(?:\\.[a-zA-Z0-9_+&*-]+){0,64}@(?:[a-zA-Z0-9-]+\\.){1,255}[a-zA-Z]{2,7}")
+  @Pattern(message = "format is not valid", regexp = RegexUtil.EMAIL_FORMAT_REGEX)
   @Size(max = 254, message = "length cannot be over 254 characters")
   private String email;
 
   @NotNull(message = "cannot be null")
-  @Pattern(
-      regexp =
-          "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d!@#&()–\\[{}\\]:\\-;',?|/*%~$_^+=<>\\s]{8,50}",
-      message = "format not valid")
+  @Pattern(regexp = RegexUtil.PASSWORD_FORMAT_REGEX, message = "format not valid")
   private String password;
 
   @NotBlank(message = "cannot be null or empty")
@@ -39,7 +34,7 @@ public class UserRegisterRequest {
 
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 30, message = "length cannot be over 30")
-  @Pattern(regexp = "[\\d]+", message = "format not valid")
+  @Pattern(regexp = RegexUtil.PHONE_NUMBER_FORMAT_REGEX, message = "format not valid")
   private String phoneNumber;
 
   @NotBlank(message = "cannot be null or empty")

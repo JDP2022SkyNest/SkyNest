@@ -28,4 +28,6 @@ public interface UserService {
   void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid);
 
   void authorizeAccessForChangePassword(UUID uuid);
+
+  UserDto findUserById(UUID uuid);
 }

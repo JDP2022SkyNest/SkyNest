@@ -26,7 +26,7 @@ public class UserEntity implements Serializable {
 
   private LocalDateTime deletedOn;
   private String email;
-  @With private String encryptedPassword;
+  private String encryptedPassword;
   private String name;
   private String surname;
   private String address;
