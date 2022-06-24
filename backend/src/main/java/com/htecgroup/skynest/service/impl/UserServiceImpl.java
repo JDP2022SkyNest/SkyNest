@@ -3,6 +3,8 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
+import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
@@ -145,8 +147,11 @@ public class UserServiceImpl implements UserService {
   @Override
   public void enableUser(UUID uuid) {
     UserDto userDto = findUserById(uuid);
+    if (!userDto.getVerified()) {
+      throw new UserNotVerifiedException();
+    }
     if (userDto.getEnabled() && userDto.getDeletedOn() == null) {
-      return;
+      throw new UserAlreadyEnabledException();
     }
     UserDto enabledUserDto = userDto.withEnabled(true).withDeletedOn(null);
     userRepository.save(modelMapper.map(enabledUserDto, UserEntity.class));

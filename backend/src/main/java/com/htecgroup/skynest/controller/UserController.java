@@ -353,10 +353,11 @@ public class UserController {
     return ResponseEntity.ok(true);
   }
 
-  @PutMapping("/enable")
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
+  @PutMapping("/enable/{uuid}")
   public ResponseEntity<Boolean> enableUser(@PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
     userService.enableUser(uuid);
+    log.info("User with id {} was successfully enabled", uuid);
     return ResponseEntity.ok(true);
   }
 }
