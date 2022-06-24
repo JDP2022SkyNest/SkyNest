@@ -20,9 +20,6 @@ public class TierEntity implements Serializable {
 
   private static final long serialVersionUID = -41839637756579466L;
 
-  public static final String TIER_BASIC = "basic";
-  public static final String TIER_GOLD = "gold";
-
   @Id @GeneratedValue private UUID id;
   private String name;
 }
