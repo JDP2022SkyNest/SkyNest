@@ -30,6 +30,8 @@ import static java.util.Arrays.stream;
 public class JwtUtils {
 
   public static final String AUTH_HEADER = HttpHeaders.AUTHORIZATION;
+
+  public static final String REFRESH_TOKEN_HEADER = "refresh-token";
   public static final String TOKEN_PREFIX = "Bearer ";
   private static final String EMAIL_TOKEN_CLAIM = "Email token";
   private static final String PASSWORD_RESET_PURPOSE = "password reset";
@@ -37,6 +39,7 @@ public class JwtUtils {
   private static final String CLAIM_NAME = "roles";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
+  public static long REFRESH_TOKEN_EXPIRATION_MS;
   public static long EMAIL_TOKEN_EXPIRATION_MS;
   public static Algorithm ALGORITHM;
 
@@ -67,6 +70,21 @@ public class JwtUtils {
       log.error("JWT algorithm is null: {}", e.getMessage());
       throw new InvalidAlgorithmException();
     }
+  }
+
+  public static String getUsernameFromRefreshToken(String token) {
+    DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
+
+    String username = decodedJWT.getSubject();
+    return username;
+  }
+
+  public static Collection<SimpleGrantedAuthority> getAuthoritiesFromRefreshToken(String token) {
+    DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
+    String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+    Collection<SimpleGrantedAuthority> authorities =
+        stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    return authorities;
   }
 
   public static long stillValidForInMs(String token) {
@@ -126,9 +144,18 @@ public class JwtUtils {
     return generate(jwtObject, ACCESS_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
   }
 
+  public static String generateRefreshToken(JwtObject jwtObject, List<String> claims) {
+    return generate(jwtObject, REFRESH_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
+  }
+
   @Value("${jwt.access-expiration-ms}")
   private void setAccessTokenExpirationMs(long expirationMs) {
     ACCESS_TOKEN_EXPIRATION_MS = expirationMs;
+  }
+
+  @Value("${jwt.refresh-expiration-ms}")
+  public void setNameStaticRefresh(long expirationMs) {
+    REFRESH_TOKEN_EXPIRATION_MS = expirationMs;
   }
 
   @Value("${jwt.email-expiration-ms}")
