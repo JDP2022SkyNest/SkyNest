@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
@@ -24,6 +25,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -140,5 +142,19 @@ public class UserServiceImpl implements UserService {
         passwordEncoderService.encode(userChangePasswordRequest.getNewPassword());
     UserDto changedPasswordDto = userDto.withEncryptedPassword(encryptedNewPassword);
     userRepository.save(modelMapper.map(changedPasswordDto, UserEntity.class));
+  }
+
+  @Override
+  public void disableUser(UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    // TODO Exceptions
+    if (!userDto.getVerified()) {
+      throw new RuntimeException();
+    }
+    if (!userDto.getEnabled() && userDto.getDeletedOn() != null) {
+      throw new UserAlreadyDisabledException();
+    }
+    UserDto disabledUserDto = userDto.withEnabled(false).withDeletedOn(LocalDateTime.now());
+    userRepository.save(modelMapper.map(disabledUserDto, UserEntity.class));
   }
 }

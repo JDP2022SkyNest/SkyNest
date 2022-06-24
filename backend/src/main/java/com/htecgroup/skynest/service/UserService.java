@@ -30,4 +30,6 @@ public interface UserService {
   void authorizeAccessForChangePassword(UUID uuid);
 
   UserDto findUserById(UUID uuid);
+
+  void disableUser(UUID uuid);
 }
