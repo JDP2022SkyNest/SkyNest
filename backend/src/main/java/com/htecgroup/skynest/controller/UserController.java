@@ -352,4 +352,11 @@ public class UserController {
     log.info("User with id {} successfully changed their password", uuid);
     return ResponseEntity.ok(true);
   }
+
+  @PutMapping("/enable")
+  public ResponseEntity<Boolean> enableUser(@PathVariable UUID uuid) {
+    userService.authorizeAccessToUserDetailsWith(uuid);
+    userService.enableUser(uuid);
+    return ResponseEntity.ok(true);
+  }
 }

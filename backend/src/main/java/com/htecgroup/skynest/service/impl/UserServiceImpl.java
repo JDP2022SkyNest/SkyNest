@@ -141,4 +141,14 @@ public class UserServiceImpl implements UserService {
     UserDto changedPasswordDto = userDto.withEncryptedPassword(encryptedNewPassword);
     userRepository.save(modelMapper.map(changedPasswordDto, UserEntity.class));
   }
+
+  @Override
+  public void enableUser(UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    if (userDto.getEnabled() && userDto.getDeletedOn() == null) {
+      return;
+    }
+    UserDto enabledUserDto = userDto.withEnabled(true).withDeletedOn(null);
+    userRepository.save(modelMapper.map(enabledUserDto, UserEntity.class));
+  }
 }
