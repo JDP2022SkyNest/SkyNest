@@ -37,7 +37,9 @@ public class RefreshController {
               @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Password reset email sent")})
+                  examples = {
+                    @ExampleObject(value = "New Access Token successfully created and sent")
+                  })
             }),
         @ApiResponse(
             responseCode = "403",
