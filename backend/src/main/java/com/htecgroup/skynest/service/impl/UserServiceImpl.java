@@ -2,6 +2,8 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
+import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
+import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -9,16 +11,17 @@ import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
   private UserRepository userRepository;
   private RoleService roleService;
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private PasswordEncoderService passwordEncoderService;
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
 
@@ -50,7 +53,7 @@ public class UserServiceImpl implements UserService {
     RoleDto roleDto = roleService.findByName(roleName);
     userDto.setRole(roleDto);
 
-    userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+    userDto.setEncryptedPassword(passwordEncoderService.encode(userDto.getPassword()));
     userDto.setVerified(false);
     userDto.setEnabled(false);
     userDto.setName(userDto.getName().trim());
@@ -72,9 +75,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse getUser(UUID uuid) {
-    UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
-
-    return modelMapper.map(userEntity, UserResponse.class);
+    UserDto userDto = findUserById(uuid);
+    return modelMapper.map(userDto, UserResponse.class);
   }
 
   @Override
@@ -110,5 +112,33 @@ public class UserServiceImpl implements UserService {
     if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
       throw new ForbiddenForWorkerException();
     }
+  }
+
+  public void authorizeAccessForChangePassword(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    if (!(loggedUserUuid.equals(uuid))) {
+      throw new PasswordChangeForbiddenException();
+    }
+  }
+
+  @Override
+  public UserDto findUserById(UUID uuid) {
+    UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
+    return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    if (!passwordEncoderService.matches(
+        userChangePasswordRequest.getCurrentPassword(), userDto.getEncryptedPassword())) {
+      throw new WrongPasswordException();
+    }
+    String encryptedNewPassword =
+        passwordEncoderService.encode(userChangePasswordRequest.getNewPassword());
+    UserDto changedPasswordDto = userDto.withEncryptedPassword(encryptedNewPassword);
+    userRepository.save(modelMapper.map(changedPasswordDto, UserEntity.class));
   }
 }
