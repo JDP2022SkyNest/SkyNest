@@ -31,6 +31,7 @@ public class UserEntity implements Serializable {
   private String surname;
   private String address;
   private String phoneNumber;
+  private String positionInCompany;
   @With private Boolean verified;
   @With private Boolean enabled;
 
