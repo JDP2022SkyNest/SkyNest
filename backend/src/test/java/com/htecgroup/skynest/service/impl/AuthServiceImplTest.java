@@ -1,8 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.register.UserAlreadyVerifiedException;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
@@ -79,12 +78,13 @@ public class AuthServiceImplTest {
   @Test
   void verifyUser_UserAlreadyVerified() {
     UserDto verifiedUserDto = UserDtoUtil.getVerified();
-    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
+    String expectedErrorMessage = new UserAlreadyVerifiedException().getMessage();
 
     doReturn(true).when(authService).isActive(anyString());
 
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> authService.verifyUser(verifiedUserDto));
+        Assertions.assertThrows(
+            UserAlreadyVerifiedException.class, () -> authService.verifyUser(verifiedUserDto));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -109,10 +109,11 @@ public class AuthServiceImplTest {
   void when_VerifiedUser_sendVerificationEmail_ShouldThrowUserExceptionAlreadyRegistered() {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserByEmail(anyString());
-    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
+    String expectedErrorMessage = new UserAlreadyVerifiedException().getMessage();
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class, () -> authService.sendVerificationEmail(userDto.getEmail()));
+            UserAlreadyVerifiedException.class,
+            () -> authService.sendVerificationEmail(userDto.getEmail()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }

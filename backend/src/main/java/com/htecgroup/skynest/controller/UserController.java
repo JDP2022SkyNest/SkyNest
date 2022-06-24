@@ -102,21 +102,6 @@ public class UserController {
                   })
             }),
         @ApiResponse(
-            responseCode = "404",
-            description = "User not found",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"User not found\"],"
-                                + " \"status\": \"404\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
-                  })
-            }),
-        @ApiResponse(
             responseCode = "403",
             description = "Unauthorized request",
             content = {
@@ -128,6 +113,21 @@ public class UserController {
                         value =
                             "{\"messages\":[\"Access denied\"],"
                                 + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User not found\"],"
+                                + " \"status\": \"404\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
@@ -172,6 +172,21 @@ public class UserController {
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
                                 + "  \"roleName\": \"role_worker\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
         @ApiResponse(
@@ -223,6 +238,21 @@ public class UserController {
                   schema = @Schema(implementation = String.class),
                   examples = {
                     @ExampleObject(value = "User was successfully deleted from database")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
         @ApiResponse(

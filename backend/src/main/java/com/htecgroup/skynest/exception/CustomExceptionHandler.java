@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Slf4j
-public class UserExceptionHandler {
+public class CustomExceptionHandler {
 
-  @ExceptionHandler(value = {UserException.class})
-  public ResponseEntity<ErrorMessage> handleUserException(UserException ex, WebRequest webRequest) {
-    log.error("Handle UserException. Error: {}", ex.getMessage());
+  @ExceptionHandler(value = {SkyNestBaseException.class})
+  public ResponseEntity<ErrorMessage> handleUserException(
+      SkyNestBaseException ex, WebRequest webRequest) {
+    log.error("Handle CustomException. Error: {}", ex.getMessage());
     ErrorMessage errorMessage =
         new ErrorMessage(
             ex.getMessage(), ex.getStatus().value(), DateTimeUtil.currentTimeFormatted());
