@@ -8,10 +8,9 @@ import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,8 +20,6 @@ import java.util.UUID;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
   private UserService userService;
-  private InvalidJwtServiceImpl invalidJwtService;
-  private ModelMapper modelMapper;
 
   @Override
   public String refreshToken(String refreshToken) {
@@ -31,8 +28,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String refresh_token = refreshToken.replace(JwtUtils.TOKEN_PREFIX, "");
         String username = JwtUtils.getUsernameFromRefreshToken(refresh_token);
         UserDto userDto = userService.findUserByEmail(username);
-        List<String> authorities = new ArrayList<>();
-        authorities.add(userDto.getRole().getName());
+        List<String> authorities = Collections.singletonList((userDto.getRole().getName()));
 
         UUID id = userDto.getId();
 
