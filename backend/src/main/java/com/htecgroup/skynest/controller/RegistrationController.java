@@ -137,6 +137,24 @@ public class RegistrationController {
                   examples = {@ExampleObject(value = "User verified successfully")})
             }),
         @ApiResponse(
+            responseCode = "401",
+            description = "Invalid email verification token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Invalid email verification token")})
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User is already verified",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "User is already verified")})
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Email confirmation failed",
             content = {
@@ -170,6 +188,15 @@ public class RegistrationController {
                   examples = {@ExampleObject(value = "Email resent successfully")})
             }),
         @ApiResponse(
+            responseCode = "409",
+            description = "User is already verified",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "User is already verified")})
+            }),
+        @ApiResponse(
             responseCode = "500",
             description =
                 "User already registered, not a valid email address or failed to resend email",
@@ -201,22 +228,22 @@ public class RegistrationController {
                   examples = {@ExampleObject(value = "Password reset email sent")})
             }),
         @ApiResponse(
-            responseCode = "400",
-            description = "Email does not exist",
+            responseCode = "401",
+            description = "Invalid password reset token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Invalid password reset token")})
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "This email is not in use",
             content = {
               @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = String.class),
                   examples = {@ExampleObject(value = "This email is not in use")})
-            }),
-        @ApiResponse(
-            responseCode = "403",
-            description = "Access denied",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Access token is invalid")})
             }),
         @ApiResponse(
             responseCode = "500",
@@ -249,13 +276,13 @@ public class RegistrationController {
                   examples = {@ExampleObject(value = "Password was successfully reset")})
             }),
         @ApiResponse(
-            responseCode = "403",
-            description = "Access denied",
+            responseCode = "404",
+            description = "This email is not in use",
             content = {
               @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Access token is invalid")})
+                  examples = {@ExampleObject(value = "This email is not in use")})
             }),
         @ApiResponse(
             responseCode = "500",

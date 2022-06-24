@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.jwt.MissingRefreshToken;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.service.RefreshTokenService;
@@ -44,7 +43,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         log.error(exception.getMessage(), exception);
       }
     } else {
-      throw new UserException(UserExceptionType.REFRESH_TOKEN_IS_MISSING);
+      throw new MissingRefreshToken();
     }
     return null;
   }
