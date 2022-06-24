@@ -4,7 +4,6 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
-import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
@@ -148,7 +147,7 @@ public class UserServiceImpl implements UserService {
   public void enableUser(UUID uuid) {
     UserDto userDto = findUserById(uuid);
     if (!userDto.getVerified()) {
-      throw new UserNotVerifiedException();
+      throw new RuntimeException();
     }
     if (userDto.getEnabled() && userDto.getDeletedOn() == null) {
       throw new UserAlreadyEnabledException();
