@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public class CustomException extends RuntimeException {
+public class SkyNestBaseException extends RuntimeException {
 
   private final String message;
   private final HttpStatus status;

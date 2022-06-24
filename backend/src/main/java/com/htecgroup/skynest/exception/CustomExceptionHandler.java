@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomExceptionHandler {
 
-  @ExceptionHandler(value = {CustomException.class})
+  @ExceptionHandler(value = {SkyNestBaseException.class})
   public ResponseEntity<ErrorMessage> handleUserException(
-      CustomException ex, WebRequest webRequest) {
+      SkyNestBaseException ex, WebRequest webRequest) {
     log.error("Handle CustomException. Error: {}", ex.getMessage());
     ErrorMessage errorMessage =
         new ErrorMessage(
