@@ -2,7 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
-import com.htecgroup.skynest.exception.auth.UnableToChangeOtherUserPasswordException;
+import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
 import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
     if (!(loggedUserUuid.equals(uuid))) {
-      throw new UnableToChangeOtherUserPasswordException();
+      throw new PasswordChangeForbiddenException();
     }
   }
 
