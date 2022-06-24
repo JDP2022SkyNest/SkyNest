@@ -220,7 +220,7 @@ class UserServiceImplTest {
 
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntityThatShouldBeEdited));
     when(userRepository.save(any())).thenReturn(userEntityThatShouldBeEdited);
-    UserResponse userResponse = userService.editUser(editedUser, UUID.randomUUID());
+    UserResponse userResponse = userService.editUser(UUID.randomUUID(), editedUser);
 
     this.assertUserEntityAndUserResponse(userEntityThatShouldBeEdited, userResponse);
   }

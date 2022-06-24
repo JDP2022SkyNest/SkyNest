@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,5 +43,19 @@ public class UserExceptionHandler {
             errors, HttpStatus.BAD_REQUEST.value(), DateTimeUtil.currentTimeFormatted());
     log.error("Handle MethodArgumentNotValidException. Error: {}", ex.getMessage());
     return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(value = {ConstraintViolationException.class})
+  public ResponseEntity<ErrorMessage> handleConstraintViolationException(
+      ConstraintViolationException ex) {
+
+    List<String> errors =
+        ex.getConstraintViolations().stream()
+            .map(error -> error.getMessage())
+            .collect(Collectors.toList());
+    ErrorMessage errorMessage =
+        new ErrorMessage(errors, HttpStatus.FORBIDDEN.value(), DateTimeUtil.currentTimeFormatted());
+    log.error("Handle MethodArgumentNotValidException. Error: {}", ex.getMessage());
+    return new ResponseEntity<>(errorMessage, HttpStatus.FORBIDDEN);
   }
 }

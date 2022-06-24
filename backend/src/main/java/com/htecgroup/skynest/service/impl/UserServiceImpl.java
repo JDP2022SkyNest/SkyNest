@@ -1,5 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
+import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -19,12 +21,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void deleteUser(UUID uuid) {
+  public void deleteUser(@Valid @CurrentUserCanEdit UUID uuid) {
     if (!userRepository.existsById(uuid)) {
       throw new UserException(
           String.format("User with id %s doesn't exist", uuid), HttpStatus.NOT_FOUND);
@@ -71,7 +76,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse getUser(UUID uuid) {
+  public UserResponse getUser(@Valid @CurrentUserCanView UUID uuid) {
 
     UserEntity userEntity =
         userRepository
@@ -82,7 +87,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse editUser(UserEditRequest userEditRequest, UUID uuid) {
+  public UserResponse editUser(
+      @Valid @CurrentUserCanEdit UUID uuid, UserEditRequest userEditRequest) {
     UserEntity userEntity =
         userRepository
             .findById(uuid)
