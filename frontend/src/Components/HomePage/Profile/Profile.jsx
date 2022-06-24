@@ -7,15 +7,28 @@ import { useNavigate } from "react-router-dom";
 import ROUTES from "../../Routes/ROUTES";
 import ROLE from "..//../Roles/Roles";
 import "./Profile.css";
+{
+   /*import { getUserData } from "../../ReusableComponents/ReusableFunctions";
+import { onPasswordChange } from "../../ReusableComponents/ReusableFunctions";*/
+}
 
 const Profile = ({ setAccessToken, userRole }) => {
    const accessToken = localStorage.accessToken;
    const [show, setShow] = useState(false);
+   const [oldPw, setOldPw] = useState("");
+   const [newPassword, setNewPassword] = useState("");
+   const [confirmPw, setConfirmPw] = useState("");
 
    const navigate = useNavigate();
 
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
+
+   {
+      /*  const onFormSubmitPw = (e) => {
+      e.preventDefault();
+ onPasswordChange(userID, oldPw, password, confirmPw, accessToken);*/
+   }
 
    return (
       <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" variant="secondary" menuVariant="dark">
@@ -42,22 +55,20 @@ const Profile = ({ setAccessToken, userRole }) => {
                   <Form>
                      <Form.Group className="mb-3" controlId="ControlInput1">
                         <Form.Label>Please Enter your current Password:*</Form.Label>
-                        <Form.Control type="email" placeholder="Password" autoFocus />
+                        <Form.Control value={oldPw} onChange={(e) => setOldPw(e.target.value)} type="password" placeholder="Password" autoFocus />
                      </Form.Group>
                      <Form.Group className="mb-3" controlId="ControlInput2">
                         <Form.Label>New Password:*</Form.Label>
-                        <Form.Control type="email" autoFocus />
+                        <Form.Control value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" autoFocus />
                      </Form.Group>
                      <Form.Group className="mb-3" controlId="ControlInput3">
                         <Form.Label>Re-enter New Password:*</Form.Label>
-                        <Form.Control type="email" autoFocus />
+                        <Form.Control value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} type="password" autoFocus />
                      </Form.Group>
                   </Form>
                </Modal.Body>
                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleClose}>
-                     Save Changes
-                  </Button>
+                  <Button variant="secondary">Save Changes</Button>
                </Modal.Footer>
             </Modal>
             <Dropdown.Divider />
