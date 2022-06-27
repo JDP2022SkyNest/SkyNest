@@ -4,7 +4,6 @@ import { Accordion } from "react-bootstrap";
 
 const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change, userID }) => {
    const [youSure, setYouSure] = useState(false);
-
    const userRoleName = elem.roleName.slice(5);
 
    return (
@@ -21,6 +20,7 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
                {userRoleName}
             </span>
             <span className="badge bg-primary ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
+            {!elem.verified && <span className="badge badge-color text-danger ml-1 py-1 users-badge-align rounded-pill">Unverified</span>}
          </Accordion.Header>
          <Accordion.Body>
             <p>
