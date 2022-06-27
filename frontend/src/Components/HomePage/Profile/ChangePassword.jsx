@@ -32,7 +32,10 @@ const ChangePassword = ({ userID }) => {
             }
          );
          setErrorMsg("");
-         setSuccessMsg("Successfully changes");
+         setSuccessMsg("Successfully changed");
+         setTimeout(() => {
+            setShow(false);
+         }, 1000);
       } catch (err) {
          setErrorMsg(err.response.data.messages);
          console.log(err.response.status);
@@ -61,6 +64,7 @@ const ChangePassword = ({ userID }) => {
                         type="password"
                         placeholder="Password"
                         autoFocus
+                        required
                      />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="ControlInput1">
@@ -71,6 +75,7 @@ const ChangePassword = ({ userID }) => {
                         type="password"
                         placeholder="Password"
                         autoFocus
+                        required
                      />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="ControlInput1">
@@ -81,6 +86,7 @@ const ChangePassword = ({ userID }) => {
                         type="password"
                         placeholder="Password"
                         autoFocus
+                        required
                      />
                   </Form.Group>
                   {PasswordRequirements(newPassword, confirmNewPw)}
