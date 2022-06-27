@@ -1,5 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.model.entity.BucketEntity;
+import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.utils.UserEntityUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BucketServiceImplTest {
 
+
   @Test
   void listAllBuckets() {
     List<BucketEntity> bucketEntityList = new ArrayList<>();
@@ -25,6 +28,5 @@ class BucketServiceImplTest {
     List<BucketResponse> actualResponse = bucketService.listAllUsers();
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
-    this.assertUserEntityAndUserResponse(expectedResponse.get(0), actualResponse.get(0));
   }
 }

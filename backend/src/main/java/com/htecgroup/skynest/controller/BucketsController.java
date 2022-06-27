@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.BucketService;
 import io.swagger.v3.oas.annotations.Operation;
