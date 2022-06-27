@@ -70,10 +70,15 @@ export const editUserData = async (accessToken, id, payload, success, error, fun
             headers: { Authorization: accessToken },
          }
       );
+      error("");
       success("Profile Updated");
    } catch (err) {
-      console.error(err);
-      error("Failed to update profile");
+      success("");
+      if (err.response.status === 400) {
+         error("Fields can't be empty");
+      } else {
+         error(err.response.data.messages);
+      }
    }
    func();
 };
