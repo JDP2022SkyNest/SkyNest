@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UrlUtil {
   public static final String USERS_CONTROLLER_URL = "/users";
+  public static final String COMPANY_CONTROLLER_URL = "/companies";
   public static final String PUBLIC_CONTROLLER_URL = "/public";
   public static final String LOG_IN_URL = "/login";
   public static final String REGISTER_URL = "/register";
