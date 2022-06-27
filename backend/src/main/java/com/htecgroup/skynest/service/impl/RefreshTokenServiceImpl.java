@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.jwt.MissingRefreshToken;
+import com.htecgroup.skynest.exception.jwt.RefreshTokenIsInvalid;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.service.RefreshTokenService;
@@ -41,6 +42,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     } else {
       throw new MissingRefreshToken();
     }
-    return null;
+    throw new RefreshTokenIsInvalid();
   }
 }
