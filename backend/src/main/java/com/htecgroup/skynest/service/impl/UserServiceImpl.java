@@ -9,6 +9,7 @@ import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
@@ -16,10 +17,8 @@ import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.PasswordEncoderService;
-import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.service.UserService;
+import com.htecgroup.skynest.service.*;
+import com.htecgroup.skynest.util.EmailUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,8 @@ public class UserServiceImpl implements UserService {
   private PasswordEncoderService passwordEncoderService;
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
+
+  private EmailService emailService;
 
   @Override
   public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
@@ -140,5 +141,8 @@ public class UserServiceImpl implements UserService {
         passwordEncoderService.encode(userChangePasswordRequest.getNewPassword());
     UserDto changedPasswordDto = userDto.withEncryptedPassword(encryptedNewPassword);
     userRepository.save(modelMapper.map(changedPasswordDto, UserEntity.class));
+
+    Email email = EmailUtil.createPasswordChangeNotificationEmail(changedPasswordDto);
+    emailService.send(email);
   }
 }
