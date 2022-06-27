@@ -38,10 +38,9 @@ services:
     image: mongo:latest
     restart: unless-stopped
     ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      - $FILE_DB_PORT_HOST:$FILE_DB_PORT_CONTAINER
+    env_file:
+      - ./file_db.env
     volumes:
       - ./.db_data/mongo:/data/db
 
