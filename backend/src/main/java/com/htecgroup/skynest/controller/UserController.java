@@ -352,4 +352,12 @@ public class UserController {
     log.info("User with id {} successfully changed their password", uuid);
     return ResponseEntity.ok(true);
   }
+
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
+  @PutMapping("/{userId}/promote")
+  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID userId) {
+    userService.promoteUser(userId);
+    log.info("User with id {} was successfully promoted to manager", userId);
+    return ResponseEntity.ok(true);
+  }
 }

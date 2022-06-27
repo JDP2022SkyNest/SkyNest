@@ -4,9 +4,11 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.AuthException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
+import com.htecgroup.skynest.exception.role.UserNotWorkerException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
@@ -14,15 +16,13 @@ import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
-import com.htecgroup.skynest.utils.UserEditRequestUtil;
-import com.htecgroup.skynest.utils.UserEntityUtil;
-import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
+import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
@@ -209,6 +209,27 @@ class UserServiceImplTest {
     UserResponse userResponse = userService.editUser(editedUser, UUID.randomUUID());
 
     this.assertUserEntityAndUserResponse(userEntityThatShouldBeEdited, userResponse);
+  }
+
+  @Test
+  void when_NotWorkerUser_promoteUser_ShouldThrowUserNotWorker() {
+    UserDto userDto = UserDtoUtil.getNotWorker();
+    doReturn(userDto).when(userService).findUserById(any());
+    String expectedErrorMessage = UserNotWorkerException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(UserNotWorkerException.class, () -> userService.promoteUser(any()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_WorkerUser_promoteUser_ShouldPromoteUser() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    UUID roleId = UUID.randomUUID();
+    when(roleService.findByName(anyString()))
+        .thenReturn(new RoleDto(roleId, RoleEntity.ROLE_MANAGER));
+    userService.promoteUser(any());
+    Mockito.verify(userRepository).save(any());
   }
 
   private void assertUserEntityAndUserResponse(

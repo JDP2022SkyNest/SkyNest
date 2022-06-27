@@ -25,6 +25,6 @@ public class UserDto {
   private String phoneNumber;
   @With private Boolean verified;
   @With private Boolean enabled;
-  private RoleDto role;
+  @With private RoleDto role;
   private CompanyDto company;
 }
