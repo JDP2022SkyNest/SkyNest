@@ -16,8 +16,6 @@ const Profile = ({ setAccessToken, userRole }) => {
    const accessToken = localStorage.accessToken;
    const [show, setShow] = useState(false);
    const [oldPw, setOldPw] = useState("");
-   const [newPassword, setNewPassword] = useState("");
-   const [confirmPw, setConfirmPw] = useState("");
 
    const navigate = useNavigate();
 
@@ -57,18 +55,10 @@ const Profile = ({ setAccessToken, userRole }) => {
                         <Form.Label>Please Enter your current Password:*</Form.Label>
                         <Form.Control value={oldPw} onChange={(e) => setOldPw(e.target.value)} type="password" placeholder="Password" autoFocus />
                      </Form.Group>
-                     <Form.Group className="mb-3" controlId="ControlInput2">
-                        <Form.Label>New Password:*</Form.Label>
-                        <Form.Control value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" autoFocus />
-                     </Form.Group>
-                     <Form.Group className="mb-3" controlId="ControlInput3">
-                        <Form.Label>Re-enter New Password:*</Form.Label>
-                        <Form.Control value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} type="password" autoFocus />
-                     </Form.Group>
                   </Form>
                </Modal.Body>
                <Modal.Footer>
-                  <Button variant="secondary">Save Changes</Button>
+                  <Button variant="secondary">Confirm</Button>
                </Modal.Footer>
             </Modal>
             <Dropdown.Divider />
