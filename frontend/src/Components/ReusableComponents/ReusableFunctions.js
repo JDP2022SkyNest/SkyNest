@@ -37,7 +37,6 @@ export const getPersonalData = async (userID, accessToken, stateToChange, error)
       });
       stateToChange(response.data);
    } catch (err) {
-      console.log(err);
       error("Token Expired");
    }
 };
@@ -55,6 +54,28 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
          messageToShow(err.data.messages);
       }
    }
+};
+
+export const editUserData = async (accessToken, id, payload, success, error, func) => {
+   try {
+      await AxiosInstance.put(
+         `/users/${id}`,
+         {
+            name: payload.name,
+            surname: payload.surname,
+            phoneNumber: payload.phoneNumber,
+            address: payload.address,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Profile Updated");
+   } catch (err) {
+      console.error(err);
+      error("Failed to update profile");
+   }
+   func();
 };
 
 export const deleteUser = async (accessToken, id) => {
