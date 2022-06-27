@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as AiIcons from "react-icons/ai";
 import * as CgIcons from "react-icons/cg";
+import { onPasswordChange } from "../../ReusableComponents/ReusableFunctions";
 import { DropdownButton, Dropdown, Modal, Form, Button } from "react-bootstrap";
 import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
@@ -9,13 +10,15 @@ import ROLE from "..//../Roles/Roles";
 import "./Profile.css";
 {
    /*import { getUserData } from "../../ReusableComponents/ReusableFunctions";
-import { onPasswordChange } from "../../ReusableComponents/ReusableFunctions";*/
+    */
 }
 
 const Profile = ({ setAccessToken, userRole }) => {
    const accessToken = localStorage.accessToken;
    const [show, setShow] = useState(false);
    const [oldPw, setOldPw] = useState("");
+   const [newPw, setNewPw] = useState("");
+   const [confirmNewPw, setconfirmNewPw] = useState("");
 
    const navigate = useNavigate();
 
@@ -54,6 +57,20 @@ const Profile = ({ setAccessToken, userRole }) => {
                      <Form.Group className="mb-3" controlId="ControlInput1">
                         <Form.Label>Please Enter your current Password:*</Form.Label>
                         <Form.Control value={oldPw} onChange={(e) => setOldPw(e.target.value)} type="password" placeholder="Password" autoFocus />
+                     </Form.Group>
+                     <Form.Group className="mb-3" controlId="ControlInput1">
+                        <Form.Label>Please Enter new Password:*</Form.Label>
+                        <Form.Control value={oldPw} onChange={(e) => setNewPw(e.target.value)} type="password" placeholder="Password" autoFocus />
+                     </Form.Group>
+                     <Form.Group className="mb-3" controlId="ControlInput1">
+                        <Form.Label>Confirm new Password:*</Form.Label>
+                        <Form.Control
+                           value={oldPw}
+                           onChange={(e) => setconfirmNewPw(e.target.value)}
+                           type="password"
+                           placeholder="Password"
+                           autoFocus
+                        />
                      </Form.Group>
                   </Form>
                </Modal.Body>

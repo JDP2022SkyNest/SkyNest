@@ -104,14 +104,13 @@ export const onUserLogout = async (accessToken, stateToChange) => {
    stateToChange("");
 };
 
-export const onPasswordChange = async (uuid, oldPassword, currentPassword, confirmPassword, accessToken) => {
+export const onPasswordChange = async (uuid, currentPassword, newPassword, accessToken) => {
    try {
       let response = await AxiosInstance.put(
          `/users/password-change/${uuid}`,
          {
-            oldPassword,
             currentPassword,
-            confirmPassword,
+            newPassword,
          },
          {
             headers: {
