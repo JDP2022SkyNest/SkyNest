@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service;
 
+import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
 import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -19,7 +20,7 @@ public interface UserService {
 
   List<UserResponse> listAllUsers();
 
-  void deleteUser(@Valid @CurrentUserCanEdit UUID uuid);
+  void deleteUser(@Valid @CurrentUserCanDelete UUID uuid);
 
   UserResponse getUser(@Valid @CurrentUserCanView UUID uuid);
 

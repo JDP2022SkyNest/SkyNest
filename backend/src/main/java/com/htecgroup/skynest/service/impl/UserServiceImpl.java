@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
 import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserException;
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void deleteUser(@Valid @CurrentUserCanEdit UUID uuid) {
+  public void deleteUser(@Valid @CurrentUserCanDelete UUID uuid) {
     if (!userRepository.existsById(uuid)) {
       throw new UserException(
           String.format("User with id %s doesn't exist", uuid), HttpStatus.NOT_FOUND);
