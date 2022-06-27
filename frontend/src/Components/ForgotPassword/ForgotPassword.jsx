@@ -31,9 +31,9 @@ const ForgotPassword = () => {
          setSuccessMsg("Email has been sent");
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
-         if (err.response.status === 400) {
+         if (err.response.status === 404) {
             setErrorMsg("Email not found");
-         } else if (err.response.status === 403) {
+         } else if (err.response.status === 401) {
             setErrorMsg("You're not authoraized");
          } else if (err.response.status === 500) {
             setErrorMsg("Failed to send email");

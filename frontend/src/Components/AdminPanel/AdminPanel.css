@@ -19,3 +19,7 @@
    position: relative;
    top: 1px;
 }
+
+.badge-color {
+   background-color: rgb(223, 223, 223);
+}
