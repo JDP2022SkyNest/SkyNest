@@ -1,21 +1,21 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.register.UserAlreadyVerifiedException;
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.EmailService;
 import com.htecgroup.skynest.service.UserService;
+import com.htecgroup.skynest.util.EmailUtil;
 import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.utils.UserDtoUtil;
 import com.htecgroup.skynest.utils.UserEntityUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,8 +24,7 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceImplTest {
@@ -33,6 +32,7 @@ public class AuthServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
   @Mock private UserService userService;
+  @Mock private EmailService emailService;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private AuthServiceImpl authService;
 
@@ -78,12 +78,13 @@ public class AuthServiceImplTest {
   @Test
   void verifyUser_UserAlreadyVerified() {
     UserDto verifiedUserDto = UserDtoUtil.getVerified();
-    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
+    String expectedErrorMessage = new UserAlreadyVerifiedException().getMessage();
 
     doReturn(true).when(authService).isActive(anyString());
 
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> authService.verifyUser(verifiedUserDto));
+        Assertions.assertThrows(
+            UserAlreadyVerifiedException.class, () -> authService.verifyUser(verifiedUserDto));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -102,5 +103,54 @@ public class AuthServiceImplTest {
     doReturn(deletedUserDto).when(userService).findUserByEmail(anyString());
     boolean returnedValue = authService.isActive(deletedUserDto.getEmail());
     Assertions.assertFalse(returnedValue);
+  }
+
+  @Test
+  void when_VerifiedUser_sendVerificationEmail_ShouldThrowUserExceptionAlreadyRegistered() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserByEmail(anyString());
+    String expectedErrorMessage = new UserAlreadyVerifiedException().getMessage();
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserAlreadyVerifiedException.class,
+            () -> authService.sendVerificationEmail(userDto.getEmail()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_NotVerifiedUser_sendVerificationEmail_ShouldInvokeEmailSendMethod() {
+    UserDto userDto = UserDtoUtil.getNotVerified();
+    doReturn(userDto).when(userService).findUserByEmail(anyString());
+    try (MockedStatic<JwtUtils> utilities = Mockito.mockStatic(JwtUtils.class)) {
+      utilities
+          .when(() -> JwtUtils.generateEmailVerificationToken(anyString()))
+          .thenReturn("TOKEN");
+
+      try (MockedStatic<EmailUtil> emailUtilities = Mockito.mockStatic(EmailUtil.class)) {
+        emailUtilities
+            .when(() -> EmailUtil.createVerificationEmail(any(), anyString()))
+            .thenReturn(mock(Email.class));
+        authService.sendVerificationEmail(userDto.getEmail());
+        verify(emailService).send(any());
+      }
+    }
+  }
+
+  @Test
+  void when_EverythingFine_sendVerificationEmail_ShouldInvokeEmailSendMethod() {
+    UserDto userDto = UserDtoUtil.getNotVerified();
+    doReturn(userDto).when(userService).findUserByEmail(anyString());
+    try (MockedStatic<JwtUtils> utilities = Mockito.mockStatic(JwtUtils.class)) {
+      utilities.when(() -> JwtUtils.generatePasswordResetToken(anyString())).thenReturn("TOKEN");
+
+      try (MockedStatic<EmailUtil> emailUtilities = Mockito.mockStatic(EmailUtil.class)) {
+        emailUtilities
+            .when(() -> EmailUtil.createPasswordResetEmail(any(), anyString()))
+            .thenReturn(mock(Email.class));
+        authService.sendPasswordResetEmail(userDto.getEmail());
+        verify(emailService).send(any());
+      }
+    }
   }
 }

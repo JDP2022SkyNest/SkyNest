@@ -3,12 +3,17 @@ import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 import * as IoIcons from "react-icons/io";
 import * as BiIcons from "react-icons/bi";
+import ROLE from "..//../Roles/Roles";
 import "./SideBar.css";
 import Logo from "./assets/logoblackandwhite.svg";
 
-const SideBar = ({ sidebar }) => {
+const SideBar = ({ sidebar, userRole }) => {
    return (
-      <div className={sidebar ? "side-bar side-bar-open" : "side-bar"}>
+      <div
+         className={`${sidebar && userRole === ROLE.ADMIN ? "side-bar side-bar-admin side-bar-open" : "side-bar"} ${
+            sidebar && userRole === ROLE.WORKER ? "side-bar side-bar-open" : "side-bar"
+         }`}
+      >
          <li>
             <AiIcons.AiFillHome />
             Home
@@ -29,7 +34,7 @@ const SideBar = ({ sidebar }) => {
             <FaIcons.FaEnvelopeOpenText />
             Placeholder
          </li>
-         <img src={Logo} alt="logo" className="logo-sidebar" />
+         <img src={Logo} alt="logo" className={userRole === ROLE.ADMIN ? `logo-sidebar-admin` : "logo-sidebar"} />
       </div>
    );
 };

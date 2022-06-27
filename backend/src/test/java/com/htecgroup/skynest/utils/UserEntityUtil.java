@@ -18,6 +18,7 @@ public class UserEntityUtil extends BasicUtil {
         surname,
         address,
         phoneNumber,
+        null,
         false,
         false,
         roleWorkerEntity,

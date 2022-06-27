@@ -31,10 +31,8 @@ const ForgotPassword = () => {
          setSuccessMsg("Email has been sent");
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
-         if (err.response.status === 500) {
+         if (err.response.status === 409) {
             setErrorMsg("User already verified");
-         } else if (err.response.status === 404) {
-            setErrorMsg("User doesn't exist");
          } else {
             setErrorMsg(err.response.data.messages);
             console.log(err.response.status);

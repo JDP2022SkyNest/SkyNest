@@ -2,9 +2,8 @@ import React from "react";
 import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 
-const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change }) => {
+const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, change, userID }) => {
    const [youSure, setYouSure] = useState(false);
-
    const userRoleName = elem.roleName.slice(5);
 
    return (
@@ -20,6 +19,8 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
             >
                {userRoleName}
             </span>
+            <span className="badge bg-primary ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
+            {!elem.verified && <span className="badge badge-color text-danger ml-1 py-1 users-badge-align rounded-pill">Unverified</span>}
          </Accordion.Header>
          <Accordion.Body>
             <p>
@@ -38,27 +39,29 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
                <span className="font-weight-bold">User ID: </span>
                {elem.id}
             </p>
-            <div className="d-flex justify-content-between">
-               <div>
-                  {/* This button is still a placeholder, functinality will be added */}
-                  <button className="btn btn-info text-white">Promote</button>
-                  <button className="btn btn-primary ml-2">Demote</button>
+            {userRoleName !== "admin" && (
+               <div className="d-flex justify-content-between">
+                  <div>
+                     {/* This button is still a placeholder, functinality will be added */}
+                     <button className="btn btn-info text-white">Promote</button>
+                     <button className="btn btn-primary ml-2">Demote</button>
+                  </div>
+                  <div>
+                     <button
+                        onClick={async () => {
+                           setYouSure(!youSure);
+                           if (youSure) {
+                              await deleteUser(accessToken, elem.id);
+                              setChange(!change);
+                           }
+                        }}
+                        className={`btn btn-${!youSure ? "danger" : "dark"}`}
+                     >
+                        {!youSure ? "Delete" : "You sure?"}
+                     </button>
+                  </div>
                </div>
-               <div>
-                  <button
-                     onClick={async () => {
-                        setYouSure(!youSure);
-                        if (youSure) {
-                           await deleteUser(accessToken, elem.id);
-                           setChange(!change);
-                        }
-                     }}
-                     className={`btn btn-${!youSure ? "danger" : "warning"}`}
-                  >
-                     {!youSure ? "Delete" : "You sure?"}
-                  </button>
-               </div>
-            </div>
+            )}
          </Accordion.Body>
       </Accordion.Item>
    );

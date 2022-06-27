@@ -13,4 +13,6 @@ public class UserResponse {
   private String phoneNumber;
   private String address;
   private String roleName;
+  private Boolean verified;
+  private Boolean enabled;
 }

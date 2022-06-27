@@ -2,7 +2,7 @@
    color: var(--smoke);
 }
 
-.dropdown-menu a:hover{
+.dropdown-menu-worker a:hover{
    background-color: var(--smoke) !important;
    color: var(--mate-black) !important;
 }

@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.UserResponse;
@@ -52,14 +53,33 @@ public class UserController {
                                 + "\"surname\": \"Surname\","
                                 + "\"phoneNumber\": \"38166575757\","
                                 + "\"address\": \"Local address\","
-                                + "\"roleName\": \"role_admin\"},"
+                                + "\"roleName\": \"role_admin\","
+                                + "\"enabled\": \"true\","
+                                + "\"verified\": \"true\"},"
                                 + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
                                 + "\"email\": \"username123@gmail.com\","
                                 + "\"name\": \"Name\","
                                 + "\"surname\": \"Surname\","
                                 + "\"phoneNumber\": \"38166676767\","
                                 + "\"address\": \"Local address\","
-                                + "\"roleName\": \"role_worker\"}]")
+                                + "\"roleName\": \"role_worker\","
+                                + "\"enabled\": \"false\","
+                                + "\"verified\": \"false\"}]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
         @ApiResponse(
@@ -98,12 +118,14 @@ public class UserController {
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
-                                + "  \"roleName\": \"role_worker\"}")
+                                + "  \"roleName\": \"role_worker\","
+                                + "  \"enabled\": \"false\","
+                                + "  \"verified\": \"true\"}")
                   })
             }),
         @ApiResponse(
-            responseCode = "404",
-            description = "User not found",
+            responseCode = "401",
+            description = "Invalid session token",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -111,8 +133,8 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User not found\"],"
-                                + " \"status\": \"404\","
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
@@ -128,6 +150,21 @@ public class UserController {
                         value =
                             "{\"messages\":[\"Access denied\"],"
                                 + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User not found\"],"
+                                + " \"status\": \"404\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
@@ -170,7 +207,24 @@ public class UserController {
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
-                                + "  \"roleName\": \"role_worker\"}")
+                                + "  \"roleName\": \"role_worker\","
+                                + "  \"enabled\": \"false\","
+                                + "  \"verified\": \"true\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
         @ApiResponse(
@@ -239,6 +293,21 @@ public class UserController {
                   })
             }),
         @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "403",
             description = "Unauthorized request",
             content = {
@@ -285,5 +354,75 @@ public class UserController {
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
     return ResponseEntity.ok(deleteSuccess);
+  }
+
+  @Operation(summary = "Change password for user")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Password successfully changed",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Wrong password",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Wrong password\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PreAuthorize(
+      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
+  @PutMapping("/password-change/{uuid}")
+  public ResponseEntity<Boolean> changePassword(
+      @Valid @RequestBody UserChangePasswordRequest userChangePasswordRequest,
+      @PathVariable UUID uuid) {
+    userService.authorizeAccessForChangePassword(uuid);
+    userService.changePassword(userChangePasswordRequest, uuid);
+    log.info("User with id {} successfully changed their password", uuid);
+    return ResponseEntity.ok(true);
   }
 }

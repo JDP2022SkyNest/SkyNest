@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.util.EmailUtil;
 import com.htecgroup.skynest.util.JwtUtils;
@@ -13,7 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.when;
 class EmailServiceImplTest {
 
   @Mock private JavaMailSender javaMailSender;
-  @Mock private TemplateEngine templateEngine;
+  @Mock private ITemplateEngine templateEngine;
 
   @InjectMocks private EmailServiceImpl emailService;
 
@@ -50,8 +51,8 @@ class EmailServiceImplTest {
   @Test
   void sendTest() {
     String emailText = "Email text";
+    when(templateEngine.process(anyString(), any(Context.class))).thenReturn(emailText);
     MimeMessage mimeMessage = mock(MimeMessage.class);
-    when(templateEngine.process(anyString(), any())).thenReturn(emailText);
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
     emailService.send(email);
     Mockito.verify(javaMailSender).send(mimeMessage);
@@ -61,8 +62,8 @@ class EmailServiceImplTest {
   void sendFailsTest() {
     String emailText = "Email text";
     when(templateEngine.process(anyString(), any())).thenReturn(emailText);
-    when(javaMailSender.createMimeMessage()).thenThrow(UserException.class);
-    Assertions.assertThrows(UserException.class, () -> emailService.send(email));
+    when(javaMailSender.createMimeMessage()).thenThrow(UserNotFoundException.class);
+    Assertions.assertThrows(UserNotFoundException.class, () -> emailService.send(email));
   }
 
   @Test

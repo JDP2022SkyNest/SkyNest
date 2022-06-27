@@ -5,21 +5,27 @@ import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.UserNotFoundException;
+import com.htecgroup.skynest.exception.WrongOldPasswordException;
+import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
+import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
+import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
+import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.service.UserService;
+import com.htecgroup.skynest.service.*;
+import com.htecgroup.skynest.util.EmailUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,9 +41,11 @@ public class UserServiceImpl implements UserService {
 
   private UserRepository userRepository;
   private RoleService roleService;
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private PasswordEncoderService passwordEncoderService;
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
+
+  private EmailService emailService;
 
   @Override
   public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
@@ -45,16 +53,16 @@ public class UserServiceImpl implements UserService {
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
     if (userRepository.existsByEmail(userDto.getEmail())) {
-      throw new UserException(UserExceptionType.EMAIL_ALREADY_IN_USE);
+      throw new EmailAlreadyInUseException();
     }
     if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
-      throw new UserException(UserExceptionType.PHONE_NUMBER_ALREADY_IN_USE);
+      throw new PhoneNumberAlreadyInUseException();
     }
     String roleName = RoleEntity.ROLE_WORKER;
     RoleDto roleDto = roleService.findByName(roleName);
     userDto.setRole(roleDto);
 
-    userDto.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+    userDto.setEncryptedPassword(passwordEncoderService.encode(userDto.getPassword()));
     userDto.setVerified(false);
     userDto.setEnabled(false);
     userDto.setName(userDto.getName().trim());
@@ -69,30 +77,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public void deleteUser(@Valid @CurrentUserCanDelete UUID uuid) {
     if (!userRepository.existsById(uuid)) {
-      throw new UserException(
-          String.format("User with id %s doesn't exist", uuid), HttpStatus.NOT_FOUND);
+      throw new UserNotFoundException();
     }
     userRepository.deleteById(uuid);
   }
 
   @Override
   public UserResponse getUser(@Valid @CurrentUserCanView UUID uuid) {
-
-    UserEntity userEntity =
-        userRepository
-            .findById(uuid)
-            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
-
-    return modelMapper.map(userEntity, UserResponse.class);
+    UserDto userDto = findUserById(uuid);
+    return modelMapper.map(userDto, UserResponse.class);
   }
 
   @Override
   public UserResponse editUser(
       @Valid @CurrentUserCanEdit UUID uuid, UserEditRequest userEditRequest) {
-    UserEntity userEntity =
-        userRepository
-            .findById(uuid)
-            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+    UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
     userEditRequest.setName(userEditRequest.getName().trim());
     userEditRequest.setSurname(userEditRequest.getSurname().trim());
     userEditRequest.setAddress(userEditRequest.getAddress().trim());
@@ -104,10 +103,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDto findUserByEmail(String email) {
     UserEntity userEntity =
-        userRepository
-            .findUserByEmail(email)
-            .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
-
+        userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
     return modelMapper.map(userEntity, UserDto.class);
   }
 
@@ -117,5 +113,36 @@ public class UserServiceImpl implements UserService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
+  }
+
+  public void authorizeAccessForChangePassword(UUID uuid) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserUuid = loggedUserDto.getUuid();
+
+    if (!(loggedUserUuid.equals(uuid))) {
+      throw new PasswordChangeForbiddenException();
+    }
+  }
+
+  @Override
+  public UserDto findUserById(UUID uuid) {
+    UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
+    return modelMapper.map(userEntity, UserDto.class);
+  }
+
+  @Override
+  public void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    if (!passwordEncoderService.matches(
+        userChangePasswordRequest.getCurrentPassword(), userDto.getEncryptedPassword())) {
+      throw new WrongOldPasswordException();
+    }
+    String encryptedNewPassword =
+        passwordEncoderService.encode(userChangePasswordRequest.getNewPassword());
+    UserDto changedPasswordDto = userDto.withEncryptedPassword(encryptedNewPassword);
+    userRepository.save(modelMapper.map(changedPasswordDto, UserEntity.class));
+
+    Email email = EmailUtil.createPasswordChangeNotificationEmail(changedPasswordDto);
+    emailService.send(email);
   }
 }

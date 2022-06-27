@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.register.UserAlreadyVerifiedException;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -9,12 +8,12 @@ import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.AuthService;
 import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.EmailUtil;
 import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,14 +24,14 @@ public class AuthServiceImpl implements AuthService {
   private final EmailService emailService;
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
-  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final PasswordEncoderService passwordEncoderService;
 
   @Override
   public void sendVerificationEmail(String emailAddress) {
     UserDto userDto = userService.findUserByEmail(emailAddress);
 
     if (userDto.getVerified()) {
-      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
+      throw new UserAlreadyVerifiedException();
     }
 
     String token = JwtUtils.generateEmailVerificationToken(emailAddress);
@@ -58,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
     UserDto userDto = userService.findUserByEmail(email);
     UserDto userDtoNewPassword =
         userDto.withEncryptedPassword(
-            bCryptPasswordEncoder.encode(userPasswordResetRequest.getPassword()));
+            passwordEncoderService.encode(userPasswordResetRequest.getPassword()));
     userRepository.save(modelMapper.map(userDtoNewPassword, UserEntity.class));
     return "Password was successfully reset";
   }
@@ -67,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
   public String confirmEmail(String token) {
     String email = JwtUtils.getValidatedEmailVerificationTokenContext(token);
     UserDto userDto = userService.findUserByEmail(email);
-    UserDto enabledUser = this.verifyUser(userDto);
+    UserDto enabledUser = verifyUser(userDto);
     userRepository.save(modelMapper.map(enabledUser, UserEntity.class));
     return "User verified successfully";
   }
@@ -81,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public UserDto verifyUser(UserDto userDto) {
     if (isActive(userDto.getEmail())) {
-      throw new UserException(UserExceptionType.USER_ALREADY_REGISTERED);
+      throw new UserAlreadyVerifiedException();
     }
     return userDto.withEnabled(true).withVerified(true);
   }

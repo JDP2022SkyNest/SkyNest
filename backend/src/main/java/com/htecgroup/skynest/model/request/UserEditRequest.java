@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.model.request;
 
+import com.htecgroup.skynest.util.RegexUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ public class UserEditRequest {
 
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 30, message = "length cannot be over 30")
-  @Pattern(regexp = "[\\d]+", message = "format not valid")
+  @Pattern(regexp = RegexUtil.PHONE_NUMBER_FORMAT_REGEX, message = "format not valid")
   private String phoneNumber;
 
   @NotBlank(message = "cannot be null or empty")

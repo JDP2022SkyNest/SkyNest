@@ -1,8 +1,10 @@
 package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.login.EmailNotVerifiedException;
+import com.htecgroup.skynest.exception.login.IOErrorException;
+import com.htecgroup.skynest.exception.login.TooManyAttemptsException;
+import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
@@ -49,10 +51,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       email = userDetails.getUsername();
 
       if (loginAttemptService.hasTooManyAttempts(userDetails.getUsername()))
-        throw new UserException(UserExceptionType.TOO_MANY_LOGIN_ATTEMPTS);
+        throw new TooManyAttemptsException();
 
-      if (!authService.isActive(userDetails.getUsername()))
-        throw new UserException(UserExceptionType.USER_NOT_ACTIVE);
+      if (!authService.isActive(userDetails.getUsername())) throw new EmailNotVerifiedException();
 
       return authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
@@ -60,10 +61,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     } catch (BadCredentialsException ex) {
       loginAttemptService.saveUnsuccessfulAttempt(email);
-      throw new UserException(UserExceptionType.PASSWORDS_DOES_NOT_MATCH);
+      throw new WrongPasswordException();
     } catch (IOException e) {
       log.error("Unable to authenticate, because of Input or Output error", e);
-      throw new UserException(UserExceptionType.INVALID_AUTHENTICATION_FORMAT);
+      throw new IOErrorException();
     }
   }
 
@@ -82,7 +83,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     String token = JwtUtils.generateAccessToken(jwtObject, authorities);
 
+    String refresh_token = JwtUtils.generateRefreshToken(jwtObject, authorities);
+
     response.addHeader(JwtUtils.AUTH_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, token));
+    response.addHeader(
+        JwtUtils.REFRESH_TOKEN_HEADER, String.format("%s%s", JwtUtils.TOKEN_PREFIX, refresh_token));
     log.info("Jwt token successfully created for user: {}", user.getUsername());
 
     log.info("{} is successfully logged in.", user.getUsername());

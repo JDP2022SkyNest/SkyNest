@@ -3,8 +3,8 @@ import "./Footer.css";
 
 const Footer = () => {
    return (
-      <footer class="footer">
-         <div>© 2022 Copyright SkyNest</div>
+      <footer className="footer">
+         <div className="py-2">© 2022 Copyright SkyNest</div>
       </footer>
    );
 };

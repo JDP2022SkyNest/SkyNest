@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.email.NonExistingEmailAddressException;
+import com.htecgroup.skynest.exception.email.SendingEmailFailedException;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.service.EmailService;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
@@ -22,7 +22,7 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
   private JavaMailSender javaMailSender;
-  private TemplateEngine templateEngine;
+  private ITemplateEngine templateEngine;
 
   @Override
   @Async
@@ -42,10 +42,10 @@ public class EmailServiceImpl implements EmailService {
       javaMailSender.send(mimeMessage);
     } catch (AddressException e) {
       log.error("Illegal mail address", e);
-      throw new UserException(UserExceptionType.ILLEGAL_EMAIL);
+      throw new NonExistingEmailAddressException();
     } catch (MessagingException messagingException) {
       log.error("Failed to send email", messagingException);
-      throw new UserException(UserExceptionType.EMAIL_FAILED_TO_SEND);
+      throw new SendingEmailFailedException();
     }
   }
 }
