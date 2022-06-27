@@ -104,26 +104,6 @@ export const onUserLogout = async (accessToken, stateToChange) => {
    stateToChange("");
 };
 
-export const onPasswordChange = async (uuid, currentPassword, newPassword, accessToken) => {
-   try {
-      let response = await AxiosInstance.put(
-         `/users/password-change/${uuid}`,
-         {
-            currentPassword,
-            newPassword,
-         },
-         {
-            headers: {
-               Authorization: { accessToken },
-            },
-         }
-      );
-      console.log(response);
-   } catch (err) {
-      console.log(err);
-   }
-};
-
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
