@@ -1,11 +1,11 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
+import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
-import com.htecgroup.skynest.exception.login.WrongPasswordException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
     UserDto userDto = findUserById(uuid);
     if (!passwordEncoderService.matches(
         userChangePasswordRequest.getCurrentPassword(), userDto.getEncryptedPassword())) {
-      throw new WrongPasswordException();
+      throw new WrongOldPasswordException();
     }
     String encryptedNewPassword =
         passwordEncoderService.encode(userChangePasswordRequest.getNewPassword());
