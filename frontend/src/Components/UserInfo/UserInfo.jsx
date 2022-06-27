@@ -4,35 +4,66 @@ import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
 import SOCIALS from "./UserSocialInfo";
-import { getPersonalData } from "../ReusableComponents/ReusableFunctions";
+import { getPersonalData, editUserData, onUserLogout } from "../ReusableComponents/ReusableFunctions";
 import UserCardDetails from "./UserCardDetails";
-import LoaderAnimation from "../Loader/LoaderAnimation";
 import "./UserInfo.css";
 
-const UserInfo = ({ userID, accessToken }) => {
+const UserInfo = ({ userID, accessToken, setAccessToken }) => {
    const [userData, setUserData] = useState();
+   const [clonedData, setClonedData] = useState();
    const [errorMsg, setErrorMsg] = useState("");
-   const [loading, setLoading] = useState(false);
+   const [successMsg, setSuccessMsg] = useState("");
+   const [edit, setEdit] = useState(false);
 
    const role = userData?.roleName.slice(5).toUpperCase();
 
+   const nameChange = (e) => {
+      setUserData({ ...userData, name: e.target.value });
+   };
+
+   const surnameChange = (e) => {
+      setUserData({ ...userData, surname: e.target.value });
+   };
+
+   const phoneChange = (e) => {
+      setUserData({ ...userData, phoneNumber: e.target.value });
+   };
+
+   const addressChange = (e) => {
+      setUserData({ ...userData, address: e.target.value });
+   };
+
+   const onUserInfoChanged = async () => {
+      await editUserData(accessToken, userData?.id, clonedData, setSuccessMsg, setErrorMsg, refreshTheData);
+      setEdit(false);
+   };
+
+   const refreshTheData = async () => {
+      await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
+   };
+
    useEffect(() => {
-      (async function loading() {
-         if (userID) {
-            setLoading(true);
-            await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
-            setLoading(true);
-         }
-      })();
+      if (userID) {
+         getPersonalData(userID, accessToken, setUserData, setErrorMsg);
+      }
       // eslint-disable-next-line
    }, [userID]);
+
+   useEffect(() => {
+      const clone = Object.assign({}, userData);
+      delete clone.email;
+      delete clone.id;
+      delete clone.roleName;
+      setClonedData(clone);
+   }, [userData]);
 
    return (
       <section>
          <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
-         {loading ? (
-            <div className="container py-5">
-               <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
+         <div className="container py-3">
+            <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
+            <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
+            {userData && (
                <div className="row">
                   <div className="col-lg-4">
                      <div className="card mb-4">
@@ -48,11 +79,23 @@ const UserInfo = ({ userID, accessToken }) => {
                            <p className="text-muted mb-1">Full Stack Developer</p>
                            <p className={`text-${role === "ADMIN" ? "danger" : "mutted"} mb-4`}>{role}</p>
                            <div className="d-flex justify-content-center mb-2">
-                              <button type="button" className={`btn btn-${role === "ADMIN" ? "danger" : "primary"}`}>
-                                 Follow
+                              <button
+                                 type="button"
+                                 onClick={() => {
+                                    setEdit(!edit);
+                                 }}
+                                 className={`btn btn-${role === "ADMIN" ? "danger" : "primary"}`}
+                              >
+                                 {edit ? "Cancel" : "Edit"}
                               </button>
-                              <button type="button" className={`btn btn-outline-${role === "ADMIN" ? "danger" : "primary"} ms-1`}>
-                                 Message
+                              <button
+                                 onClick={() => {
+                                    onUserLogout(accessToken, setAccessToken);
+                                 }}
+                                 type="button"
+                                 className={`btn btn-outline-${role === "ADMIN" ? "danger" : "primary"} ms-1`}
+                              >
+                                 Logout
                               </button>
                            </div>
                         </div>
@@ -72,26 +115,28 @@ const UserInfo = ({ userID, accessToken }) => {
                         </div>
                      </div>
                   </div>
-                  <div className="col-lg-8">
-                     <div className="card mb-4 shadow">
+                  <div className="col-lg-8 mb-5">
+                     <div className="card mb-3 shadow">
                         <div className="card-body">
-                           <UserCardDetails info="Name:" result={userData?.name} />
-                           <UserCardDetails info="Last Name:" result={userData?.surname} />
+                           <UserCardDetails info="Name:" result={userData?.name} edit={edit} func={nameChange} />
+                           <UserCardDetails info="Last Name:" result={userData?.surname} edit={edit} func={surnameChange} />
                            <UserCardDetails info="Email:" result={userData?.email} />
-                           <UserCardDetails info="Phone Number:" result={userData?.phoneNumber} />
-                           <UserCardDetails info="Address:" result={userData?.address} />
+                           <UserCardDetails info="Phone Number:" type="number" result={userData?.phoneNumber} edit={edit} func={phoneChange} />
+                           <UserCardDetails info="Address:" result={userData?.address} edit={edit} func={addressChange} />
                            <UserCardDetails info="ID:" result={userData?.id} horLine={false} />
                         </div>
                      </div>
+                     {edit && (
+                        <div className="d-flex flex-row-reverse mb-2 mr-1">
+                           <button onClick={onUserInfoChanged} className="btn btn-secondary">
+                              Update
+                           </button>
+                        </div>
+                     )}
                   </div>
                </div>
-            </div>
-         ) : (
-            <div className="mt-5">
-               <LoaderAnimation />
-            </div>
-         )}
-
+            )}
+         </div>
          <Footer />
       </section>
    );
