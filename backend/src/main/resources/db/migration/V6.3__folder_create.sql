@@ -6,8 +6,8 @@ CREATE TABLE `folder` (
   CONSTRAINT `fk_folder_object_id`
     FOREIGN KEY (`id`)
     REFERENCES `object` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_folder_parent_folder_id`
     FOREIGN KEY (`parent_folder_id`)
     REFERENCES `folder` (`id`)

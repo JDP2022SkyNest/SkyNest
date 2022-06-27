@@ -1,5 +1,10 @@
 package com.htecgroup.skynest.model.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -7,6 +12,10 @@ import java.util.UUID;
 
 @Entity(name = "object")
 @Inheritance(strategy = InheritanceType.JOINED)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ObjectEntity implements Serializable {
 
   private static final long serialVersionUID = 145843022185009528L;

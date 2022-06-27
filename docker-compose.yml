@@ -9,6 +9,7 @@ services:
       - ./db.env
     volumes:
       - ./.db_data/mysql:/var/lib/mysql
+    command: --log_bin_trust_function_creators=1
     healthcheck:
       test: mysql ${DB_NAME} --user=${DB_USERNAME} --password=${DB_PASSWORD} --silent --execute "SELECT 1;"
       interval: 15s
