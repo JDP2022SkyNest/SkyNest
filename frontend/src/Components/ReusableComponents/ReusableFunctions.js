@@ -37,7 +37,6 @@ export const getPersonalData = async (userID, accessToken, stateToChange, error)
       });
       stateToChange(response.data);
    } catch (err) {
-      console.log(err);
       error("Token Expired");
    }
 };
