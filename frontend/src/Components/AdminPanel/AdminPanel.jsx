@@ -55,7 +55,7 @@ const AdminPanel = ({ userID }) => {
    return (
       <div className="admin-page-body">
          <NavbarPanel name="Admin Panel" searchBar={true} path={ROUTES.HOME} setSearchTerm={setSearchTerm}>
-            <ReusableModal title="Instructions">
+            <ReusableModal title="Instructions" buttonText="Close">
                <AdminCarousel />
             </ReusableModal>
          </NavbarPanel>
