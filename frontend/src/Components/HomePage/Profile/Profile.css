@@ -12,3 +12,8 @@
    color: var(--mate-black) !important;
 }
 
+.avatar-style {
+   position: relative;
+   bottom: 2px;
+}
+

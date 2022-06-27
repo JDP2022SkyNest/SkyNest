@@ -15,7 +15,13 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
    const navigate = useNavigate();
 
    return (
-      <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" variant="secondary" menuVariant="dark">
+      <DropdownButton
+         align="end"
+         title={<AiIcons.AiOutlineUser className="avatar-style" />}
+         id="dropdown-menu-align-end"
+         variant="dark"
+         menuVariant="dark"
+      >
          <div className={userRole === ROLE.ADMIN ? "dropdown-menu-admin" : "dropdown-menu-worker"}>
             <Dropdown.Item
                onClick={() => {
