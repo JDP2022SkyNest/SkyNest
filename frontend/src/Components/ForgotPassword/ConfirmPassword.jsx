@@ -30,8 +30,8 @@ const ConfirmPassword = () => {
          setSuccessMsg("Password changed successfully");
          redirectTo(navigate, ROUTES.LOGIN, 1500);
       } catch (err) {
-         if (err.response.status === 403) {
-            setErrorMsg("Access token is invalid");
+         if (err.response.status === 404) {
+            setErrorMsg("Email not in use");
          } else if (err.response.status === 500) {
             setErrorMsg("Internal Server Error");
          } else {
