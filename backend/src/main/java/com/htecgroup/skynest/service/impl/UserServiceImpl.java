@@ -150,8 +150,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void disableUser(UUID uuid) {
-    UserDto userDto = findUserById(uuid);
+  public void disableUser(UUID userId) {
+    UserDto userDto = findUserById(userId);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();
     }

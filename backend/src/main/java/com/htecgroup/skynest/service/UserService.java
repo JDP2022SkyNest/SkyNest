@@ -31,5 +31,5 @@ public interface UserService {
 
   UserDto findUserById(UUID uuid);
 
-  void disableUser(UUID uuid);
+  void disableUser(UUID userId);
 }

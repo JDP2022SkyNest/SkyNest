@@ -412,10 +412,10 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/disable/{uuid}")
-  public ResponseEntity<Boolean> disableUser(@PathVariable UUID uuid) {
-    userService.disableUser(uuid);
-    log.info("User with id {} was successfully disabled", uuid);
+  @PutMapping("/{userId}/disable")
+  public ResponseEntity<Boolean> disableUser(@PathVariable UUID userId) {
+    userService.disableUser(userId);
+    log.info("User with id {} was successfully disabled", userId);
     return ResponseEntity.ok(true);
   }
 }
