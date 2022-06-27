@@ -14,7 +14,9 @@ public class UserResponseUtil extends BasicUtil {
         surname,
         phoneNumber,
         address,
-        roleWorkerEntity.getName());
+        roleWorkerEntity.getName(),
+        false,
+        false);
   }
 
   public static UserResponse getAdmin() {

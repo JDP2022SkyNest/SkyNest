@@ -120,7 +120,7 @@ class CustomAuthenticationFilterTest {
       utilities.when(() -> JwtUtils.generateAccessToken(any(), anyList())).thenReturn("TOKEN");
       customAuthenticationFilter.successfulAuthentication(
           request, response, filterChain, authentication);
-      verify(response).addHeader(anyString(), anyString());
+      verify(response, times(2)).addHeader(anyString(), anyString());
     } catch (ServletException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {
