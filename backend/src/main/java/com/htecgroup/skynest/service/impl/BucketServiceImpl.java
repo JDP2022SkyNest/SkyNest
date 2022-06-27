@@ -6,8 +6,13 @@ import com.htecgroup.skynest.service.BucketService;
 import java.util.UUID;
 
 public class BucketServiceImpl implements BucketService {
+
+  private BucketsRepository bucketsRepository;
+
   @Override
   public BucketResponse getBucket(UUID uuid) {
-    return null;
+    BucketEntity bucketEntity = bucketsRepository.getById(uuid);
+    BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
+    return bucketResponse;
   }
 }

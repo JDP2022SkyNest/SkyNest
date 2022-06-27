@@ -57,7 +57,7 @@ public class BucketsController {
                   })
             }),
         @ApiResponse(
-            responseCode = "403",
+            responseCode = "401",
             description = "Unauthorized request",
             content = {
               @Content(
@@ -67,7 +67,7 @@ public class BucketsController {
                     @ExampleObject(
                         value =
                             "{\"messages\":[\"Access denied\"],"
-                                + " \"status\": \"403\","
+                                + " \"status\": \"401\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
@@ -81,7 +81,7 @@ public class BucketsController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User not found\"],"
+                            "{\"messages\":[\"Bucket not found\"],"
                                 + " \"status\": \"404\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
