@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,7 +24,7 @@ public class CompanyEntity implements Serializable {
   @Column(insertable = false)
   private LocalDateTime modifiedOn;
 
-  private LocalDateTime deletedOn;
+  @With private LocalDateTime deletedOn;
 
   private String pib;
   private String name;

@@ -1,6 +1,8 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.UniqueCompany;
+import com.htecgroup.skynest.exception.company.CompanyAlreadyDeletedException;
+import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
 import com.htecgroup.skynest.exception.tier.NonExistingTierException;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TierEntity;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @Validated
@@ -36,6 +40,21 @@ public class CompanyServiceImpl implements CompanyService {
     CompanyEntity companyEntity = modelMapper.map(companyAddRequest, CompanyEntity.class);
     companyEntity.setTier(tierEntity);
     companyEntity = companyRepository.save(companyEntity);
+
+    return modelMapper.map(companyEntity, CompanyResponse.class);
+  }
+
+  @Override
+  public CompanyResponse deleteCompany(UUID uuid) {
+
+    CompanyEntity companyEntity =
+        companyRepository.findById(uuid).orElseThrow(CompanyNotFoundException::new);
+
+    if (companyEntity.getDeletedOn() != null) {
+      throw new CompanyAlreadyDeletedException();
+    }
+
+    companyRepository.save(companyEntity.withDeletedOn(LocalDateTime.now()));
 
     return modelMapper.map(companyEntity, CompanyResponse.class);
   }
