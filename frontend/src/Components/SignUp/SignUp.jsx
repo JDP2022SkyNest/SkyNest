@@ -41,7 +41,7 @@ const SignUp = () => {
          redirectTo(navigate, ROUTES.LOGIN, 2000);
       } catch (err) {
          if (err.response.status === 409) {
-            setErrorMsg("Email or phone number in use");
+            setErrorMsg(err.response.data.messages);
          } else if (err.response.status === 500) {
             setErrorMsg("Internal Server Error");
          } else if (err.response.status === 0) {
