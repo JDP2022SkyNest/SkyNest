@@ -39,4 +39,6 @@ public interface UserService {
   void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID userId);
 
   void disableUser(UUID userId);
+
+  void demoteUser(UUID userId);
 }
