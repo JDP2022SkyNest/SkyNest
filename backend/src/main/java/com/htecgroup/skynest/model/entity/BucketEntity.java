@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 public class BucketEntity extends ObjectEntity {
 
   private static final long serialVersionUID = 7020161097724572834L;
