@@ -31,7 +31,7 @@ const App = () => {
             exact
             element={
                <ProtectedRoute accessToken={accessToken}>
-                  <HomePage setAccessToken={setAccessToken} userRole={userRole} />
+                  <HomePage setAccessToken={setAccessToken} userRole={userRole} userID={userID} />
                </ProtectedRoute>
             }
          />

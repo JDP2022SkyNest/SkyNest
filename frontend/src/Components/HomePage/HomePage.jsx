@@ -11,7 +11,7 @@ import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
 import "./HomePage.css";
 
-const HomePage = ({ setAccessToken, userRole }) => {
+const HomePage = ({ setAccessToken, userRole, userID }) => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(false);
    const toggleSidebar = () => {
@@ -34,7 +34,7 @@ const HomePage = ({ setAccessToken, userRole }) => {
                   >
                      Admin Panel
                   </button>
-                  <Profile setAccessToken={setAccessToken} userRole={userRole} />
+                  <Profile setAccessToken={setAccessToken} userRole={userRole} userID={userID} />
                </div>
             </Container>
          </Navbar>
