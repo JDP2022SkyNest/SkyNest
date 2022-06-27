@@ -4,7 +4,6 @@ import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserException;
 import com.htecgroup.skynest.exception.UserExceptionType;
-import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
@@ -117,26 +116,5 @@ public class UserServiceImpl implements UserService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
-  }
-
-  public void authorizeViewUserDetailsWith(UUID uuid) {
-    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UUID loggedUserUuid = loggedUserDto.getUuid();
-
-    if (!loggedUserUuid.equals(uuid) && loggedUserDto.hasRole(RoleEntity.ROLE_WORKER)) {
-      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
-    }
-  }
-
-  public void authorizeEditUserDetailsWith(UUID uuid) {
-    authorizeViewUserDetailsWith(uuid);
-    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UUID loggedUserUuid = loggedUserDto.getUuid();
-
-    String accessedUserRole = getUser(uuid).getRoleName();
-
-    if (!loggedUserUuid.equals(uuid) && accessedUserRole.equals(RoleEntity.ROLE_ADMIN)) {
-      throw new UserException("Access denied", HttpStatus.FORBIDDEN);
-    }
   }
 }

@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
 import com.htecgroup.skynest.annotation.validator.EditValidator;
-import com.htecgroup.skynest.model.entity.RoleEntity;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -16,8 +15,6 @@ import java.lang.annotation.Target;
 public @interface CurrentUserCanEdit {
 
   String message() default "Access denied";
-
-  String role_name() default RoleEntity.ROLE_ADMIN;
 
   Class<?> groups()[] default {};
 

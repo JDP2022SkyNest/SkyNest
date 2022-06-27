@@ -24,8 +24,4 @@ public interface UserService {
   UserResponse getUser(@Valid @CurrentUserCanView UUID uuid);
 
   UserResponse editUser(@Valid @CurrentUserCanEdit UUID uuid, UserEditRequest userEditRequest);
-
-  void authorizeViewUserDetailsWith(UUID uuid);
-
-  void authorizeEditUserDetailsWith(UUID uuid);
 }

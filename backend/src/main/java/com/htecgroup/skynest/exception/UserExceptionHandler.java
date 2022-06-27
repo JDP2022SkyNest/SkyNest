@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class UserExceptionHandler {
 
     List<String> errors =
         ex.getConstraintViolations().stream()
-            .map(error -> error.getMessage())
+            .map(ConstraintViolation::getMessage)
             .collect(Collectors.toList());
     ErrorMessage errorMessage =
         new ErrorMessage(errors, HttpStatus.FORBIDDEN.value(), DateTimeUtil.currentTimeFormatted());

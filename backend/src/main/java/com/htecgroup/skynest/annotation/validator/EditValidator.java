@@ -2,6 +2,7 @@ package com.htecgroup.skynest.annotation.validator;
 
 import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
+import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,12 @@ public class EditValidator implements ConstraintValidator<CurrentUserCanEdit, UU
 
   @Override
   public boolean isValid(UUID uuid, ConstraintValidatorContext context) {
-    String roleName = currentUserCanEdit.role_name();
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
     String accessedUserRole = userService.getUser(uuid).getRoleName();
 
-    if (!loggedUserUuid.equals(uuid) && accessedUserRole.equals(roleName)) {
+    if (!loggedUserUuid.equals(uuid) && accessedUserRole.equals(RoleEntity.ROLE_ADMIN)) {
       return false;
     }
     return true;
