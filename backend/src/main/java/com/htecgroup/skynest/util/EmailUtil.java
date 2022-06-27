@@ -20,4 +20,9 @@ public class EmailUtil {
 
     return new Email(userDto.getEmail(), EmailType.PASSWORD_RESET, arguments, true);
   }
+
+  public static Email createPasswordChangeNotificationEmail(UserDto userDto) {
+    Map<String, String> arguments = Map.of("name", userDto.getName());
+    return new Email(userDto.getEmail(), EmailType.PASSWORD_CHANGE_NOTIFICATION, arguments, true);
+  }
 }

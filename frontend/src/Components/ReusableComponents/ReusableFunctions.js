@@ -37,7 +37,6 @@ export const getPersonalData = async (userID, accessToken, stateToChange, error)
       });
       stateToChange(response.data);
    } catch (err) {
-      console.log(err);
       error("Token Expired");
    }
 };
@@ -52,9 +51,36 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
       if (err.response.status === 403) {
          messageToShow("Access denied");
       } else {
-         messageToShow(err.data.messages);
+         messageToShow(err.response.data.messages);
       }
    }
+};
+
+export const editUserData = async (accessToken, id, payload, success, error, func) => {
+   try {
+      await AxiosInstance.put(
+         `/users/${id}`,
+         {
+            name: payload.name,
+            surname: payload.surname,
+            phoneNumber: payload.phoneNumber,
+            address: payload.address,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      error("");
+      success("Profile Updated");
+   } catch (err) {
+      success("");
+      if (err.response.status === 400) {
+         error("Fields can't be empty");
+      } else {
+         error(err.response.data.messages);
+      }
+   }
+   func();
 };
 
 export const deleteUser = async (accessToken, id) => {
@@ -74,9 +100,9 @@ export const emailVerification = async (accessToken, success, error, info, setpa
       await AxiosInstance.post(`/public/confirm?token=${accessToken}`);
       success("Email Verified");
    } catch (err) {
-      if (err.response.status === 500) {
+      if (err.response.status === 409) {
          success("Email already verified");
-      } else if (err.response.status === 403) {
+      } else if (err.response.status === 401) {
          error("Token expired");
          resendEmail(true);
       } else {

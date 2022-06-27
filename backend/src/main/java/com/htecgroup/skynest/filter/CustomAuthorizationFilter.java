@@ -53,6 +53,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         return;
       }
+
       String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
       if (invalidJwtService.isInvalid(token)) {
         filterChain.doFilter(request, response);
