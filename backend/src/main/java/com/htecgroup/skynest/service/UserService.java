@@ -27,6 +27,8 @@ public interface UserService {
 
   UserResponse editUser(@Valid @CurrentUserCanEdit UUID uuid, UserEditRequest userEditRequest);
 
+  void enableUser(UUID uuid);
+
   void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid);
 
   void authorizeAccessForChangePassword(UUID uuid);
