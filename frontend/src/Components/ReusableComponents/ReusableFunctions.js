@@ -75,7 +75,7 @@ export const editUserData = async (accessToken, id, payload, success, error, fun
    } catch (err) {
       success("");
       if (err.response.status === 400) {
-         error("Fields can't be empty");
+         error("Invalid Inputs");
       } else {
          error(err.response.data.messages);
       }
