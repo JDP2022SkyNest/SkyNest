@@ -19,8 +19,6 @@ const AdminPanel = ({ userID }) => {
    const [loading, setLoading] = useState(false);
    const accessToken = localStorage.accessToken;
 
-   const time = new Date();
-
    useEffect(() => {
       (async function loading() {
          setLoading(true);
@@ -62,14 +60,11 @@ const AdminPanel = ({ userID }) => {
          {!loading ? (
             <Container>
                <div className="row">
-                  <div className="col-12 col-sm-6 col-lg-3 offset-lg-2">
-                     <AdminCard title="Total Users:" body={usersData.length} color={"info"} />
+                  <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
+                     <AdminCard title="Total Users:" body={usersData.length} color={"white"} />
                   </div>
-                  <div className="col-lg-2 d-none d-lg-block">
-                     <AdminCard title={"Info:"} body={time.toLocaleDateString()} color={"secondary"} centered={"text-center"} />
-                  </div>
-                  <div className="col-12 col-sm-6 col-lg-3 offset-lg-0">
-                     <AdminCard title="Filtered Users:" body={filterUsers.length} color={"primary"} />
+                  <div className="col-6 col-md-4 col-lg-3 offset-lg-0">
+                     <AdminCard title="Filtered Users:" body={filterUsers.length} color={"white"} />
                   </div>
                </div>
                <div className="row">

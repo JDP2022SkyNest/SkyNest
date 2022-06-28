@@ -7,9 +7,9 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
    const userRoleName = elem.roleName.slice(5);
 
    return (
-      <Accordion.Item eventKey={index}>
+      <Accordion.Item eventKey={index} className={`${!elem.verified && "border border-danger"}`}>
          <Accordion.Header>
-            <div className="users-number-style">
+            <div className={`${!elem.verified ? "text-danger unverified-users-number-style " : "users-number-style"}`}>
                {elem.name} {elem.surname}
             </div>
             <span
@@ -20,7 +20,6 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
                {userRoleName}
             </span>
             <span className="badge bg-primary ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
-            {!elem.verified && <span className="badge badge-color text-danger ml-1 py-1 users-badge-align rounded-pill">Unverified</span>}
          </Accordion.Header>
          <Accordion.Body>
             <p>
