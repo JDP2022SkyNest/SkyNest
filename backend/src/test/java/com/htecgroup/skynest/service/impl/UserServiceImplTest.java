@@ -5,7 +5,6 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
-import com.htecgroup.skynest.exception.role.UserNotWorkerException;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -214,23 +213,15 @@ class UserServiceImplTest {
   }
 
   @Test
-  void when_NotWorkerUser_promoteUser_ShouldThrowUserNotWorker() {
-    UserDto userDto = UserDtoUtil.getVerifiedManager();
-    doReturn(userDto).when(userService).findUserById(any());
-    String expectedErrorMessage = UserNotWorkerException.MESSAGE;
-    Exception thrownException =
-        Assertions.assertThrows(UserNotWorkerException.class, () -> userService.promoteUser(any()));
-    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
-  }
-
-  @Test
   void when_WorkerUser_promoteUser_ShouldPromoteUser() {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserById(any());
     RoleDto roleManager = RoleDtoUtil.getManagerRole();
     when(roleService.findByName(anyString())).thenReturn(roleManager);
     userService.promoteUser(any());
-    Mockito.verify(userRepository).save(any());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+    UserEntity capturedUserEntity = captorUserEntity.getValue();
+    Assertions.assertEquals(roleManager.getName(), capturedUserEntity.getRole().getName());
   }
 
   private void assertUserEntityAndUserResponse(

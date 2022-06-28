@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service;
 
+import com.htecgroup.skynest.annotation.AdminUserCanPromote;
 import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
 import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
@@ -33,7 +34,7 @@ public interface UserService {
 
   UserDto findUserById(UUID uuid);
 
-  void promoteUser(UUID userId);
+  void promoteUser(@Valid @AdminUserCanPromote UUID userId);
 
   void disableUser(UUID userId);
 }

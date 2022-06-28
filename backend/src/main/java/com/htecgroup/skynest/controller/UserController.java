@@ -535,8 +535,8 @@ public class UserController {
                   })
             }),
         @ApiResponse(
-            responseCode = "409",
-            description = "User is not worker",
+            responseCode = "403",
+            description = "Can't promote user that is not a worker.",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -544,8 +544,8 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User is not a worker, can't be promoted.\"],"
-                                + " \"status\": \"409\","
+                            "{\"messages\":[\"Can't promote user that is not a worker.\"],"
+                                + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),

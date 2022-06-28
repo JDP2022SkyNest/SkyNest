@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.AdminUserCanPromote;
 import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
 import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
@@ -10,7 +11,6 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
-import com.htecgroup.skynest.exception.role.UserNotWorkerException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -161,15 +161,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void promoteUser(UUID userId) {
+  public void promoteUser(@Valid @AdminUserCanPromote UUID userId) {
     UserDto userDto = findUserById(userId);
-    if (!userDto.getRole().getName().equals(RoleEntity.ROLE_WORKER)) {
-      throw new UserNotWorkerException();
-    }
-
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_MANAGER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);
-
     userRepository.save(modelMapper.map(changedRoleUser, UserEntity.class));
   }
 }
