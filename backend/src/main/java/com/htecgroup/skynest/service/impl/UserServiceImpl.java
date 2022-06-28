@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -156,7 +155,7 @@ public class UserServiceImpl implements UserService {
     if (!userDto.getEnabled() && userDto.getDeletedOn() != null) {
       throw new UserAlreadyDisabledException();
     }
-    UserDto disabledUserDto = userDto.withEnabled(false).withDeletedOn(LocalDateTime.now());
+    UserDto disabledUserDto = userDto.disableUser();
     userRepository.save(modelMapper.map(disabledUserDto, UserEntity.class));
   }
 
@@ -169,7 +168,7 @@ public class UserServiceImpl implements UserService {
     if (userDto.getEnabled() && userDto.getDeletedOn() == null) {
       throw new UserAlreadyEnabledException();
     }
-    UserDto enabledUserDto = userDto.withEnabled(true).withDeletedOn(null);
+    UserDto enabledUserDto = userDto.enableUser();
     userRepository.save(modelMapper.map(enabledUserDto, UserEntity.class));
   }
 }
