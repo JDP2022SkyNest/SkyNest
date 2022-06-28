@@ -11,9 +11,12 @@
    transition: 0.5s;
  }
  
- .admin {
-  color: var(--gold)!important;
- }
+ .main-icon-align {
+  position: relative;
+  bottom: 2px;
+}
 
-
- 
+.home-page-body {
+  background-color: var(--latte);
+  height: 100vh;
+}
