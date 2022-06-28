@@ -1,16 +1,16 @@
 package com.htecgroup.skynest.model.response;
 
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.Data;
+
+import java.util.UUID;
 
 @Data
 public class BucketResponse {
-  private UserEntity createdBy;
+  private UUID createdById;
 
   private String name;
 
-  private CompanyEntity company;
+  private UUID companyId;
 
   private String description;
 

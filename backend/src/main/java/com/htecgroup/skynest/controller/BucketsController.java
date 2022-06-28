@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,24 +40,16 @@ public class BucketsController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "[{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "\"email\": \"username@gmail.com\","
+                            "[{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "\"name\": \"Name\","
-                                + "\"surname\": \"Surname\","
-                                + "\"phoneNumber\": \"38166575757\","
-                                + "\"address\": \"Local address\","
-                                + "\"roleName\": \"role_admin\","
-                                + "\"enabled\": \"true\","
-                                + "\"verified\": \"true\"},"
-                                + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
-                                + "\"email\": \"username123@gmail.com\","
-                                + "\"name\": \"Name\","
-                                + "\"surname\": \"Surname\","
-                                + "\"phoneNumber\": \"38166676767\","
-                                + "\"address\": \"Local address\","
-                                + "\"roleName\": \"role_worker\","
-                                + "\"enabled\": \"false\","
-                                + "\"verified\": \"false\"}]")
+                                + "\"companyId\": \"agfad95-0g60-42ff-935f-2b9g4ff72f95\","
+                                + "\"description\": \"Description\","
+                                + "\"size\": \"1000\"},"
+                                + "{\"createdById\": \"b6fd6d95-0b60-43ff-961f-2b9b2ff72f95\","
+                                + "\"name\": \"Name2\","
+                                + "\"companyId\": \"lkfad95-0p60-42ff-935f-2b9g4ff72f95\","
+                                + "\"description\": \"Description2\","
+                                + "\"size\": \"104124\"}]")
                   })
             }),
         @ApiResponse(
@@ -71,7 +62,6 @@ public class BucketsController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @GetMapping
   public List<BucketResponse> getBuckets() {
     List<BucketResponse> listOfBuckets = bucketService.listAllBuckets();
