@@ -74,12 +74,18 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public boolean isActive(String email) {
     UserDto userDto = userService.findUserByEmail(email);
-    return userDto.getEnabled() && userDto.getVerified() && userDto.getDeletedOn() == null;
+    return userDto.getEnabled() && userDto.getDeletedOn() == null;
+  }
+
+  @Override
+  public boolean isVerified(String email) {
+    UserDto userDto = userService.findUserByEmail(email);
+    return userDto.getVerified();
   }
 
   @Override
   public UserDto verifyUser(UserDto userDto) {
-    if (isActive(userDto.getEmail())) {
+    if (isVerified(userDto.getEmail())) {
       throw new UserAlreadyVerifiedException();
     }
     return userDto.withEnabled(true).withVerified(true);

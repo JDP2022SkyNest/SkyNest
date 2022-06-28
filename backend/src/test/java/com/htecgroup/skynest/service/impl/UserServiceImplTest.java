@@ -1,7 +1,8 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
-import com.htecgroup.skynest.exception.auth.AuthException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
+import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.RoleDto;
@@ -12,19 +13,18 @@ import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
+import com.htecgroup.skynest.utils.UserDtoUtil;
 import com.htecgroup.skynest.utils.UserEditRequestUtil;
 import com.htecgroup.skynest.utils.UserEntityUtil;
 import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +39,12 @@ class UserServiceImplTest {
 
   @Mock private UserRepository userRepository;
   @Mock private RoleService roleService;
-  @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Mock private PasswordEncoderService passwordEncoderService;
   @Spy private ModelMapper modelMapper;
   @Mock private CurrentUserService currentUserService;
+
+  @Captor private ArgumentCaptor<UserEntity> captorUserEntity;
+
   @Spy @InjectMocks private UserServiceImpl userService;
 
   @Test
@@ -52,7 +55,7 @@ class UserServiceImplTest {
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
-    when(bCryptPasswordEncoder.encode(anyString())).thenReturn("encryptedPassword");
+    when(passwordEncoderService.encode(anyString())).thenReturn("encryptedPassword");
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
     UserResponse actualUserResponse = userService.registerUser(userRegisterRequest);
@@ -175,6 +178,41 @@ class UserServiceImplTest {
     UserResponse userResponse = userService.editUser(UUID.randomUUID(), editedUser);
 
     this.assertUserEntityAndUserResponse(userEntityThatShouldBeEdited, userResponse);
+  }
+
+  @Test
+  void when_NotVerifiedUser_disableUser_ShouldThrowUserNotVerified() {
+    UserDto userDto = UserDtoUtil.getNotVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserNotVerifiedException.class, () -> userService.disableUser(any()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_VerifiedButAlreadyDisabledUser_disableUser_ShouldThrowUserAlreadyDisabled() {
+    UserDto userDto = UserDtoUtil.getVerifiedButDisabledUser();
+    doReturn(userDto).when(userService).findUserById(any());
+    String expectedErrorMessage = UserAlreadyDisabledException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserAlreadyDisabledException.class, () -> userService.disableUser(any()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_VerifiedAndEnabledUser_disableUser_ShouldDisableUser() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+
+    userService.disableUser(any());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+
+    UserEntity userEntity = captorUserEntity.getValue();
+    Assertions.assertFalse(userEntity.getEnabled());
+    Assertions.assertNotNull(userEntity.getDeletedOn());
   }
 
   private void assertUserEntityAndUserResponse(
