@@ -26,7 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Log4j2
 @Tag(name = "Bucket API", description = "Bucket-related operations")
-public class BucketsController {
+public class BucketController {
 
   private BucketService bucketService;
 
