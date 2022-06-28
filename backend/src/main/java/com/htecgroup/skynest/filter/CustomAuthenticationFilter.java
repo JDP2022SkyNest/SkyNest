@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.htecgroup.skynest.exception.auth.UserNotActiveException;
 import com.htecgroup.skynest.exception.login.EmailNotVerifiedException;
 import com.htecgroup.skynest.exception.login.IOErrorException;
 import com.htecgroup.skynest.exception.login.TooManyAttemptsException;
@@ -53,7 +54,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       if (loginAttemptService.hasTooManyAttempts(userDetails.getUsername()))
         throw new TooManyAttemptsException();
 
-      if (!authService.isActive(userDetails.getUsername())) throw new EmailNotVerifiedException();
+      if (!authService.isVerified(userDetails.getUsername())) throw new EmailNotVerifiedException();
+
+      if (!authService.isActive(userDetails.getUsername())) throw new UserNotActiveException();
 
       return authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(

@@ -15,5 +15,7 @@ public interface AuthService {
 
   boolean isActive(String email);
 
+  boolean isVerified(String email);
+
   UserDto verifyUser(UserDto userDto);
 }
