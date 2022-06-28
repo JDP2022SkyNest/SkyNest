@@ -9,8 +9,9 @@ import java.util.UUID;
 
 public interface ActionRepository extends CrudRepository<ActionEntity, UUID> {
 
-  List<ActionEntity> findAllByUserId(UUID userId);
+  List<ActionEntity> findAllByUserIdOrderByPerformedOnDesc(UUID userId);
 
-  @Query("SELECT a FROM action a WHERE (SELECT o FROM object o WHERE id = ?1) MEMBER OF objects")
-  List<ActionEntity> findAllByObjectId(UUID objectId);
+  @Query(
+      "SELECT a FROM action a WHERE (SELECT o FROM object o WHERE id = ?1) MEMBER OF objects ORDER BY performedOn DESC")
+  List<ActionEntity> findAllByObjectIdOrderByPerformedOnDesc(UUID objectId);
 }

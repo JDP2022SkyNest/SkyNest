@@ -46,7 +46,7 @@ public class ActionServiceImpl implements ActionService {
 
   @Override
   public List<ActionEntity> getActionsForUser(UUID userId) {
-    return actionRepository.findAllByUserId(userId);
+    return actionRepository.findAllByUserIdOrderByPerformedOnDesc(userId);
   }
 
   @Override
@@ -56,6 +56,6 @@ public class ActionServiceImpl implements ActionService {
 
   @Override
   public List<ActionEntity> getActionsForObject(UUID objectId) {
-    return actionRepository.findAllByObjectId(objectId);
+    return actionRepository.findAllByObjectIdOrderByPerformedOnDesc(objectId);
   }
 }
