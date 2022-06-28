@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 @Constraint(validatedBy = PromoteValidator.class)
-public @interface AdminUserCanPromote {
+public @interface OnlyWorkerCanBePromoted {
   String message() default "Can't promote user that is not a worker.";
 
   Class<?> groups()[] default {};

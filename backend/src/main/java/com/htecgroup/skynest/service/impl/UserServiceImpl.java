@@ -1,9 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.AdminUserCanPromote;
 import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
 import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.annotation.CurrentUserCanView;
+import com.htecgroup.skynest.annotation.OnlyWorkerCanBePromoted;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void promoteUser(@Valid @AdminUserCanPromote UUID userId) {
+  public void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID userId) {
     UserDto userDto = findUserById(userId);
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_MANAGER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);

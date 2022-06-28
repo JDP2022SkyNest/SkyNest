@@ -185,7 +185,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserNotVerifiedException.class, () -> userService.disableUser(any()));
+            UserNotVerifiedException.class, () -> userService.disableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -196,7 +196,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserAlreadyDisabledException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserAlreadyDisabledException.class, () -> userService.disableUser(any()));
+            UserAlreadyDisabledException.class, () -> userService.disableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -205,7 +205,7 @@ class UserServiceImplTest {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserById(any());
 
-    userService.disableUser(any());
+    userService.disableUser(UUID.randomUUID());
     Mockito.verify(userRepository).save(captorUserEntity.capture());
 
     UserEntity userEntity = captorUserEntity.getValue();
@@ -220,7 +220,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserNotVerifiedException.class, () -> userService.enableUser(any()));
+            UserNotVerifiedException.class, () -> userService.enableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -231,7 +231,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserAlreadyEnabledException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserAlreadyEnabledException.class, () -> userService.enableUser(any()));
+            UserAlreadyEnabledException.class, () -> userService.enableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -240,7 +240,7 @@ class UserServiceImplTest {
     UserDto userDto = UserDtoUtil.getVerifiedButDisabledUser();
     doReturn(userDto).when(userService).findUserById(any());
 
-    userService.enableUser(any());
+    userService.enableUser(UUID.randomUUID());
     Mockito.verify(userRepository).save(captorUserEntity.capture());
 
     UserEntity userEntity = captorUserEntity.getValue();
@@ -254,7 +254,7 @@ class UserServiceImplTest {
     doReturn(userDto).when(userService).findUserById(any());
     RoleDto roleManager = RoleDtoUtil.getManagerRole();
     when(roleService.findByName(anyString())).thenReturn(roleManager);
-    userService.promoteUser(any());
+    userService.promoteUser(UUID.randomUUID());
     Mockito.verify(userRepository).save(captorUserEntity.capture());
     UserEntity capturedUserEntity = captorUserEntity.getValue();
     Assertions.assertEquals(roleManager.getName(), capturedUserEntity.getRole().getName());
