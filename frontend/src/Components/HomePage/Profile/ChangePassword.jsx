@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AxiosInstance from "../../axios/AxiosInstance";
-import { Modal, Form } from "react-bootstrap";
+import { Modal, Form, InputGroup } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import PasswordRequirements from "../../ReusableComponents/PasswordRequirements";
 import { passwordRegEx } from "../../ReusableComponents/ReusableFunctions";
@@ -12,6 +12,8 @@ const ChangePassword = ({ userID }) => {
    const [successMsg, setSuccessMsg] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [show, setShow] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
+
    const accessToken = localStorage.accessToken;
 
    const handleClose = () => setShow(false);
@@ -42,6 +44,10 @@ const ChangePassword = ({ userID }) => {
       }
    };
 
+   const passwordShowHide = () => {
+      setShowPassword(!showPassword);
+   };
+
    return (
       <>
          <div onClick={handleShow}>
@@ -61,7 +67,7 @@ const ChangePassword = ({ userID }) => {
                      <Form.Control
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         autoFocus
                         required
@@ -69,21 +75,27 @@ const ChangePassword = ({ userID }) => {
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="ControlInput1">
                      <Form.Label>Please Enter new Password:*</Form.Label>
-                     <Form.Control
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        type="password"
-                        placeholder="Password"
-                        autoFocus
-                        required
-                     />
+                     <InputGroup>
+                        <Form.Control
+                           value={newPassword}
+                           onChange={(e) => setNewPassword(e.target.value)}
+                           type={showPassword ? "text" : "password"}
+                           placeholder="Password"
+                           autoFocus
+                           required
+                           className="border-right-0"
+                        />
+                        <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
+                           <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
+                        </span>
+                     </InputGroup>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="ControlInput1">
                      <Form.Label>Confirm new Password:*</Form.Label>
                      <Form.Control
                         value={confirmNewPw}
                         onChange={(e) => setconfirmNewPw(e.target.value)}
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         autoFocus
                         required
