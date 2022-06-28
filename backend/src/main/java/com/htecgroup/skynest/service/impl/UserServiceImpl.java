@@ -1,9 +1,13 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
+import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
+import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
-import com.htecgroup.skynest.exception.auth.ForbiddenForWorkerException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
+import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.exception.role.UserNotWorkerException;
@@ -23,12 +27,16 @@ import com.htecgroup.skynest.util.EmailUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -68,7 +76,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void deleteUser(UUID uuid) {
+  public void deleteUser(@Valid @CurrentUserCanDelete UUID uuid) {
     if (!userRepository.existsById(uuid)) {
       throw new UserNotFoundException();
     }
@@ -76,13 +84,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse getUser(UUID uuid) {
+  public UserResponse getUser(@Valid @CurrentUserCanView UUID uuid) {
     UserDto userDto = findUserById(uuid);
     return modelMapper.map(userDto, UserResponse.class);
   }
 
   @Override
-  public UserResponse editUser(UserEditRequest userEditRequest, UUID uuid) {
+  public UserResponse editUser(
+      @Valid @CurrentUserCanEdit UUID uuid, UserEditRequest userEditRequest) {
     UserEntity userEntity = userRepository.findById(uuid).orElseThrow(UserNotFoundException::new);
     userEditRequest.setName(userEditRequest.getName().trim());
     userEditRequest.setSurname(userEditRequest.getSurname().trim());
@@ -105,15 +114,6 @@ public class UserServiceImpl implements UserService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
-  }
-
-  public void authorizeAccessToUserDetailsWith(UUID uuid) {
-    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UUID loggedUserUuid = loggedUserDto.getUuid();
-
-    if (loggedUserDto.hasRole(RoleEntity.ROLE_WORKER) && !(loggedUserUuid.equals(uuid))) {
-      throw new ForbiddenForWorkerException();
-    }
   }
 
   public void authorizeAccessForChangePassword(UUID uuid) {
@@ -145,6 +145,19 @@ public class UserServiceImpl implements UserService {
 
     Email email = EmailUtil.createPasswordChangeNotificationEmail(changedPasswordDto);
     emailService.send(email);
+  }
+
+  @Override
+  public void disableUser(UUID userId) {
+    UserDto userDto = findUserById(userId);
+    if (!userDto.getVerified()) {
+      throw new UserNotVerifiedException();
+    }
+    if (!userDto.getEnabled() && userDto.getDeletedOn() != null) {
+      throw new UserAlreadyDisabledException();
+    }
+    UserDto disabledUserDto = userDto.withEnabled(false).withDeletedOn(LocalDateTime.now());
+    userRepository.save(modelMapper.map(disabledUserDto, UserEntity.class));
   }
 
   @Override

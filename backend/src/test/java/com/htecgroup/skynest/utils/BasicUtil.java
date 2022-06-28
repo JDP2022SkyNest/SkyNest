@@ -15,6 +15,8 @@ public class BasicUtil {
       new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_WORKER);
   protected static final RoleDto roleAdminDto =
       new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_ADMIN);
+  protected static final RoleEntity roleAdminEntity =
+      new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_ADMIN);
   protected static final RoleDto roleManagerDto =
       new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_MANAGER);
   protected static String email = "test@test.com";

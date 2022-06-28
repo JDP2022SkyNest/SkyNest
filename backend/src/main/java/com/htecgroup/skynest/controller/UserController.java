@@ -182,7 +182,6 @@ public class UserController {
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{uuid}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
     UserResponse userResponse = userService.getUser(uuid);
     ResponseEntity<UserResponse> userResponseEntity =
         new ResponseEntity<>(userResponse, HttpStatus.OK);
@@ -273,9 +272,8 @@ public class UserController {
   @PutMapping("/{uuid}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
-    userService.authorizeAccessToUserDetailsWith(uuid);
     ResponseEntity<UserResponse> responseEntity =
-        new ResponseEntity<>(userService.editUser(userEditRequest, uuid), HttpStatus.OK);
+        new ResponseEntity<>(userService.editUser(uuid, userEditRequest), HttpStatus.OK);
     log.info("User is successfully edited.");
     return responseEntity;
   }
@@ -425,6 +423,72 @@ public class UserController {
     userService.authorizeAccessForChangePassword(uuid);
     userService.changePassword(userChangePasswordRequest, uuid);
     log.info("User with id {} successfully changed their password", uuid);
+    return ResponseEntity.ok(true);
+  }
+
+  @Operation(summary = "Disable user")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User successfully disabled",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "User not verified",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Not verified user can't be enabled.\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User already disabled",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User is already disabled.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
+  @PutMapping("/{userId}/disable")
+  public ResponseEntity<Boolean> disableUser(@PathVariable UUID userId) {
+    userService.disableUser(userId);
+    log.info("User with id {} was successfully disabled", userId);
     return ResponseEntity.ok(true);
   }
 
