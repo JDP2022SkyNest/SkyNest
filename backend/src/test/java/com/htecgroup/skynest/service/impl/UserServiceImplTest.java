@@ -8,7 +8,6 @@ import com.htecgroup.skynest.exception.role.UserNotWorkerException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
-import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
@@ -213,7 +212,7 @@ class UserServiceImplTest {
 
   @Test
   void when_NotWorkerUser_promoteUser_ShouldThrowUserNotWorker() {
-    UserDto userDto = UserDtoUtil.getNotWorker();
+    UserDto userDto = UserDtoUtil.getVerifiedManager();
     doReturn(userDto).when(userService).findUserById(any());
     String expectedErrorMessage = UserNotWorkerException.MESSAGE;
     Exception thrownException =
@@ -225,9 +224,8 @@ class UserServiceImplTest {
   void when_WorkerUser_promoteUser_ShouldPromoteUser() {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserById(any());
-    UUID roleId = UUID.randomUUID();
-    when(roleService.findByName(anyString()))
-        .thenReturn(new RoleDto(roleId, RoleEntity.ROLE_MANAGER));
+    RoleDto roleManager = RoleDtoUtil.getManagerRole();
+    when(roleService.findByName(anyString())).thenReturn(roleManager);
     userService.promoteUser(any());
     Mockito.verify(userRepository).save(any());
   }

@@ -31,7 +31,7 @@ public class UserDtoUtil extends BasicUtil {
     return getNotVerified().withVerified(true).withEnabled(true);
   }
 
-  public static UserDto getNotWorker() {
+  public static UserDto getVerifiedManager() {
     return getVerified().withRole(new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_MANAGER));
   }
 }
