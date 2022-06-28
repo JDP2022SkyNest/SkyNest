@@ -12,16 +12,13 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
             <div className={`${!elem.verified ? "text-danger unverified-users-number-style " : "users-number-style"}`}>
                {elem.name} {elem.surname}
             </div>
-            <span
-               className={`ml-1 badge bg-${
-                  userRoleName === "admin" ? "danger" : "secondary rounded-pill"
-               } py-1 users-badge-align`}
-            >
+            <span className={`ml-1 badge ${userRoleName === "admin" ? "admin-color" : "bg-secondary rounded-pill"} py-1 users-badge-align`}>
                {userRoleName}
             </span>
-            <span className="badge bg-primary ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
+            <span className="badge border border-secondary text-dark ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
          </Accordion.Header>
          <Accordion.Body>
+            {!elem.verified && <p className="text-danger">Unverified</p>}
             <p>
                <span className="font-weight-bold">Email: </span>
                {elem.email}
@@ -37,9 +34,8 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
             {userRoleName !== "admin" && (
                <div className="d-flex justify-content-between">
                   <div>
-                     {/* This button is still a placeholder, functinality will be added */}
-                     <button className="btn btn-info text-white">Promote</button>
-                     <button className="btn btn-primary ml-2">Demote</button>
+                     {userRoleName === "worker" && <button className="btn btn-info text-white">Promote</button>}
+                     {userRoleName === "manager" && <button className="btn btn-primary ml-2">Demote</button>}
                   </div>
                   <div>
                      <button

@@ -39,3 +39,7 @@
 .card-title-style {
    font-size: 18px;
 }
+
+.admin-color {
+   background-color: var(--gold);
+}
