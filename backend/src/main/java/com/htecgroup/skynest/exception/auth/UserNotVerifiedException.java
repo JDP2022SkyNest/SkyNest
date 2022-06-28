@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class UserNotVerifiedException extends AuthException {
 
-  public static final String MESSAGE = "Not verified user can't be enabled.";
+  public static final String MESSAGE = "An unverified user can't be enabled.";
 
   public UserNotVerifiedException() {
     super(MESSAGE, HttpStatus.FORBIDDEN);
