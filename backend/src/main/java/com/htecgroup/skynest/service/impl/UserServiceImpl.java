@@ -6,6 +6,8 @@ import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
+import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -141,5 +144,18 @@ public class UserServiceImpl implements UserService {
 
     Email email = EmailUtil.createPasswordChangeNotificationEmail(changedPasswordDto);
     emailService.send(email);
+  }
+
+  @Override
+  public void disableUser(UUID userId) {
+    UserDto userDto = findUserById(userId);
+    if (!userDto.getVerified()) {
+      throw new UserNotVerifiedException();
+    }
+    if (!userDto.getEnabled() && userDto.getDeletedOn() != null) {
+      throw new UserAlreadyDisabledException();
+    }
+    UserDto disabledUserDto = userDto.withEnabled(false).withDeletedOn(LocalDateTime.now());
+    userRepository.save(modelMapper.map(disabledUserDto, UserEntity.class));
   }
 }
