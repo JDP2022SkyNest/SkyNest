@@ -1,0 +1,1 @@
+INSERT INTO `action_type` (`name`) VALUES ('create'), ('view'), ('download'), ('edit'), ('move'), ('delete'), ('restore');
