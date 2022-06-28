@@ -16,8 +16,13 @@ public class BucketServiceImpl implements BucketService {
   private BucketRepository bucketRepository;
 
   @Override
-  public void deleteBucket(UUID uuid) {
+  public String deleteBucket(UUID uuid) {
     BucketEntity bucketEntity = bucketRepository.findById(uuid).orElseThrow();
     bucketEntity.setDeletedOn(LocalDateTime.now());
+    String bucketId;
+    if (bucketEntity.getDeletedOn() != null) {
+      bucketId = bucketEntity.getId().toString();
+      return bucketId;
+    } else return "";
   }
 }

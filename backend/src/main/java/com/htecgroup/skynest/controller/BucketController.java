@@ -97,8 +97,11 @@ public class BucketController {
       })
   @DeleteMapping("/{uuid}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
-    bucketService.deleteBucket(uuid);
-    String deleteSuccess = "Bucket was successfully deleted.";
+    String deletedId = bucketService.deleteBucket(uuid);
+    String deleteSuccess;
+    if (!deletedId.isEmpty())
+      deleteSuccess = String.format("Bucket %s was successfully deleted.", deletedId);
+    else deleteSuccess = "Bucket was not deleted.";
     log.info(deleteSuccess);
     return ResponseEntity.ok(deleteSuccess);
   }
