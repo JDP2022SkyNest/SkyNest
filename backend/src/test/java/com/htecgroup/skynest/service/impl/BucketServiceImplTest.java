@@ -27,14 +27,12 @@ class BucketServiceImplTest {
 
   @Test
   void getBucket() {
-    BucketEntity bucketEntity = BucketEntityUtil.getNotPublic();
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
 
     BucketResponse actualBucketResponse = bucketService.getBucket(bucketEntity.getId());
 
-    Assertions.assertEquals(actualBucketResponse.getCreatedBy(), bucketEntity.getCreatedBy());
     Assertions.assertEquals(actualBucketResponse.getName(), bucketEntity.getName());
-    Assertions.assertEquals(actualBucketResponse.getCompany(), bucketEntity.getCompany());
     Assertions.assertEquals(actualBucketResponse.getDescription(), bucketEntity.getDescription());
     Assertions.assertEquals(actualBucketResponse.getSize(), bucketEntity.getSize());
   }

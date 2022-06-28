@@ -44,15 +44,11 @@ public class BucketsController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + " \"email\": \"username@gmail.com\","
+                            "{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"name\": \"Name\","
-                                + "  \"surname\": \"Surname\","
-                                + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\","
-                                + "  \"roleName\": \"role_worker\","
-                                + "  \"enabled\": \"false\","
-                                + "  \"verified\": \"true\"}")
+                                + "  \"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"description\": \"Description\","
+                                + "  \"size\": \"1000\"}")
                   })
             }),
         @ApiResponse(

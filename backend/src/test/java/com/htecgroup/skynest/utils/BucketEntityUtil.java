@@ -4,7 +4,7 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 
 public class BucketEntityUtil extends BucketBasicUtil {
 
-  public static BucketEntity getNotPublic() {
-    return new BucketEntity(companyEntity, description, size, isPublic);
+  public static BucketEntity getPrivateBucket() {
+    return new BucketEntity(companyEntity, description, size, privateBucket);
   }
 }
