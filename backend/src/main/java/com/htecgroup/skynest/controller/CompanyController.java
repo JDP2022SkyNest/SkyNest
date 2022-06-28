@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.controller;
 
-import com.htecgroup.skynest.model.io.CompanyIO;
+import com.htecgroup.skynest.model.request.CompanyAddRequest;
+import com.htecgroup.skynest.model.response.CompanyResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +43,7 @@ public class CompanyController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = CompanyIO.class),
+                  schema = @Schema(implementation = CompanyResponse.class),
                   examples = {
                     @ExampleObject(
                         value =
@@ -147,7 +148,7 @@ public class CompanyController {
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
       content =
           @Content(
-              schema = @Schema(implementation = CompanyIO.class),
+              schema = @Schema(implementation = CompanyAddRequest.class),
               mediaType = "application/json",
               examples = {
                 @ExampleObject(
@@ -161,8 +162,12 @@ public class CompanyController {
               }))
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @PostMapping
-  public ResponseEntity<CompanyIO> addCompany(@Valid @RequestBody CompanyIO companyIO) {
+  public ResponseEntity<CompanyResponse> addCompany(
+      @Valid @RequestBody CompanyAddRequest companyAddRequest) {
+    ResponseEntity<CompanyResponse> responseEntity =
+        new ResponseEntity<>(companyService.addCompany(companyAddRequest), HttpStatus.OK);
 
-    return new ResponseEntity<>(companyService.addCompany(companyIO), HttpStatus.OK);
+    log.info("Company {} was successfully created", companyAddRequest.getName());
+    return responseEntity;
   }
 }

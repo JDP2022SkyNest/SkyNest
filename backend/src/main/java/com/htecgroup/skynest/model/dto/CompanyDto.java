@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.model.dto;
 
-import com.htecgroup.skynest.model.entity.TierEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,5 +17,5 @@ public class CompanyDto implements Serializable {
   private String address;
   private String phoneNumber;
   private String email;
-  private TierEntity tier;
+  private TierDto tier;
 }

@@ -1,4 +1,4 @@
-package com.htecgroup.skynest.model.io;
+package com.htecgroup.skynest.model.request;
 
 import com.htecgroup.skynest.util.RegexUtil;
 import lombok.Data;
@@ -7,11 +7,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.UUID;
 
 @Data
-public class CompanyIO {
-  private UUID id;
+public class CompanyAddRequest {
 
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 30, message = "length cannot be over 30")

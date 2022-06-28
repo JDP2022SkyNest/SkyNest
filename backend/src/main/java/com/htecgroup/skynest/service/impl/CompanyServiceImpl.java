@@ -1,20 +1,24 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.UniqueEmailAndPhoneNumber;
 import com.htecgroup.skynest.exception.company.PibAlreadyInUseException;
-import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
-import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.exception.tier.NonExistingTierException;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TierEntity;
-import com.htecgroup.skynest.model.io.CompanyIO;
+import com.htecgroup.skynest.model.request.CompanyAddRequest;
+import com.htecgroup.skynest.model.response.CompanyResponse;
 import com.htecgroup.skynest.repository.CompanyRepository;
 import com.htecgroup.skynest.repository.TierRepository;
 import com.htecgroup.skynest.service.CompanyService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 @Service
+@Validated
 @AllArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
@@ -23,27 +27,22 @@ public class CompanyServiceImpl implements CompanyService {
   private ModelMapper modelMapper;
 
   @Override
-  public CompanyIO addCompany(CompanyIO companyIO) {
+  public CompanyResponse addCompany(
+      @Valid @UniqueEmailAndPhoneNumber CompanyAddRequest companyAddRequest) {
 
-    if (companyRepository.existsByPib(companyIO.getPib())) {
+    if (companyRepository.existsByPib(companyAddRequest.getPib())) {
       throw new PibAlreadyInUseException();
-    }
-    if (companyRepository.existsByEmail(companyIO.getEmail())) {
-      throw new EmailAlreadyInUseException();
-    }
-    if (companyRepository.existsByPhoneNumber(companyIO.getPhoneNumber())) {
-      throw new PhoneNumberAlreadyInUseException();
     }
 
     TierEntity tierEntity =
         tierRepository
-            .findByName(companyIO.getTierName())
+            .findByName(companyAddRequest.getTierName())
             .orElseThrow(NonExistingTierException::new);
 
-    CompanyEntity companyEntity = modelMapper.map(companyIO, CompanyEntity.class);
+    CompanyEntity companyEntity = modelMapper.map(companyAddRequest, CompanyEntity.class);
     companyEntity.setTier(tierEntity);
     companyEntity = companyRepository.save(companyEntity);
 
-    return modelMapper.map(companyEntity, CompanyIO.class);
+    return modelMapper.map(companyEntity, CompanyResponse.class);
   }
 }
