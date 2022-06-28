@@ -35,10 +35,6 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
                <span className="font-weight-bold">Address: </span>
                {elem.address}
             </p>
-            <p>
-               <span className="font-weight-bold">User ID: </span>
-               {elem.id}
-            </p>
             {userRoleName !== "admin" && (
                <div className="d-flex justify-content-between">
                   <div>
