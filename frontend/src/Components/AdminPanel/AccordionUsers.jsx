@@ -14,7 +14,7 @@ const AccordionUsers = ({ elem, index, deleteUser, accessToken, setChange, chang
             </div>
             <span
                className={`ml-1 badge bg-${
-                  userRoleName === "admin" ? "danger" : "secondary rounded-pill font-weight-normal "
+                  userRoleName === "admin" ? "danger" : "secondary rounded-pill"
                } py-1 users-badge-align`}
             >
                {userRoleName}
