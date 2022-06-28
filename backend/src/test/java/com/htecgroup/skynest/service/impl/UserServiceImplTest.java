@@ -4,7 +4,6 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.AuthException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
-import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -14,7 +13,6 @@ import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
 import com.htecgroup.skynest.utils.UserEditRequestUtil;
 import com.htecgroup.skynest.utils.UserEntityUtil;
 import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
@@ -114,38 +112,6 @@ class UserServiceImplTest {
   }
 
   @Test
-  void authorizeUser_WorkerAccessDenied() {
-    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
-    UUID uuid = UUID.randomUUID();
-
-    AuthException ex =
-        Assertions.assertThrows(
-            AuthException.class, () -> userService.authorizeAccessToUserDetailsWith(uuid));
-
-    Assertions.assertEquals("A worked can only view his/hers account details", ex.getMessage());
-    verify(currentUserService, times(1)).getLoggedUser();
-  }
-
-  @Test
-  void authorizeUser_Admin() {
-    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
-    UUID uuid = UUID.randomUUID();
-
-    Assertions.assertDoesNotThrow(() -> userService.authorizeAccessToUserDetailsWith(uuid));
-    verify(currentUserService, times(1)).getLoggedUser();
-  }
-
-  @Test
-  void authorizeUser_Worker() {
-    LoggedUserDto currentUser = LoggedUserDtoUtil.getLoggedWorkerUser();
-    when(currentUserService.getLoggedUser()).thenReturn(currentUser);
-    UUID uuid = currentUser.getUuid();
-
-    Assertions.assertDoesNotThrow(() -> userService.authorizeAccessToUserDetailsWith(uuid));
-    verify(currentUserService, times(1)).getLoggedUser();
-  }
-
-  @Test
   void getUser() {
     UserEntity userEntity = UserEntityUtil.getNotVerified();
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
@@ -206,7 +172,7 @@ class UserServiceImplTest {
 
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntityThatShouldBeEdited));
     when(userRepository.save(any())).thenReturn(userEntityThatShouldBeEdited);
-    UserResponse userResponse = userService.editUser(editedUser, UUID.randomUUID());
+    UserResponse userResponse = userService.editUser(UUID.randomUUID(), editedUser);
 
     this.assertUserEntityAndUserResponse(userEntityThatShouldBeEdited, userResponse);
   }
