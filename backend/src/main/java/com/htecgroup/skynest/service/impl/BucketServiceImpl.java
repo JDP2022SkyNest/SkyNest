@@ -31,6 +31,9 @@ public class BucketServiceImpl implements BucketService {
     UserEntity currentUser = userRepository.getById(loggedUserDto.getUuid());
     CompanyEntity currentUserCompany = currentUser.getCompany();
 
+    bucketEntity.setName(bucketEntity.getName().trim());
+    bucketEntity.setDescription(bucketEntity.getDescription().trim());
+
     bucketEntity.setCreatedBy(currentUser);
     bucketEntity.setCompany(currentUserCompany);
     bucketEntity.setIsPublic(false);

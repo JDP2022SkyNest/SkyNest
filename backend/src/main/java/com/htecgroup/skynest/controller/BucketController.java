@@ -52,6 +52,22 @@ public class BucketController {
                   })
             }),
         @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"name cannot be null or empty\","
+                                + " \"description cannot be null or empty\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "401",
             description = "Unauthorized request",
             content = {
