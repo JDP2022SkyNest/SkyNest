@@ -184,7 +184,7 @@ class UserServiceImplTest {
   void when_NotVerifiedUser_disableUser_ShouldThrowUserNotVerified() {
     UserDto userDto = UserDtoUtil.getNotVerified();
     doReturn(userDto).when(userService).findUserById(any());
-    String expectedErrorMessage = "Not verified user can't be enabled.";
+    String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
             UserNotVerifiedException.class, () -> userService.disableUser(any()));
@@ -195,7 +195,7 @@ class UserServiceImplTest {
   void when_VerifiedButAlreadyDisabledUser_disableUser_ShouldThrowUserAlreadyDisabled() {
     UserDto userDto = UserDtoUtil.getVerifiedButDisabledUser();
     doReturn(userDto).when(userService).findUserById(any());
-    String expectedErrorMessage = "User is already disabled.";
+    String expectedErrorMessage = UserAlreadyDisabledException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
             UserAlreadyDisabledException.class, () -> userService.disableUser(any()));
