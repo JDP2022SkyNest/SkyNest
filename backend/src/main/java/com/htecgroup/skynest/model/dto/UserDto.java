@@ -15,7 +15,7 @@ public class UserDto {
   private UUID id;
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
-  private LocalDateTime deletedOn;
+  @With private LocalDateTime deletedOn;
   private String email;
   private String password;
   @With private String encryptedPassword;
