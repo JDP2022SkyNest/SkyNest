@@ -8,6 +8,7 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
     if (!userDto.getEnabled() && userDto.getDeletedOn() != null) {
       throw new UserAlreadyDisabledException();
     }
-    UserDto disabledUserDto = userDto.withEnabled(false).withDeletedOn(LocalDateTime.now());
+    UserDto disabledUserDto = userDto.disableUser();
     userRepository.save(modelMapper.map(disabledUserDto, UserEntity.class));
   }
 
@@ -166,5 +166,18 @@ public class UserServiceImpl implements UserService {
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_MANAGER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);
     userRepository.save(modelMapper.map(changedRoleUser, UserEntity.class));
+  }
+
+  @Override
+  public void enableUser(UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    if (!userDto.getVerified()) {
+      throw new UserNotVerifiedException();
+    }
+    if (userDto.getEnabled() && userDto.getDeletedOn() == null) {
+      throw new UserAlreadyEnabledException();
+    }
+    UserDto enabledUserDto = userDto.enableUser();
+    userRepository.save(modelMapper.map(enabledUserDto, UserEntity.class));
   }
 }

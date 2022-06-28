@@ -27,4 +27,12 @@ public class UserDto {
   @With private Boolean enabled;
   @With private RoleDto role;
   private CompanyDto company;
+
+  public UserDto enableUser() {
+    return this.withEnabled(true).withDeletedOn(null);
+  }
+
+  public UserDto disableUser() {
+    return this.withEnabled(false).withDeletedOn(LocalDateTime.now());
+  }
 }
