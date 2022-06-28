@@ -99,6 +99,7 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketService.createBucket(bucketCreateRequest), HttpStatus.OK);
 
+    log.info("Bucket {} was successfully created", bucketCreateRequest.getName());
     return bucketResponseEntity;
   }
 }
