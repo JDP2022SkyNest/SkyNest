@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
+import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
@@ -213,6 +214,41 @@ class UserServiceImplTest {
     UserEntity userEntity = captorUserEntity.getValue();
     Assertions.assertFalse(userEntity.getEnabled());
     Assertions.assertNotNull(userEntity.getDeletedOn());
+  }
+
+  @Test
+  void when_NotVerifiedUser_enableUser_ShouldThrowUserNotVerified() {
+    UserDto userDto = UserDtoUtil.getNotVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserNotVerifiedException.class, () -> userService.enableUser(any()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_VerifiedButAlreadyEnabledUser_enableUser_ShouldThrowUserAlreadyEnabled() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    String expectedErrorMessage = UserAlreadyEnabledException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserAlreadyEnabledException.class, () -> userService.enableUser(any()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_VerifiedAndDisabledUser_enableUser_ShouldEnableUser() {
+    UserDto userDto = UserDtoUtil.getVerifiedButDisabledUser();
+    doReturn(userDto).when(userService).findUserById(any());
+
+    userService.enableUser(any());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+
+    UserEntity userEntity = captorUserEntity.getValue();
+    Assertions.assertTrue(userEntity.getEnabled());
+    Assertions.assertNull(userEntity.getDeletedOn());
   }
 
   private void assertUserEntityAndUserResponse(
