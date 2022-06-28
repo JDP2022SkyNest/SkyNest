@@ -2,7 +2,6 @@ package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
-import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.service.BucketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,7 +39,7 @@ public class BucketsController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = UserResponse.class),
+                  schema = @Schema(implementation = BucketResponse.class),
                   examples = {
                     @ExampleObject(
                         value =
