@@ -15,3 +15,8 @@
   position: relative;
   bottom: 2px;
 }
+
+.home-page-body {
+  background-color: var(--latte);
+  height: 100vh;
+}

@@ -20,7 +20,7 @@ const HomePage = ({ setAccessToken, userRole }) => {
    };
 
    return (
-      <>
+      <div className="home-page-body">
          <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
@@ -41,13 +41,10 @@ const HomePage = ({ setAccessToken, userRole }) => {
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container mt-5">
-            <div>
-               Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint
-               illum, quasi molestias neque, earum incidunt voluptate eum iusto aperiam. Pariatur, impedit.
-            </div>
+            <div></div>
          </div>
          <Footer />
-      </>
+      </div>
    );
 };
 
