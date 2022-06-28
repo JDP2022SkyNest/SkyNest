@@ -18,12 +18,6 @@ public class EditValidator implements ConstraintValidator<CurrentUserCanEdit, UU
 
   private final CurrentUserService currentUserService;
   private final UserService userService;
-  private CurrentUserCanEdit currentUserCanEdit;
-
-  @Override
-  public void initialize(CurrentUserCanEdit constraintAnnotation) {
-    currentUserCanEdit = constraintAnnotation;
-  }
 
   @Override
   public boolean isValid(UUID uuid, ConstraintValidatorContext context) {

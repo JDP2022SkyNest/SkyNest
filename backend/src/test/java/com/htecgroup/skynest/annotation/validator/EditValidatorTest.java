@@ -1,13 +1,11 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
 import com.htecgroup.skynest.utils.UserResponseUtil;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,14 +20,8 @@ import static org.mockito.Mockito.*;
 class EditValidatorTest {
 
   @Mock CurrentUserService currentUserService;
-  @Mock CurrentUserCanEdit currentUserCanEdit;
   @Mock UserService userService;
   @InjectMocks EditValidator editValidator;
-
-  @BeforeEach
-  void setUp() {
-    editValidator.initialize(currentUserCanEdit);
-  }
 
   @Test
   void isValid_AdminAccessDenied() {

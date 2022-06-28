@@ -17,12 +17,6 @@ import java.util.UUID;
 public class DeleteValidator implements ConstraintValidator<CurrentUserCanDelete, UUID> {
   private final CurrentUserService currentUserService;
   private final UserService userService;
-  private CurrentUserCanDelete currentUserCanDelete;
-
-  @Override
-  public void initialize(CurrentUserCanDelete constraintAnnotation) {
-    currentUserCanDelete = constraintAnnotation;
-  }
 
   @Override
   public boolean isValid(UUID uuid, ConstraintValidatorContext context) {
