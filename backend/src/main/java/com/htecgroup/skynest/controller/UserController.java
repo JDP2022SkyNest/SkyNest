@@ -3,7 +3,9 @@ package com.htecgroup.skynest.controller;
 import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.model.response.LoggedUserResponse;
 import com.htecgroup.skynest.model.response.UserResponse;
+import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,6 +35,7 @@ import static com.htecgroup.skynest.util.UrlUtil.USERS_CONTROLLER_URL;
 public class UserController {
 
   private UserService userService;
+  private CurrentUserService currentUserService;
 
   @Operation(summary = "Get all users")
   @ApiResponses(
@@ -688,5 +691,48 @@ public class UserController {
     userService.demoteUser(uuid);
     log.info("User with id {} was successfully demoted to worker", uuid);
     return ResponseEntity.ok(true);
+  }
+
+  @Operation(summary = "Get logged user")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = LoggedUserResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"uuid\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + " \"username\": \"username@gmail.com\","
+                                + "  \"name\": \"Name\","
+                                + "  \"surname\": \"Surname\","
+                                + "  \"company\": \"null\","
+                                + "  \"roles\": [\"role_worker\"]}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @GetMapping("/me")
+  public ResponseEntity<LoggedUserResponse> getLoggedUser() {
+    LoggedUserResponse loggedUser = currentUserService.getUserResponseForLoggedUser();
+    return ResponseEntity.ok(loggedUser);
   }
 }
