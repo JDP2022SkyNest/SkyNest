@@ -38,6 +38,8 @@ class BucketServiceImplTest {
     List<BucketResponse> actualResponse = bucketService.listAllBuckets();
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+    Assertions.assertEquals(
+        expectedResponse.get(0).getId(), actualResponse.get(0).getCreatedById());
   }
 
   @Test
