@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
-import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
-import com.htecgroup.skynest.annotation.CurrentUserCanView;
-import com.htecgroup.skynest.annotation.OnlyWorkerCanBePromoted;
+import com.htecgroup.skynest.annotation.*;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
@@ -148,7 +145,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void disableUser(UUID userId) {
+  public void disableUser(@Valid @UserNotAdmin UUID userId) {
     UserDto userDto = findUserById(userId);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();
@@ -169,7 +166,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void enableUser(UUID uuid) {
+  public void enableUser(@Valid @UserNotAdmin UUID uuid) {
     UserDto userDto = findUserById(uuid);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();
