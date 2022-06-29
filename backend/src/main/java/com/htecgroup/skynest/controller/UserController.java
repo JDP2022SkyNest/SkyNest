@@ -463,14 +463,14 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"An unverified user can't be enabled/disabled.\"],"
+                            "{\"messages\":[\"An unverified user can't be enabled/disabled.  /  Access Denied\"],"
                                 + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
         @ApiResponse(
             responseCode = "409",
-            description = "User already disabled",
+            description = "User already enabled",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -478,7 +478,7 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User is already disabled.\"],"
+                            "{\"messages\":[\"User is already enabled.\"],"
                                 + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
@@ -529,7 +529,7 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Not verified user can't be enabled/disabled.\"],"
+                            "{\"messages\":[\"An unverified user can't be enabled/disabled.  /  Access Denied\"],"
                                 + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
