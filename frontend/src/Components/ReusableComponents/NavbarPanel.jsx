@@ -29,12 +29,15 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchT
                      placeholder="Search User"
                   />
                   <div className="input-group-append">
-                     <DropdownButton id="dropdown-basic-button" title="">
+                     <DropdownButton id="dropdown-basic-button" align={"end"} title="">
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("admin")}>
                            Admins
                         </Dropdown.Item>
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("manager")}>
                            Managers
+                        </Dropdown.Item>
+                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("worker")}>
+                           Workers
                         </Dropdown.Item>
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(false)}>
                            Disabled & Unverified
