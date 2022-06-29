@@ -21,7 +21,7 @@ const ChangePassword = ({ userID }) => {
 
    const isSuccessfulValidation = newPassword.match(passwordRegEx) && newPassword === confirmNewPw;
 
-   const onPasswordChange = async () => {
+   const handlePasswordChange = async () => {
       try {
          await AxiosInstance.put(
             `/users/password-change/${userID}`,
@@ -40,11 +40,10 @@ const ChangePassword = ({ userID }) => {
          }, 1000);
       } catch (err) {
          setErrorMsg(err.response.data.messages);
-         console.log(err.response.status);
       }
    };
 
-   const passwordShowHide = () => {
+   const toggleShowHide = () => {
       setShowPassword(!showPassword);
    };
 
@@ -85,7 +84,7 @@ const ChangePassword = ({ userID }) => {
                            required
                            className="border-right-0"
                         />
-                        <span onClick={passwordShowHide} className="input-group-text bg-white rounded-right border-left-0">
+                        <span onClick={toggleShowHide} className="input-group-text bg-white rounded-right border-left-0">
                            <i className={showPassword ? "fa-solid fa-eye" : "fa fa-eye"}></i>
                         </span>
                      </InputGroup>
@@ -106,13 +105,13 @@ const ChangePassword = ({ userID }) => {
                <button
                   onClick={() => {
                      if (isSuccessfulValidation) {
-                        onPasswordChange();
+                        handlePasswordChange();
                      } else {
                         setErrorMsg("Requirements not met");
                      }
                   }}
                   className={isSuccessfulValidation ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
-                  disabled={isSuccessfulValidation ? false : true}
+                  disabled={!isSuccessfulValidation}
                >
                   Submit
                </button>
