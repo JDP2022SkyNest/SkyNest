@@ -12,7 +12,10 @@ public class CompanyDto implements Serializable {
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
   private LocalDateTime deletedOn;
+  private String pib;
   private String name;
   private String address;
-  private String domain;
+  private String phoneNumber;
+  private String email;
+  private TierDto tier;
 }
