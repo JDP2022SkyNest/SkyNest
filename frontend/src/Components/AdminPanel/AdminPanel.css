@@ -33,7 +33,9 @@
 
 .admin-page-body {
    background-color: var(--latte);
-   height: 100vh;
+   min-height: 100vh;
+   margin-bottom: 40px;
+   padding-bottom: 40px;
 }
 
 .card-title-style {
@@ -42,4 +44,8 @@
 
 .admin-color {
    background-color: var(--gold);
+}
+
+.manager-badge {
+   background-color: rgb(67, 67, 207);
 }
