@@ -5,6 +5,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.file.FileAlreadyExistsException;
 import com.htecgroup.skynest.exception.file.FileIOException;
+import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -14,14 +15,20 @@ import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.FileService;
 import com.mongodb.MongoException;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 @Service
@@ -39,6 +46,7 @@ public class FileServiceImpl implements FileService {
   private final ModelMapper modelMapper;
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public FileResponse uploadFile(MultipartFile multipartFile, UUID bucketId) {
 
     FileMetadataEntity emptyFileMetadata = reserveFileName(multipartFile, bucketId);
@@ -65,9 +73,8 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadataEntity = initFileMetadata(multipartFile, bucketId);
 
     checkCanCreateFile(fileMetadataEntity);
-    fileMetadataRepository.save(fileMetadataEntity);
 
-    return fileMetadataEntity;
+    return fileMetadataRepository.save(fileMetadataEntity);
   }
 
   private String storeFileContentsToDatabase(MultipartFile multipartFile) throws IOException {
@@ -80,17 +87,17 @@ public class FileServiceImpl implements FileService {
   }
 
   private void checkCanCreateFile(FileMetadataEntity fileMetadataEntity) {
-    onlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
-    fileMustHaveUniqueNameInFolder(fileMetadataEntity);
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    checkFileMustHaveUniqueNameInFolder(fileMetadataEntity);
   }
 
-  private void fileMustHaveUniqueNameInFolder(FileMetadataEntity fileMetadataEntity) {
+  private void checkFileMustHaveUniqueNameInFolder(FileMetadataEntity fileMetadataEntity) {
     if (fileMetadataRepository.existsByNameAndBucketAndParentFolder(
         fileMetadataEntity.getName(), fileMetadataEntity.getBucket(), null))
       throw new FileAlreadyExistsException();
   }
 
-  private void onlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
+  private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
     UUID bucketCreatorId = bucket.getCreatedBy().getId();
@@ -124,12 +131,39 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public FileResponse getFileMetadata(UUID fileId) {
-    return null;
+
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+
+    return modelMapper.map(fileMetadataEntity, FileResponse.class);
+  }
+
+  private FileMetadataEntity getFileMetadataEntity(UUID fileId) {
+    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
   }
 
   @Override
   public Resource downloadFile(UUID fileId) {
-    return null;
+
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+
+    String objectId = fileMetadataEntity.getContentId();
+    if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
+
+    return getFileContents(objectId);
+  }
+
+  private InputStreamResource getFileContents(String objectId) {
+    GridFSFile gridFSFile = operations.findOne(new Query(Criteria.where("_id").is(objectId)));
+    if (gridFSFile == null) throw new FileNotFoundException();
+    try {
+      InputStream inputStream = operations.getResource(gridFSFile).getInputStream();
+      return new InputStreamResource(inputStream);
+    } catch (IOException e) {
+      throw new FileIOException();
+    }
   }
 }
