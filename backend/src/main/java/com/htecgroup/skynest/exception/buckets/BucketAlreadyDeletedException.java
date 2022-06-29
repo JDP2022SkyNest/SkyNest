@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public class BucketAlreadyDeletedException extends SkyNestBaseException {
 
-  private static final String MESSAGE = "Bucket already deleted";
+  public static final String MESSAGE = "Bucket already deleted";
 
   public BucketAlreadyDeletedException() {
     super(MESSAGE, HttpStatus.CONFLICT);
