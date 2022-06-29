@@ -4,6 +4,7 @@ import { Modal, Form, InputGroup } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import PasswordRequirements from "../../ReusableComponents/PasswordRequirements";
 import { passwordRegEx } from "../../ReusableComponents/ReusableFunctions";
+import { useEffect } from "react";
 
 const ChangePassword = ({ userID }) => {
    const [currentPassword, setCurrentPassword] = useState("");
@@ -46,6 +47,10 @@ const ChangePassword = ({ userID }) => {
    const toggleShowHide = () => {
       setShowPassword(!showPassword);
    };
+
+   useEffect(() => {
+      setErrorMsg("");
+   }, [currentPassword, newPassword, confirmNewPw]);
 
    return (
       <>
