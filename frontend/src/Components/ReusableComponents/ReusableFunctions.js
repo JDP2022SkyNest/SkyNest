@@ -98,6 +98,21 @@ export const disableUser = async (accessToken, id) => {
    }
 };
 
+export const enableUser = async (accessToken, id) => {
+   try {
+      await AxiosInstance.put(
+         `/users/${id}/enable`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      console.log("User Enabled");
+   } catch (err) {
+      console.error(err.response.data.messages);
+   }
+};
+
 export const emailVerification = async (accessToken, success, error, info, setparams, resendEmail) => {
    info("Verifying in proggress");
    try {

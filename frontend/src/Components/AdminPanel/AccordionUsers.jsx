@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 import * as MdIcons from "react-icons/md";
 
-const AccordionUsers = ({ elem, index, disableUser, accessToken, setChange, change, userID, promoteUser }) => {
+const AccordionUsers = ({ elem, index, disableUser, enableUser, accessToken, setChange, change, userID, promoteUser }) => {
    const [youSure, setYouSure] = useState(false);
    const userRoleName = elem.roleName.slice(5);
 
@@ -59,18 +59,30 @@ const AccordionUsers = ({ elem, index, disableUser, accessToken, setChange, chan
                      {userRoleName === "manager" && <button className="btn btn-primary">Demote</button>}
                   </div>
                   <div>
-                     <button
-                        onClick={async () => {
-                           setYouSure(!youSure);
-                           if (youSure) {
-                              await disableUser(accessToken, elem.id);
+                     {elem.enabled ? (
+                        <button
+                           onClick={async () => {
+                              setYouSure(!youSure);
+                              if (youSure) {
+                                 await disableUser(accessToken, elem.id);
+                                 setChange(!change);
+                              }
+                           }}
+                           className={`btn btn-${!youSure ? "danger" : "dark"}`}
+                        >
+                           {!youSure ? "Disable" : "You sure?"}
+                        </button>
+                     ) : (
+                        <button
+                           onClick={async () => {
+                              await enableUser(accessToken, elem.id);
                               setChange(!change);
-                           }
-                        }}
-                        className={`btn btn-${!youSure ? "danger" : "dark"}`}
-                     >
-                        {!youSure ? "Disable" : "You sure?"}
-                     </button>
+                           }}
+                           className="btn btn-outline-dark"
+                        >
+                           Enable
+                        </button>
+                     )}
                   </div>
                </div>
             )}
