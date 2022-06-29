@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -95,14 +95,10 @@ public class BucketController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @DeleteMapping("/{uuid}")
-  public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
-    String deletedId = bucketService.deleteBucket(uuid);
-    String deleteSuccess;
-    if (!deletedId.isEmpty())
-      deleteSuccess = String.format("Bucket %s was successfully deleted.", deletedId);
-    else deleteSuccess = "Bucket was not deleted.";
-    log.info(deleteSuccess);
-    return ResponseEntity.ok(deleteSuccess);
+  @PutMapping("/{uuid}/delete")
+  public ResponseEntity<Boolean> deleteBucket(@PathVariable UUID uuid) {
+    bucketService.deleteBucket(uuid);
+    log.info("Bucket with id {} was successfully deleted", uuid);
+    return ResponseEntity.ok(true);
   }
 }
