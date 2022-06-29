@@ -54,3 +54,14 @@
    font-size: 22px;
    color: rgb(194, 12, 12);
 }
+
+.remove-error-icon {
+   position: absolute;
+   right: 5px;
+   top: 5px;
+   font-size: 20px;
+}
+
+.remove-error-icon:hover {
+   cursor: pointer;
+}

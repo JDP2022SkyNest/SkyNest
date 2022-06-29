@@ -10,6 +10,7 @@ import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ReusableModal from "../ReusableComponents/ReusableModal";
 import AdminCarousel from "./AdminCarousel";
 import ROUTES from "../Routes/ROUTES";
+import * as TiCions from "react-icons/ti";
 
 const AdminPanel = ({ userID }) => {
    const [usersData, setUsersData] = useState([]);
@@ -54,6 +55,12 @@ const AdminPanel = ({ userID }) => {
             <Container>
                <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0" : "d-none"}>
                   {errorMsg}
+                  <TiCions.TiDeleteOutline
+                     onClick={() => {
+                        setErrorMsg("");
+                     }}
+                     className="remove-error-icon"
+                  />
                </p>
                <div className="row">
                   <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
