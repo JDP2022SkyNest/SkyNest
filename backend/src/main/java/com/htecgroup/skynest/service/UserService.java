@@ -25,7 +25,7 @@ public interface UserService {
 
   UserResponse editUser(@Valid @CurrentUserCanEdit UUID uuid, UserEditRequest userEditRequest);
 
-  void enableUser(@Valid @AdminCanNotEnableOrDisableAnotherAdmin UUID uuid);
+  void enableUser(@Valid @UserNotAdmin UUID uuid);
 
   void changePassword(UserChangePasswordRequest userChangePasswordRequest, UUID uuid);
 
@@ -35,5 +35,5 @@ public interface UserService {
 
   void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID userId);
 
-  void disableUser(@Valid @AdminCanNotEnableOrDisableAnotherAdmin UUID userId);
+  void disableUser(@Valid @UserNotAdmin UUID userId);
 }

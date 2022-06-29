@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.AdminCanNotEnableOrDisableAnotherAdmin;
+import com.htecgroup.skynest.annotation.UserNotAdmin;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class EnableAndDisableValidator
-    implements ConstraintValidator<AdminCanNotEnableOrDisableAnotherAdmin, UUID> {
+public class EnableAndDisableValidator implements ConstraintValidator<UserNotAdmin, UUID> {
 
   private final UserService userService;
 

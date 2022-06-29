@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void disableUser(@Valid @AdminCanNotEnableOrDisableAnotherAdmin UUID userId) {
+  public void disableUser(@Valid @UserNotAdmin UUID userId) {
     UserDto userDto = findUserById(userId);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();
@@ -166,7 +166,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void enableUser(@Valid @AdminCanNotEnableOrDisableAnotherAdmin UUID uuid) {
+  public void enableUser(@Valid @UserNotAdmin UUID uuid) {
     UserDto userDto = findUserById(uuid);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();

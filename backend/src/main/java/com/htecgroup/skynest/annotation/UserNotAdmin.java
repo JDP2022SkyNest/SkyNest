@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 @Constraint(validatedBy = EnableAndDisableValidator.class)
-public @interface AdminCanNotEnableOrDisableAnotherAdmin {
+public @interface UserNotAdmin {
   String message() default "Access denied";
 
   Class<?> groups()[] default {};
