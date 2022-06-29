@@ -6,6 +6,7 @@ import java.util.UUID;
 
 @Data
 public class BucketResponse {
+
   private UUID createdById;
 
   private String name;
@@ -14,5 +15,5 @@ public class BucketResponse {
 
   private String description;
 
-  private long size;
+  private Long size;
 }

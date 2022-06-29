@@ -14,7 +14,7 @@ const Profile = ({ setAccessToken, userRole }) => {
    const navigate = useNavigate();
 
    return (
-      <DropdownButton align="end" title={<AiIcons.AiOutlineUser />} id="dropdown-menu-align-end" variant="secondary" menuVariant="dark">
+      <DropdownButton align="end" title={<AiIcons.AiOutlineUser className="main-icon-align" />} id="dropdown-menu-align-end" variant="dark" menuVariant="dark">
          <div className={userRole === ROLE.ADMIN ? "dropdown-menu-admin" : "dropdown-menu-worker"}>
             <Dropdown.Item
                onClick={() => {
@@ -23,16 +23,16 @@ const Profile = ({ setAccessToken, userRole }) => {
                className="mr-2"
                eventKey="1"
             >
-               <CgIcons.CgProfile className="mr-2" />
+               <CgIcons.CgProfile className="icons-align mr-2" />
                Profile
             </Dropdown.Item>
             <Dropdown.Item eventKey="2">
-               <FiIcons.FiSettings className="mr-2" />
+               <FiIcons.FiSettings className="icons-align mr-2" />
                Settings
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={openFullscreen} eventKey="3">
-               <AiIcons.AiOutlineFullscreen className="mr-2" />
+               <AiIcons.AiOutlineFullscreen className="icons-align mr-2" />
                Fullscreen
             </Dropdown.Item>
             <Dropdown.Divider />
@@ -43,7 +43,7 @@ const Profile = ({ setAccessToken, userRole }) => {
                eventKey="4"
             >
                <div>
-                  <CgIcons.CgLogOut className="mr-2" />
+                  <CgIcons.CgLogOut className="icons-align mr-2" />
                   Logout
                </div>
             </Dropdown.Item>
