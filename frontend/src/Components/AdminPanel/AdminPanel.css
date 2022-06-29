@@ -49,3 +49,8 @@
 .manager-badge {
    background-color: rgb(67, 67, 207);
 }
+
+.disabled-user-icon {
+   font-size: 22px;
+   color: rgb(194, 12, 12);
+}
