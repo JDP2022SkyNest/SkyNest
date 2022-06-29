@@ -51,7 +51,9 @@
 .logo-sidebar-admin {
    margin-top:  35vh;
    filter: sepia(100);
-   animation: logoRotation 60s linear infinite reverse;
+   width: 180px;
+   margin-left: 50px;
+   animation: logoRotation 360s linear infinite reverse;
 }
 
 @keyframes logoRotation {
