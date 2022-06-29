@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.service;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
-import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
-import com.htecgroup.skynest.annotation.CurrentUserCanView;
-import com.htecgroup.skynest.annotation.OnlyWorkerCanBePromoted;
+import com.htecgroup.skynest.annotation.*;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
@@ -36,9 +33,9 @@ public interface UserService {
 
   UserDto findUserById(UUID uuid);
 
-  void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID userId);
+  void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID uuid);
 
-  void disableUser(UUID userId);
+  void disableUser(UUID uuid);
 
-  void demoteUser(UUID userId);
+  void demoteUser(@Valid @OnlyManagerCanBeDemoted UUID uuid);
 }

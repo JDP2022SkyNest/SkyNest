@@ -551,10 +551,10 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{userId}/disable")
-  public ResponseEntity<Boolean> disableUser(@PathVariable UUID userId) {
-    userService.disableUser(userId);
-    log.info("User with id {} was successfully disabled", userId);
+  @PutMapping("/{uuid}/disable")
+  public ResponseEntity<Boolean> disableUser(@PathVariable UUID uuid) {
+    userService.disableUser(uuid);
+    log.info("User with id {} was successfully disabled", uuid);
     return ResponseEntity.ok(true);
   }
 
@@ -617,10 +617,10 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{userId}/promote")
-  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID userId) {
-    userService.promoteUser(userId);
-    log.info("User with id {} was successfully promoted to manager", userId);
+  @PutMapping("/{uuid}/promote")
+  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID uuid) {
+    userService.promoteUser(uuid);
+    log.info("User with id {} was successfully promoted to manager", uuid);
     return ResponseEntity.ok(true);
   }
 
@@ -684,9 +684,9 @@ public class UserController {
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
   @PutMapping("/{uuid}/demote")
-  public ResponseEntity<Boolean> demoteUser(@PathVariable UUID userId) {
-    userService.demoteUser(userId);
-    log.info("User with id {} was successfully demoted to worker", userId);
+  public ResponseEntity<Boolean> demoteUser(@PathVariable UUID uuid) {
+    userService.demoteUser(uuid);
+    log.info("User with id {} was successfully demoted to worker", uuid);
     return ResponseEntity.ok(true);
   }
 }

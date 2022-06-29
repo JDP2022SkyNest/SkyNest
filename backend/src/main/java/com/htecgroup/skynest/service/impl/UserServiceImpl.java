@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
-import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
-import com.htecgroup.skynest.annotation.CurrentUserCanView;
-import com.htecgroup.skynest.annotation.OnlyWorkerCanBePromoted;
+import com.htecgroup.skynest.annotation.*;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
@@ -12,7 +9,6 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
-import com.htecgroup.skynest.exception.role.UserNotManagerException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -149,8 +145,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void disableUser(UUID userId) {
-    UserDto userDto = findUserById(userId);
+  public void disableUser(UUID uuid) {
+    UserDto userDto = findUserById(uuid);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();
     }
@@ -162,8 +158,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID userId) {
-    UserDto userDto = findUserById(userId);
+  public void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID uuid) {
+    UserDto userDto = findUserById(uuid);
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_MANAGER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);
     userRepository.save(modelMapper.map(changedRoleUser, UserEntity.class));
@@ -183,15 +179,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void demoteUser(UUID userId) {
-    UserDto userDto = findUserById(userId);
-    if (!userDto.getRole().getName().equals(RoleEntity.ROLE_MANAGER)) {
-      throw new UserNotManagerException();
-    }
-
+  public void demoteUser(@Valid @OnlyManagerCanBeDemoted UUID uuid) {
+    UserDto userDto = findUserById(uuid);
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_WORKER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);
-
     userRepository.save(modelMapper.map(changedRoleUser, UserEntity.class));
   }
 }
