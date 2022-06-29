@@ -8,6 +8,6 @@ public class BucketAlreadyDeletedException extends SkyNestBaseException {
   private static final String MESSAGE = "Bucket already deleted";
 
   public BucketAlreadyDeletedException() {
-    super(MESSAGE, HttpStatus.NOT_FOUND);
+    super(MESSAGE, HttpStatus.CONFLICT);
   }
 }

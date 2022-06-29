@@ -95,12 +95,12 @@ public class BucketController {
     return bucketResponseEntity;
   }
 
-  @Operation(summary = "Disable user")
+  @Operation(summary = "Delete bucket")
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "User successfully disabled",
+            description = "Bucket successfully deleted",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -109,7 +109,7 @@ public class BucketController {
             }),
         @ApiResponse(
             responseCode = "404",
-            description = "User not found",
+            description = "Bucket not found",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -117,29 +117,14 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                            "{\"messages\":[\"Bucket with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
                                 + " \"status\": \"404\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
         @ApiResponse(
-            responseCode = "403",
-            description = "User not verified",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"Not verified user can't be enabled/disabled.\"],"
-                                + " \"status\": \"403\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
-                  })
-            }),
-        @ApiResponse(
             responseCode = "409",
-            description = "User already disabled",
+            description = "Bucket already deleted",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -147,7 +132,7 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"User is already disabled.\"],"
+                            "{\"messages\":[\"Bucket is already disabled.\"],"
                                 + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
