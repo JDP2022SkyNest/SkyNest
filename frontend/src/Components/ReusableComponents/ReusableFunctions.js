@@ -83,7 +83,7 @@ export const editUserData = async (accessToken, id, payload, success, error, fun
    func();
 };
 
-export const disableUser = async (accessToken, id) => {
+export const disableUser = async (accessToken, id, error) => {
    try {
       await AxiosInstance.put(
          `/users/${id}/disable`,
@@ -94,11 +94,11 @@ export const disableUser = async (accessToken, id) => {
       );
       console.log("User Disabled");
    } catch (err) {
-      console.error(err.response.data.messages);
+      error(err.response.data.messages);
    }
 };
 
-export const enableUser = async (accessToken, id) => {
+export const enableUser = async (accessToken, id, error) => {
    try {
       await AxiosInstance.put(
          `/users/${id}/enable`,
@@ -109,7 +109,7 @@ export const enableUser = async (accessToken, id) => {
       );
       console.log("User Enabled");
    } catch (err) {
-      console.error(err.response.data.messages);
+      error(err.response.data.messages);
    }
 };
 
@@ -149,7 +149,7 @@ export const onUserLogout = async (accessToken, stateToChange) => {
    stateToChange("");
 };
 
-export const promoteUser = async (accessToken, id) => {
+export const promoteUser = async (accessToken, id, error) => {
    try {
       await AxiosInstance.put(
          `users/${id}/promote`,
@@ -159,7 +159,7 @@ export const promoteUser = async (accessToken, id) => {
          }
       );
    } catch (err) {
-      console.error(err.response.data.messages);
+      error(err.response.data.messages);
       console.error(err.response.status);
    }
 };

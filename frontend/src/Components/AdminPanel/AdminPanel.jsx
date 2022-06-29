@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Accordion, Container } from "react-bootstrap";
-import { getAllUsers, disableUser, enableUser, promoteUser } from "../ReusableComponents/ReusableFunctions";
+import { getAllUsers } from "../ReusableComponents/ReusableFunctions";
 import AdminCard from "./AdminCard";
 import "./AdminPanel.css";
 import AccordionUsers from "./AccordionUsers";
@@ -38,18 +38,7 @@ const AdminPanel = ({ userID }) => {
    );
 
    const allUsers = filterUsers.map((elem, index) => (
-      <AccordionUsers
-         elem={elem}
-         index={index}
-         disableUser={disableUser}
-         key={elem.id}
-         accessToken={accessToken}
-         setChange={setChange}
-         change={change}
-         userID={userID}
-         promoteUser={promoteUser}
-         enableUser={enableUser}
-      />
+      <AccordionUsers elem={elem} index={index} key={elem.id} setChange={setChange} change={change} userID={userID} setErrorMsg={setErrorMsg} />
    ));
 
    return (
