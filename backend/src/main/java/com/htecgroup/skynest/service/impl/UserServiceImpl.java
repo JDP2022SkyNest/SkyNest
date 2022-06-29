@@ -9,6 +9,7 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -42,8 +43,8 @@ public class UserServiceImpl implements UserService {
   private PasswordEncoderService passwordEncoderService;
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
-
   private EmailService emailService;
+  private CompanyService companyService;
 
   @Override
   public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
@@ -176,5 +177,13 @@ public class UserServiceImpl implements UserService {
     }
     UserDto enabledUserDto = userDto.enableUser();
     userRepository.save(modelMapper.map(enabledUserDto, UserEntity.class));
+  }
+
+  @Override
+  public void addCompanyForUser(UUID uuid, UUID companyId) {
+    CompanyDto companyDto = companyService.findById(companyId);
+    UserDto userDto = findUserById(uuid);
+    UserDto userWithCompany = userDto.withCompany(companyDto);
+    userRepository.save(modelMapper.map(userWithCompany, UserEntity.class));
   }
 }

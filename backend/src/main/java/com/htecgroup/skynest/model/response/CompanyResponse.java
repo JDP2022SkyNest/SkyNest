@@ -1,12 +1,14 @@
 package com.htecgroup.skynest.model.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CompanyResponse {
-  private UUID id;
+  private String id;
   private String pib;
   private String name;
   private String address;

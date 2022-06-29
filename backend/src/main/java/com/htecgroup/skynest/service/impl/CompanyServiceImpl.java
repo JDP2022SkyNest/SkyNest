@@ -1,7 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.UniqueCompany;
+import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
 import com.htecgroup.skynest.exception.tier.NonExistingTierException;
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TierEntity;
 import com.htecgroup.skynest.model.request.CompanyAddRequest;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @Service
 @Validated
@@ -24,6 +27,7 @@ public class CompanyServiceImpl implements CompanyService {
   private CompanyRepository companyRepository;
   private TierRepository tierRepository;
   private ModelMapper modelMapper;
+
 
   @Override
   public CompanyResponse addCompany(@Valid @UniqueCompany CompanyAddRequest companyAddRequest) {
@@ -38,5 +42,12 @@ public class CompanyServiceImpl implements CompanyService {
     companyEntity = companyRepository.save(companyEntity);
 
     return modelMapper.map(companyEntity, CompanyResponse.class);
+  }
+
+  @Override
+  public CompanyDto findById(UUID companyId) {
+    CompanyEntity companyEntity =
+        companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
+    return modelMapper.map(companyEntity, CompanyDto.class);
   }
 }

@@ -669,4 +669,13 @@ public class UserController {
     LoggedUserResponse loggedUser = currentUserService.getUserResponseForLoggedUser();
     return ResponseEntity.ok(loggedUser);
   }
+
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
+  @PutMapping("/{uuid}/add-company/{companyId}")
+  public ResponseEntity<Boolean> addCompanyForUser(
+      @PathVariable UUID uuid, @PathVariable UUID companyId) {
+    userService.addCompanyForUser(uuid, companyId);
+
+    return ResponseEntity.ok(true);
+  }
 }
