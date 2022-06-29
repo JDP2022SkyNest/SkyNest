@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Accordion } from "react-bootstrap";
 import * as TiIcons from "react-icons/ti";
-import { disableUser, enableUser, promoteUser } from "../ReusableComponents/ReusableFunctions";
+import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
 
 const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg }) => {
    const [youSure, setYouSure] = useState(false);
@@ -58,7 +58,17 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
                            Promote
                         </button>
                      )}
-                     {userRoleName === "manager" && <button className="btn btn-primary">Demote</button>}
+                     {userRoleName === "manager" && (
+                        <button
+                           onClick={async () => {
+                              await demoteUser(accessToken, elem.id, setErrorMsg);
+                              setChange(!change);
+                           }}
+                           className="btn btn-primary"
+                        >
+                           Demote
+                        </button>
+                     )}
                   </div>
                   <div>
                      {elem.enabled ? (
