@@ -45,3 +45,7 @@
 .admin-color {
    background-color: var(--gold);
 }
+
+.manager-badge {
+   background-color: rgb(46, 46, 173);
+}
