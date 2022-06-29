@@ -9,11 +9,13 @@ services:
       - ./db.env
     volumes:
       - ./.db_data/mysql:/var/lib/mysql
+    command: --log_bin_trust_function_creators=1
     healthcheck:
       test: mysql ${DB_NAME} --user=${DB_USERNAME} --password=${DB_PASSWORD} --silent --execute "SELECT 1;"
       interval: 15s
       timeout: 10s
       retries: 15
+      start_period: 10s
 
   skynest-token-db:
     image: cassandra:latest
@@ -32,6 +34,32 @@ services:
       interval: 15s
       timeout: 10s
       retries: 15
+      start_period: 40s
+
+  skynest-file-db:
+    image: mongo:latest
+    container_name: skynest-file-db
+    ports:
+      - $FILE_DB_PORT_HOST:$FILE_DB_PORT_CONTAINER
+    restart: unless-stopped
+    env_file:
+      - ./file_db.env
+    volumes:
+      - ./.db_data/mongo:/data/db
+    healthcheck:
+      test: mongo --username={$FILE_DB_ROOT_USERNAME} --password={$FILE_DB_ROOT_PASSWORD} --quiet --eval "db.runCommand({serverStatus:1}).ok" | grep 1
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 20s
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - ./mongo_express.env
 
   skynest-be:
     depends_on:

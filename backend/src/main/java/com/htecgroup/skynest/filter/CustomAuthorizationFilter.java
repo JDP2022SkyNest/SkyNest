@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.filter;
 
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.SkyNestBaseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.security.CustomAuthenticationToken;
@@ -53,6 +53,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         return;
       }
+
       String token = authorizationHeader.replace(JwtUtils.TOKEN_PREFIX, "");
       if (invalidJwtService.isInvalid(token)) {
         filterChain.doFilter(request, response);
@@ -71,7 +72,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
       SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
 
       filterChain.doFilter(request, response);
-    } catch (UserException ex) {
+    } catch (SkyNestBaseException ex) {
       log.error(ex);
       ErrorMessage errorMessage =
           new ErrorMessage(

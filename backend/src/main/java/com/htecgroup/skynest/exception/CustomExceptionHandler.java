@@ -11,16 +11,19 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Slf4j
-public class UserExceptionHandler {
+public class CustomExceptionHandler {
 
-  @ExceptionHandler(value = {UserException.class})
-  public ResponseEntity<ErrorMessage> handleUserException(UserException ex, WebRequest webRequest) {
-    log.error("Handle UserException. Error: {}", ex.getMessage());
+  @ExceptionHandler(value = {SkyNestBaseException.class})
+  public ResponseEntity<ErrorMessage> handleUserException(
+      SkyNestBaseException ex, WebRequest webRequest) {
+    log.error("Handle CustomException. Error: {}", ex.getMessage());
     ErrorMessage errorMessage =
         new ErrorMessage(
             ex.getMessage(), ex.getStatus().value(), DateTimeUtil.currentTimeFormatted());
@@ -42,5 +45,19 @@ public class UserExceptionHandler {
             errors, HttpStatus.BAD_REQUEST.value(), DateTimeUtil.currentTimeFormatted());
     log.error("Handle MethodArgumentNotValidException. Error: {}", ex.getMessage());
     return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(value = {ConstraintViolationException.class})
+  public ResponseEntity<ErrorMessage> handleConstraintViolationException(
+      ConstraintViolationException ex) {
+
+    List<String> errors =
+        ex.getConstraintViolations().stream()
+            .map(ConstraintViolation::getMessage)
+            .collect(Collectors.toList());
+    ErrorMessage errorMessage =
+        new ErrorMessage(errors, HttpStatus.FORBIDDEN.value(), DateTimeUtil.currentTimeFormatted());
+    log.error("Handle MethodArgumentNotValidException. Error: {}", ex.getMessage());
+    return new ResponseEntity<>(errorMessage, HttpStatus.FORBIDDEN);
   }
 }

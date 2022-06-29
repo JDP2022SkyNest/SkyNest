@@ -1,13 +1,13 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.register.UserAlreadyVerifiedException;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.request.UserPasswordResetRequest;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.EmailService;
+import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.EmailUtil;
 import com.htecgroup.skynest.util.JwtUtils;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.*;
 public class AuthServiceImplTest {
 
   @Mock private UserRepository userRepository;
-  @Mock private BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Mock private PasswordEncoderService passwordEncoderService;
   @Mock private UserService userService;
   @Mock private EmailService emailService;
   @Spy private ModelMapper modelMapper;
@@ -58,6 +57,7 @@ public class AuthServiceImplTest {
     String token = JwtUtils.generatePasswordResetToken(testEmail);
 
     when(userService.findUserByEmail(anyString())).thenReturn(UserDtoUtil.getVerified());
+    when(passwordEncoderService.encode(anyString())).thenReturn("encodedPassword");
     when(userRepository.save(any())).thenReturn(UserEntityUtil.getVerified());
 
     UserPasswordResetRequest userPasswordResetRequest = new UserPasswordResetRequest();
@@ -69,7 +69,7 @@ public class AuthServiceImplTest {
 
   @Test
   void verifyEmail() {
-    doReturn(false).when(authService).isActive(anyString());
+    doReturn(false).when(authService).isVerified(anyString());
     UserDto verifiedUser = authService.verifyUser(UserDtoUtil.getNotVerified());
 
     Assertions.assertTrue(verifiedUser.getVerified());
@@ -79,12 +79,13 @@ public class AuthServiceImplTest {
   @Test
   void verifyUser_UserAlreadyVerified() {
     UserDto verifiedUserDto = UserDtoUtil.getVerified();
-    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
+    String expectedErrorMessage = new UserAlreadyVerifiedException().getMessage();
 
-    doReturn(true).when(authService).isActive(anyString());
+    doReturn(true).when(authService).isVerified(anyString());
 
     Exception thrownException =
-        Assertions.assertThrows(UserException.class, () -> authService.verifyUser(verifiedUserDto));
+        Assertions.assertThrows(
+            UserAlreadyVerifiedException.class, () -> authService.verifyUser(verifiedUserDto));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -109,10 +110,11 @@ public class AuthServiceImplTest {
   void when_VerifiedUser_sendVerificationEmail_ShouldThrowUserExceptionAlreadyRegistered() {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserByEmail(anyString());
-    String expectedErrorMessage = UserExceptionType.USER_ALREADY_REGISTERED.getMessage();
+    String expectedErrorMessage = new UserAlreadyVerifiedException().getMessage();
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class, () -> authService.sendVerificationEmail(userDto.getEmail()));
+            UserAlreadyVerifiedException.class,
+            () -> authService.sendVerificationEmail(userDto.getEmail()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
@@ -151,5 +153,19 @@ public class AuthServiceImplTest {
         verify(emailService).send(any());
       }
     }
+  }
+
+  @Test
+  void when_VerifiedUser_verifyUser_ShouldReturnTrue() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    when(userService.findUserByEmail(anyString())).thenReturn(userDto);
+    Assertions.assertTrue(authService.isVerified(anyString()));
+  }
+
+  @Test
+  void when_NotVerifiedUser_verifyUser_ShouldReturnFalse() {
+    UserDto userDto = UserDtoUtil.getNotVerified();
+    when(userService.findUserByEmail(anyString())).thenReturn(userDto);
+    Assertions.assertFalse(authService.isVerified(anyString()));
   }
 }

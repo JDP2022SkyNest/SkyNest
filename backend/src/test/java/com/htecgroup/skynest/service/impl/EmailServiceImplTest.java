@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.htecgroup.skynest.exception.UserException;
+import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.util.EmailUtil;
 import com.htecgroup.skynest.util.JwtUtils;
@@ -62,8 +62,8 @@ class EmailServiceImplTest {
   void sendFailsTest() {
     String emailText = "Email text";
     when(templateEngine.process(anyString(), any())).thenReturn(emailText);
-    when(javaMailSender.createMimeMessage()).thenThrow(UserException.class);
-    Assertions.assertThrows(UserException.class, () -> emailService.send(email));
+    when(javaMailSender.createMimeMessage()).thenThrow(UserNotFoundException.class);
+    Assertions.assertThrows(UserNotFoundException.class, () -> emailService.send(email));
   }
 
   @Test

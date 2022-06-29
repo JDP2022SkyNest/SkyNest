@@ -15,7 +15,7 @@ public class UserDto {
   private UUID id;
   private LocalDateTime createdOn;
   private LocalDateTime modifiedOn;
-  private LocalDateTime deletedOn;
+  @With private LocalDateTime deletedOn;
   private String email;
   private String password;
   @With private String encryptedPassword;
@@ -25,6 +25,14 @@ public class UserDto {
   private String phoneNumber;
   @With private Boolean verified;
   @With private Boolean enabled;
-  private RoleDto role;
+  @With private RoleDto role;
   private CompanyDto company;
+
+  public UserDto enableUser() {
+    return this.withEnabled(true).withDeletedOn(null);
+  }
+
+  public UserDto disableUser() {
+    return this.withEnabled(false).withDeletedOn(LocalDateTime.now());
+  }
 }

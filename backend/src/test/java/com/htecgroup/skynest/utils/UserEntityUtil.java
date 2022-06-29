@@ -18,6 +18,7 @@ public class UserEntityUtil extends BasicUtil {
         surname,
         address,
         phoneNumber,
+        null,
         false,
         false,
         roleWorkerEntity,
@@ -26,5 +27,11 @@ public class UserEntityUtil extends BasicUtil {
 
   public static UserEntity getVerified() {
     return getNotVerified().withVerified(true).withEnabled(true);
+  }
+
+  public static UserEntity getAdmin() {
+    UserEntity userEntity = getNotVerified();
+    userEntity.setRole(roleAdminEntity);
+    return userEntity;
   }
 }

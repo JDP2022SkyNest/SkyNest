@@ -12,7 +12,12 @@
    color: var(--mate-black) !important;
 }
 
-.avatar-style {
+.icons-align {
+   position: relative;
+   bottom: 1px;
+}
+
+.main-icon-align {
    position: relative;
    bottom: 2px;
 }

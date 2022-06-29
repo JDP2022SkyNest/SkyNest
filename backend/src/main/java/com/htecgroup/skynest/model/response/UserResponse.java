@@ -1,8 +1,12 @@
 package com.htecgroup.skynest.model.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
   private String id;
   private String email;
@@ -11,4 +15,6 @@ public class UserResponse {
   private String phoneNumber;
   private String address;
   private String roleName;
+  private Boolean verified;
+  private Boolean enabled;
 }

@@ -35,6 +35,14 @@
    animation: logoRotation 360s linear infinite reverse;
 }
 
+.logo-sidebar-admin {
+   margin-top: 40vh;
+   filter: sepia(100);
+   width: 180px;
+   margin-left: 50px;
+   animation: logoRotation 360s linear infinite reverse;
+}
+
 .side-bar-admin li:hover {
    background-color: var(--gold);
    color: var(--mate-black);

@@ -8,8 +8,15 @@
    top: 6px;
 }
 
+.unverified-users-number-style {
+   border-left: 3px solid rgb(209, 105, 105);
+   margin-right: 5px;
+   padding-left: 10px;
+   border-radius: 2px;
+}
+
 .users-number-style {
-   border-left: 3px solid rgb(201, 98, 98);
+   border-left: 3px solid rgb(119, 119, 119);
    margin-right: 5px;
    padding-left: 10px;
    border-radius: 2px;
@@ -18,4 +25,32 @@
 .users-badge-align {
    position: relative;
    top: 1px;
+}
+
+.badge-color {
+   background-color: rgb(223, 223, 223);
+}
+
+.admin-page-body {
+   background-color: var(--latte);
+   min-height: 100vh;
+   margin-bottom: 40px;
+   padding-bottom: 40px;
+}
+
+.card-title-style {
+   font-size: 18px;
+}
+
+.admin-color {
+   background-color: var(--gold);
+}
+
+.manager-badge {
+   background-color: rgb(67, 67, 207);
+}
+
+.disabled-user-icon {
+   font-size: 22px;
+   color: rgb(194, 12, 12);
 }

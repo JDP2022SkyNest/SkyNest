@@ -9,6 +9,7 @@ import Profile from "../HomePage/Profile/Profile";
 import ToolBar from "../HomePage/ToolBar/ToolBar";
 import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
+import * as RiCions from "react-icons/ri";
 import "./HomePage.css";
 
 const HomePage = ({ setAccessToken, userRole, userID }) => {
@@ -19,7 +20,7 @@ const HomePage = ({ setAccessToken, userRole, userID }) => {
    };
 
    return (
-      <>
+      <div className="home-page-body">
          <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
@@ -30,9 +31,9 @@ const HomePage = ({ setAccessToken, userRole, userID }) => {
                      onClick={() => {
                         redirectTo(navigate, ROUTES.ADMIN, 1);
                      }}
-                     className={userRole === ROLE.ADMIN ? `btn admin mr-3` : "d-none"}
+                     className={userRole === ROLE.ADMIN ? `btn admin mr-2` : "d-none"}
                   >
-                     Admin Panel
+                     <RiCions.RiAdminLine className="main-icon-align" fill="var(--gold)" />
                   </button>
                   <Profile setAccessToken={setAccessToken} userRole={userRole} userID={userID} />
                </div>
@@ -40,13 +41,10 @@ const HomePage = ({ setAccessToken, userRole, userID }) => {
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container mt-5">
-            <div>
-               Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis fuga nesciunt quo, adipisci laborum ut exercitationem officia sint
-               illum, quasi molestias neque, earum incidunt voluptate eum iusto aperiam. Pariatur, impedit.
-            </div>
+            <div></div>
          </div>
          <Footer />
-      </>
+      </div>
    );
 };
 

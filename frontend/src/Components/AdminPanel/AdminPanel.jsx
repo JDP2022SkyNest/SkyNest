@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Accordion, Container } from "react-bootstrap";
-import { getAllUsers, deleteUser } from "../ReusableComponents/ReusableFunctions";
+import { getAllUsers } from "../ReusableComponents/ReusableFunctions";
 import AdminCard from "./AdminCard";
 import "./AdminPanel.css";
 import AccordionUsers from "./AccordionUsers";
@@ -19,8 +19,6 @@ const AdminPanel = ({ userID }) => {
    const [loading, setLoading] = useState(false);
    const accessToken = localStorage.accessToken;
 
-   const time = new Date();
-
    useEffect(() => {
       (async function loading() {
          setLoading(true);
@@ -36,40 +34,33 @@ const AdminPanel = ({ userID }) => {
          user.email.includes(searchTerm) ||
          user.address.includes(searchTerm) ||
          user.phoneNumber.includes(searchTerm) ||
-         user.roleName.includes(searchTerm)
+         user.roleName.includes(searchTerm) ||
+         user.verified === searchTerm ||
+         user.enabled === searchTerm
    );
 
    const allUsers = filterUsers.map((elem, index) => (
-      <AccordionUsers
-         elem={elem}
-         index={index}
-         deleteUser={deleteUser}
-         key={elem.id}
-         accessToken={accessToken}
-         setChange={setChange}
-         change={change}
-         userID={userID}
-      />
+      <AccordionUsers elem={elem} index={index} key={elem.id} setChange={setChange} change={change} userID={userID} setErrorMsg={setErrorMsg} />
    ));
 
    return (
       <div className="admin-page-body">
-         <NavbarPanel name="Admin Panel" searchBar={true} path={ROUTES.HOME} setSearchTerm={setSearchTerm}>
+         <NavbarPanel name={"Admin Panel"} searchBar={true} path={ROUTES.HOME} searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
             <ReusableModal title="Instructions" buttonText="Close">
                <AdminCarousel />
             </ReusableModal>
          </NavbarPanel>
          {!loading ? (
             <Container>
+               <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0" : "d-none"}>
+                  {errorMsg}
+               </p>
                <div className="row">
-                  <div className="col-12 col-sm-6 col-lg-3 offset-lg-2">
-                     <AdminCard title="Total Users:" body={usersData.length} color={"info"} />
+                  <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
+                     <AdminCard title="Total Users:" body={usersData.length} color={"white"} />
                   </div>
-                  <div className="col-lg-2 d-none d-lg-block">
-                     <AdminCard title={"Info:"} body={time.toLocaleDateString()} color={"secondary"} centered={"text-center"} />
-                  </div>
-                  <div className="col-12 col-sm-6 col-lg-3 offset-lg-0">
-                     <AdminCard title="Filtered Users:" body={filterUsers.length} color={"primary"} />
+                  <div className="col-6 col-md-4 col-lg-3 offset-lg-0">
+                     <AdminCard title="Filtered Users:" body={filterUsers.length} color={"white"} />
                   </div>
                </div>
                <div className="row">
@@ -77,9 +68,6 @@ const AdminPanel = ({ userID }) => {
                      <Accordion className="shadow">{allUsers}</Accordion>
                   </div>
                </div>
-               <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>
-                  {errorMsg}
-               </p>
             </Container>
          ) : (
             <div className="mt-5">

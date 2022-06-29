@@ -1,8 +1,9 @@
 package com.htecgroup.skynest.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htecgroup.skynest.exception.UserException;
-import com.htecgroup.skynest.exception.UserExceptionType;
+import com.htecgroup.skynest.exception.auth.UserNotActiveException;
+import com.htecgroup.skynest.exception.login.EmailNotVerifiedException;
+import com.htecgroup.skynest.exception.login.TooManyAttemptsException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.request.UserLoginRequest;
 import com.htecgroup.skynest.service.AuthService;
@@ -66,14 +67,32 @@ class CustomAuthenticationFilterTest {
       throws IOException {
     UserLoginRequest userLoginRequest = UserLoginRequestUtil.get();
     InputStream inputStream = request.getInputStream();
-    String expectedErrorMessage = UserExceptionType.TOO_MANY_LOGIN_ATTEMPTS.getMessage();
+    String expectedErrorMessage = new TooManyAttemptsException().getMessage();
     doReturn(userLoginRequest).when(objectMapper).readValue(inputStream, UserLoginRequest.class);
     when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
     when(loginAttemptService.hasTooManyAttempts(mock(UserDetails.class).getUsername()))
         .thenReturn(true);
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class,
+            TooManyAttemptsException.class,
+            () -> customAuthenticationFilter.attemptAuthentication(request, response));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_UserNotVerified_attemptAuthentication_ShouldThrowUserNotVerified() throws IOException {
+    UserLoginRequest userLoginRequest = UserLoginRequestUtil.get();
+    InputStream inputStream = request.getInputStream();
+    String expectedErrorMessage = new EmailNotVerifiedException().getMessage();
+    doReturn(userLoginRequest).when(objectMapper).readValue(inputStream, UserLoginRequest.class);
+    when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
+    when(loginAttemptService.hasTooManyAttempts(mock(UserDetails.class).getUsername()))
+        .thenReturn(false);
+    when(authService.isVerified(mock(UserDetails.class).getUsername())).thenReturn(false);
+    Exception thrownException =
+        Assertions.assertThrows(
+            EmailNotVerifiedException.class,
             () -> customAuthenticationFilter.attemptAuthentication(request, response));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
@@ -83,15 +102,16 @@ class CustomAuthenticationFilterTest {
   void when_UserNotActive_attemptAuthentication_ShouldThrowUserNotActive() throws IOException {
     UserLoginRequest userLoginRequest = UserLoginRequestUtil.get();
     InputStream inputStream = request.getInputStream();
-    String expectedErrorMessage = UserExceptionType.USER_NOT_ACTIVE.getMessage();
+    String expectedErrorMessage = new UserNotActiveException().getMessage();
     doReturn(userLoginRequest).when(objectMapper).readValue(inputStream, UserLoginRequest.class);
     when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
     when(loginAttemptService.hasTooManyAttempts(mock(UserDetails.class).getUsername()))
         .thenReturn(false);
+    when(authService.isVerified(mock(UserDetails.class).getUsername())).thenReturn(true);
     when(authService.isActive(mock(UserDetails.class).getUsername())).thenReturn(false);
     Exception thrownException =
         Assertions.assertThrows(
-            UserException.class,
+            UserNotActiveException.class,
             () -> customAuthenticationFilter.attemptAuthentication(request, response));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
@@ -106,6 +126,7 @@ class CustomAuthenticationFilterTest {
     when(userDetailsService.loadUserByUsername(anyString())).thenReturn(mock(UserDetails.class));
     when(loginAttemptService.hasTooManyAttempts(mock(UserDetails.class).getUsername()))
         .thenReturn(false);
+    when(authService.isVerified(mock(UserDetails.class).getUsername())).thenReturn(true);
     when(authService.isActive(mock(UserDetails.class).getUsername())).thenReturn(true);
     customAuthenticationFilter.attemptAuthentication(request, response);
     verify(authenticationManager).authenticate(any());
@@ -120,7 +141,7 @@ class CustomAuthenticationFilterTest {
       utilities.when(() -> JwtUtils.generateAccessToken(any(), anyList())).thenReturn("TOKEN");
       customAuthenticationFilter.successfulAuthentication(
           request, response, filterChain, authentication);
-      verify(response).addHeader(anyString(), anyString());
+      verify(response, times(2)).addHeader(anyString(), anyString());
     } catch (ServletException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {

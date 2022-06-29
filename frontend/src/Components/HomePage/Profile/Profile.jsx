@@ -17,7 +17,7 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
    return (
       <DropdownButton
          align="end"
-         title={<AiIcons.AiOutlineUser className="avatar-style" />}
+         title={<AiIcons.AiOutlineUser className="main-icon-align" />}
          id="dropdown-menu-align-end"
          variant="dark"
          menuVariant="dark"
@@ -38,7 +38,7 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={openFullscreen} eventKey="3">
-               <AiIcons.AiOutlineFullscreen className="mr-2" />
+               <AiIcons.AiOutlineFullscreen className="icons-align mr-2" />
                Fullscreen
             </Dropdown.Item>
             <Dropdown.Divider />
@@ -49,7 +49,7 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
                eventKey="4"
             >
                <div>
-                  <CgIcons.CgLogOut className="mr-2" />
+                  <CgIcons.CgLogOut className="icons-align mr-2" />
                   Logout
                </div>
             </Dropdown.Item>
