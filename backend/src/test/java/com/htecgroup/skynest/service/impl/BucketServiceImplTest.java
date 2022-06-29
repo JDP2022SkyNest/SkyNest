@@ -65,5 +65,6 @@ class BucketServiceImplTest {
     Assertions.assertEquals(
         expectedBucketEntity.getDescription(), actualBucketResponse.getDescription());
     Assertions.assertEquals(expectedBucketEntity.getSize(), actualBucketResponse.getSize());
+    Assertions.assertEquals(expectedBucketEntity.getIsPublic(), actualBucketResponse.getIsPublic());
   }
 }
