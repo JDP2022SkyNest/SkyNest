@@ -1,6 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.*;
+import com.htecgroup.skynest.annotation.CanPromoteDemoteManagerWorker;
+import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
+import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
+import com.htecgroup.skynest.annotation.CurrentUserCanView;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.WrongOldPasswordException;
 import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
@@ -158,7 +161,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID uuid) {
+  public void promoteUser(
+      @Valid
+          @CanPromoteDemoteManagerWorker(
+              role_name = RoleEntity.ROLE_WORKER,
+              message = "Can't promote user that is not a worker")
+          UUID uuid) {
     UserDto userDto = findUserById(uuid);
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_MANAGER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);
@@ -179,7 +187,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void demoteUser(@Valid @OnlyManagerCanBeDemoted UUID uuid) {
+  public void demoteUser(
+      @Valid
+          @CanPromoteDemoteManagerWorker(
+              role_name = RoleEntity.ROLE_MANAGER,
+              message = "Can't demote user that is not a manager")
+          UUID uuid) {
     UserDto userDto = findUserById(uuid);
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_WORKER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);

@@ -602,7 +602,7 @@ public class UserController {
             }),
         @ApiResponse(
             responseCode = "403",
-            description = "Can't promote user that is not a worker.",
+            description = "Can't promote user that is not a worker",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -610,7 +610,7 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Can't promote user that is not a worker.\"],"
+                            "{\"messages\":[\"Can't promote user that is not a worker\"],"
                                 + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
@@ -668,7 +668,7 @@ public class UserController {
             }),
         @ApiResponse(
             responseCode = "403",
-            description = "Can't demote user that is not a manager.",
+            description = "Can't demote user that is not a manager",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -676,7 +676,7 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Can't demote user that is not a manager.\"],"
+                            "{\"messages\":[\"Can't demote user that is not a manager\"],"
                                 + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
