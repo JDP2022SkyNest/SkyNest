@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Accordion, Container } from "react-bootstrap";
-import { getAllUsers, deleteUser } from "../ReusableComponents/ReusableFunctions";
+import { getAllUsers, disableUser, promoteUser } from "../ReusableComponents/ReusableFunctions";
 import AdminCard from "./AdminCard";
 import "./AdminPanel.css";
 import AccordionUsers from "./AccordionUsers";
@@ -41,12 +41,13 @@ const AdminPanel = ({ userID }) => {
       <AccordionUsers
          elem={elem}
          index={index}
-         deleteUser={deleteUser}
+         disableUser={disableUser}
          key={elem.id}
          accessToken={accessToken}
          setChange={setChange}
          change={change}
          userID={userID}
+         promoteUser={promoteUser}
       />
    ));
 

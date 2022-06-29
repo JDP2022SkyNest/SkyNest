@@ -20,5 +20,5 @@
 
 .user-page-body {
    background-color: var(--latte);
-   height: 100vh;
+   min-height: 100vh;
 }
