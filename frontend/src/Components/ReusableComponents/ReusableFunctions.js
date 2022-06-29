@@ -83,14 +83,33 @@ export const editUserData = async (accessToken, id, payload, success, error, fun
    func();
 };
 
-export const deleteUser = async (accessToken, id) => {
+export const disableUser = async (accessToken, id, error) => {
    try {
-      await AxiosInstance.delete(`/users/${id}`, {
-         headers: { Authorization: accessToken },
-      });
-      console.log("User Deleted");
+      await AxiosInstance.put(
+         `/users/${id}/disable`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      console.log("User Disabled");
    } catch (err) {
-      console.log(err);
+      error(err.response.data.messages);
+   }
+};
+
+export const enableUser = async (accessToken, id, error) => {
+   try {
+      await AxiosInstance.put(
+         `/users/${id}/enable`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      console.log("User Enabled");
+   } catch (err) {
+      error(err.response.data.messages);
    }
 };
 
@@ -128,6 +147,21 @@ export const onUserLogout = async (accessToken, stateToChange) => {
    }
    localStorage.clear();
    stateToChange("");
+};
+
+export const promoteUser = async (accessToken, id, error) => {
+   try {
+      await AxiosInstance.put(
+         `users/${id}/promote`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+   } catch (err) {
+      error(err.response.data.messages);
+      console.error(err.response.status);
+   }
 };
 
 export const openFullscreen = () => {
