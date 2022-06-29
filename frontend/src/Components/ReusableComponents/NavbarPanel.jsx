@@ -4,8 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import "./NavBarPanel.css";
 
-const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children }) => {
+const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchTerm }) => {
    const navigate = useNavigate();
+
+   const searchFilter = () => {
+      if (searchTerm === false) {
+         return "Disabled & Unverified";
+      }
+      return searchTerm;
+   };
 
    return (
       <Navbar bg="dark" variant="dark">
@@ -15,6 +22,7 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children }) => {
                <div className="input-group" style={{ width: "200px" }}>
                   <input
                      type="text"
+                     value={searchFilter()}
                      onChange={(e) => setSearchTerm(e.target.value)}
                      className="form-control"
                      aria-label="Text input with segmented dropdown button"
@@ -25,8 +33,12 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children }) => {
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("admin")}>
                            Admins
                         </Dropdown.Item>
-                        <Dropdown.Item className="text-dark">Disabled Users</Dropdown.Item>
-                        <Dropdown.Item className="text-dark">Unverified Users</Dropdown.Item>
+                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("manager")}>
+                           Managers
+                        </Dropdown.Item>
+                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(false)}>
+                           Disabled & Unverified
+                        </Dropdown.Item>
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
                            Clear Search
                         </Dropdown.Item>

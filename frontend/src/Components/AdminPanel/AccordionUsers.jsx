@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Accordion } from "react-bootstrap";
-import * as MdIcons from "react-icons/md";
+import * as TiIcons from "react-icons/ti";
 import { disableUser, enableUser, promoteUser } from "../ReusableComponents/ReusableFunctions";
 
 const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg }) => {
@@ -24,14 +24,14 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
             )}
             <span className="badge border border-secondary text-dark ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
             {!elem.enabled && (
-               <span className="badge text-dark py-1">
-                  <MdIcons.MdOutlinePersonAddDisabled />
+               <span className="text-dark">
+                  <TiIcons.TiDelete className="disabled-user-icon" />
                </span>
             )}
          </Accordion.Header>
          <Accordion.Body>
             {!elem.verified && <p className="text-danger">Unverified</p>}
-            {!elem.disabled && <p className="text-muted">Disabled</p>}
+            {!elem.enabled && <p className="text-muted">Disabled</p>}
             <p>
                <span className="font-weight-bold">Email: </span>
                {elem.email}

@@ -34,7 +34,9 @@ const AdminPanel = ({ userID }) => {
          user.email.includes(searchTerm) ||
          user.address.includes(searchTerm) ||
          user.phoneNumber.includes(searchTerm) ||
-         user.roleName.includes(searchTerm)
+         user.roleName.includes(searchTerm) ||
+         user.verified === searchTerm ||
+         user.enabled === searchTerm
    );
 
    const allUsers = filterUsers.map((elem, index) => (
@@ -43,7 +45,7 @@ const AdminPanel = ({ userID }) => {
 
    return (
       <div className="admin-page-body">
-         <NavbarPanel name={"Admin Panel"} searchBar={true} path={ROUTES.HOME} setSearchTerm={setSearchTerm}>
+         <NavbarPanel name={"Admin Panel"} searchBar={true} path={ROUTES.HOME} searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
             <ReusableModal title="Instructions">
                <AdminCarousel />
             </ReusableModal>
