@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
@@ -8,8 +9,8 @@ import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.service.BucketService;
+import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class BucketServiceImpl implements BucketService {
 
   private BucketRepository bucketRepository;
   private ModelMapper modelMapper;
-  private CurrentUserServiceImpl currentUserService;
+  private CurrentUserService currentUserService;
   private UserRepository userRepository;
 
   @Override
@@ -43,6 +44,7 @@ public class BucketServiceImpl implements BucketService {
 
     bucketEntity = bucketRepository.save(bucketEntity);
     return modelMapper.map(bucketEntity, BucketResponse.class);
+  }
 
   @Override
   public BucketResponse getBucket(UUID uuid) {
