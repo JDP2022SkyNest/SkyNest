@@ -8,10 +8,13 @@ import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.service.BucketService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -40,5 +43,12 @@ public class BucketServiceImpl implements BucketService {
 
     bucketEntity = bucketRepository.save(bucketEntity);
     return modelMapper.map(bucketEntity, BucketResponse.class);
+
+  @Override
+  public BucketResponse getBucket(UUID uuid) {
+    BucketEntity bucketEntity =
+        bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
+    BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
+    return bucketResponse;
   }
 }

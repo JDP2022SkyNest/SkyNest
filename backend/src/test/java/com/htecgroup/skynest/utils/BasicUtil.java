@@ -13,10 +13,12 @@ public class BasicUtil {
       new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_WORKER);
   protected static final RoleDto roleWorkerDto =
       new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_WORKER);
-  protected static final RoleEntity roleAdminEntity =
-      new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_ADMIN);
   protected static final RoleDto roleAdminDto =
       new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_ADMIN);
+  protected static final RoleEntity roleAdminEntity =
+      new RoleEntity(UUID.randomUUID(), RoleEntity.ROLE_ADMIN);
+  protected static final RoleDto roleManagerDto =
+      new RoleDto(UUID.randomUUID(), RoleEntity.ROLE_MANAGER);
   protected static String email = "test@test.com";
   protected static String password = "password";
   protected static String encryptedPassoword =

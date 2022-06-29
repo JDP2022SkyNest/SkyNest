@@ -16,10 +16,7 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
-import com.htecgroup.skynest.utils.UserDtoUtil;
-import com.htecgroup.skynest.utils.UserEditRequestUtil;
-import com.htecgroup.skynest.utils.UserEntityUtil;
-import com.htecgroup.skynest.utils.UserRegisterRequestUtil;
+import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -188,7 +185,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserNotVerifiedException.class, () -> userService.disableUser(any()));
+            UserNotVerifiedException.class, () -> userService.disableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -199,7 +196,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserAlreadyDisabledException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserAlreadyDisabledException.class, () -> userService.disableUser(any()));
+            UserAlreadyDisabledException.class, () -> userService.disableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -208,7 +205,7 @@ class UserServiceImplTest {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserById(any());
 
-    userService.disableUser(any());
+    userService.disableUser(UUID.randomUUID());
     Mockito.verify(userRepository).save(captorUserEntity.capture());
 
     UserEntity userEntity = captorUserEntity.getValue();
@@ -223,7 +220,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserNotVerifiedException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserNotVerifiedException.class, () -> userService.enableUser(any()));
+            UserNotVerifiedException.class, () -> userService.enableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -234,7 +231,7 @@ class UserServiceImplTest {
     String expectedErrorMessage = UserAlreadyEnabledException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            UserAlreadyEnabledException.class, () -> userService.enableUser(any()));
+            UserAlreadyEnabledException.class, () -> userService.enableUser(UUID.randomUUID()));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
@@ -243,12 +240,24 @@ class UserServiceImplTest {
     UserDto userDto = UserDtoUtil.getVerifiedButDisabledUser();
     doReturn(userDto).when(userService).findUserById(any());
 
-    userService.enableUser(any());
+    userService.enableUser(UUID.randomUUID());
     Mockito.verify(userRepository).save(captorUserEntity.capture());
 
     UserEntity userEntity = captorUserEntity.getValue();
     Assertions.assertTrue(userEntity.getEnabled());
     Assertions.assertNull(userEntity.getDeletedOn());
+  }
+
+  @Test
+  void when_WorkerUser_promoteUser_ShouldPromoteUser() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    RoleDto roleManager = RoleDtoUtil.getManagerRole();
+    when(roleService.findByName(anyString())).thenReturn(roleManager);
+    userService.promoteUser(UUID.randomUUID());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+    UserEntity capturedUserEntity = captorUserEntity.getValue();
+    Assertions.assertEquals(roleManager.getName(), capturedUserEntity.getRole().getName());
   }
 
   private void assertUserEntityAndUserResponse(

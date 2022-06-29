@@ -58,7 +58,7 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
    }, [userData]);
 
    return (
-      <section>
+      <section className="user-page-body">
          <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
          <div className="container py-3">
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
@@ -122,8 +122,7 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                            <UserCardDetails info="Last Name:" result={userData?.surname} edit={edit} func={surnameChange} />
                            <UserCardDetails info="Email:" result={userData?.email} />
                            <UserCardDetails info="Phone Number:" type="number" result={userData?.phoneNumber} edit={edit} func={phoneChange} />
-                           <UserCardDetails info="Address:" result={userData?.address} edit={edit} func={addressChange} />
-                           <UserCardDetails info="ID:" result={userData?.id} horLine={false} />
+                           <UserCardDetails info="Address:" result={userData?.address} edit={edit} func={addressChange} horLine={false} />
                         </div>
                      </div>
                      {edit && (
