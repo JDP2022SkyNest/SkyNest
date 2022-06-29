@@ -636,19 +636,16 @@ public class UserController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = UserResponse.class),
+                  schema = @Schema(implementation = LoggedUserResponse.class),
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + " \"email\": \"username@gmail.com\","
+                            "{\"uuid\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + " \"username\": \"username@gmail.com\","
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
-                                + "  \"phoneNumber\": \"38166575757\","
-                                + "  \"address\": \"Local address\","
-                                + "  \"roleName\": \"role_worker\","
-                                + "  \"enabled\": \"false\","
-                                + "  \"verified\": \"true\"}")
+                                + "  \"company\": \"null\","
+                                + "  \"roles\": [\"role_worker\"]}")
                   })
             }),
         @ApiResponse(
@@ -665,30 +662,6 @@ public class UserController {
                                 + " \"status\": \"401\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
-            }),
-        @ApiResponse(
-            responseCode = "403",
-            description = "Unauthorized request",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"Access denied\"],"
-                                + " \"status\": \"403\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
-                  })
-            }),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Internal Server Error",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
   @GetMapping("/me")
