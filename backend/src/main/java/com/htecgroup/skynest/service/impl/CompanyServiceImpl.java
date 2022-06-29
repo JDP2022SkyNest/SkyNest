@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.UniqueEmailAndPhoneNumber;
-import com.htecgroup.skynest.exception.company.PibAlreadyInUseException;
+import com.htecgroup.skynest.annotation.UniqueCompany;
 import com.htecgroup.skynest.exception.tier.NonExistingTierException;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TierEntity;
@@ -27,12 +26,7 @@ public class CompanyServiceImpl implements CompanyService {
   private ModelMapper modelMapper;
 
   @Override
-  public CompanyResponse addCompany(
-      @Valid @UniqueEmailAndPhoneNumber CompanyAddRequest companyAddRequest) {
-
-    if (companyRepository.existsByPib(companyAddRequest.getPib())) {
-      throw new PibAlreadyInUseException();
-    }
+  public CompanyResponse addCompany(@Valid @UniqueCompany CompanyAddRequest companyAddRequest) {
 
     TierEntity tierEntity =
         tierRepository

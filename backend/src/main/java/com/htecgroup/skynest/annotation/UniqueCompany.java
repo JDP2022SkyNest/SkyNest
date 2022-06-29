@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.EmailAndPhoneNumberValidator;
+import com.htecgroup.skynest.annotation.validator.UniqueCompanyValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,10 +11,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = EmailAndPhoneNumberValidator.class)
-public @interface UniqueEmailAndPhoneNumber {
+@Constraint(validatedBy = UniqueCompanyValidator.class)
+public @interface UniqueCompany {
 
-  String message() default "Email or phone number already in use";
+  String message() default "Pib, email or phone number already in use";
 
   Class<?>[] groups() default {};
 
