@@ -11,14 +11,17 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ActionServiceImpl implements ActionService {
 
   private final ActionRepository actionRepository;
@@ -41,7 +44,15 @@ public class ActionServiceImpl implements ActionService {
 
     actionEntity.setObjects(objects);
 
-    return actionRepository.save(actionEntity);
+    ActionEntity savedEntity = actionRepository.save(actionEntity);
+
+    log.info(
+        "User {} has performed action {} on objects {}",
+        savedEntity.getUser().getEmail(),
+        savedEntity.getActionType().getName(),
+        savedEntity.getObjects().stream().map(ObjectEntity::getId).collect(Collectors.toList()));
+
+    return savedEntity;
   }
 
   @Override
