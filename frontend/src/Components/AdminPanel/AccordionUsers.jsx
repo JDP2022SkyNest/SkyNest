@@ -59,7 +59,7 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
                               await promoteUser(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-success text-white"
+                           className="btn alert-success text-success"
                         >
                            Promote
                         </button>
@@ -70,7 +70,7 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
                               await demoteUser(accessToken, elem.id, setErrorMsg, setWarningMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-warning"
+                           className="btn alert-warning text-dark"
                         >
                            Demote
                         </button>
@@ -86,7 +86,7 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
                                  setChange(!change);
                               }
                            }}
-                           className={`btn btn-${!youSure ? "danger" : "dark"}`}
+                           className={`btn alert-${!youSure ? "danger" : "dark"}`}
                         >
                            {!youSure ? "Disable" : "You sure?"}
                         </button>
