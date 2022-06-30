@@ -4,7 +4,7 @@ import { Accordion } from "react-bootstrap";
 import * as TiIcons from "react-icons/ti";
 import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
 
-const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg }) => {
+const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
    const [youSure, setYouSure] = useState(false);
    const userRoleName = elem.roleName.slice(5);
    const accessToken = localStorage.accessToken;
@@ -50,10 +50,10 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
                      {userRoleName === "worker" && (
                         <button
                            onClick={async () => {
-                              await promoteUser(accessToken, elem.id, setErrorMsg);
+                              await promoteUser(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-info text-white"
+                           className="btn btn-success text-white"
                         >
                            Promote
                         </button>
@@ -61,10 +61,10 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
                      {userRoleName === "manager" && (
                         <button
                            onClick={async () => {
-                              await demoteUser(accessToken, elem.id, setErrorMsg);
+                              await demoteUser(accessToken, elem.id, setErrorMsg, setWarningMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-primary"
+                           className="btn btn-warning"
                         >
                            Demote
                         </button>

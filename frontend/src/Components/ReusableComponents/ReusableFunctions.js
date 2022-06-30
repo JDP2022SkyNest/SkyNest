@@ -149,7 +149,7 @@ export const onUserLogout = async (accessToken, stateToChange) => {
    stateToChange("");
 };
 
-export const promoteUser = async (accessToken, id, error) => {
+export const promoteUser = async (accessToken, id, error, success) => {
    try {
       await AxiosInstance.put(
          `users/${id}/promote`,
@@ -158,13 +158,14 @@ export const promoteUser = async (accessToken, id, error) => {
             headers: { Authorization: accessToken },
          }
       );
+      success("User Promoted Successfully");
    } catch (err) {
       error(err.response.data.messages);
       console.error(err.response.status);
    }
 };
 
-export const demoteUser = async (accessToken, id, error) => {
+export const demoteUser = async (accessToken, id, error, success) => {
    try {
       await AxiosInstance.put(
          `users/${id}/demote`,
@@ -173,6 +174,7 @@ export const demoteUser = async (accessToken, id, error) => {
             headers: { Authorization: accessToken },
          }
       );
+      success("User Demoted Successfully");
    } catch (err) {
       error(err.response.data.messages);
       console.error(err);
@@ -187,4 +189,10 @@ export const openFullscreen = () => {
    } else if (elem.msRequestFullscreen) {
       elem.msRequestFullscreen();
    }
+};
+
+export const alertTimeout = (delay, stateToChange) => {
+   setTimeout(() => {
+      stateToChange("");
+   }, delay);
 };
