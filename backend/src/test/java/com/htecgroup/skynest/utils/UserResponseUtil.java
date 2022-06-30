@@ -24,4 +24,10 @@ public class UserResponseUtil extends BasicUtil {
     userResponse.setRoleName(roleAdminEntity.getName());
     return userResponse;
   }
+
+  public static UserResponse getManager() {
+    UserResponse userResponse = getWorker();
+    userResponse.setRoleName(roleManagerDto.getName());
+    return userResponse;
+  }
 }

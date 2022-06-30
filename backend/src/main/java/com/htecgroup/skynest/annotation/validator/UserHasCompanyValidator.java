@@ -2,7 +2,6 @@ package com.htecgroup.skynest.annotation.validator;
 
 import com.htecgroup.skynest.annotation.UserHasCompany;
 import com.htecgroup.skynest.model.dto.UserDto;
-import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,8 +13,6 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class UserHasCompanyValidator implements ConstraintValidator<UserHasCompany, UUID> {
-
-  private final CurrentUserService currentUserService;
   private final UserService userService;
 
   @Override
