@@ -25,9 +25,14 @@ public class CustomWebMvcConfigurer implements WebMvcConfigurer {
             String.format(
                 "http://%s:%s/*", serverProperties.getHost(), serverProperties.getFrontendPort()))
         .allowedHeaders(
-            JwtUtils.AUTH_HEADER, HttpHeaders.ORIGIN, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCEPT)
+            JwtUtils.AUTH_HEADER,
+            JwtUtils.REFRESH_TOKEN_HEADER,
+            HttpHeaders.ORIGIN,
+            HttpHeaders.CONTENT_TYPE,
+            HttpHeaders.ACCEPT)
         .exposedHeaders(
             JwtUtils.AUTH_HEADER,
+            JwtUtils.REFRESH_TOKEN_HEADER,
             HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
             HttpHeaders.ORIGIN,
             HttpHeaders.ACCEPT,
