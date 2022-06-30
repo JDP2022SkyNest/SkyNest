@@ -16,8 +16,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -33,6 +32,20 @@ class BucketServiceImplTest {
   @Spy @InjectMocks private BucketServiceImpl bucketService;
 
   @Captor private ArgumentCaptor<BucketEntity> captorBucketEntity;
+
+  @Test
+  void listAllBuckets() {
+    List<BucketEntity> bucketEntityList =
+        Collections.singletonList(BucketEntityUtil.getPrivateBucket());
+    when(bucketRepository.findAll()).thenReturn(bucketEntityList);
+
+    List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
+
+    List<BucketResponse> actualResponse = bucketService.listAllBuckets();
+
+    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+    this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
+  }
 
   @Test
   void getBucket() {

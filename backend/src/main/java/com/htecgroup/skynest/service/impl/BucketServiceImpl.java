@@ -17,7 +17,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -54,6 +56,14 @@ public class BucketServiceImpl implements BucketService {
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
     return bucketResponse;
+  }
+
+  @Override
+  public List<BucketResponse> listAllBuckets() {
+    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, BucketResponse.class))
+        .collect(Collectors.toList());
   }
 
   @Override

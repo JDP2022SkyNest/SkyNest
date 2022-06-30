@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -167,6 +168,62 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
     return bucketResponseEntity;
+  }
+
+  @Operation(summary = "Get all buckets")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Buckets returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = BucketResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"name\": \"Name\","
+                                + "\"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"description\": \"Description\","
+                                + "\"size\": \"1000\"}},"
+                                + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
+                                + "\"name\": \"Name2\","
+                                + "\"companyId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"description\": \"Description2\","
+                                + "\"size\": \"1200\"}]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping
+  public List<BucketResponse> getBuckets() {
+    List<BucketResponse> listOfBuckets = bucketService.listAllBuckets();
+    return listOfBuckets;
   }
 
   @Operation(summary = "Delete bucket")
