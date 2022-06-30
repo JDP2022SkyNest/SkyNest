@@ -1,17 +1,13 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
+import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.utils.BucketCreateRequestUtil;
-import com.htecgroup.skynest.utils.BucketEditRequestUtil;
-import com.htecgroup.skynest.utils.BucketEntityUtil;
-import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
-import com.htecgroup.skynest.utils.UserEntityUtil;
+import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,7 +62,7 @@ class BucketServiceImplTest {
     BucketEditRequest bucketEditRequest = BucketEditRequestUtil.get();
     BucketResponse actualBucketResponse =
         bucketService.editBucket(bucketEditRequest, expectedBucketEntity.getId());
-    Assertions.assertEquals(expectedBucketEntity.getName(), actualBucketResponse.getName());
+    this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
   }
 
   private void assertBucketEntityAndBucketResponse(
