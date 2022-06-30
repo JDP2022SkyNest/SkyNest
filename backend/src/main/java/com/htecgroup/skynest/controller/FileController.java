@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.service.FileService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,16 +38,15 @@ public class FileController {
   @GetMapping("/{uuid}")
   public ResponseEntity<Resource> downloadFile(@PathVariable(name = "uuid") UUID fileId) {
 
-    Resource fileContent = fileService.downloadFile(fileId);
-    FileResponse fileMetadata = fileService.getFileMetadata(fileId);
+    FileDownloadResponse fileDownloadResponse = fileService.downloadFile(fileId);
 
     ResponseEntity<Resource> responseEntity =
         ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(fileMetadata.getType()))
+            .contentType(MediaType.parseMediaType(fileDownloadResponse.getType()))
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + fileMetadata.getName() + "\"")
-            .body(fileContent);
+                "attachment; filename=\"" + fileDownloadResponse.getName() + "\"")
+            .body(fileDownloadResponse.getFileContent());
 
     return responseEntity;
   }
