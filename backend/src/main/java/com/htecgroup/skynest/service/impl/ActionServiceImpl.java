@@ -47,8 +47,9 @@ public class ActionServiceImpl implements ActionService {
     ActionEntity savedEntity = actionRepository.save(actionEntity);
 
     log.info(
-        "User {} has performed action {} on objects {}",
+        "User {} ({}) has performed action {} on objects {}",
         savedEntity.getUser().getEmail(),
+        savedEntity.getUser().getId(),
         savedEntity.getActionType().getName(),
         savedEntity.getObjects().stream().map(ObjectEntity::getId).collect(Collectors.toList()));
 
