@@ -50,5 +50,6 @@ public interface UserService {
 
   void disableUser(@Valid @UserNotAdmin UUID userId);
 
-  void addCompanyForUser(UUID uuid, UUID companyId);
+  void addCompanyForUser(
+      @Valid @UserHasCompany UUID uuid, @Valid @AddUserInAdminCompany UUID companyId);
 }

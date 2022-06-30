@@ -198,7 +198,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void addCompanyForUser(UUID uuid, UUID companyId) {
+  public void addCompanyForUser(
+      @Valid @UserHasCompany UUID uuid, @Valid @AddUserInAdminCompany UUID companyId) {
     CompanyDto companyDto = companyService.findById(companyId);
     UserDto userDto = findUserById(uuid);
     UserDto userWithCompany = userDto.withCompany(companyDto);
