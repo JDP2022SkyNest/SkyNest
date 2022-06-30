@@ -16,4 +16,6 @@ public class BucketResponse {
   private String description;
 
   private Long size;
+
+  private Boolean isPublic;
 }
