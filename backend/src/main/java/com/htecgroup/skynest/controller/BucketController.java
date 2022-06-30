@@ -15,15 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import java.util.UUID;
 
 @RestController
@@ -173,5 +167,70 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
     return bucketResponseEntity;
+  }
+
+  @Operation(summary = "Delete bucket")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Bucket successfully deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Bucket already deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket is already disabled.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @PutMapping("delete/{uuid}")
+  public ResponseEntity<Boolean> deleteBucket(@PathVariable UUID uuid) {
+    bucketService.deleteBucket(uuid);
+    log.info("Bucket with id {} was successfully deleted", uuid);
+    return ResponseEntity.ok(true);
   }
 }

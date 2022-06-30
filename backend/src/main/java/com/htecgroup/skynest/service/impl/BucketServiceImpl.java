@@ -1,6 +1,8 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
@@ -52,5 +54,22 @@ public class BucketServiceImpl implements BucketService {
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
     return bucketResponse;
+  }
+
+  @Override
+  public BucketDto findBucketById(UUID uuid) {
+    BucketEntity bucketEntity =
+        bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
+    return modelMapper.map(bucketEntity, BucketDto.class);
+  }
+
+  @Override
+  public void deleteBucket(UUID uuid) {
+    BucketDto bucketDto = findBucketById(uuid);
+    if (bucketDto.getDeletedOn() != null) {
+      throw new BucketAlreadyDeletedException();
+    }
+    BucketDto deletedBucketDto = bucketDto.deleteBucket();
+    bucketRepository.save(modelMapper.map(deletedBucketDto, BucketEntity.class));
   }
 }
