@@ -56,6 +56,32 @@ public class FileServiceImpl implements FileService {
     return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
 
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public FileResponse getFileMetadata(UUID fileId) {
+
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+
+    return modelMapper.map(fileMetadataEntity, FileResponse.class);
+  }
+
+  private FileMetadataEntity getFileMetadataEntity(UUID fileId) {
+    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+  }
+
+  @Override
+  public Resource downloadFile(UUID fileId) {
+
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+
+    String objectId = fileMetadataEntity.getContentId();
+    if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
+
+    return getFileContents(objectId);
+  }
+
   private FileMetadataEntity storeFileContents(
       MultipartFile multipartFile, FileMetadataEntity reservedFileMetadataEntity) {
     try {
@@ -128,32 +154,6 @@ public class FileServiceImpl implements FileService {
     fileMetadataEntity.setType(multipartFile.getContentType());
 
     return fileMetadataEntity;
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public FileResponse getFileMetadata(UUID fileId) {
-
-    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
-
-    return modelMapper.map(fileMetadataEntity, FileResponse.class);
-  }
-
-  private FileMetadataEntity getFileMetadataEntity(UUID fileId) {
-    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-  }
-
-  @Override
-  public Resource downloadFile(UUID fileId) {
-
-    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
-
-    String objectId = fileMetadataEntity.getContentId();
-    if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
-
-    return getFileContents(objectId);
   }
 
   private InputStreamResource getFileContents(String objectId) {
