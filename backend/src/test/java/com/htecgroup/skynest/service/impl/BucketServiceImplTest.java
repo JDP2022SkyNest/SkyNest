@@ -1,30 +1,25 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
+import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.utils.BucketCreateRequestUtil;
-import com.htecgroup.skynest.utils.BucketEntityUtil;
-import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
-import com.htecgroup.skynest.utils.UserEntityUtil;
+import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +30,8 @@ class BucketServiceImplTest {
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private BucketServiceImpl bucketService;
+
+  @Captor private ArgumentCaptor<BucketEntity> captorBucketEntity;
 
   @Test
   void listAllBuckets() {
@@ -47,8 +44,7 @@ class BucketServiceImplTest {
     List<BucketResponse> actualResponse = bucketService.listAllBuckets();
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
-    Assertions.assertEquals(
-        expectedResponse.get(0).getId(), actualResponse.get(0).getCreatedById());
+    this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
   }
 
   @Test
@@ -84,5 +80,29 @@ class BucketServiceImplTest {
         expectedBucketEntity.getDescription(), actualBucketResponse.getDescription());
     Assertions.assertEquals(expectedBucketEntity.getSize(), actualBucketResponse.getSize());
     Assertions.assertEquals(expectedBucketEntity.getIsPublic(), actualBucketResponse.getIsPublic());
+  }
+
+  @Test
+  void when_AlreadyDeletedBucket_deletedBucket_ShouldThrowBucketAlreadyDeleted() {
+    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    doReturn(bucketDto).when(bucketService).findBucketById(any());
+    String expectedErrorMessage = BucketAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            BucketAlreadyDeletedException.class,
+            () -> bucketService.deleteBucket(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_deleteBucket_ShouldDeleteBucket() {
+    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    doReturn(bucketDto).when(bucketService).findBucketById(any());
+
+    bucketService.deleteBucket(UUID.randomUUID());
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketEntity = captorBucketEntity.getValue();
+    Assertions.assertNotNull(bucketEntity.getDeletedOn());
   }
 }
