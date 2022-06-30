@@ -6,6 +6,7 @@ import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.file.FileAlreadyExistsException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
+import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -14,6 +15,7 @@ import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileService;
 import com.mongodb.MongoException;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
@@ -46,6 +49,8 @@ public class FileServiceImpl implements FileService {
 
   private final FileMetadataRepository fileMetadataRepository;
 
+  private final ActionService actionService;
+
   private final ModelMapper modelMapper;
 
   @Override
@@ -56,14 +61,7 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity savedFileMetadata = storeFileContents(multipartFile, emptyFileMetadata);
 
-    log.info(
-        "User {} ({}) uploaded file {} ({}) to bucket {} ({})",
-        savedFileMetadata.getCreatedBy().getEmail(),
-        savedFileMetadata.getCreatedBy().getId(),
-        savedFileMetadata.getName(),
-        savedFileMetadata.getId(),
-        savedFileMetadata.getBucket().getName(),
-        savedFileMetadata.getBucket().getId());
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.ACTION_CREATE);
 
     return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
@@ -75,14 +73,7 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
 
-    log.info(
-        "User {} ({}) viewed details for file {} ({}) in bucket {} ({})",
-        fileMetadataEntity.getCreatedBy().getEmail(),
-        fileMetadataEntity.getCreatedBy().getId(),
-        fileMetadataEntity.getName(),
-        fileMetadataEntity.getId(),
-        fileMetadataEntity.getBucket().getName(),
-        fileMetadataEntity.getBucket().getId());
+    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.ACTION_VIEW);
 
     return modelMapper.map(fileMetadataEntity, FileResponse.class);
   }
@@ -97,14 +88,8 @@ public class FileServiceImpl implements FileService {
     if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
 
     Resource resource = getFileContents(objectId);
-    log.info(
-        "User {} ({}) downloaded file {} ({}) from bucket {} ({})",
-        fileMetadataEntity.getCreatedBy().getEmail(),
-        fileMetadataEntity.getCreatedBy().getId(),
-        fileMetadataEntity.getName(),
-        fileMetadataEntity.getId(),
-        fileMetadataEntity.getBucket().getName(),
-        fileMetadataEntity.getBucket().getId());
+    actionService.recordAction(
+        Collections.singleton(fileMetadataEntity), ActionType.ACTION_DOWNLOAD);
 
     return new FileDownloadResponse(
         fileMetadataEntity.getName(), fileMetadataEntity.getType(), resource);
