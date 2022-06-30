@@ -554,10 +554,10 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{userId}/disable")
-  public ResponseEntity<Boolean> disableUser(@PathVariable UUID userId) {
-    userService.disableUser(userId);
-    log.info("User with id {} was successfully disabled", userId);
+  @PutMapping("/{uuid}/disable")
+  public ResponseEntity<Boolean> disableUser(@PathVariable UUID uuid) {
+    userService.disableUser(uuid);
+    log.info("User with id {} was successfully disabled", uuid);
     return ResponseEntity.ok(true);
   }
 
@@ -605,7 +605,7 @@ public class UserController {
             }),
         @ApiResponse(
             responseCode = "403",
-            description = "Can't promote user that is not a worker.",
+            description = "Can't promote user that is not a worker",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -613,17 +613,83 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Can't promote user that is not a worker.\"],"
+                            "{\"messages\":[\"Can't promote user that is not a worker\"],"
                                 + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{userId}/promote")
-  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID userId) {
-    userService.promoteUser(userId);
-    log.info("User with id {} was successfully promoted to manager", userId);
+  @PutMapping("/{uuid}/promote")
+  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID uuid) {
+    userService.promoteUser(uuid);
+    log.info("User with id {} was successfully promoted to manager", uuid);
+    return ResponseEntity.ok(true);
+  }
+
+  @Operation(summary = "Demote user")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User successfully demoted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Can't demote user that is not a manager",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Can't demote user that is not a manager\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
+  @PutMapping("/{uuid}/demote")
+  public ResponseEntity<Boolean> demoteUser(@PathVariable UUID uuid) {
+    userService.demoteUser(uuid);
+    log.info("User with id {} was successfully demoted to worker", uuid);
     return ResponseEntity.ok(true);
   }
 
