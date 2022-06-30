@@ -59,6 +59,13 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
+  public BucketDto findBucketByName(String name) {
+    BucketEntity bucketEntity =
+        bucketRepository.findBucketByName(name).orElseThrow(BucketNotFoundException::new);
+    return modelMapper.map(bucketEntity, BucketDto.class);
+  }
+
+  @Override
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
     return entityList.stream()

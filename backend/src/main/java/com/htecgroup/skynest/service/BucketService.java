@@ -18,4 +18,6 @@ public interface BucketService {
   BucketDto findBucketById(UUID uuid);
 
   void deleteBucket(UUID uuid);
+
+  BucketDto findBucketByName(String name);
 }
