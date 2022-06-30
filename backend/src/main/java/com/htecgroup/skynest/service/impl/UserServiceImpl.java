@@ -145,8 +145,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void disableUser(@Valid @UserNotAdmin UUID userId) {
-    UserDto userDto = findUserById(userId);
+  public void disableUser(UUID uuid) {
+    UserDto userDto = findUserById(uuid);
     if (!userDto.getVerified()) {
       throw new UserNotVerifiedException();
     }
@@ -158,8 +158,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void promoteUser(@Valid @OnlyWorkerCanBePromoted UUID userId) {
-    UserDto userDto = findUserById(userId);
+  public void promoteUser(
+      @Valid
+          @CanPromoteDemoteManagerWorker(
+              role_name = RoleEntity.ROLE_WORKER,
+              message = "Can't promote user that is not a worker")
+          UUID uuid) {
+    UserDto userDto = findUserById(uuid);
     RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_MANAGER);
     UserDto changedRoleUser = userDto.withRole(userPromotedRole);
     userRepository.save(modelMapper.map(changedRoleUser, UserEntity.class));
@@ -176,5 +181,18 @@ public class UserServiceImpl implements UserService {
     }
     UserDto enabledUserDto = userDto.enableUser();
     userRepository.save(modelMapper.map(enabledUserDto, UserEntity.class));
+  }
+
+  @Override
+  public void demoteUser(
+      @Valid
+          @CanPromoteDemoteManagerWorker(
+              role_name = RoleEntity.ROLE_MANAGER,
+              message = "Can't demote user that is not a manager")
+          UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    RoleDto userPromotedRole = roleService.findByName(RoleEntity.ROLE_WORKER);
+    UserDto changedRoleUser = userDto.withRole(userPromotedRole);
+    userRepository.save(modelMapper.map(changedRoleUser, UserEntity.class));
   }
 }
