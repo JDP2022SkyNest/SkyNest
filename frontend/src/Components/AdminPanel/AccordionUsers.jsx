@@ -19,18 +19,28 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
                   <AiIcons.AiOutlineUser className="main-icon-align" />
                </span>
             ) : (
-               <span className="ml-1 badge bg-dark text-white rounded-pill mr-3">
+               <span className="ml-1 badge manager-badge text-white rounded-pill mr-3">
                   <AiIcons.AiOutlineUser className="main-icon-align" />
                </span>
             )}
-            <div className={`${!elem.verified ? "text-muted unverified-users-number-style" : "users-number-style"}`}>
+            <div
+               className={`${
+                  !elem.verified
+                     ? "text-muted default-number-style unverified-users-number-style"
+                     : "default-number-style users-number-style" && userRoleName === "manager"
+                     ? "manager-number-style default-number-style"
+                     : "default-number-style users-number-style" && userRoleName === "admin"
+                     ? "admin-number-style default-number-style"
+                     : "default-number-style users-number-style"
+               }`}
+            >
                {elem.name} {elem.surname}
-               <VscIcons.VscUnverified className={`${!elem.verified ? "ml-1" : "d-none"}`} />
+               <VscIcons.VscUnverified className={`${!elem.verified ? "ml-3" : "d-none"}`} />
             </div>
             <span className="badge border border-secondary text-dark ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
 
             {!elem.enabled && (
-               <span className="badge text-dark ml-1 py-1">
+               <span className="badge text-dark ml-0 py-1">
                   <MdIcons.MdOutlinePersonAddDisabled />
                </span>
             )}

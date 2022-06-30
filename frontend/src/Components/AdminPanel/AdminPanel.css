@@ -8,18 +8,25 @@
    top: 6px;
 }
 
-.unverified-users-number-style {
-   border-left: 3px solid rgb(202, 201, 201);
+.default-number-style {
    margin-right: 5px;
    padding-left: 10px;
    border-radius: 2px;
 }
+.unverified-users-number-style {
+   border-left: 3px solid rgb(202, 201, 201);
+}
 
 .users-number-style {
    border-left: 3px solid rgb(119, 119, 119);
-   margin-right: 5px;
-   padding-left: 10px;
-   border-radius: 2px;
+}
+
+.manager-number-style {
+   border-left: 3px solid rgb(86, 121, 18);
+}
+
+.admin-number-style {
+   border-left: 3px solid var(--gold);
 }
 
 .users-badge-align {
@@ -47,7 +54,7 @@
 }
 
 .manager-badge {
-   background-color: rgb(67, 67, 207);
+   background-color: rgb(86, 121, 18);
 }
 
 .disabled-user-icon {
