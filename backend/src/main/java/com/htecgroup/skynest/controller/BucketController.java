@@ -118,10 +118,10 @@ public class BucketController {
                                 + "\"description\": \"Description\","
                                 + "\"size\": \"1000\"}},"
                                 + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
-                                + "\"name\": \"Name\","
-                                + "\"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "\"description\": \"Description\","
-                                + "\"size\": \"1000\"}]")
+                                + "\"name\": \"Name2\","
+                                + "\"companyId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"description\": \"Description2\","
+                                + "\"size\": \"1200\"}]")
                   })
             }),
         @ApiResponse(

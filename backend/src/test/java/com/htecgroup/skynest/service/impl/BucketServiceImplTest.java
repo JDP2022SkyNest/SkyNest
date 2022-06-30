@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,8 @@ class BucketServiceImplTest {
 
   @Test
   void listAllBuckets() {
-    List<BucketEntity> bucketEntityList = new ArrayList<>();
-    bucketEntityList.add(BucketEntityUtil.getPrivateBucket());
+    List<BucketEntity> bucketEntityList =
+        Collections.singletonList(BucketEntityUtil.getPrivateBucket());
     when(bucketRepository.findAll()).thenReturn(bucketEntityList);
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
