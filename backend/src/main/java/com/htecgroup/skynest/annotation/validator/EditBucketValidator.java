@@ -1,7 +1,8 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanView;
+import com.htecgroup.skynest.annotation.CanBucketBeEdited;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
+import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,23 +13,18 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ViewValidator implements ConstraintValidator<CurrentUserCanView, UUID> {
-
+public class EditBucketValidator implements ConstraintValidator<CanBucketBeEdited, UUID> {
   private final CurrentUserService currentUserService;
-  private CurrentUserCanView currentUserCanView;
-
-  @Override
-  public void initialize(CurrentUserCanView constraintAnnotation) {
-    currentUserCanView = constraintAnnotation;
-  }
+  private final BucketService bucketService;
 
   @Override
   public boolean isValid(UUID uuid, ConstraintValidatorContext context) {
-    String roleName = currentUserCanView.role_name();
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
-    if (!loggedUserUuid.equals(uuid) && loggedUserDto.hasRole(roleName)) {
+    UUID ownerId = bucketService.getBucket(uuid).getCreatedById();
+
+    if (!loggedUserUuid.equals(ownerId)) {
       return false;
     }
     return true;

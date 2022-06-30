@@ -22,7 +22,7 @@ class ViewValidatorTest {
 
   @Mock CurrentUserService currentUserService;
   @Mock CurrentUserCanView currentUserCanView;
-  @InjectMocks ViewValidator viewValidator;
+  @InjectMocks ViewUserValidator viewValidator;
 
   @BeforeEach
   void setUp() {

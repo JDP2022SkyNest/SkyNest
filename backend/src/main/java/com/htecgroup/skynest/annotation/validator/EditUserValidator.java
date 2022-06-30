@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanDelete;
+import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.service.CurrentUserService;
@@ -14,7 +14,8 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class DeleteValidator implements ConstraintValidator<CurrentUserCanDelete, UUID> {
+public class EditUserValidator implements ConstraintValidator<CurrentUserCanEdit, UUID> {
+
   private final CurrentUserService currentUserService;
   private final UserService userService;
 

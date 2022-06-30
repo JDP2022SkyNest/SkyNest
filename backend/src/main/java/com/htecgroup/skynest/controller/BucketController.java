@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.BucketService;
@@ -14,11 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -95,6 +94,14 @@ public class BucketController {
     BucketResponse bucketResponse = bucketService.getBucket(uuid);
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
+    return bucketResponseEntity;
+  }
+
+  public ResponseEntity<BucketResponse> editBucket(
+      @Valid @RequestBody BucketEditRequest bucketEditRequest, @PathVariable UUID uuid) {
+    ResponseEntity<BucketResponse> bucketResponseEntity =
+        new ResponseEntity<>(bucketService.editBucket(bucketEditRequest, uuid), HttpStatus.OK);
+    log.info("Bucket is successfully edited");
     return bucketResponseEntity;
   }
 }
