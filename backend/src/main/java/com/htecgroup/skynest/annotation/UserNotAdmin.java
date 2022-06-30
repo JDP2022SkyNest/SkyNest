@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.PromoteValidator;
+import com.htecgroup.skynest.annotation.validator.EnableAndDisableValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = PromoteValidator.class)
-public @interface OnlyWorkerCanBePromoted {
-  String message() default "Can't promote user that is not a worker.";
+@Constraint(validatedBy = EnableAndDisableValidator.class)
+public @interface UserNotAdmin {
+  String message() default "Access denied";
 
   Class<?> groups()[] default {};
 

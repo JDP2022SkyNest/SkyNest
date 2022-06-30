@@ -164,6 +164,21 @@ export const promoteUser = async (accessToken, id, error) => {
    }
 };
 
+export const demoteUser = async (accessToken, id, error) => {
+   try {
+      await AxiosInstance.put(
+         `users/${id}/demote`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+   } catch (err) {
+      error(err.response.data.messages);
+      console.error(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
