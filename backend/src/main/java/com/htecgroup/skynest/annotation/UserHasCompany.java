@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER})
 @Constraint(validatedBy = UserHasCompanyValidator.class)
 public @interface UserHasCompany {
-  String message() default "User already has company";
+  String message() default "User already has a company";
 
   Class<?> groups()[] default {};
 

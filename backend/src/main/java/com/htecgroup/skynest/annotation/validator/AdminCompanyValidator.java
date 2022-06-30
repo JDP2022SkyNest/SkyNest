@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanEdit;
+import com.htecgroup.skynest.annotation.AddUserInAdminCompany;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.service.CompanyService;
 import com.htecgroup.skynest.service.CurrentUserService;
@@ -13,20 +13,19 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AdminCompanyValidator implements ConstraintValidator<CurrentUserCanEdit, UUID> {
+public class AdminCompanyValidator implements ConstraintValidator<AddUserInAdminCompany, UUID> {
   private final CurrentUserService currentUserService;
   private final CompanyService companyService;
 
   @Override
-  public boolean isValid(UUID uuid, ConstraintValidatorContext constraintValidatorContext) {
+  public boolean isValid(UUID companyId, ConstraintValidatorContext constraintValidatorContext) {
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UUID loggedUserCompanyId = loggedUserDto.getCompany().getId();
 
-    UUID companyToAddId = companyService.findById(uuid).getId();
-
-    if (!loggedUserCompanyId.equals(companyToAddId)) {
+    if (loggedUserDto.getCompany() == null) {
       return false;
     }
-    return true;
+    UUID loggedUserCompanyId = loggedUserDto.getCompany().getId();
+
+    return loggedUserCompanyId.equals(companyId);
   }
 }

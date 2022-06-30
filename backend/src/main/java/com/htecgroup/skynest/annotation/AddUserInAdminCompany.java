@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER})
 @Constraint(validatedBy = AdminCompanyValidator.class)
 public @interface AddUserInAdminCompany {
-  String message() default "Can't add user in another company";
+  String message() default "Admin and user company don't match";
 
   Class<?> groups()[] default {};
 
