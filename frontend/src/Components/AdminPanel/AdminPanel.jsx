@@ -10,6 +10,7 @@ import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ReusableModal from "../ReusableComponents/ReusableModal";
 import AdminCarousel from "./AdminCarousel";
 import ROUTES from "../Routes/ROUTES";
+import * as TiCions from "react-icons/ti";
 
 const AdminPanel = ({ userID }) => {
    const [usersData, setUsersData] = useState([]);
@@ -34,7 +35,9 @@ const AdminPanel = ({ userID }) => {
          user.email.includes(searchTerm) ||
          user.address.includes(searchTerm) ||
          user.phoneNumber.includes(searchTerm) ||
-         user.roleName.includes(searchTerm)
+         user.roleName.includes(searchTerm) ||
+         user.verified === searchTerm ||
+         user.enabled === searchTerm
    );
 
    const allUsers = filterUsers.map((elem, index) => (
@@ -43,13 +46,22 @@ const AdminPanel = ({ userID }) => {
 
    return (
       <div className="admin-page-body">
-         <NavbarPanel name={"Admin Panel"} searchBar={true} path={ROUTES.HOME} setSearchTerm={setSearchTerm}>
-            <ReusableModal title="Instructions">
+         <NavbarPanel name={"Admin Panel"} searchBar={true} path={ROUTES.HOME} searchTerm={searchTerm} setSearchTerm={setSearchTerm}>
+            <ReusableModal title="Instructions" buttonText="Close">
                <AdminCarousel />
             </ReusableModal>
          </NavbarPanel>
          {!loading ? (
             <Container>
+               <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0" : "d-none"}>
+                  {errorMsg}
+                  <TiCions.TiDeleteOutline
+                     onClick={() => {
+                        setErrorMsg("");
+                     }}
+                     className="remove-error-icon"
+                  />
+               </p>
                <div className="row">
                   <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
                      <AdminCard title="Total Users:" body={usersData.length} color={"white"} />
@@ -63,9 +75,6 @@ const AdminPanel = ({ userID }) => {
                      <Accordion className="shadow">{allUsers}</Accordion>
                   </div>
                </div>
-               <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-4" : "d-none"}>
-                  {errorMsg}
-               </p>
             </Container>
          ) : (
             <div className="mt-5">
