@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.BucketService;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +28,78 @@ import java.util.UUID;
 public class BucketController {
 
   private BucketService bucketService;
+
+  @Operation(summary = "Create new bucket")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Bucket successfully created",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = BucketResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"name\": \"Name\","
+                                + "  \"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"description\": \"Description\","
+                                + "  \"size\": \"1000\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"name cannot be null or empty\","
+                                + " \"description cannot be null or empty\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PostMapping
+  public ResponseEntity<BucketResponse> createBucket(
+      @Valid @RequestBody BucketCreateRequest bucketCreateRequest) {
+
+    ResponseEntity<BucketResponse> bucketResponseEntity =
+        new ResponseEntity<>(bucketService.createBucket(bucketCreateRequest), HttpStatus.OK);
+
+    log.info("Bucket {} was successfully created", bucketCreateRequest.getName());
+    return bucketResponseEntity;
+  }
 
   @Operation(summary = "Get bucket with given uuid")
   @ApiResponses(
