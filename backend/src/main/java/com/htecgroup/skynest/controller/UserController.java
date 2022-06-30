@@ -674,8 +674,8 @@ public class UserController {
   @PutMapping("/{uuid}/add-company/{companyId}")
   public ResponseEntity<Boolean> addCompanyForUser(
       @PathVariable UUID uuid, @PathVariable UUID companyId) {
-    userService.addCompanyForUser(uuid, companyId);
 
+    userService.addCompanyForUser(uuid, companyId);
     return ResponseEntity.ok(true);
   }
 }

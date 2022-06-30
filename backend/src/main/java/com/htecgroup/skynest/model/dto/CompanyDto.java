@@ -21,5 +21,5 @@ public class CompanyDto implements Serializable {
   private String address;
   private String phoneNumber;
   private String email;
-  private TierDto tier;
+  private String tierName;
 }
