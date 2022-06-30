@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.PromoteValidator;
+import com.htecgroup.skynest.annotation.validator.PromoteDemoteValidator;
+import com.htecgroup.skynest.model.entity.RoleEntity;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,9 +12,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = PromoteValidator.class)
-public @interface OnlyWorkerCanBePromoted {
-  String message() default "Can't promote user that is not a worker.";
+@Constraint(validatedBy = PromoteDemoteValidator.class)
+public @interface CanPromoteDemoteManagerWorker {
+  String message() default "Can't promote/demote user.";
+
+  String role_name() default RoleEntity.ROLE_WORKER;
 
   Class<?> groups()[] default {};
 

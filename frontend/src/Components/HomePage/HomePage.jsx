@@ -12,7 +12,7 @@ import BackDrop from "../HomePage/BackDrop/BackDrop";
 import * as RiCions from "react-icons/ri";
 import "./HomePage.css";
 
-const HomePage = ({ setAccessToken, userRole }) => {
+const HomePage = ({ setAccessToken, userRole, userID }) => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(false);
    const toggleSidebar = () => {
@@ -35,7 +35,7 @@ const HomePage = ({ setAccessToken, userRole }) => {
                   >
                      <RiCions.RiAdminLine className="main-icon-align" fill="var(--gold)" />
                   </button>
-                  <Profile setAccessToken={setAccessToken} userRole={userRole} />
+                  <Profile setAccessToken={setAccessToken} userRole={userRole} userID={userID} />
                </div>
             </Container>
          </Navbar>
