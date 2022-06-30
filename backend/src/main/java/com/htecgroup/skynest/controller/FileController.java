@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,9 +37,17 @@ public class FileController {
   @GetMapping("/{uuid}")
   public ResponseEntity<Resource> downloadFile(@PathVariable(name = "uuid") UUID fileId) {
 
-    Resource resource = fileService.downloadFile(fileId);
+    Resource fileContent = fileService.downloadFile(fileId);
+    FileResponse fileMetadata = fileService.getFileMetadata(fileId);
 
-    ResponseEntity<Resource> responseEntity = new ResponseEntity<>(resource, HttpStatus.OK);
+    ResponseEntity<Resource> responseEntity =
+        ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(fileMetadata.getType()))
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + fileMetadata.getName() + "\"")
+            .body(fileContent);
+
     return responseEntity;
   }
 
