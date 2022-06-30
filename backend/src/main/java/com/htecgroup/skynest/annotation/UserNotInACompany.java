@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.UserHasCompanyValidator;
+import com.htecgroup.skynest.annotation.validator.UserNotInACompanyValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = UserHasCompanyValidator.class)
-public @interface UserHasCompany {
+@Constraint(validatedBy = UserNotInACompanyValidator.class)
+public @interface UserNotInACompany {
   String message() default "User already has a company";
 
   Class<?> groups()[] default {};

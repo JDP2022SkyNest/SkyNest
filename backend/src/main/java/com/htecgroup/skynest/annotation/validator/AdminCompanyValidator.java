@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.AddUserInAdminCompany;
+import com.htecgroup.skynest.annotation.AdminAndUserInSameCompany;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AdminCompanyValidator implements ConstraintValidator<AddUserInAdminCompany, UUID> {
+public class AdminCompanyValidator implements ConstraintValidator<AdminAndUserInSameCompany, UUID> {
   private final CurrentUserService currentUserService;
 
   @Override

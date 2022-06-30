@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.UserHasCompany;
+import com.htecgroup.skynest.annotation.UserNotInACompany;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class UserHasCompanyValidator implements ConstraintValidator<UserHasCompany, UUID> {
+public class UserNotInACompanyValidator implements ConstraintValidator<UserNotInACompany, UUID> {
   private final UserService userService;
 
   @Override

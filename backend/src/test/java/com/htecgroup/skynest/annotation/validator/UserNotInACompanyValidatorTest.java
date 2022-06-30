@@ -14,17 +14,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserHasCompanyValidatorTest {
+class UserNotInACompanyValidatorTest {
   @Mock private UserService userService;
 
-  @InjectMocks private UserHasCompanyValidator userHasCompanyValidator;
+  @InjectMocks private UserNotInACompanyValidator userNotInACompanyValidator;
 
   @Test
   void when_UserWithoutCompany_isValid_ShouldReturnTrue() {
     UserDto userDto = UserDtoUtil.getVerified();
     when(userService.findUserById(any())).thenReturn(userDto);
 
-    Assertions.assertTrue(userHasCompanyValidator.isValid(userDto.getId(), null));
+    Assertions.assertTrue(userNotInACompanyValidator.isValid(userDto.getId(), null));
   }
 
   @Test
@@ -32,6 +32,6 @@ class UserHasCompanyValidatorTest {
     UserDto userDto = UserDtoUtil.getUserWithCompany();
     when(userService.findUserById(any())).thenReturn(userDto);
 
-    Assertions.assertFalse(userHasCompanyValidator.isValid(userDto.getId(), null));
+    Assertions.assertFalse(userNotInACompanyValidator.isValid(userDto.getId(), null));
   }
 }
