@@ -20,5 +20,5 @@ public class BucketEditRequest {
   @Size(max = 5000, message = "length cannot be over 5000 characters")
   private String description;
 
-  private boolean isPublic;
+  private String isPublic;
 }

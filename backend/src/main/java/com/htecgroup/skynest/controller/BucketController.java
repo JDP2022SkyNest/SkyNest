@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.controller;
 
-import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
+import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.BucketService;
@@ -16,15 +16,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.UUID;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/buckets")
@@ -175,6 +170,7 @@ public class BucketController {
     return bucketResponseEntity;
   }
 
+  @PutMapping("/{uuid}")
   public ResponseEntity<BucketResponse> editBucket(
       @Valid @RequestBody BucketEditRequest bucketEditRequest, @PathVariable UUID uuid) {
     ResponseEntity<BucketResponse> bucketResponseEntity =
