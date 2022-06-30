@@ -8,7 +8,7 @@ public class UserEntityUtil extends BasicUtil {
 
   public static UserEntity getNotVerified() {
     return new UserEntity(
-        UUID.randomUUID(),
+        UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
         currentDateTime,
         currentDateTime,
         null,
