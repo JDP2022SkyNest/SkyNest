@@ -780,7 +780,8 @@ public class UserController {
             }),
         @ApiResponse(
             responseCode = "403",
-            description = "Can't demote user that is not a manager",
+            description =
+                "Admin and user company don't match, or User Already Has a Company, or Logged user is not an admin",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -788,7 +789,8 @@ public class UserController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Admin and user company don't match\"],"
+                            "{\"messages\":[\"Admin and user company don't match \","
+                                + " \"User already has a company\"],"
                                 + " \"status\": \"403\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
