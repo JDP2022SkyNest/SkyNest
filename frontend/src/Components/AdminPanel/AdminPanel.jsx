@@ -10,11 +10,15 @@ import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ReusableModal from "../ReusableComponents/ReusableModal";
 import AdminCarousel from "./AdminCarousel";
 import ROUTES from "../Routes/ROUTES";
-import * as TiCions from "react-icons/ti";
+import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import SetWarningMsg from "../ReusableComponents/SetWarningMsg";
 
 const AdminPanel = ({ userID }) => {
    const [usersData, setUsersData] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
+   const [successMsg, setSuccessMsg] = useState("");
+   const [warningMsg, setWarningMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
    const [change, setChange] = useState(false);
    const [loading, setLoading] = useState(false);
@@ -41,7 +45,17 @@ const AdminPanel = ({ userID }) => {
    );
 
    const allUsers = filterUsers.map((elem, index) => (
-      <AccordionUsers elem={elem} index={index} key={elem.id} setChange={setChange} change={change} userID={userID} setErrorMsg={setErrorMsg} />
+      <AccordionUsers
+         elem={elem}
+         index={index}
+         key={elem.id}
+         setChange={setChange}
+         change={change}
+         userID={userID}
+         setErrorMsg={setErrorMsg}
+         setSuccessMsg={setSuccessMsg}
+         setWarningMsg={setWarningMsg}
+      />
    ));
 
    return (
@@ -53,15 +67,9 @@ const AdminPanel = ({ userID }) => {
          </NavbarPanel>
          {!loading ? (
             <Container>
-               <p className={errorMsg ? "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0" : "d-none"}>
-                  {errorMsg}
-                  <TiCions.TiDeleteOutline
-                     onClick={() => {
-                        setErrorMsg("");
-                     }}
-                     className="remove-error-icon"
-                  />
-               </p>
+               <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+               <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+               <SetWarningMsg warningMsg={warningMsg} setWarningMsg={setWarningMsg} />
                <div className="row">
                   <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
                      <AdminCard title="Total Users:" body={usersData.length} color={"white"} />

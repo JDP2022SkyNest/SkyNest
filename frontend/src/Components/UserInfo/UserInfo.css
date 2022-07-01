@@ -2,23 +2,65 @@
    width: 150px;
 }
 
-.github-icon-color {
-   color: #333333
-}
-
-.twitter-icon-color {
-   color: #55acee
-}
-
-.instagram-icon-color {
-   color: #ac2bac
-}
-
-.facebook-icon-color {
-   color: #3b5998
-}
-
 .user-page-body {
    background-color: var(--latte);
    min-height: 100vh;
 }
+
+.admin-button {
+   background-color: #ccb45c;
+   color: white;
+   transition: 300ms;
+}
+
+.admin-button:hover {
+   background-color: #ad953e;
+   color: white;
+}
+
+.manager-button {
+   background-color: rgb(115, 161, 22);
+   color: white;
+   transition: 300ms;
+}
+
+.manager-button:hover {
+   background-color: rgb(75, 105, 15);
+   color: white;
+}
+
+.admin-edit-button {
+   background-color: transparent;
+   color: #ad953e;
+   border-color: #ad953e;
+   transition: 300ms;
+   margin-left: 5px;
+}
+
+.admin-edit-button:hover {
+   background-color: #ad953e;
+   color: white;
+}
+
+.manager-edit-button {
+   background-color: transparent;
+   color: rgb(75, 105, 15);
+   border-color: rgb(75, 105, 15);
+   transition: 300ms;
+   margin-left: 5px;
+}
+
+.manager-edit-button:hover {
+   background-color: rgb(75, 105, 15);
+   color: white;
+}
+
+.admin-text {
+   color:#ccb45c ;
+}
+
+.manager-text {
+   color: rgb(115, 161, 22);
+}
+
+

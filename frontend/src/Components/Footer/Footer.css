@@ -12,4 +12,8 @@
    color: var(--smoke);
    z-index: var(--z-fixed);
    transition: 0.5s;
+  }
+  
+  .footer-text {
+    cursor: pointer;
  }

@@ -118,6 +118,7 @@ class BucketServiceImplTest {
 
   private void assertBucketEntityAndBucketResponse(
       BucketEntity expectedBucketEntity, BucketResponse actualBucketResponse) {
+    Assertions.assertEquals(expectedBucketEntity.getId(), actualBucketResponse.getBucketId());
     Assertions.assertEquals(
         expectedBucketEntity.getCreatedBy().getId(), actualBucketResponse.getCreatedById());
     Assertions.assertEquals(expectedBucketEntity.getName(), actualBucketResponse.getName());

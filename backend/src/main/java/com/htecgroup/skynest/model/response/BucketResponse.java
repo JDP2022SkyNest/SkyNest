@@ -11,6 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BucketResponse {
 
+  private UUID bucketId;
+
   private UUID createdById;
 
   private String name;

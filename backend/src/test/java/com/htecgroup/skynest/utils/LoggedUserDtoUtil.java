@@ -1,6 +1,8 @@
 package com.htecgroup.skynest.utils;
 
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
+import com.htecgroup.skynest.utils.company.CompanyDtoUtil;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
@@ -36,6 +38,26 @@ public class LoggedUserDtoUtil extends BasicUtil {
         name,
         surname,
         null,
+        email,
+        password,
+        true,
+        true,
+        true,
+        true,
+        authorities);
+  }
+
+  public static LoggedUserDto getLoggedAdminWithCompany() {
+    List<SimpleGrantedAuthority> authorities =
+        Collections.singletonList(new SimpleGrantedAuthority(roleAdminDto.getName()));
+
+    CompanyDto companyDto = CompanyDtoUtil.getCompanyDto();
+
+    return new LoggedUserDto(
+        UUID.randomUUID(),
+        name,
+        surname,
+        companyDto,
         email,
         password,
         true,
