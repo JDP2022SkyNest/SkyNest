@@ -52,13 +52,29 @@ public class FileServiceImpl implements FileService {
   @Transactional(rollbackFor = Exception.class)
   public FileResponse uploadFile(MultipartFile multipartFile, UUID bucketId) {
 
-    FileMetadataEntity emptyFileMetadata = reserveFileName(multipartFile, bucketId);
+    FileMetadataEntity emptyFileMetadata =
+        initFileMetadata(
+            multipartFile.getOriginalFilename(),
+            multipartFile.getSize(),
+            multipartFile.getContentType(),
+            bucketId);
 
-    FileMetadataEntity savedFileMetadata = storeFileContents(multipartFile, emptyFileMetadata);
+    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
+    checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
+    checkBucketNotDeleted(emptyFileMetadata);
+    checkBucketSizeExceedsMax(emptyFileMetadata);
 
-    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.ACTION_CREATE);
+    try {
+      InputStream fileContents = multipartFile.getInputStream();
 
-    return modelMapper.map(savedFileMetadata, FileResponse.class);
+      FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
+      actionService.recordAction(
+          Collections.singleton(savedFileMetadata), ActionType.ACTION_CREATE);
+
+      return modelMapper.map(savedFileMetadata, FileResponse.class);
+    } catch (IOException e) {
+      throw new FileIOException();
+    }
   }
 
   @Override
@@ -79,56 +95,59 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
 
-    String objectId = fileMetadataEntity.getContentId();
-    if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
-
-    Resource resource = getFileContents(objectId);
+    Resource fileContents = getFileContents(fileMetadataEntity.getContentId());
     actionService.recordAction(
         Collections.singleton(fileMetadataEntity), ActionType.ACTION_DOWNLOAD);
 
     return new FileDownloadResponse(
-        fileMetadataEntity.getName(), fileMetadataEntity.getType(), resource);
+        fileMetadataEntity.getName(), fileMetadataEntity.getType(), fileContents);
+  }
+
+  private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
+
+    UserEntity currentUserEntity =
+        userRepository
+            .findById(currentUserService.getLoggedUser().getUuid())
+            .orElseThrow(UserNotFoundException::new);
+
+    BucketEntity bucketEntity =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+
+    FileMetadataEntity fileMetadataEntity = new FileMetadataEntity();
+
+    fileMetadataEntity.setCreatedBy(currentUserEntity);
+    fileMetadataEntity.setName(name);
+
+    fileMetadataEntity.setBucket(bucketEntity);
+    fileMetadataEntity.setParentFolder(null);
+    fileMetadataEntity.setSize(size);
+    fileMetadataEntity.setType(type);
+
+    return fileMetadataEntity;
+  }
+
+  private FileMetadataEntity storeFileContents(
+      FileMetadataEntity emptyFileMetadata, InputStream fileContents) {
+
+    String fileContentId =
+        storeFileContentsToDatabase(
+            emptyFileMetadata.getName(), emptyFileMetadata.getType(), fileContents);
+
+    emptyFileMetadata.setContentId(fileContentId);
+    return fileMetadataRepository.save(emptyFileMetadata);
   }
 
   private FileMetadataEntity getFileMetadataEntity(UUID fileId) {
     return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
   }
 
-  private FileMetadataEntity storeFileContents(
-      MultipartFile multipartFile, FileMetadataEntity reservedFileMetadataEntity) {
+  private String storeFileContentsToDatabase(String name, String type, InputStream inputStream) {
     try {
-      String fileContentId = storeFileContentsToDatabase(multipartFile);
-      reservedFileMetadataEntity.setContentId(fileContentId);
-      return fileMetadataRepository.save(reservedFileMetadataEntity);
-    } catch (IOException | MongoException e) {
-      fileMetadataRepository.delete(reservedFileMetadataEntity);
+      Object objectId = operations.store(inputStream, name, type);
+      return objectId.toString();
+    } catch (MongoException e) {
       throw new FileIOException();
     }
-  }
-
-  private FileMetadataEntity reserveFileName(MultipartFile multipartFile, UUID bucketId) {
-
-    FileMetadataEntity fileMetadataEntity = initFileMetadata(multipartFile, bucketId);
-
-    checkCanCreateFile(fileMetadataEntity);
-
-    return fileMetadataRepository.save(fileMetadataEntity);
-  }
-
-  private String storeFileContentsToDatabase(MultipartFile multipartFile) throws IOException {
-    Object objectId =
-        operations.store(
-            multipartFile.getInputStream(),
-            multipartFile.getOriginalFilename(),
-            multipartFile.getContentType());
-    return objectId.toString();
-  }
-
-  private void checkCanCreateFile(FileMetadataEntity fileMetadataEntity) {
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
-    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
-    checkBucketNotDeleted(fileMetadataEntity);
-    checkBucketSizeExceedsMax(fileMetadataEntity);
   }
 
   private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
@@ -192,36 +211,16 @@ public class FileServiceImpl implements FileService {
       throw new BucketsTooFullException();
   }
 
-  private FileMetadataEntity initFileMetadata(MultipartFile multipartFile, UUID bucketId) {
-
-    UserEntity currentUserEntity =
-        userRepository
-            .findById(currentUserService.getLoggedUser().getUuid())
-            .orElseThrow(UserNotFoundException::new);
-
-    BucketEntity bucketEntity =
-        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
-
-    FileMetadataEntity fileMetadataEntity = new FileMetadataEntity();
-
-    fileMetadataEntity.setCreatedBy(currentUserEntity);
-    fileMetadataEntity.setName(multipartFile.getOriginalFilename());
-
-    fileMetadataEntity.setBucket(bucketEntity);
-    fileMetadataEntity.setParentFolder(null);
-    fileMetadataEntity.setSize(multipartFile.getSize());
-    fileMetadataEntity.setType(multipartFile.getContentType());
-
-    return fileMetadataEntity;
-  }
-
   private InputStreamResource getFileContents(String objectId) {
-    GridFSFile gridFSFile = operations.findOne(new Query(Criteria.where("_id").is(objectId)));
-    if (gridFSFile == null) throw new FileNotFoundException();
     try {
+      if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
+
+      GridFSFile gridFSFile = operations.findOne(new Query(Criteria.where("_id").is(objectId)));
+      if (gridFSFile == null) throw new FileNotFoundException();
+
       InputStream inputStream = operations.getResource(gridFSFile).getInputStream();
       return new InputStreamResource(inputStream);
-    } catch (IOException e) {
+    } catch (IOException | MongoException e) {
       throw new FileIOException();
     }
   }
