@@ -43,9 +43,10 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                            "{\"bucketId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"name\": \"Name\","
-                                + "  \"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"companyId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"description\": \"Description\","
                                 + "  \"size\": \"1000\"}")
                   })
@@ -98,7 +99,6 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketService.createBucket(bucketCreateRequest), HttpStatus.OK);
 
-    log.info("Bucket {} was successfully created", bucketCreateRequest.getName());
     return bucketResponseEntity;
   }
 
@@ -115,9 +115,10 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                            "{\"bucketId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"name\": \"Name\","
-                                + "  \"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"companyId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"description\": \"Description\","
                                 + "  \"size\": \"1000\"}")
                   })
@@ -183,14 +184,16 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "[{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                            "[{\"bucketId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "\"name\": \"Name\","
-                                + "\"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "\"description\": \"Description\","
-                                + "\"size\": \"1000\"}},"
-                                + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
-                                + "\"name\": \"Name2\","
                                 + "\"companyId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"description\": \"Description\","
+                                + "\"size\": \"1000\"},"
+                                + "{\"bucketId\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
+                                + "\"name\": \"Name2\","
+                                + "\"companyId\": \"b2d6b109-624c-4509-8544-5ad8d3a2a88f\","
                                 + "\"description\": \"Description2\","
                                 + "\"size\": \"1200\"}]")
                   })
@@ -287,7 +290,6 @@ public class BucketController {
   @PutMapping("delete/{uuid}")
   public ResponseEntity<Boolean> deleteBucket(@PathVariable UUID uuid) {
     bucketService.deleteBucket(uuid);
-    log.info("Bucket with id {} was successfully deleted", uuid);
     return ResponseEntity.ok(true);
   }
 }
