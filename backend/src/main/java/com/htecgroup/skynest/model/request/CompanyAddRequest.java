@@ -25,7 +25,7 @@ public class CompanyAddRequest {
   private String name;
 
   @NotBlank(message = "cannot be null or empty")
-  @Size(max = 254, message = "length cannot be over 50")
+  @Size(max = 254, message = "length cannot be over 254")
   private String address;
 
   @NotBlank(message = "cannot be null or empty")
