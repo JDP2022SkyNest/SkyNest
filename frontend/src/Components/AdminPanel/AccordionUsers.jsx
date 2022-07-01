@@ -1,31 +1,43 @@
 import React from "react";
 import { useState } from "react";
 import { Accordion } from "react-bootstrap";
-import * as TiIcons from "react-icons/ti";
+import * as MdIcons from "react-icons/md";
+import * as AiIcons from "react-icons/ai";
+import * as VscIcons from "react-icons/vsc";
 import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
 
-const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg }) => {
+const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
    const [youSure, setYouSure] = useState(false);
    const userRoleName = elem.roleName.slice(5);
    const accessToken = localStorage.accessToken;
 
    return (
-      <Accordion.Item eventKey={index} className={`${!elem.verified && "border border-danger"}`}>
+      <Accordion.Item eventKey={index} className={`${!elem.verified}`}>
          <Accordion.Header>
-            <div className={`${!elem.verified ? "text-danger unverified-users-number-style " : "users-number-style"}`}>
-               {elem.name} {elem.surname}
-            </div>
             {userRoleName !== "manager" ? (
-               <span className={`ml-1 badge ${userRoleName === "admin" ? "admin-color" : "bg-secondary rounded-pill"} py-1 users-badge-align`}>
-                  {userRoleName}
+               <span className={`ml-1 badge ${userRoleName === "admin" ? "admin-color" : "bg-secondary rounded-pill"} py-1 users-badge-align mr-3`}>
+                  <AiIcons.AiOutlineUser className="main-icon-align" />
                </span>
             ) : (
-               <span className="ml-1 badge manager-badge rounded-pill">{userRoleName}</span>
+               <span className="ml-1 badge manager-badge text-white rounded-pill mr-3">
+                  <AiIcons.AiOutlineUser className="main-icon-align" />
+               </span>
             )}
+            <div
+               className={`default-style ${
+                  !elem.verified
+                     ? "unverified-style text-muted"
+                     : `${userRoleName === "manager" ? "manager-style" : `${userRoleName === "admin" ? "admin-style" : "worker-style"}`}`
+               }`}
+            >
+               {elem.name} {elem.surname}
+               <VscIcons.VscUnverified className={`${!elem.verified ? "ml-3" : "d-none"}`} />
+            </div>
             <span className="badge border border-secondary text-dark ml-1 py-1 users-badge-align rounded-pill">{userID === elem.id && "You"}</span>
+
             {!elem.enabled && (
-               <span className="text-dark">
-                  <TiIcons.TiDelete className="disabled-user-icon" />
+               <span className="badge text-dark ml-0 py-1">
+                  <MdIcons.MdOutlinePersonAddDisabled />
                </span>
             )}
          </Accordion.Header>
@@ -50,10 +62,10 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
                      {userRoleName === "worker" && (
                         <button
                            onClick={async () => {
-                              await promoteUser(accessToken, elem.id, setErrorMsg);
+                              await promoteUser(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-info text-white"
+                           className="btn alert-success text-success"
                         >
                            Promote
                         </button>
@@ -61,10 +73,10 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
                      {userRoleName === "manager" && (
                         <button
                            onClick={async () => {
-                              await demoteUser(accessToken, elem.id, setErrorMsg);
+                              await demoteUser(accessToken, elem.id, setErrorMsg, setWarningMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-primary"
+                           className="btn alert-warning text-dark"
                         >
                            Demote
                         </button>
@@ -80,7 +92,7 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg })
                                  setChange(!change);
                               }
                            }}
-                           className={`btn btn-${!youSure ? "danger" : "dark"}`}
+                           className={`btn alert-${!youSure ? "danger" : "dark"}`}
                         >
                            {!youSure ? "Disable" : "You sure?"}
                         </button>
