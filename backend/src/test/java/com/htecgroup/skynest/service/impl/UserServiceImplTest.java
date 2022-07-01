@@ -278,11 +278,12 @@ class UserServiceImplTest {
 
   @Test
   void when_EverythingFine_addCompanyForUser_SaveUserWithAddedCompany() {
+    // TODO Change test
     CompanyDto companyDto = CompanyDtoUtil.getCompanyDto();
     UserDto userDto = UserDtoUtil.getVerified();
     when(companyService.findById(any())).thenReturn(companyDto);
     doReturn(userDto).when(userService).findUserById(any());
-    userService.addCompanyForUser(UUID.randomUUID(), UUID.randomUUID());
+    userService.addCompanyForUser(UUID.randomUUID());
 
     Mockito.verify(userRepository).save(captorUserEntity.capture());
 

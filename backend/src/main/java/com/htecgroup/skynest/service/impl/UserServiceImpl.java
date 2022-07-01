@@ -7,6 +7,7 @@ import com.htecgroup.skynest.exception.auth.PasswordChangeForbiddenException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
+import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.CompanyDto;
@@ -14,6 +15,7 @@ import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
+import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
@@ -198,12 +200,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void addCompanyForUser(
-      @Valid @UserNotInACompany @UserNotAdmin UUID uuid,
-      @Valid @CurrentUserIsInCompany UUID companyId) {
-    CompanyDto companyDto = companyService.findById(companyId);
+  public void addCompanyForUser(@Valid @UserNotInACompany @UserNotAdmin UUID uuid) {
+    CompanyEntity companyEntity =
+        currentUserService
+            .getCompanyEntityFromLoggedUser()
+            .orElseThrow(UserNotInAnyCompanyException::new);
     UserDto userDto = findUserById(uuid);
-    UserDto userWithCompany = userDto.withCompany(companyDto);
+    UserDto userWithCompany = userDto.withCompany(modelMapper.map(companyEntity, CompanyDto.class));
     userRepository.save(modelMapper.map(userWithCompany, UserEntity.class));
   }
 

@@ -797,11 +797,10 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/company/{companyId}/add")
-  public ResponseEntity<Boolean> addCompanyForUser(
-      @PathVariable UUID uuid, @PathVariable UUID companyId) {
-    userService.addCompanyForUser(uuid, companyId);
-    log.info("Successfully added company {} to user {}", companyId, uuid);
+  @PutMapping("/{uuid}/company/add")
+  public ResponseEntity<Boolean> addCompanyForUser(@PathVariable UUID uuid) {
+    userService.addCompanyForUser(uuid);
+    log.info("Successfully added company to user {}", uuid);
     return ResponseEntity.ok(true);
   }
 
