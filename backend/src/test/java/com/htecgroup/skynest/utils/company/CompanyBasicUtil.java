@@ -1,5 +1,7 @@
 package com.htecgroup.skynest.utils.company;
 
+import com.htecgroup.skynest.model.entity.TierEntity;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,4 +16,5 @@ public class CompanyBasicUtil {
   protected static final String phoneNumber = "9212412";
   protected static final String email = "htec@htecgroup.com";
   protected static final String tierName = "TierOne";
+  protected static final TierEntity tierEntity = new TierEntity(UUID.randomUUID(), "tierOne");
 }
