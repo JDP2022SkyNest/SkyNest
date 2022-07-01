@@ -14,6 +14,7 @@ public class LoggedUserDto extends User {
   private UUID uuid;
   private String name;
   private String surname;
+  private String positionInCompany;
   private CompanyDto company;
 
   public LoggedUserDto(
@@ -23,6 +24,7 @@ public class LoggedUserDto extends User {
       CompanyDto company,
       String email,
       String password,
+      String positionInCompany,
       boolean enabled,
       boolean accountNonExpired,
       boolean credentialsNonExpired,
@@ -39,6 +41,7 @@ public class LoggedUserDto extends User {
     this.uuid = uuid;
     this.name = name;
     this.surname = surname;
+    this.positionInCompany = positionInCompany;
     this.company = company;
   }
 

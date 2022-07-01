@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.ViewValidator;
+import com.htecgroup.skynest.annotation.validator.ViewUserValidator;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 
 import javax.validation.Constraint;
@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = ViewValidator.class)
+@Constraint(validatedBy = ViewUserValidator.class)
 public @interface CurrentUserCanView {
 
   String message() default "Access denied";
