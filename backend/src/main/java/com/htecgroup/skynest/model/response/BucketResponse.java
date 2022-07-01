@@ -7,6 +7,8 @@ import java.util.UUID;
 @Data
 public class BucketResponse {
 
+  private UUID bucketId;
+
   private UUID createdById;
 
   private String name;
