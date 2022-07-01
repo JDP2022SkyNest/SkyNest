@@ -3,7 +3,6 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.exception.file.FileAlreadyExistsException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -131,13 +130,6 @@ public class FileServiceImpl implements FileService {
 
   private void checkCanCreateFile(FileMetadataEntity fileMetadataEntity) {
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
-    checkFileMustHaveUniqueNameInFolder(fileMetadataEntity);
-  }
-
-  private void checkFileMustHaveUniqueNameInFolder(FileMetadataEntity fileMetadataEntity) {
-    if (fileMetadataRepository.existsByNameAndBucketAndParentFolder(
-        fileMetadataEntity.getName(), fileMetadataEntity.getBucket(), null))
-      throw new FileAlreadyExistsException();
   }
 
   private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {

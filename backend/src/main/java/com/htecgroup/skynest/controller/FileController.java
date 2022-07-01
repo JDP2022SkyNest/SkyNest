@@ -126,21 +126,6 @@ public class FileController {
                   })
             }),
         @ApiResponse(
-            responseCode = "409",
-            description = "File name is not unique in folder",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"File with the same name already exists in folder\"],"
-                                + " \"status\": \"409\","
-                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
-                  })
-            }),
-        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
