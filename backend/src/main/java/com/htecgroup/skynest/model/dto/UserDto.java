@@ -26,7 +26,7 @@ public class UserDto {
   @With private Boolean verified;
   @With private Boolean enabled;
   @With private RoleDto role;
-  private CompanyDto company;
+  @With private CompanyDto company;
 
   public UserDto enableUser() {
     return this.withEnabled(true).withDeletedOn(null);
