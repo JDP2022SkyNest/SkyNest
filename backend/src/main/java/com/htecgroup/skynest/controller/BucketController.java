@@ -99,7 +99,6 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketService.createBucket(bucketCreateRequest), HttpStatus.OK);
 
-    log.info("Bucket {} was successfully created", bucketCreateRequest.getName());
     return bucketResponseEntity;
   }
 
@@ -291,7 +290,6 @@ public class BucketController {
   @PutMapping("delete/{uuid}")
   public ResponseEntity<Boolean> deleteBucket(@PathVariable UUID uuid) {
     bucketService.deleteBucket(uuid);
-    log.info("Bucket with id {} was successfully deleted", uuid);
     return ResponseEntity.ok(true);
   }
 }
