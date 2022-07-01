@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AxiosInstance from "../../axios/AxiosInstance";
 import { Modal, Form, InputGroup } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import PasswordRequirements from "../../ReusableComponents/PasswordRequirements";
 import { passwordRegEx } from "../../ReusableComponents/ReusableFunctions";
-import { useEffect } from "react";
+import Label from "../../ReusableComponents/Label";
 
 const ChangePassword = ({ userID }) => {
    const [currentPassword, setCurrentPassword] = useState("");
@@ -67,25 +67,23 @@ const ChangePassword = ({ userID }) => {
                <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
                <Form>
                   <Form.Group className="mb-3" controlId="ControlInput1">
-                     <Form.Label>Please Enter your current Password:*</Form.Label>
+                     <Label>Current Password</Label>
                      <Form.Control
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        autoFocus
+                        placeholder="Current Password"
                         required
                      />
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="ControlInput1">
-                     <Form.Label>Please Enter new Password:*</Form.Label>
+                  <Form.Group className="mb-3" controlId="ControlInput2">
+                     <Label>New Password</Label>
                      <InputGroup>
                         <Form.Control
                            value={newPassword}
                            onChange={(e) => setNewPassword(e.target.value)}
                            type={showPassword ? "text" : "password"}
-                           placeholder="Password"
-                           autoFocus
+                           placeholder="New Password"
                            required
                            className="border-right-0"
                         />
@@ -94,14 +92,13 @@ const ChangePassword = ({ userID }) => {
                         </span>
                      </InputGroup>
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="ControlInput1">
-                     <Form.Label>Confirm new Password:*</Form.Label>
+                  <Form.Group className="mb-3" controlId="ControlInput3">
+                     <Label>Confirm Password</Label>
                      <Form.Control
                         value={confirmNewPw}
                         onChange={(e) => setconfirmNewPw(e.target.value)}
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        autoFocus
+                        placeholder="Confirm Password"
                         required
                      />
                   </Form.Group>
