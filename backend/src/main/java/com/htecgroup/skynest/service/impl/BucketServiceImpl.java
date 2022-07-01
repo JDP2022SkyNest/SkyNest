@@ -4,6 +4,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
+import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -11,12 +12,15 @@ import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +33,8 @@ public class BucketServiceImpl implements BucketService {
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
   private UserRepository userRepository;
+
+  private ActionService actionService;
 
   @Override
   public BucketResponse createBucket(BucketCreateRequest bucketCreateRequest) {
@@ -46,8 +52,11 @@ public class BucketServiceImpl implements BucketService {
     bucketEntity.setCompany(currentUserCompany);
     bucketEntity.setIsPublic(false);
 
-    bucketEntity = bucketRepository.save(bucketEntity);
-    return modelMapper.map(bucketEntity, BucketResponse.class);
+    BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
+
+    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.ACTION_CREATE);
+
+    return modelMapper.map(savedBucketEntity, BucketResponse.class);
   }
 
   @Override
@@ -55,12 +64,18 @@ public class BucketServiceImpl implements BucketService {
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
+
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_VIEW);
+
     return bucketResponse;
   }
 
   @Override
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
+
+    actionService.recordAction(new HashSet<>(entityList), ActionType.ACTION_VIEW);
+
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
         .collect(Collectors.toList());
@@ -80,6 +95,8 @@ public class BucketServiceImpl implements BucketService {
       throw new BucketAlreadyDeletedException();
     }
     BucketDto deletedBucketDto = bucketDto.deleteBucket();
-    bucketRepository.save(modelMapper.map(deletedBucketDto, BucketEntity.class));
+    BucketEntity bucketEntity =
+        bucketRepository.save(modelMapper.map(deletedBucketDto, BucketEntity.class));
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_DELETE);
   }
 }
