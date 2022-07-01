@@ -802,11 +802,76 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/add-company/{companyId}")
-  public ResponseEntity<Boolean> addCompanyForUser(
-      @PathVariable UUID uuid, @PathVariable UUID companyId) {
+  @PutMapping("/{uuid}/company/add")
+  public ResponseEntity<Boolean> addCompanyForUser(@PathVariable UUID uuid) {
+    userService.addCompanyForUser(uuid);
+    log.info("Successfully added company to user {}", uuid);
+    return ResponseEntity.ok(true);
+  }
 
-    userService.addCompanyForUser(uuid, companyId);
+  @Operation(summary = "Remove company for user")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully removed company for user",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Admin and user are not in the same company",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Admin and user are not in the same company \"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
+  @PutMapping("/{uuid}/company/remove")
+  public ResponseEntity<Boolean> removeCompanyForUser(@PathVariable UUID uuid) {
+    userService.removeCompany(uuid);
+    log.info("Successfully removed company for user {}", uuid);
     return ResponseEntity.ok(true);
   }
 }

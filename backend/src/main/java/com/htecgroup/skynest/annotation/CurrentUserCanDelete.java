@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.DeleteValidator;
+import com.htecgroup.skynest.annotation.validator.DeleteUserValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = DeleteValidator.class)
+@Constraint(validatedBy = DeleteUserValidator.class)
 public @interface CurrentUserCanDelete {
 
   String message() default "Access denied";
