@@ -1,7 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.annotation.CanBucketBeEdited;
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -93,6 +93,10 @@ public class BucketServiceImpl implements BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CanBucketBeEdited UUID uuid) {
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
+    BucketDto bucketDto = findBucketById(uuid);
+    if (bucketDto.getDeletedOn() != null) {
+      throw new BucketAlreadyDeletedException();
+    }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
     bucketEditRequest.setDescription(bucketEditRequest.getDescription().trim());
     modelMapper.map(bucketEditRequest, bucketEntity);

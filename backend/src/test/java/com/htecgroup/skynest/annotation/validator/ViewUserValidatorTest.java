@@ -18,15 +18,15 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ViewValidatorTest {
+class ViewUserValidatorTest {
 
   @Mock CurrentUserService currentUserService;
   @Mock CurrentUserCanView currentUserCanView;
-  @InjectMocks ViewUserValidator viewValidator;
+  @InjectMocks ViewUserValidator viewUserValidator;
 
   @BeforeEach
   void setUp() {
-    viewValidator.initialize(currentUserCanView);
+    viewUserValidator.initialize(currentUserCanView);
   }
 
   @Test
@@ -36,7 +36,7 @@ class ViewValidatorTest {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     UUID uuid = UUID.randomUUID();
 
-    Assertions.assertFalse(() -> viewValidator.isValid(uuid, null));
+    Assertions.assertFalse(() -> viewUserValidator.isValid(uuid, null));
 
     verify(currentUserCanView, times(1)).role_name();
     verify(currentUserService, times(1)).getLoggedUser();
@@ -50,7 +50,7 @@ class ViewValidatorTest {
     when(currentUserService.getLoggedUser()).thenReturn(currentUser);
     UUID uuid = currentUser.getUuid();
 
-    Assertions.assertTrue(() -> viewValidator.isValid(uuid, null));
+    Assertions.assertTrue(() -> viewUserValidator.isValid(uuid, null));
 
     verify(currentUserCanView, times(1)).role_name();
     verify(currentUserService, times(1)).getLoggedUser();
@@ -63,7 +63,7 @@ class ViewValidatorTest {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
     UUID uuid = UUID.randomUUID();
 
-    Assertions.assertTrue(() -> viewValidator.isValid(uuid, null));
+    Assertions.assertTrue(() -> viewUserValidator.isValid(uuid, null));
 
     verify(currentUserCanView, times(1)).role_name();
     verify(currentUserService, times(1)).getLoggedUser();

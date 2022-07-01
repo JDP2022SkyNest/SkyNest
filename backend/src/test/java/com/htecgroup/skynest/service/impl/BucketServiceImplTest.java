@@ -20,8 +20,7 @@ import org.modelmapper.ModelMapper;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BucketServiceImplTest {
@@ -46,6 +45,7 @@ class BucketServiceImplTest {
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
+    verify(bucketRepository, times(1)).findAll();
   }
 
   @Test
@@ -56,6 +56,7 @@ class BucketServiceImplTest {
     BucketResponse actualBucketResponse = bucketService.getBucket(expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
+    verify(bucketRepository, times(1)).findById(any());
   }
 
   @Test
@@ -67,7 +68,11 @@ class BucketServiceImplTest {
 
     BucketCreateRequest bucketCreateRequest = BucketCreateRequestUtil.get();
     BucketResponse actualBucketResponse = bucketService.createBucket(bucketCreateRequest);
+
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
+    verify(currentUserService, times(1)).getLoggedUser();
+    verify(userRepository, times(1)).getById(any());
+    verify(bucketRepository, times(1)).save(any());
   }
 
   @Test
@@ -79,7 +84,36 @@ class BucketServiceImplTest {
     BucketEditRequest bucketEditRequest = BucketEditRequestUtil.get();
     BucketResponse actualBucketResponse =
         bucketService.editBucket(bucketEditRequest, expectedBucketEntity.getId());
+
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
+    verify(bucketRepository, times(2)).findById(any());
+    verify(bucketRepository, times(1)).save(any());
+  }
+
+  @Test
+  void when_AlreadyDeletedBucket_deletedBucket_ShouldThrowBucketAlreadyDeleted() {
+    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    doReturn(bucketDto).when(bucketService).findBucketById(any());
+    String expectedErrorMessage = BucketAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            BucketAlreadyDeletedException.class,
+            () -> bucketService.deleteBucket(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(bucketService, times(1)).findBucketById(any());
+  }
+
+  @Test
+  void when_deleteBucket_ShouldDeleteBucket() {
+    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    doReturn(bucketDto).when(bucketService).findBucketById(any());
+
+    bucketService.deleteBucket(UUID.randomUUID());
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketEntity = captorBucketEntity.getValue();
+    Assertions.assertNotNull(bucketEntity.getDeletedOn());
+    verify(bucketService, times(1)).findBucketById(any());
   }
 
   private void assertBucketEntityAndBucketResponse(
@@ -93,29 +127,5 @@ class BucketServiceImplTest {
         expectedBucketEntity.getDescription(), actualBucketResponse.getDescription());
     Assertions.assertEquals(expectedBucketEntity.getSize(), actualBucketResponse.getSize());
     Assertions.assertEquals(expectedBucketEntity.getIsPublic(), actualBucketResponse.getIsPublic());
-  }
-
-  @Test
-  void when_AlreadyDeletedBucket_deletedBucket_ShouldThrowBucketAlreadyDeleted() {
-    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
-    doReturn(bucketDto).when(bucketService).findBucketById(any());
-    String expectedErrorMessage = BucketAlreadyDeletedException.MESSAGE;
-    Exception thrownException =
-        Assertions.assertThrows(
-            BucketAlreadyDeletedException.class,
-            () -> bucketService.deleteBucket(UUID.randomUUID()));
-    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
-  }
-
-  @Test
-  void when_deleteBucket_ShouldDeleteBucket() {
-    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
-    doReturn(bucketDto).when(bucketService).findBucketById(any());
-
-    bucketService.deleteBucket(UUID.randomUUID());
-    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
-
-    BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNotNull(bucketEntity.getDeletedOn());
   }
 }
