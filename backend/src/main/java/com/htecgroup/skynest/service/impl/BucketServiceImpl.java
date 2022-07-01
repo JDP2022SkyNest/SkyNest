@@ -116,8 +116,11 @@ public class BucketServiceImpl implements BucketService {
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
     bucketEditRequest.setDescription(bucketEditRequest.getDescription().trim());
+
     modelMapper.map(bucketEditRequest, bucketEntity);
     bucketRepository.save(bucketEntity);
+
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_EDIT);
     return modelMapper.map(bucketEntity, BucketResponse.class);
   }
 }
