@@ -291,6 +291,17 @@ class UserServiceImplTest {
     Assertions.assertEquals(companyDto.getId(), userEntityWithAddedCompany.getCompany().getId());
   }
 
+  @Test
+  void when_EverythingFine_removeCompanyForUser_SaveUserWithCompanyRemoved() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    userService.removeCompany(UUID.randomUUID());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+
+    UserEntity userEntityWithRemovedCompany = captorUserEntity.getValue();
+    Assertions.assertNull(userEntityWithRemovedCompany.getCompany());
+  }
+
   private void assertUserEntityAndUserResponse(
       UserEntity expectedUserEntity, UserResponse actualUserResponse) {
     Assertions.assertEquals(expectedUserEntity.getId().toString(), actualUserResponse.getId());

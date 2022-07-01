@@ -199,10 +199,18 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void addCompanyForUser(
-      @Valid @UserNotInACompany UUID uuid, @Valid @CurrentUserIsInCompany UUID companyId) {
+      @Valid @UserNotInACompany @UserNotAdmin UUID uuid,
+      @Valid @CurrentUserIsInCompany UUID companyId) {
     CompanyDto companyDto = companyService.findById(companyId);
     UserDto userDto = findUserById(uuid);
     UserDto userWithCompany = userDto.withCompany(companyDto);
+    userRepository.save(modelMapper.map(userWithCompany, UserEntity.class));
+  }
+
+  @Override
+  public void removeCompany(@Valid @AdminUserAndUserHaveSameCompany @UserNotAdmin UUID uuid) {
+    UserDto userDto = findUserById(uuid);
+    UserDto userWithCompany = userDto.withCompany(null);
     userRepository.save(modelMapper.map(userWithCompany, UserEntity.class));
   }
 }
