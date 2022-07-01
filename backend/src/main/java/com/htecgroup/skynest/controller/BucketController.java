@@ -366,7 +366,6 @@ public class BucketController {
       @Valid @RequestBody BucketEditRequest bucketEditRequest, @PathVariable UUID uuid) {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketService.editBucket(bucketEditRequest, uuid), HttpStatus.OK);
-    log.info("Bucket ({}) was successfully edited", bucketResponseEntity.getBody().getBucketId());
     return bucketResponseEntity;
   }
 }

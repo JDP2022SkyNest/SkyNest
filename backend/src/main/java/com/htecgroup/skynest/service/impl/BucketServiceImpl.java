@@ -88,9 +88,11 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public BucketDto findBucketById(UUID uuid) {
-    BucketEntity bucketEntity =
-        bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
-    return modelMapper.map(bucketEntity, BucketDto.class);
+    return modelMapper.map(findBucketEntityById(uuid), BucketDto.class);
+  }
+
+  public BucketEntity findBucketEntityById(UUID uuid) {
+    return bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
   }
 
   @Override
@@ -108,19 +110,18 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
-    BucketEntity bucketEntity =
-        bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
-    BucketDto bucketDto = findBucketById(uuid);
-    if (bucketDto.getDeletedOn() != null) {
+    BucketEntity bucketEntity = findBucketEntityById(uuid);
+
+    if (bucketEntity.getDeletedOn() != null) {
       throw new BucketAlreadyDeletedException();
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
     bucketEditRequest.setDescription(bucketEditRequest.getDescription().trim());
 
     modelMapper.map(bucketEditRequest, bucketEntity);
-    bucketRepository.save(bucketEntity);
+    BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
 
-    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_EDIT);
-    return modelMapper.map(bucketEntity, BucketResponse.class);
+    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.ACTION_EDIT);
+    return modelMapper.map(savedBucketEntity, BucketResponse.class);
   }
 }

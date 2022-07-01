@@ -22,7 +22,7 @@ public class EditBucketValidator implements ConstraintValidator<CurrentUserCanEd
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UUID loggedUserUuid = loggedUserDto.getUuid();
 
-    UUID ownerId = bucketService.getBucket(uuid).getCreatedById();
+    UUID ownerId = bucketService.findBucketById(uuid).getCreatedBy().getId();
 
     if (!loggedUserUuid.equals(ownerId)) {
       return false;
