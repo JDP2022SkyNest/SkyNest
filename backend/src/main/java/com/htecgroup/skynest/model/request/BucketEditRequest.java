@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -20,5 +21,7 @@ public class BucketEditRequest {
   @Size(max = 5000, message = "length cannot be over 5000 characters")
   private String description;
 
+  @NotBlank(message = "cannot be null or empty")
+  @Pattern(regexp = "true|false", message = "must be true or false")
   private String isPublic;
 }

@@ -7,6 +7,7 @@ import java.util.UUID;
 public class BucketResponseUtil {
   public static BucketResponse getCurrentPrivate() {
     return new BucketResponse(
+        BucketEntityUtil.getPrivateBucket().getId(),
         BucketEntityUtil.getPrivateBucket().getCreatedBy().getId(),
         "Name",
         BucketDtoUtil.companyEntity.getId(),
