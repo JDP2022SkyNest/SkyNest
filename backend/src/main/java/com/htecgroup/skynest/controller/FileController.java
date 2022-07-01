@@ -5,6 +5,7 @@ import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +41,7 @@ public class FileController {
             description = "Successfully uploaded a new file",
             content = {
               @Content(
-                  mediaType = "application/json",
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(implementation = FileResponse.class),
                   examples = {
                     @ExampleObject(
@@ -63,7 +64,7 @@ public class FileController {
             description = "File IO error/Failed to write file contents",
             content = {
               @Content(
-                  mediaType = "application/json",
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(implementation = ErrorMessage.class),
                   examples = {
                     @ExampleObject(
@@ -78,7 +79,7 @@ public class FileController {
             description = "Invalid session token",
             content = {
               @Content(
-                  mediaType = "application/json",
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(implementation = ErrorMessage.class),
                   examples = {
                     @ExampleObject(
@@ -93,7 +94,7 @@ public class FileController {
             description = "Access denied",
             content = {
               @Content(
-                  mediaType = "application/json",
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(implementation = ErrorMessage.class),
                   examples = {
                     @ExampleObject(
@@ -108,7 +109,7 @@ public class FileController {
             description = "Bucket/User not found",
             content = {
               @Content(
-                  mediaType = "application/json",
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(implementation = ErrorMessage.class),
                   examples = {
                     @ExampleObject(
@@ -130,7 +131,7 @@ public class FileController {
             description = "Internal Server Error",
             content = {
               @Content(
-                  mediaType = "application/json",
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
                   schema = @Schema(implementation = String.class),
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
@@ -145,7 +146,92 @@ public class FileController {
     return responseEntity;
   }
 
-  @GetMapping("/{uuid}")
+  @Operation(summary = "Download a file")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully downloaded file",
+            headers = {
+              @Header(
+                  name = HttpHeaders.CONTENT_DISPOSITION,
+                  description =
+                      "contains file name, for example: attachment; filename=\"some file.txt\""),
+              @Header(
+                  name = HttpHeaders.CONTENT_TYPE,
+                  description = "contains file type, for example: text/plain")
+            }),
+        @ApiResponse(
+            responseCode = "400",
+            description = "File IO error/Failed to write file contents",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Failed to write file contents\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User does not have access to bucket\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping(path = "/{uuid}")
   public ResponseEntity<Resource> downloadFile(@PathVariable(name = "uuid") UUID fileId) {
 
     FileDownloadResponse fileDownloadResponse = fileService.downloadFile(fileId);
@@ -161,6 +247,87 @@ public class FileController {
     return responseEntity;
   }
 
+  @Operation(summary = "Get file info")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully fetched file info",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = FileResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"1d132ffe-51c0-43fb-aaed-290d4501b8dd\",\n"
+                                + "    \"createdOn\": \"2022-06-03 16:18:12\",\n"
+                                + "    \"modifiedOn\": \"2022-06-03 16:18:12\",\n"
+                                + "    \"deletedOn\": null,\n"
+                                + "    \"name\": \"change user role.sql\",\n"
+                                + "    \"createdById\": \"67898b3b-4d5f-4a51-95e2-3808b4dfc903\",\n"
+                                + "    \"parentFolderId\": null,\n"
+                                + "    \"bucketId\": \"1ebdec68-f6d7-11ec-8822-0242ac160002\",\n"
+                                + "    \"type\": \"application/x-sql\",\n"
+                                + "    \"size\": \"499\"\n"
+                                + "}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User does not have access to bucket\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
   @GetMapping("/{uuid}/metadata")
   public ResponseEntity<FileResponse> getFileDetails(@PathVariable(name = "uuid") UUID fileId) {
 

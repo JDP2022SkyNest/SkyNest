@@ -41,16 +41,12 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
 
   private final GridFsOperations operations;
-  private final BucketRepository bucketRepository;
-
-  private final CurrentUserServiceImpl currentUserService;
-  private final UserRepository userRepository;
-
-  private final FileMetadataRepository fileMetadataRepository;
-
-  private final ActionService actionService;
-
   private final ModelMapper modelMapper;
+  private final CurrentUserServiceImpl currentUserService;
+  private final BucketRepository bucketRepository;
+  private final UserRepository userRepository;
+  private final FileMetadataRepository fileMetadataRepository;
+  private final ActionService actionService;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
