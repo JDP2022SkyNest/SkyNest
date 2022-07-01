@@ -8,6 +8,7 @@ import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
@@ -28,6 +29,7 @@ class BucketServiceImplTest {
   @Mock private BucketRepository bucketRepository;
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
+  @Mock private ActionService actionService;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private BucketServiceImpl bucketService;
 
