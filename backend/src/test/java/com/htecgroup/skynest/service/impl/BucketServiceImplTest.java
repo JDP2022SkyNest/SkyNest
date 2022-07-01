@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -107,5 +108,29 @@ class BucketServiceImplTest {
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
     Assertions.assertNotNull(bucketEntity.getDeletedOn());
+  }
+
+  @Test
+  void when_AlreadyRestoredBucket_restoreBucket_ShouldThrowBucketAlreadyRestored() {
+    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    doReturn(bucketDto).when(bucketService).findBucketById(any());
+    String expectedErrorMessage = BucketAlreadyRestoredException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            BucketAlreadyRestoredException.class,
+            () -> bucketService.restoreBucket(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_restoreBucket_ShouldRestoreBucket() {
+    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    doReturn(bucketDto).when(bucketService).findBucketById(any());
+
+    bucketService.restoreBucket(UUID.randomUUID());
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketEntity = captorBucketEntity.getValue();
+    Assertions.assertNull(bucketEntity.getDeletedOn());
   }
 }
