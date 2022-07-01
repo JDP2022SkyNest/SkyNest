@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
@@ -60,7 +60,7 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public FolderDto findFolderByName(String name) {
     FolderEntity folderEntity =
-        folderRepository.findFolderByName(name).orElseThrow(BucketNotFoundException::new);
+        folderRepository.findFolderByName(name).orElseThrow(FolderNotFoundException::new);
     return modelMapper.map(folderEntity, FolderDto.class);
   }
 }
