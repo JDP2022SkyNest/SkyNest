@@ -16,4 +16,6 @@ public interface CompanyService {
   CompanyResponse editCompany(CompanyEditRequest companyEditRequest);
 
   CompanyDto findById(UUID companyId);
+
+  CompanyResponse getMyCompany();
 }
