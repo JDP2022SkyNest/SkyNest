@@ -127,6 +127,21 @@ public class FileController {
                   })
             }),
         @ApiResponse(
+            responseCode = "409",
+            description = "Bucket already deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket already deleted\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "419",
             description = "Company/User buckets are full",
             content = {

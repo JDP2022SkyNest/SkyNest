@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.FileIOException;
@@ -126,6 +127,7 @@ public class FileServiceImpl implements FileService {
   private void checkCanCreateFile(FileMetadataEntity fileMetadataEntity) {
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
+    checkBucketNotDeleted(fileMetadataEntity);
     checkBucketSizeExceedsMax(fileMetadataEntity);
   }
 
@@ -154,6 +156,11 @@ public class FileServiceImpl implements FileService {
       if (bucket.getIsPublic() && !currentUserCompanyId.equals(companyId))
         throw new BucketAccessDeniedException();
     }
+  }
+
+  private void checkBucketNotDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.getBucket().getDeletedOn() != null)
+      throw new BucketAlreadyDeletedException();
   }
 
   private void checkBucketSizeExceedsMax(FileMetadataEntity fileMetadataEntity) {
