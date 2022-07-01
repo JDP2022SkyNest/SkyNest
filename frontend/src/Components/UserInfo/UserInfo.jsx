@@ -87,14 +87,18 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                                  {userData?.name} {userData?.surname}
                               </h5>
                               <p className="text-muted mb-1">Full Stack Developer</p>
-                              <p className={`text-${role === "ADMIN" ? "danger" : "mutted"} mb-4`}>{role}</p>
+                              <p className={`${role === "ADMIN" ? "admin-text" : `${role === "WORKER" ? "text-secondary" : "manager-text"}`}`}>
+                                 {role}
+                              </p>
                               <div className="d-flex justify-content-center mb-2">
                                  <button
                                     type="button"
                                     onClick={() => {
                                        setEdit(!edit);
                                     }}
-                                    className={`btn btn-${role === "ADMIN" ? "danger" : "primary"}`}
+                                    className={`btn ${
+                                       role === "ADMIN" ? "admin-button" : `${role === "WORKER" ? "btn-secondary" : "manager-button"}`
+                                    }`}
                                  >
                                     {edit ? "Cancel" : "Edit"}
                                  </button>
@@ -103,7 +107,11 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                                        onUserLogout(accessToken, setAccessToken);
                                     }}
                                     type="button"
-                                    className={`btn btn-outline-${role === "ADMIN" ? "danger" : "primary"} ms-1`}
+                                    className={`btn ${
+                                       role === "ADMIN"
+                                          ? "admin-edit-button"
+                                          : `${role === "WORKER" ? "btn-outline-secondary ml-1" : "manager-edit-button"}`
+                                    }`}
                                  >
                                     Logout
                                  </button>

@@ -1,41 +1,33 @@
-.icon-back-align {
-   position: relative;
-   top:-1px
-}
 
 .icon-modal-align {
    position: relative;
    top: 6px;
 }
 
-.default-number-style {
+.default-style {
    margin-right: 5px;
    padding-left: 10px;
    border-radius: 2px;
 }
-.unverified-users-number-style {
+.unverified-style {
    border-left: 3px solid rgb(202, 201, 201);
 }
 
-.users-number-style {
+.worker-style {
    border-left: 3px solid rgb(119, 119, 119);
 }
 
-.manager-number-style {
+.manager-style {
    border-left: 3px solid rgb(86, 121, 18);
 }
 
-.admin-number-style {
+.admin-style {
    border-left: 3px solid var(--gold);
 }
 
 .users-badge-align {
    position: relative;
    top: 1px;
-}
-
-.badge-color {
-   background-color: rgb(223, 223, 223);
 }
 
 .admin-page-body {
@@ -55,9 +47,4 @@
 
 .manager-badge {
    background-color: rgb(86, 121, 18);
-}
-
-.disabled-user-icon {
-   font-size: 22px;
-   color: rgb(194, 12, 12);
 }

@@ -92,7 +92,6 @@ export const disableUser = async (accessToken, id, error) => {
             headers: { Authorization: accessToken },
          }
       );
-      console.log("User Disabled");
    } catch (err) {
       error(err.response.data.messages);
    }
@@ -107,7 +106,6 @@ export const enableUser = async (accessToken, id, error) => {
             headers: { Authorization: accessToken },
          }
       );
-      console.log("User Enabled");
    } catch (err) {
       error(err.response.data.messages);
    }

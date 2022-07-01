@@ -24,14 +24,10 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
                </span>
             )}
             <div
-               className={`${
+               className={`default-style ${
                   !elem.verified
-                     ? "text-muted default-number-style unverified-users-number-style"
-                     : "default-number-style users-number-style" && userRoleName === "manager"
-                     ? "manager-number-style default-number-style"
-                     : "default-number-style users-number-style" && userRoleName === "admin"
-                     ? "admin-number-style default-number-style"
-                     : "default-number-style users-number-style"
+                     ? "unverified-style text-muted"
+                     : `${userRoleName === "manager" ? "manager-style" : `${userRoleName === "admin" ? "admin-style" : "worker-style"}`}`
                }`}
             >
                {elem.name} {elem.surname}
