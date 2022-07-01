@@ -328,7 +328,7 @@ public class FileController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}/metadata")
+  @GetMapping("/{uuid}/info")
   public ResponseEntity<FileResponse> getFileDetails(@PathVariable(name = "uuid") UUID fileId) {
 
     FileResponse fileResponse = fileService.getFileMetadata(fileId);
