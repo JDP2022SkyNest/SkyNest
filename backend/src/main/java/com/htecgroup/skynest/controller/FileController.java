@@ -152,7 +152,7 @@ public class FileController {
                     @ExampleObject(
                         value =
                             "{\"messages\":[\"Company/User buckets don't have enough space\"],"
-                                + " \"status\": \"404\","
+                                + " \"status\": \"419\","
                                 + " \"timestamp\": \"2022-06-03 16:18:12\"}")
                   })
             }),
