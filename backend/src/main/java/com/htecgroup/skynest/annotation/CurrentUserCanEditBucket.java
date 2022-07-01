@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 @Constraint(validatedBy = EditBucketValidator.class)
-public @interface CanBucketBeEdited {
+public @interface CurrentUserCanEditBucket {
 
   String message() default "Current user can't edit this bucket";
 

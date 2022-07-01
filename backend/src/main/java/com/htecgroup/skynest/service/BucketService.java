@@ -1,8 +1,8 @@
 package com.htecgroup.skynest.service;
 
+import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
-import com.htecgroup.skynest.annotation.CanBucketBeEdited;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 
@@ -23,5 +23,5 @@ public interface BucketService {
   void deleteBucket(UUID uuid);
 
   BucketResponse editBucket(
-      BucketEditRequest bucketEditRequest, @Valid @CanBucketBeEdited UUID uuid);
+      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
 }

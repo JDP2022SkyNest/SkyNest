@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.CanBucketBeEdited;
+import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
@@ -90,7 +90,7 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public BucketResponse editBucket(
-      BucketEditRequest bucketEditRequest, @Valid @CanBucketBeEdited UUID uuid) {
+      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketDto bucketDto = findBucketById(uuid);

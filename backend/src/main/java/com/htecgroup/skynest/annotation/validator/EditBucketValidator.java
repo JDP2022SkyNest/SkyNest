@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation.validator;
 
-import com.htecgroup.skynest.annotation.CanBucketBeEdited;
+import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class EditBucketValidator implements ConstraintValidator<CanBucketBeEdited, UUID> {
+public class EditBucketValidator implements ConstraintValidator<CurrentUserCanEditBucket, UUID> {
   private final CurrentUserService currentUserService;
   private final BucketService bucketService;
 
