@@ -88,7 +88,7 @@ class BucketServiceImplTest {
         bucketService.editBucket(bucketEditRequest, expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
-    verify(bucketRepository, times(2)).findById(any());
+    verify(bucketRepository, times(1)).findById(any());
     verify(bucketRepository, times(1)).save(any());
   }
 
