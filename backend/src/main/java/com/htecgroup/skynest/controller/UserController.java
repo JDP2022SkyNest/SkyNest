@@ -57,6 +57,7 @@ public class UserController {
                                 + "\"phoneNumber\": \"38166575757\","
                                 + "\"address\": \"Local address\","
                                 + "\"roleName\": \"role_admin\","
+                                + "\"positionInCompany\": \"Software Engineer\","
                                 + "\"enabled\": \"true\","
                                 + "\"verified\": \"true\"},"
                                 + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
@@ -66,6 +67,7 @@ public class UserController {
                                 + "\"phoneNumber\": \"38166676767\","
                                 + "\"address\": \"Local address\","
                                 + "\"roleName\": \"role_worker\","
+                                + "\"positionInCompany\": \"Software Engineer\","
                                 + "\"enabled\": \"false\","
                                 + "\"verified\": \"false\"}]")
                   })
@@ -122,6 +124,7 @@ public class UserController {
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
                                 + "  \"roleName\": \"role_worker\","
+                                + "  \"positionInCompany\": \"Software Engineer\","
                                 + "  \"enabled\": \"false\","
                                 + "  \"verified\": \"true\"}")
                   })
@@ -211,6 +214,7 @@ public class UserController {
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
                                 + "  \"roleName\": \"role_worker\","
+                                + "  \"positionInCompany\": \"Software Engineer\","
                                 + "  \"enabled\": \"false\","
                                 + "  \"verified\": \"true\"}")
                   })
@@ -710,6 +714,7 @@ public class UserController {
                                 + " \"username\": \"username@gmail.com\","
                                 + "  \"name\": \"Name\","
                                 + "  \"surname\": \"Surname\","
+                                + "  \"positionInCompany\": \"Software Engineer\","
                                 + "  \"company\": \"null\","
                                 + "  \"roles\": [\"role_worker\"]}")
                   })

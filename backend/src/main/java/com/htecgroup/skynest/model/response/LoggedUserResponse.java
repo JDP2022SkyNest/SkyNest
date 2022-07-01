@@ -17,6 +17,7 @@ public class LoggedUserResponse {
   private String username;
   private String name;
   private String surname;
+  private String positionInCompany;
   private CompanyDto company;
   @With private List<String> roles;
 }

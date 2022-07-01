@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
     userDto.setName(userDto.getName().trim());
     userDto.setSurname(userDto.getSurname().trim());
     userDto.setAddress(userDto.getAddress().trim());
+    userDto.setPositionInCompany("Unknown");
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
@@ -94,6 +95,7 @@ public class UserServiceImpl implements UserService {
     userEditRequest.setName(userEditRequest.getName().trim());
     userEditRequest.setSurname(userEditRequest.getSurname().trim());
     userEditRequest.setAddress(userEditRequest.getAddress().trim());
+    userEditRequest.setPositionInCompany(userEditRequest.getPositionInCompany().trim());
     modelMapper.map(userEditRequest, userEntity);
     userRepository.save(userEntity);
     return modelMapper.map(userEntity, UserResponse.class);

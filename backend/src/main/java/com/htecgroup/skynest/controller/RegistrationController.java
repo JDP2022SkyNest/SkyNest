@@ -52,7 +52,8 @@ public class RegistrationController {
                                 + "  \"surname\": \"Surname\","
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
-                                + "  \"roleName\": \"role_worker\"}")
+                                + "  \"roleName\": \"role_worker\","
+                                + "  \"positionInCompany\": \"Software Engineer\"}")
                   })
             }),
         @ApiResponse(
