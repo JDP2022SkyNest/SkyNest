@@ -3,12 +3,11 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.FileMetadataEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
@@ -126,6 +125,8 @@ public class FileServiceImpl implements FileService {
 
   private void checkCanCreateFile(FileMetadataEntity fileMetadataEntity) {
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
+    checkBucketSizeExceedsMax(fileMetadataEntity);
   }
 
   private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
@@ -136,6 +137,52 @@ public class FileServiceImpl implements FileService {
 
     if (!bucket.getIsPublic() && !bucketCreatorId.equals(fileCreatorId))
       throw new BucketAccessDeniedException();
+  }
+
+  private void checkOnlyEmployeesCanAccessCompanyBuckets(FileMetadataEntity fileMetadataEntity) {
+
+    BucketEntity bucket = fileMetadataEntity.getBucket();
+
+    if (bucket.getCompany() != null) {
+      UUID companyId = bucket.getCompany().getId();
+
+      LoggedUserDto currentUser = currentUserService.getLoggedUser();
+      if (currentUser.getCompany() == null) throw new BucketAccessDeniedException();
+
+      UUID currentUserCompanyId = currentUserService.getLoggedUser().getCompany().getId();
+
+      if (bucket.getIsPublic() && !currentUserCompanyId.equals(companyId))
+        throw new BucketAccessDeniedException();
+    }
+  }
+
+  private void checkBucketSizeExceedsMax(FileMetadataEntity fileMetadataEntity) {
+
+    BucketEntity bucket = fileMetadataEntity.getBucket();
+
+    long maxAllowedSize;
+    long currentTotalSize;
+
+    if (bucket.getCompany() != null) {
+
+      CompanyEntity company = bucket.getCompany();
+
+      UUID companyId = company.getId();
+      currentTotalSize = bucketRepository.sumSizeByCompanyId(companyId);
+
+      TierEntity tierEntity = company.getTier();
+      TierType tierType = TierType.valueOf(tierEntity.getName().toUpperCase());
+      maxAllowedSize = tierType.getMaxSize();
+    } else {
+
+      UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+      currentTotalSize = bucketRepository.sumSizeByUserId(currentUserId);
+
+      maxAllowedSize = 1024L * 1024L * 512L; //  512MiB
+    }
+
+    if (currentTotalSize + fileMetadataEntity.getSize() > maxAllowedSize)
+      throw new BucketsTooFullException();
   }
 
   private FileMetadataEntity initFileMetadata(MultipartFile multipartFile, UUID bucketId) {

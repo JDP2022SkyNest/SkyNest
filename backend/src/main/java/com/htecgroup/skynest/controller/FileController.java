@@ -127,6 +127,21 @@ public class FileController {
                   })
             }),
         @ApiResponse(
+            responseCode = "419",
+            description = "Company/User buckets are full",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Company/User buckets don't have enough space\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
