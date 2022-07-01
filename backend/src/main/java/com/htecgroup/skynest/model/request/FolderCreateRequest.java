@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,10 +17,7 @@ public class FolderCreateRequest {
   @Size(max = 1000, message = "length cannot be over 1000 characters")
   private String name;
 
-  @NotBlank(message = "cannot be null or empty")
-  @Size(max = 1000, message = "length cannot be over 1000 characters")
-  private String bucketName;
+  private UUID bucketId;
 
-  @Size(max = 1000, message = "length cannot be over 1000 characters")
-  private String parentFolderName;
+  private UUID parentFolderId;
 }

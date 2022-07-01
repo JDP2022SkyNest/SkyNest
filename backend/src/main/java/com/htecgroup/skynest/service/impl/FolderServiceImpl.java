@@ -17,6 +17,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class FolderServiceImpl implements FolderService {
@@ -37,16 +39,14 @@ public class FolderServiceImpl implements FolderService {
     UserEntity currentUser = userRepository.getById(loggedUserDto.getUuid());
     BucketEntity bucketEntity =
         modelMapper.map(
-            bucketService.findBucketByName(folderCreateRequest.getBucketName()),
-            BucketEntity.class);
+            bucketService.findBucketById(folderCreateRequest.getBucketId()), BucketEntity.class);
 
-    if (folderCreateRequest.getParentFolderName() == null
-        || folderCreateRequest.getParentFolderName().isEmpty()) {
+    if (folderCreateRequest.getParentFolderId() == null) {
       folderEntity.setParentFolder(null);
     } else {
       FolderEntity parentFolderEntity =
           modelMapper.map(
-              findFolderByName(folderCreateRequest.getParentFolderName()), FolderEntity.class);
+              findFolderById(folderCreateRequest.getParentFolderId()), FolderEntity.class);
       folderEntity.setParentFolder(parentFolderEntity);
     }
 
@@ -61,6 +61,13 @@ public class FolderServiceImpl implements FolderService {
   public FolderDto findFolderByName(String name) {
     FolderEntity folderEntity =
         folderRepository.findFolderByName(name).orElseThrow(FolderNotFoundException::new);
+    return modelMapper.map(folderEntity, FolderDto.class);
+  }
+
+  @Override
+  public FolderDto findFolderById(UUID uuid) {
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
     return modelMapper.map(folderEntity, FolderDto.class);
   }
 }

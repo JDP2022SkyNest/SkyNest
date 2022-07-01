@@ -11,7 +11,7 @@ public class FolderResponse {
 
   private String name;
 
-  private String bucketName;
+  private UUID bucketId;
 
-  private String parentFolderName;
+  private UUID parentFolderId;
 }
