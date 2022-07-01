@@ -33,6 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         userDto.getCompany(),
         userDto.getEmail(),
         userDto.getPassword(),
+        userDto.getPositionInCompany(),
         userDto.getEnabled(),
         true,
         true,
