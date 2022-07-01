@@ -68,7 +68,9 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
       <section className="user-page-body">
          <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
          {loading ? (
-            <LoaderAnimation />
+            <div className="mt-5">
+               <LoaderAnimation />
+            </div>
          ) : (
             <div className="container py-3">
                <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
