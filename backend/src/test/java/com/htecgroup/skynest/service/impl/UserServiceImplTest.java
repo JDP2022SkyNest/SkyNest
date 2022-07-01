@@ -6,6 +6,7 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -13,10 +14,12 @@ import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
 import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.CompanyService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.utils.*;
+import com.htecgroup.skynest.utils.company.CompanyDtoUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +40,7 @@ class UserServiceImplTest {
 
   @Mock private UserRepository userRepository;
   @Mock private RoleService roleService;
+  @Mock private CompanyService companyService;
   @Mock private PasswordEncoderService passwordEncoderService;
   @Spy private ModelMapper modelMapper;
   @Mock private CurrentUserService currentUserService;
@@ -249,7 +253,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  void when_WorkerUser_promoteUser_ShouldPromoteUser() {
+  void when_EverythingFine_promoteUser_ShouldSavePromotedUser() {
     UserDto userDto = UserDtoUtil.getVerified();
     doReturn(userDto).when(userService).findUserById(any());
     RoleDto roleManager = RoleDtoUtil.getManagerRole();
@@ -258,6 +262,33 @@ class UserServiceImplTest {
     Mockito.verify(userRepository).save(captorUserEntity.capture());
     UserEntity capturedUserEntity = captorUserEntity.getValue();
     Assertions.assertEquals(roleManager.getName(), capturedUserEntity.getRole().getName());
+  }
+
+  @Test
+  void when_EverythingFine_demoteUser_ShouldSaveDemotedUser() {
+    UserDto userDto = UserDtoUtil.getVerifiedManager();
+    doReturn(userDto).when(userService).findUserById(any());
+    RoleDto roleWorker = RoleDtoUtil.getWorkerRole();
+    when(roleService.findByName(anyString())).thenReturn(roleWorker);
+    userService.demoteUser(UUID.randomUUID());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+    UserEntity capturedUserEntity = captorUserEntity.getValue();
+    Assertions.assertEquals(roleWorker.getName(), capturedUserEntity.getRole().getName());
+  }
+
+  @Test
+  void when_EverythingFine_addCompanyForUser_SaveUserWithAddedCompany() {
+    CompanyDto companyDto = CompanyDtoUtil.getCompanyDto();
+    UserDto userDto = UserDtoUtil.getVerified();
+    when(companyService.findById(any())).thenReturn(companyDto);
+    doReturn(userDto).when(userService).findUserById(any());
+    userService.addCompanyForUser(UUID.randomUUID(), UUID.randomUUID());
+
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+
+    UserEntity userEntityWithAddedCompany = captorUserEntity.getValue();
+
+    Assertions.assertEquals(companyDto.getId(), userEntityWithAddedCompany.getCompany().getId());
   }
 
   private void assertUserEntityAndUserResponse(
