@@ -10,7 +10,6 @@ import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
-import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -206,8 +205,9 @@ public class UserServiceImpl implements UserService {
             .getCompanyEntityFromLoggedUser()
             .orElseThrow(UserNotInAnyCompanyException::new);
     UserDto userDto = findUserById(uuid);
-    UserDto userWithCompany = userDto.withCompany(modelMapper.map(companyEntity, CompanyDto.class));
-    userRepository.save(modelMapper.map(userWithCompany, UserEntity.class));
+    UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
+    UserEntity userWithCompany = userEntity.withCompany(companyEntity);
+    userRepository.save(userWithCompany);
   }
 
   @Override

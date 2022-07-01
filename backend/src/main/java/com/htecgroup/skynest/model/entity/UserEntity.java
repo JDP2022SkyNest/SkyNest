@@ -41,5 +41,6 @@ public class UserEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "company_id")
+  @With
   private CompanyEntity company;
 }
