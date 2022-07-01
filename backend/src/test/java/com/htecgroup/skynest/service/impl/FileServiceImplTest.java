@@ -38,10 +38,7 @@ class FileServiceImplTest {
   @InjectMocks private FileServiceImpl fileService;
 
   @Test
-  void uploadFile() {}
-
-  @Test
-  void getFileMetadata_throwsNotFound() {
+  void getFileMetadata_ThrowsFileNotFound() {
     FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getFileMetadataEntity();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
@@ -53,5 +50,14 @@ class FileServiceImplTest {
   }
 
   @Test
-  void downloadFile() {}
+  void downloadFile_ThrowsFileNotFound() {
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getFileMetadataEntity();
+    when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+    Assertions.assertThrows(
+        FileNotFoundException.class,
+        () -> {
+          fileService.downloadFile(fileMetadata.getId());
+        });
+    verify(fileMetadataRepository, times(1)).findById(any());
+  }
 }
