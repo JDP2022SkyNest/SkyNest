@@ -15,11 +15,11 @@ import java.util.UUID;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AdminCompanyValidatorTest {
+class CurrentUserInCompanyValidatorTest {
 
   @Mock private CurrentUserService currentUserService;
 
-  @InjectMocks AdminCompanyValidator adminCompanyValidator;
+  @InjectMocks CurrentUserInCompanyValidator currentUserInCompanyValidator;
 
   @Test
   void when_EverythingFine_isValid_ShouldReturnTrue() {
@@ -27,7 +27,7 @@ class AdminCompanyValidatorTest {
     when(currentUserService.getLoggedUser()).thenReturn(loggedAdminWithCompany);
 
     Assertions.assertTrue(
-        adminCompanyValidator.isValid(loggedAdminWithCompany.getCompany().getId(), null));
+        currentUserInCompanyValidator.isValid(loggedAdminWithCompany.getCompany().getId(), null));
   }
 
   @Test
@@ -35,7 +35,7 @@ class AdminCompanyValidatorTest {
     LoggedUserDto loggedAdminWithoutCompany = LoggedUserDtoUtil.getLoggedAdminUser();
     when(currentUserService.getLoggedUser()).thenReturn(loggedAdminWithoutCompany);
 
-    Assertions.assertFalse(adminCompanyValidator.isValid(UUID.randomUUID(), null));
+    Assertions.assertFalse(currentUserInCompanyValidator.isValid(UUID.randomUUID(), null));
   }
 
   @Test
@@ -43,6 +43,6 @@ class AdminCompanyValidatorTest {
     LoggedUserDto loggedAdminWithCompany = LoggedUserDtoUtil.getLoggedAdminWithCompany();
     when(currentUserService.getLoggedUser()).thenReturn(loggedAdminWithCompany);
 
-    Assertions.assertFalse(adminCompanyValidator.isValid(UUID.randomUUID(), null));
+    Assertions.assertFalse(currentUserInCompanyValidator.isValid(UUID.randomUUID(), null));
   }
 }

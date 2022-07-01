@@ -1,6 +1,6 @@
 package com.htecgroup.skynest.annotation;
 
-import com.htecgroup.skynest.annotation.validator.AdminCompanyValidator;
+import com.htecgroup.skynest.annotation.validator.CurrentUserInCompanyValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-@Constraint(validatedBy = AdminCompanyValidator.class)
-public @interface AdminAndUserInSameCompany {
+@Constraint(validatedBy = CurrentUserInCompanyValidator.class)
+public @interface CurrentUserIsInCompany {
   String message() default "Admin and user company don't match";
 
   Class<?> groups()[] default {};

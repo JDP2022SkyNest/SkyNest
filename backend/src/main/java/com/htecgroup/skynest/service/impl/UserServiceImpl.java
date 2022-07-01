@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void addCompanyForUser(
-      @Valid @UserNotInACompany UUID uuid, @Valid @AdminAndUserInSameCompany UUID companyId) {
+      @Valid @UserNotInACompany UUID uuid, @Valid @CurrentUserIsInCompany UUID companyId) {
     CompanyDto companyDto = companyService.findById(companyId);
     UserDto userDto = findUserById(uuid);
     UserDto userWithCompany = userDto.withCompany(companyDto);
