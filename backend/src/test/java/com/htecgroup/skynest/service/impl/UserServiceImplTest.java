@@ -4,11 +4,12 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
+import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
-import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
+import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
@@ -19,7 +20,7 @@ import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
 import com.htecgroup.skynest.utils.*;
-import com.htecgroup.skynest.utils.company.CompanyDtoUtil;
+import com.htecgroup.skynest.utils.company.CompanyEntityUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -278,17 +279,40 @@ class UserServiceImplTest {
 
   @Test
   void when_EverythingFine_addCompanyForUser_SaveUserWithAddedCompany() {
-    CompanyDto companyDto = CompanyDtoUtil.getCompanyDto();
+    CompanyEntity companyEntity = CompanyEntityUtil.getCompanyEntity();
     UserDto userDto = UserDtoUtil.getVerified();
-    when(companyService.findById(any())).thenReturn(companyDto);
+    when(currentUserService.getCompanyEntityFromLoggedUser())
+        .thenReturn(Optional.of(companyEntity));
     doReturn(userDto).when(userService).findUserById(any());
-    userService.addCompanyForUser(UUID.randomUUID(), UUID.randomUUID());
+    userService.addCompanyForUser(UUID.randomUUID());
 
     Mockito.verify(userRepository).save(captorUserEntity.capture());
 
     UserEntity userEntityWithAddedCompany = captorUserEntity.getValue();
 
-    Assertions.assertEquals(companyDto.getId(), userEntityWithAddedCompany.getCompany().getId());
+    Assertions.assertEquals(companyEntity.getId(), userEntityWithAddedCompany.getCompany().getId());
+  }
+
+  @Test
+  void when_LoggedUserHasNoCompany_addCompanyForUser_SaveUserWithAddedCompany() {
+    when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.empty());
+    String expectedErrorMessage = UserNotInAnyCompanyException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserNotInAnyCompanyException.class,
+            () -> userService.addCompanyForUser(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_EverythingFine_removeCompanyForUser_SaveUserWithCompanyRemoved() {
+    UserDto userDto = UserDtoUtil.getVerified();
+    doReturn(userDto).when(userService).findUserById(any());
+    userService.removeCompany(UUID.randomUUID());
+    Mockito.verify(userRepository).save(captorUserEntity.capture());
+
+    UserEntity userEntityWithRemovedCompany = captorUserEntity.getValue();
+    Assertions.assertNull(userEntityWithRemovedCompany.getCompany());
   }
 
   private void assertUserEntityAndUserResponse(

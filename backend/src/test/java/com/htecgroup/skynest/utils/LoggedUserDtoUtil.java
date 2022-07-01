@@ -16,7 +16,7 @@ public class LoggedUserDtoUtil extends BasicUtil {
         Collections.singletonList(new SimpleGrantedAuthority(roleWorkerDto.getName()));
 
     return new LoggedUserDto(
-        UUID.randomUUID(),
+        UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
         name,
         surname,
         null,
@@ -34,7 +34,7 @@ public class LoggedUserDtoUtil extends BasicUtil {
         Collections.singletonList(new SimpleGrantedAuthority(roleAdminDto.getName()));
 
     return new LoggedUserDto(
-        UUID.randomUUID(),
+        UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
         name,
         surname,
         null,
