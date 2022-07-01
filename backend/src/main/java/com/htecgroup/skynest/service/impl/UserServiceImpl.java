@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
     userEditRequest.setName(userEditRequest.getName().trim());
     userEditRequest.setSurname(userEditRequest.getSurname().trim());
     userEditRequest.setAddress(userEditRequest.getAddress().trim());
+    userEditRequest.setPositionInCompany(userEditRequest.getPositionInCompany().trim());
     modelMapper.map(userEditRequest, userEntity);
     userRepository.save(userEntity);
     return modelMapper.map(userEntity, UserResponse.class);

@@ -16,10 +16,12 @@ public class UserEditRequest {
 
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 50, message = "length cannot be over 50")
+  @Pattern(regexp = RegexUtil.USER_NAME_AND_SURNAME_REGEX, message = "format not valid")
   private String name;
 
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 100, message = "length cannot be over 100")
+  @Pattern(regexp = RegexUtil.USER_NAME_AND_SURNAME_REGEX, message = "format not valid")
   private String surname;
 
   @NotBlank(message = "cannot be null or empty")
@@ -30,4 +32,8 @@ public class UserEditRequest {
   @NotBlank(message = "cannot be null or empty")
   @Size(max = 254, message = "length cannot be over 254")
   private String address;
+
+  @NotBlank(message = "cannot be null or empty")
+  @Size(max = 255, message = "length cannot be over 255")
+  private String positionInCompany;
 }
