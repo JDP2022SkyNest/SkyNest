@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface BucketRepository extends CrudRepository<BucketEntity, UUID> {
 
-  @Query("SELECT SUM(b.size) FROM bucket b WHERE AND b.company.id = ?1")
+  @Query("SELECT SUM(b.size) FROM bucket b WHERE b.company.id = ?1")
   Long sumSizeByCompanyId(UUID companyId);
 
   @Query("SELECT SUM(b.size) FROM bucket b WHERE b.company IS NULL AND b.createdBy.id = ?1")
