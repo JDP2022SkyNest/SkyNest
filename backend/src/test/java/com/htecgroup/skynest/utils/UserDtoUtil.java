@@ -23,6 +23,7 @@ public class UserDtoUtil extends BasicUtil {
         surname,
         address,
         phoneNumber,
+        positionInCompany,
         false,
         false,
         roleWorkerDto,

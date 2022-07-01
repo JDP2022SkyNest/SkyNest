@@ -32,6 +32,6 @@ public class UserEditRequest {
   private String address;
 
   @NotBlank(message = "cannot be null or empty")
-  @Size(max = 100, message = "length cannot be over 100")
+  @Size(max = 255, message = "length cannot be over 255")
   private String positionInCompany;
 }

@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
     userDto.setName(userDto.getName().trim());
     userDto.setSurname(userDto.getSurname().trim());
     userDto.setAddress(userDto.getAddress().trim());
-    userDto.setPositionInCompany("Unknown");
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
