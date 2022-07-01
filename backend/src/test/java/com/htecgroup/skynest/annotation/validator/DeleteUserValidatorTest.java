@@ -17,11 +17,11 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EditValidatorTest {
+class DeleteUserValidatorTest {
 
   @Mock CurrentUserService currentUserService;
   @Mock UserService userService;
-  @InjectMocks EditValidator editValidator;
+  @InjectMocks DeleteUserValidator deleteUserValidator;
 
   @Test
   void isValid_AdminAccessDenied() {
@@ -30,7 +30,7 @@ class EditValidatorTest {
     when(userService.getUser(any())).thenReturn(UserResponseUtil.getAdmin());
     UUID uuid = UUID.randomUUID();
 
-    Assertions.assertFalse(() -> editValidator.isValid(uuid, null));
+    Assertions.assertFalse(() -> deleteUserValidator.isValid(uuid, null));
 
     verify(currentUserService, times(1)).getLoggedUser();
     verify(userService, times(1)).getUser(any());
@@ -44,7 +44,7 @@ class EditValidatorTest {
     when(userService.getUser(any())).thenReturn(UserResponseUtil.getAdmin());
     UUID uuid = currentUser.getUuid();
 
-    Assertions.assertTrue(() -> editValidator.isValid(uuid, null));
+    Assertions.assertTrue(() -> deleteUserValidator.isValid(uuid, null));
 
     verify(currentUserService, times(1)).getLoggedUser();
     verify(userService, times(1)).getUser(any());
