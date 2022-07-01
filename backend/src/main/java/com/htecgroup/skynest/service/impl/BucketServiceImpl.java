@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
@@ -10,6 +11,7 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
+import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
@@ -19,7 +21,9 @@ import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 @AllArgsConstructor
 public class BucketServiceImpl implements BucketService {
 
@@ -84,9 +89,11 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public BucketDto findBucketById(UUID uuid) {
-    BucketEntity bucketEntity =
-        bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
-    return modelMapper.map(bucketEntity, BucketDto.class);
+    return modelMapper.map(findBucketEntityById(uuid), BucketDto.class);
+  }
+
+  public BucketEntity findBucketEntityById(UUID uuid) {
+    return bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
   }
 
   @Override
@@ -109,5 +116,23 @@ public class BucketServiceImpl implements BucketService {
     }
     BucketDto restoreBucketDto = bucketDto.restoreBucket();
     bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
+  }
+
+  @Override
+  public BucketResponse editBucket(
+      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
+    BucketEntity bucketEntity = findBucketEntityById(uuid);
+
+    if (bucketEntity.getDeletedOn() != null) {
+      throw new BucketAlreadyDeletedException();
+    }
+    bucketEditRequest.setName(bucketEditRequest.getName().trim());
+    bucketEditRequest.setDescription(bucketEditRequest.getDescription().trim());
+
+    modelMapper.map(bucketEditRequest, bucketEntity);
+    BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
+
+    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.ACTION_EDIT);
+    return modelMapper.map(savedBucketEntity, BucketResponse.class);
   }
 }

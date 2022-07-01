@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class EditValidator implements ConstraintValidator<CurrentUserCanEdit, UUID> {
+public class EditUserValidator implements ConstraintValidator<CurrentUserCanEdit, UUID> {
 
   private final CurrentUserService currentUserService;
   private final UserService userService;

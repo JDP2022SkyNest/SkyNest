@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ViewValidator implements ConstraintValidator<CurrentUserCanView, UUID> {
+public class ViewUserValidator implements ConstraintValidator<CurrentUserCanView, UUID> {
 
   private final CurrentUserService currentUserService;
   private CurrentUserCanView currentUserCanView;
