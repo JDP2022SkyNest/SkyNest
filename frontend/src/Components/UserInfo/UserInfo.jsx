@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
-import SOCIALS from "./UserSocialInfo";
-import { getPersonalData, editUserData, onUserLogout } from "../ReusableComponents/ReusableFunctions";
+import { getPersonalData, editUserData, onUserLogout, getCompany } from "../ReusableComponents/ReusableFunctions";
 import UserCardDetails from "./UserCardDetails";
 import "./UserInfo.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
+import UserCompanyAccordion from "./UserCompanyAccordion";
+import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const UserInfo = ({ userID, accessToken, setAccessToken }) => {
    const [userData, setUserData] = useState();
+   const [companyData, setCompanyData] = useState();
    const [clonedData, setClonedData] = useState();
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -48,6 +51,7 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
          if (userID) {
             setLoading(true);
             await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
+            await getCompany(accessToken, setCompanyData, setErrorMsg);
             setLoading(false);
          }
       };
@@ -72,8 +76,8 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
             </div>
          ) : (
             <div className="container py-3">
-               <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
-               <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
+               <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center" />
+               <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} customStyle="alert alert-success text-success text-center" />
                {userData && (
                   <div className="row">
                      <div className="col-lg-4">
@@ -123,16 +127,11 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                         </div>
                         <div className="card mb-4 mb-lg-0 shadow">
                            <div className="card-body p-0">
-                              <ul className="list-group list-group-flush rounded-3">
-                                 {SOCIALS.map((item, index) => {
-                                    return (
-                                       <li key={index} className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                          <i className={item.classId} />
-                                          <p className="mb-0">{item.title}</p>
-                                       </li>
-                                    );
-                                 })}
-                              </ul>
+                              {companyData && (
+                                 <ul className="list-group list-group-flush rounded-3">
+                                    <UserCompanyAccordion companyData={companyData} />
+                                 </ul>
+                              )}
                            </div>
                         </div>
                      </div>
