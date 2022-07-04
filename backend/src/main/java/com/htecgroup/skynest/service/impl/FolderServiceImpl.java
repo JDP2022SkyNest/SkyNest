@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
-import com.htecgroup.skynest.model.dto.FolderDto;
+import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
@@ -16,11 +15,13 @@ import com.htecgroup.skynest.service.FolderService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.UUID;
+import javax.validation.Valid;
 
 @Service
 @AllArgsConstructor
+@Validated
 public class FolderServiceImpl implements FolderService {
 
   private ModelMapper modelMapper;
@@ -32,7 +33,8 @@ public class FolderServiceImpl implements FolderService {
   private BucketService bucketService;
 
   @Override
-  public FolderResponse createFolder(FolderCreateRequest folderCreateRequest) {
+  public FolderResponse createFolder(
+      @Valid @ParentFolderIsInTheSameBucket FolderCreateRequest folderCreateRequest) {
     FolderEntity folderEntity = modelMapper.map(folderCreateRequest, FolderEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
@@ -41,33 +43,25 @@ public class FolderServiceImpl implements FolderService {
         modelMapper.map(
             bucketService.findBucketById(folderCreateRequest.getBucketId()), BucketEntity.class);
 
-    if (folderCreateRequest.getParentFolderId() == null) {
-      folderEntity.setParentFolder(null);
-    } else {
-      FolderEntity parentFolderEntity =
-          modelMapper.map(
-              findFolderById(folderCreateRequest.getParentFolderId()), FolderEntity.class);
-      folderEntity.setParentFolder(parentFolderEntity);
+    FolderEntity parentFolderEntity = null;
+    if (folderCreateRequest.getParentFolderId() != null) {
+      parentFolderEntity = folderRepository.findFolderById(folderCreateRequest.getParentFolderId());
     }
 
-    folderEntity.setBucket(bucketEntity);
-    folderEntity.setCreatedBy(currentUser);
-
+    folderEntity = setNewFolder(folderEntity, currentUser, bucketEntity, parentFolderEntity);
     folderEntity = folderRepository.save(folderEntity);
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
 
   @Override
-  public FolderDto findFolderByName(String name) {
-    FolderEntity folderEntity =
-        folderRepository.findFolderByName(name).orElseThrow(FolderNotFoundException::new);
-    return modelMapper.map(folderEntity, FolderDto.class);
-  }
-
-  @Override
-  public FolderDto findFolderById(UUID uuid) {
-    FolderEntity folderEntity =
-        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
-    return modelMapper.map(folderEntity, FolderDto.class);
+  public FolderEntity setNewFolder(
+      FolderEntity folderEntity,
+      UserEntity currentUser,
+      BucketEntity bucketEntity,
+      FolderEntity parentFolderEntity) {
+    folderEntity.setParentFolder(parentFolderEntity);
+    folderEntity.setBucket(bucketEntity);
+    folderEntity.setCreatedBy(currentUser);
+    return folderEntity;
   }
 }

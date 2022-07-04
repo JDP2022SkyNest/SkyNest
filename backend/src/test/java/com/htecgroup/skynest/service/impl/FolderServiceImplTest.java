@@ -36,8 +36,10 @@ class FolderServiceImplTest {
     FolderEntity exceptedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     when(userRepository.getById(any())).thenReturn(UserEntityUtil.getVerified());
-    when(bucketService.findBucketByName(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
-    doReturn(FolderDtoUtil.getFolderWithoutParent()).when(folderService).findFolderByName(any());
+    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    doReturn(FolderEntityUtil.getFolderWithoutParent())
+        .when(folderRepository)
+        .findFolderById(any());
     when(folderRepository.save(any())).thenReturn(exceptedFolderEntity);
 
     FolderCreateRequest folderCreateRequest = FolderCreateRequestUtil.get();
@@ -50,16 +52,15 @@ class FolderServiceImplTest {
     FolderEntity exceptedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     when(userRepository.getById(any())).thenReturn(UserEntityUtil.getVerified());
-    when(bucketService.findBucketByName(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
-    doReturn(FolderDtoUtil.getFolderWithParent()).when(folderService).findFolderByName(any());
+    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    doReturn(FolderEntityUtil.getFolderWithParent()).when(folderRepository).findFolderById(any());
     when(folderRepository.save(any())).thenReturn(exceptedFolderEntity);
 
     FolderCreateRequest folderCreateRequest = FolderCreateRequestUtil.get();
     FolderResponse actualFolderResponse = folderService.createFolder(folderCreateRequest);
     this.assertFolderEntityAndFolderResponse(exceptedFolderEntity, actualFolderResponse);
     Assertions.assertEquals(
-        exceptedFolderEntity.getParentFolder().getName(),
-        actualFolderResponse.getParentFolderName());
+        exceptedFolderEntity.getParentFolder().getId(), actualFolderResponse.getParentFolderId());
   }
 
   private void assertFolderEntityAndFolderResponse(
@@ -68,6 +69,6 @@ class FolderServiceImplTest {
         expectedFolderEntity.getCreatedBy().getId(), actualFolderResponse.getCreatedById());
     Assertions.assertEquals(expectedFolderEntity.getName(), actualFolderResponse.getName());
     Assertions.assertEquals(
-        expectedFolderEntity.getBucket().getName(), actualFolderResponse.getBucketName());
+        expectedFolderEntity.getBucket().getId(), actualFolderResponse.getBucketId());
   }
 }

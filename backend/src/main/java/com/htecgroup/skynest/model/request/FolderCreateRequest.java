@@ -17,7 +17,7 @@ public class FolderCreateRequest {
   @Size(max = 1000, message = "length cannot be over 1000 characters")
   private String name;
 
-  private UUID bucketId;
-
   private UUID parentFolderId;
+
+  private UUID bucketId;
 }
