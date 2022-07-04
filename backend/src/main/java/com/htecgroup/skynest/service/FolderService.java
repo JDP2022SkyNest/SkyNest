@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface FolderService {
 
-  FolderResponse getFolder(UUID uuid);
+  FolderResponse getFolderDetails(UUID uuid);
 }

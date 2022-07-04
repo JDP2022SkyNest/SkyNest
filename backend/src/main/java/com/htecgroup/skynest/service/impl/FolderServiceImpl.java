@@ -19,7 +19,7 @@ public class FolderServiceImpl implements FolderService {
   private FolderRepository folderRepository;
 
   @Override
-  public FolderResponse getFolder(UUID uuid) {
+  public FolderResponse getFolderDetails(UUID uuid) {
     FolderEntity folderEntity =
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
     FolderResponse folderResponse = modelMapper.map(folderEntity, FolderResponse.class);

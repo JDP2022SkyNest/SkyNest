@@ -90,9 +90,9 @@ public class FolderController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping
-  public ResponseEntity<FolderResponse> getFolder(@PathVariable UUID uuid) {
-    FolderResponse folderResponse = folderService.getFolder(uuid);
+  @GetMapping("/{uuid}/info")
+  public ResponseEntity<FolderResponse> getFolderDetails(@PathVariable UUID uuid) {
+    FolderResponse folderResponse = folderService.getFolderDetails(uuid);
     ResponseEntity<FolderResponse> folderResponseEntity =
         new ResponseEntity<>(folderResponse, HttpStatus.OK);
     return folderResponseEntity;
