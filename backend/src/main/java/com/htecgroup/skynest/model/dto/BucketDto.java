@@ -37,4 +37,8 @@ public class BucketDto {
   public BucketDto deleteBucket() {
     return this.withDeletedOn(LocalDateTime.now());
   }
+
+  public BucketDto restoreBucket() {
+    return this.withDeletedOn(null);
+  }
 }

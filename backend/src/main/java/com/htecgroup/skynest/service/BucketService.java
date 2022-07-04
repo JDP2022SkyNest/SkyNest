@@ -22,6 +22,8 @@ public interface BucketService {
 
   void deleteBucket(UUID uuid);
 
+  void restoreBucket(UUID uuid);
+
   BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
 
