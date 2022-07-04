@@ -1,6 +1,7 @@
 import React from "react";
 import * as AiIcons from "react-icons/ai";
 import * as CgIcons from "react-icons/cg";
+import * as BiIcons from "react-icons/bi";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
@@ -30,14 +31,26 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
                className="mr-2"
                eventKey="1"
             >
-               <CgIcons.CgProfile className="mr-2" />
+               <CgIcons.CgProfile className="icons-align mr-2" />
                Your Profile
             </Dropdown.Item>
-            <Dropdown.Item eventKey="2">
+            <Dropdown.Divider />
+            <Dropdown.Item
+               onClick={() => {
+                  redirectTo(navigate, ROUTES.COMPANYINFO, 1);
+               }}
+               className="mr-2"
+               eventKey="2"
+            >
+               <BiIcons.BiBuildingHouse className="icons-align mr-2" />
+               Company Info
+            </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item eventKey="3">
                <ChangePassword userID={userID} />
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item onClick={openFullscreen} eventKey="3">
+            <Dropdown.Item onClick={openFullscreen} eventKey="4">
                <AiIcons.AiOutlineFullscreen className="icons-align mr-2" />
                Fullscreen
             </Dropdown.Item>
@@ -46,7 +59,7 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
                onClick={() => {
                   onUserLogout(accessToken, setAccessToken);
                }}
-               eventKey="4"
+               eventKey="5"
             >
                <div>
                   <CgIcons.CgLogOut className="icons-align mr-2" />

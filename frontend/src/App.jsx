@@ -14,6 +14,7 @@ import NoToken from "./Components/Routes/NoToken";
 import AdminRoute from "./Components/Routes/AdminRoute";
 import { getUserData } from "./Components/ReusableComponents/ReusableFunctions";
 import UserInfo from "./Components/UserInfo/UserInfo";
+import CompanyInfo from "./Components/CompanyInfo/CompanyInfo";
 
 const App = () => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
@@ -95,6 +96,15 @@ const App = () => {
             element={
                <ProtectedRoute accessToken={accessToken}>
                   <UserInfo userID={userID} accessToken={accessToken} setAccessToken={setAccessToken} />
+               </ProtectedRoute>
+            }
+         />
+         <Route
+            path="company-info"
+            exact
+            element={
+               <ProtectedRoute accessToken={accessToken}>
+                  <CompanyInfo />
                </ProtectedRoute>
             }
          />
