@@ -179,6 +179,39 @@ export const demoteUser = async (accessToken, id, error, success) => {
    }
 };
 
+export const getCompany = async (accessToken, stateToChange, error) => {
+   try {
+      let response = await AxiosInstance.get("/companies", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.error(err);
+   }
+};
+
+export const editCompany = async (accessToken, payload, error, success, func) => {
+   try {
+      await AxiosInstance.put(
+         "/companies",
+         {
+            name: payload.name,
+            address: payload.address,
+            phoneNumber: payload.phoneNumber,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Company Info Changed");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.error(err);
+   }
+   func();
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();

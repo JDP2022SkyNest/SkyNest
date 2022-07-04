@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
@@ -88,7 +87,9 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                               <h5 className="my-3">
                                  {userData?.name} {userData?.surname}
                               </h5>
-                              <p className="text-muted mb-1">Full Stack Developer</p>
+                              <p className="text-muted mb-1">
+                                 {userData?.positionInCompany === null ? "Position: Undefined" : userData.positionInCompany}
+                              </p>
                               <p className={`${role === "ADMIN" ? "admin-text" : `${role === "WORKER" ? "text-secondary" : "manager-text"}`}`}>
                                  {role}
                               </p>
