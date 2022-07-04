@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -105,6 +106,18 @@ public class BucketServiceImpl implements BucketService {
     BucketEntity bucketEntity =
         bucketRepository.save(modelMapper.map(deletedBucketDto, BucketEntity.class));
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_DELETE);
+  }
+
+  @Override
+  public void restoreBucket(UUID uuid) {
+    BucketDto bucketDto = findBucketById(uuid);
+    if (bucketDto.getDeletedOn() == null) {
+      throw new BucketAlreadyRestoredException();
+    }
+    BucketDto restoreBucketDto = bucketDto.restoreBucket();
+    BucketEntity bucketEntity =
+        bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_RESTORE);
   }
 
   @Override
