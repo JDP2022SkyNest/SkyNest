@@ -68,8 +68,7 @@ public class FileServiceImpl implements FileService {
       InputStream fileContents = multipartFile.getInputStream();
 
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
-      actionService.recordAction(
-          Collections.singleton(savedFileMetadata), ActionType.ACTION_CREATE);
+      actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
     } catch (IOException e) {
@@ -84,7 +83,7 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
 
-    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.ACTION_VIEW);
+    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.VIEW);
 
     return modelMapper.map(fileMetadataEntity, FileResponse.class);
   }
@@ -96,8 +95,7 @@ public class FileServiceImpl implements FileService {
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
 
     Resource fileContents = getFileContents(fileMetadataEntity.getContentId());
-    actionService.recordAction(
-        Collections.singleton(fileMetadataEntity), ActionType.ACTION_DOWNLOAD);
+    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.DOWNLOAD);
 
     return new FileDownloadResponse(
         fileMetadataEntity.getName(), fileMetadataEntity.getType(), fileContents);

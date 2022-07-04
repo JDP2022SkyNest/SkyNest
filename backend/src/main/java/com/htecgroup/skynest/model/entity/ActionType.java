@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ActionType {
-  ACTION_CREATE("create"),
-  ACTION_VIEW("view"),
-  ACTION_DOWNLOAD("download"),
-  ACTION_EDIT("edit"),
-  ACTION_MOVE("move"),
-  ACTION_DELETE("delete"),
-  ACTION_RESTORE("restore");
+  CREATE("create"),
+  VIEW("view"),
+  DOWNLOAD("download"),
+  EDIT("edit"),
+  MOVE("move"),
+  DELETE("delete"),
+  RESTORE("restore");
   public final String text;
 }
