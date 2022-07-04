@@ -69,4 +69,13 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
     return modelMapper.map(companyEntity, CompanyDto.class);
   }
+
+  @Override
+  public CompanyResponse getMyCompany() {
+    CompanyEntity companyEntity =
+        currentUserService
+            .getCompanyEntityFromLoggedUser()
+            .orElseThrow(UserNotInAnyCompanyException::new);
+    return modelMapper.map(companyEntity, CompanyResponse.class);
+  }
 }
