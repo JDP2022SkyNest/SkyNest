@@ -67,6 +67,8 @@ services:
         condition: service_healthy
       skynest-token-db:
         condition: service_healthy
+      skynest-file-db:
+        condition: service_healthy
     image: skynest/skynest-api
     container_name: skynest-be
     ports:
