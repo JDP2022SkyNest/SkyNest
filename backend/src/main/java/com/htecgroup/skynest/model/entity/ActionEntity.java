@@ -33,6 +33,10 @@ public class ActionEntity implements Serializable {
   @JoinColumn(name = "action_type_id", nullable = false)
   private ActionTypeEntity actionType;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "revoked_by")
+  private ActionEntity revokedBy;
+
   @ManyToMany
   @JoinTable(
       name = "action_on_object",

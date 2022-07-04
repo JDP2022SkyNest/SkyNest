@@ -11,9 +11,14 @@ import java.util.UUID;
 public interface ActionService {
   ActionEntity recordAction(Set<ObjectEntity> objects, ActionType actionType);
 
+  ActionEntity recordAction(Set<ObjectEntity> objects, ActionType actionType, UUID revokedActionId);
+
   List<ActionEntity> getActionsForUser(UUID userId);
 
   List<ActionEntity> getActionsForCurrentUser();
 
   List<ActionEntity> getActionsForObject(UUID objectId);
+
+  List<ActionEntity> getActionsWithTypeForObject(
+      ActionType actionType, UUID objectId, boolean includeRevoked);
 }
