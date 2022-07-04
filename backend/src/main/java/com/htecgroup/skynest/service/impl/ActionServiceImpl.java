@@ -1,9 +1,11 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
-import com.htecgroup.skynest.exception.action.ActionTypeNotFound;
+import com.htecgroup.skynest.exception.action.ActionNotFoundException;
+import com.htecgroup.skynest.exception.action.ActionTypeNotFoundException;
 import com.htecgroup.skynest.model.entity.ActionEntity;
 import com.htecgroup.skynest.model.entity.ActionType;
+import com.htecgroup.skynest.model.entity.ActionTypeEntity;
 import com.htecgroup.skynest.model.entity.ObjectEntity;
 import com.htecgroup.skynest.repository.ActionRepository;
 import com.htecgroup.skynest.repository.ActionTypeRepository;
@@ -34,13 +36,14 @@ public class ActionServiceImpl implements ActionService {
 
     ActionEntity actionEntity = new ActionEntity();
 
-    actionEntity.setActionType(
-        actionTypeRepository.findByName(actionType.text).orElseThrow(ActionTypeNotFound::new));
+    actionEntity.setActionType(findActionTypeByName(actionType.text));
 
     actionEntity.setUser(
         userRepository
             .findById(currentUserService.getLoggedUser().getUuid())
             .orElseThrow(UserNotFoundException::new));
+
+    actionEntity.setRevokedBy(null);
 
     actionEntity.setObjects(objects);
 
@@ -56,6 +59,25 @@ public class ActionServiceImpl implements ActionService {
     return savedEntity;
   }
 
+  private ActionTypeEntity findActionTypeByName(String name) {
+    return actionTypeRepository.findByName(name).orElseThrow(ActionTypeNotFoundException::new);
+  }
+
+  @Override
+  public ActionEntity recordAction(
+      Set<ObjectEntity> objects, ActionType actionType, UUID revokedActionId) {
+
+    ActionEntity revokedAction =
+        actionRepository.findById(revokedActionId).orElseThrow(ActionNotFoundException::new);
+
+    ActionEntity savedAction = recordAction(objects, actionType);
+
+    revokedAction.setRevokedBy(savedAction);
+    actionRepository.save(revokedAction);
+
+    return savedAction;
+  }
+
   @Override
   public List<ActionEntity> getActionsForUser(UUID userId) {
     return actionRepository.findAllByUserIdOrderByPerformedOnDesc(userId);
@@ -69,5 +91,19 @@ public class ActionServiceImpl implements ActionService {
   @Override
   public List<ActionEntity> getActionsForObject(UUID objectId) {
     return actionRepository.findAllByObjectIdOrderByPerformedOnDesc(objectId);
+  }
+
+  @Override
+  public List<ActionEntity> getActionsWithTypeForObject(
+      ActionType actionType, UUID objectId, boolean includeRevoked) {
+
+    ActionTypeEntity actionTypeEntity = findActionTypeByName(actionType.text);
+
+    if (includeRevoked)
+      return actionRepository.findAllByObjectIdAndTypeOrderByPerformedOnDesc(
+          objectId, actionTypeEntity);
+    else
+      return actionRepository.findAllByObjectIdAndTypeAndNotRevokedOrderByPerformedOnDesc(
+          objectId, actionTypeEntity);
   }
 }
