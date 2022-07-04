@@ -307,6 +307,21 @@ public class BucketController {
                   examples = {@ExampleObject(value = "true")})
             }),
         @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "404",
             description = "Bucket not found",
             content = {
@@ -340,7 +355,6 @@ public class BucketController {
   @PutMapping("/{uuid}/restore")
   public ResponseEntity<Boolean> restoreBucket(@PathVariable UUID uuid) {
     bucketService.restoreBucket(uuid);
-    log.info("Bucket with id {} was successfully restored", uuid);
     return ResponseEntity.ok(true);
   }
 

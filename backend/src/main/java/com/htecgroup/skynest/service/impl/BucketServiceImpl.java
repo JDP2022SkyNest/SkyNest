@@ -115,7 +115,9 @@ public class BucketServiceImpl implements BucketService {
       throw new BucketAlreadyRestoredException();
     }
     BucketDto restoreBucketDto = bucketDto.restoreBucket();
-    bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
+    BucketEntity bucketEntity =
+        bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_RESTORE);
   }
 
   @Override
