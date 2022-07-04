@@ -42,4 +42,18 @@ public class BucketDtoUtil {
         size,
         privateBucket);
   }
+
+  public static BucketDto getOtherNotDeletedBucket() {
+    return new BucketDto(
+        UUID.randomUUID(),
+        currentDateTime,
+        currentDateTime,
+        null,
+        BucketEntityUtil.getOtherPrivateBucket().getCreatedBy(),
+        name,
+        companyEntity,
+        description,
+        size,
+        privateBucket);
+  }
 }

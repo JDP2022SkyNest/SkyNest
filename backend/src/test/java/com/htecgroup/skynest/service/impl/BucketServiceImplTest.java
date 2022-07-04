@@ -88,8 +88,22 @@ class BucketServiceImplTest {
         bucketService.editBucket(bucketEditRequest, expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
-    verify(bucketRepository, times(2)).findById(any());
+    verify(bucketRepository, times(1)).findById(any());
     verify(bucketRepository, times(1)).save(any());
+  }
+
+  @Test
+  void when_editBucket_ShouldThrowBucketAlreadyDeleted() {
+    BucketEntity bucketEntity = BucketEntityUtil.getDeletedBucket();
+    BucketEditRequest bucketEditRequest = BucketEditRequestUtil.get();
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+    String expectedErrorMessage = BucketAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            BucketAlreadyDeletedException.class,
+            () -> bucketService.editBucket(bucketEditRequest, UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(bucketService, times(1)).findBucketEntityById(any());
   }
 
   @Test
