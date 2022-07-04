@@ -11,4 +11,6 @@ public class RegexUtil {
       "[a-zA-Z0-9_+&*-]{1,64}(?:\\.[a-zA-Z0-9_+&*-]+){0,64}@(?:[a-zA-Z0-9-]+\\.){1,255}[a-zA-Z]{2,7}";
 
   public static final String PIB_FORMAT_REGEX = "[1-9]\\d{8}";
+
+  public static final String USER_NAME_AND_SURNAME_REGEX = "[A-Za-z\\-\\s]+";
 }
