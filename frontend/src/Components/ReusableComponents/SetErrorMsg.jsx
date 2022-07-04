@@ -9,8 +9,11 @@ const SetErrorMsg = ({
    customStyle = "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0",
 }) => {
    useEffect(() => {
-      alertTimeout(3000, setErrorMsg);
-   }, [setErrorMsg]);
+      if (errorMsg !== "") {
+         alertTimeout(3000, setErrorMsg);
+      }
+      //eslint-disable-next-line
+   }, [errorMsg]);
 
    return (
       <p className={errorMsg ? customStyle : "d-none"}>

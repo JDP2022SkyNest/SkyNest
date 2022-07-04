@@ -37,6 +37,10 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
       setUserData({ ...userData, address: e.target.value });
    };
 
+   const positionChange = (e) => {
+      setUserData({ ...userData, positionInCompany: e.target.value });
+   };
+
    const onUserInfoChanged = async () => {
       await editUserData(accessToken, userData?.id, clonedData, setSuccessMsg, setErrorMsg, refreshTheData);
       setEdit(false);
@@ -92,7 +96,7 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                                  {userData?.name} {userData?.surname}
                               </h5>
                               <p className="text-muted mb-1">
-                                 {userData?.positionInCompany === null ? "Position: Undefined" : userData.positionInCompany}
+                                 {userData?.positionInCompany === null ? "Position not set" : userData.positionInCompany}
                               </p>
                               <p className={`${role === "ADMIN" ? "admin-text" : `${role === "WORKER" ? "text-secondary" : "manager-text"}`}`}>
                                  {role}
@@ -142,6 +146,15 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                               <UserCardDetails info="Last Name:" result={userData?.surname} edit={edit} func={surnameChange} />
                               <UserCardDetails info="Email:" result={userData?.email} />
                               <UserCardDetails info="Phone Number:" type="number" result={userData?.phoneNumber} edit={edit} func={phoneChange} />
+                              {edit && (
+                                 <UserCardDetails
+                                    info="Position:"
+                                    result={userData?.positionInCompany}
+                                    edit={edit}
+                                    func={positionChange}
+                                    placeholder="Please enter a value here"
+                                 />
+                              )}
                               <UserCardDetails info="Address:" result={userData?.address} edit={edit} func={addressChange} horLine={false} />
                            </div>
                         </div>

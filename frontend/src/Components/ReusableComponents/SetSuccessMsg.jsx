@@ -9,8 +9,11 @@ const SetSuccessMsg = ({
    customStyle = "alert alert-success text-success text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0",
 }) => {
    useEffect(() => {
-      alertTimeout(3000, setSuccessMsg);
-   }, [setSuccessMsg]);
+      if (successMsg !== "") {
+         alertTimeout(3000, setSuccessMsg);
+      }
+      //eslint-disable-next-line
+   }, [successMsg]);
 
    return (
       <p className={successMsg ? customStyle : "d-none"}>

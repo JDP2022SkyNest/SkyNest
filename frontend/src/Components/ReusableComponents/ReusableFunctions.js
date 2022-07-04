@@ -65,6 +65,7 @@ export const editUserData = async (accessToken, id, payload, success, error, fun
             surname: payload.surname,
             phoneNumber: payload.phoneNumber,
             address: payload.address,
+            positionInCompany: payload.positionInCompany,
          },
          {
             headers: { Authorization: accessToken },
