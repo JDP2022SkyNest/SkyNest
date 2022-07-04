@@ -6,6 +6,7 @@ import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -27,6 +28,12 @@ public final class BucketEntityUtil {
     UserEntity userEntity = UserEntityUtil.getVerified();
     userEntity.setId(UUID.randomUUID());
     bucketEntity.setCreatedBy(userEntity);
+    return bucketEntity;
+  }
+
+  public static BucketEntity getDeletedBucket() {
+    BucketEntity bucketEntity = getPrivateBucket();
+    bucketEntity.setDeletedOn(LocalDateTime.now());
     return bucketEntity;
   }
 }
