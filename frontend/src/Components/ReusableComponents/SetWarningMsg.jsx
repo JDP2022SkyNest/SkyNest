@@ -5,8 +5,11 @@ import { alertTimeout } from "./ReusableFunctions";
 
 const SetWarningMsg = ({ warningMsg, setWarningMsg }) => {
    useEffect(() => {
-      alertTimeout(3000, setWarningMsg);
-   }, [setWarningMsg]);
+      if (warningMsg !== "") {
+         alertTimeout(3000, setWarningMsg);
+      }
+      //eslint-disable-next-line
+   }, [warningMsg]);
 
    return (
       <p className={warningMsg ? "alert alert-warning text-dark text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0" : "d-none"}>

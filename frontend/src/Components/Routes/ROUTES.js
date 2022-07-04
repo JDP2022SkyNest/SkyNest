@@ -6,6 +6,7 @@ const ROUTES = {
    ADMIN: "/admin-panel",
    RESEND: "/resend-email",
    USERINFO: "/user-info",
+   COMPANYINFO: "/company-info",
 };
 
 export default ROUTES;
