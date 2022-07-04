@@ -254,4 +254,72 @@ public class CompanyController {
     log.info("Company {} was successfully edited", companyResponse.getName());
     return ResponseEntity.ok(companyResponse);
   }
+
+  @Operation(summary = "Get current user's company")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully received company info",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = CompanyResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"pib\": \"123456789\","
+                                + "  \"name\": \"Name\","
+                                + "  \"address\": \"Local address\","
+                                + "  \"phoneNumber\": \"38166575757\","
+                                + "  \"email\": \"username@gmail.com\","
+                                + "  \"tierName\": \"basic\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User is not a part of any company",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User is not a part of any company\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping
+  public ResponseEntity<CompanyResponse> getMyCompany() {
+    CompanyResponse companyResponse = companyService.getMyCompany();
+    return ResponseEntity.ok(companyResponse);
+  }
 }
