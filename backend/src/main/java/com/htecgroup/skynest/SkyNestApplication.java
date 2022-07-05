@@ -1,9 +1,11 @@
 package com.htecgroup.skynest;
 
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.cassandra.DriverConfigLoaderBuilderCustomizer;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,5 +31,13 @@ public class SkyNestApplication {
   @Bean
   public ObjectMapper objectMapper() {
     return new ObjectMapper();
+  }
+
+  @Bean
+  public DriverConfigLoaderBuilderCustomizer defaultProfile() {
+    return builder ->
+        builder
+            .withString(DefaultDriverOption.METADATA_SCHEMA_REQUEST_TIMEOUT, "20 seconds")
+            .build();
   }
 }

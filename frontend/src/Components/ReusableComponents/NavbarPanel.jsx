@@ -10,6 +10,8 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchT
    const searchFilter = () => {
       if (searchTerm === false) {
          return "Disabled & Unverified";
+      } else if (searchTerm === true) {
+         return "Active Users";
       }
       return searchTerm;
    };
@@ -38,6 +40,9 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchT
                         </Dropdown.Item>
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("worker")}>
                            Workers
+                        </Dropdown.Item>
+                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(true)}>
+                           Active Users
                         </Dropdown.Item>
                         <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(false)}>
                            Disabled & Unverified
