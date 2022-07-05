@@ -7,8 +7,10 @@ import AxiosInstance from "../axios/AxiosInstance";
 import ROUTES from "../Routes/ROUTES";
 import CenteredContainer from "../ReusableComponents/CenteredContainer";
 import LoadingButton from "../Loader/LoadingButton";
+import { useContext } from "react";
+import GlobalContext from "../context/GlobalContext";
 
-const Login = ({ setAccessToken }) => {
+const Login = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
@@ -19,6 +21,8 @@ const Login = ({ setAccessToken }) => {
    const [searchParams, setSearchParams] = useSearchParams();
    const [infoMsg, setInfoMsg] = useState("");
    const [resendEmail, setResendEmail] = useState(false);
+
+   const { setAccessToken } = useContext(GlobalContext);
 
    const emailRef = useRef();
    const navigate = useNavigate();
@@ -44,8 +48,6 @@ const Login = ({ setAccessToken }) => {
             setErrorMsg("Server Timeout");
          } else if (err.response.status === 404) {
             setErrorMsg("User doesn't exist");
-         } else if (err.response.status === 403) {
-            setErrorMsg("Email not verified");
          } else if (err.response.status === 401) {
             setErrorMsg("Wrong password");
          } else {

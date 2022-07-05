@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
@@ -8,6 +8,8 @@ import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import "./CompanyInfo.css";
 import CompanyDetails from "./CompanyDetails";
+import GlobalContext from "../context/GlobalContext";
+import ROLE from "../Roles/Roles";
 
 const CompanyInfo = () => {
    const [companyData, setCompanyData] = useState();
@@ -17,6 +19,8 @@ const CompanyInfo = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const accessToken = localStorage.accessToken;
+
+   const { userRole, setUserCompany } = useContext(GlobalContext);
 
    const getCompanyData = async () => {
       setLoading(true);
@@ -55,36 +59,44 @@ const CompanyInfo = () => {
                <LoaderAnimation />
             </div>
          ) : (
-            <div className="">
+            <div className="container">
                <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
                <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
                {!!companyData && (
-                  <div className="col-12 col-sm-10 col-md-10 col-lg-6 offset-sm-1 offset-md-1 offset-lg-3 mb-5 py-3">
-                     <div className="card mb-3 shadow">
+                  <div className="col-12 col-sm-10 col-md-10 col-lg-6 offset-sm-1 offset-md-1 offset-lg-3 p-0 pb-2 pt-3">
+                     <div className="card mb-3 shadow mb-3">
                         <div className="card-body">
                            <CompanyDetails companyData={companyData} edit={edit} clonedData={clonedData} setClonedData={setClonedData} />
                         </div>
                      </div>
-                     {edit ? (
-                        <div className="d-flex flex-row-reverse">
-                           <div className="mb-2 mr-1">
-                              <button onClick={onCompanyEdit} className="btn btn-secondary">
-                                 Update
+                     <div className={`${userRole !== ROLE.ADMIN && "d-none"}`}>
+                        {edit ? (
+                           <div className="d-flex flex-row-reverse">
+                              <div className="mb-2 mr-1">
+                                 <button
+                                    onClick={() => {
+                                       onCompanyEdit();
+                                       setUserCompany(clonedData.name);
+                                    }}
+                                    className="btn btn-secondary"
+                                 >
+                                    Update
+                                 </button>
+                              </div>
+                              <div className="mb-2 mr-1">
+                                 <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
+                                    Cancel
+                                 </button>
+                              </div>
+                           </div>
+                        ) : (
+                           <div className="d-flex flex-row-reverse mb-2 mr-1">
+                              <button onClick={() => setEdit(!edit)} className="btn btn-secondary">
+                                 Edit
                               </button>
                            </div>
-                           <div className="mb-2 mr-1">
-                              <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
-                                 Cancel
-                              </button>
-                           </div>
-                        </div>
-                     ) : (
-                        <div className="d-flex flex-row-reverse mb-2 mr-1">
-                           <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
-                              Edit
-                           </button>
-                        </div>
-                     )}
+                        )}
+                     </div>
                   </div>
                )}
             </div>

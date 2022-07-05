@@ -1,7 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
+import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
@@ -15,10 +17,11 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FolderServiceImplTest {
@@ -54,5 +57,33 @@ class FolderServiceImplTest {
 
     FolderEntity folderEntityVal = captorFolderEntity.getValue();
     Assertions.assertNotNull(folderEntityVal.getDeletedOn());
+  }
+
+  @Test
+  void when_getFolderDetails_ShouldThrowFolderNotFound() {
+
+    Assertions.assertThrows(
+        FolderNotFoundException.class, () -> folderService.getFolderDetails(UUID.randomUUID()));
+  }
+
+  @Test
+  void getFolderDetails() {
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+
+    FolderResponse actualFolderResponse =
+        folderService.getFolderDetails(expectedFolderEntity.getId());
+
+    this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
+    verify(folderRepository, times(1)).findById(any());
+  }
+
+  private void assertFolderEntityAndFolderResponse(
+      FolderEntity expectedFolderEntity, FolderResponse actualFolderResponse) {
+    Assertions.assertEquals(
+        expectedFolderEntity.getCreatedBy().getId(), actualFolderResponse.getCreatedById());
+    Assertions.assertEquals(expectedFolderEntity.getName(), actualFolderResponse.getName());
+    Assertions.assertEquals(
+        expectedFolderEntity.getBucket().getId(), actualFolderResponse.getBucketId());
   }
 }

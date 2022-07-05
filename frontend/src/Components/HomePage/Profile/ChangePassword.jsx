@@ -58,7 +58,7 @@ const ChangePassword = ({ userID }) => {
             <AiIcons.AiOutlineUnlock className="mr-2" />
             Change Password
          </div>
-         <Modal show={show} onHide={handleClose}>
+         <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Header closeButton>
                <Modal.Title>Change Your Password</Modal.Title>
             </Modal.Header>
