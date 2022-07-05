@@ -1,15 +1,17 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as VscIcons from "react-icons/vsc";
-import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
+import { disableUser, enableUser, promoteUser, demoteUser, addToCompany, removeFromCompany } from "../ReusableComponents/ReusableFunctions";
+import GlobalContext from "../context/GlobalContext";
 
-const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
+const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
    const [youSure, setYouSure] = useState(false);
    const userRoleName = elem.roleName.slice(5);
    const accessToken = localStorage.accessToken;
+
+   const { userCompany, userID } = useContext(GlobalContext);
 
    return (
       <Accordion.Item eventKey={index} className={`${!elem.verified}`}>
@@ -44,6 +46,12 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
          <Accordion.Body>
             {!elem.verified && <p className="text-danger">Unverified</p>}
             {!elem.enabled && <p className="text-muted">Disabled</p>}
+            {elem.companyName && (
+               <p>
+                  <span className="font-weight-bold">Company: </span>
+                  {elem.companyName}
+               </p>
+            )}
             <p>
                <span className="font-weight-bold">Email: </span>
                {elem.email}
@@ -79,6 +87,28 @@ const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, s
                            className="btn alert-warning text-dark"
                         >
                            Demote
+                        </button>
+                     )}
+                     {elem.companyName === null && (
+                        <button
+                           onClick={async () => {
+                              await addToCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              setChange(!change);
+                           }}
+                           className="btn alert-info text-dark ml-2"
+                        >
+                           Add
+                        </button>
+                     )}
+                     {userCompany === elem.companyName && (
+                        <button
+                           onClick={async () => {
+                              await removeFromCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              setChange(!change);
+                           }}
+                           className="btn alert-light border text-dark ml-2"
+                        >
+                           Remove
                         </button>
                      )}
                   </div>

@@ -16,6 +16,7 @@ public class UserResponse {
   private String address;
   private String roleName;
   private String positionInCompany;
+  private String companyName;
   private Boolean verified;
   private Boolean enabled;
 }

@@ -1,21 +1,27 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
-import SOCIALS from "./UserSocialInfo";
-import { getPersonalData, editUserData, onUserLogout } from "../ReusableComponents/ReusableFunctions";
+import { getPersonalData, editUserData, onUserLogout, getCompany } from "../ReusableComponents/ReusableFunctions";
 import UserCardDetails from "./UserCardDetails";
 import "./UserInfo.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
+import UserCompanyAccordion from "./UserCompanyAccordion";
+import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import { useContext } from "react";
+import GlobalContext from "../context/GlobalContext";
 
-const UserInfo = ({ userID, accessToken, setAccessToken }) => {
+const UserInfo = () => {
    const [userData, setUserData] = useState();
+   const [companyData, setCompanyData] = useState();
    const [clonedData, setClonedData] = useState();
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
    const [edit, setEdit] = useState(false);
+
+   const {userID,accessToken,setAccessToken} = useContext(GlobalContext)
 
    const role = userData?.roleName.slice(5).toUpperCase();
 
@@ -35,6 +41,10 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
       setUserData({ ...userData, address: e.target.value });
    };
 
+   const positionChange = (e) => {
+      setUserData({ ...userData, positionInCompany: e.target.value });
+   };
+
    const onUserInfoChanged = async () => {
       await editUserData(accessToken, userData?.id, clonedData, setSuccessMsg, setErrorMsg, refreshTheData);
       setEdit(false);
@@ -49,6 +59,7 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
          if (userID) {
             setLoading(true);
             await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
+            await getCompany(accessToken, setCompanyData, setErrorMsg);
             setLoading(false);
          }
       };
@@ -68,11 +79,13 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
       <section className="user-page-body">
          <NavbarPanel name="User Info" searchBar={false} path={ROUTES.HOME} />
          {loading ? (
-            <LoaderAnimation />
+            <div className="mt-5">
+               <LoaderAnimation />
+            </div>
          ) : (
             <div className="container py-3">
-               <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
-               <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
+               <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center" />
+               <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} customStyle="alert alert-success text-success text-center" />
                {userData && (
                   <div className="row">
                      <div className="col-lg-4">
@@ -86,7 +99,9 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                               <h5 className="my-3">
                                  {userData?.name} {userData?.surname}
                               </h5>
-                              <p className="text-muted mb-1">Full Stack Developer</p>
+                              <p className="text-muted mb-1">
+                                 {userData?.positionInCompany === null ? "Position not set" : userData.positionInCompany}
+                              </p>
                               <p className={`${role === "ADMIN" ? "admin-text" : `${role === "WORKER" ? "text-secondary" : "manager-text"}`}`}>
                                  {role}
                               </p>
@@ -120,16 +135,11 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                         </div>
                         <div className="card mb-4 mb-lg-0 shadow">
                            <div className="card-body p-0">
-                              <ul className="list-group list-group-flush rounded-3">
-                                 {SOCIALS.map((item, index) => {
-                                    return (
-                                       <li key={index} className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                          <i className={item.classId} />
-                                          <p className="mb-0">{item.title}</p>
-                                       </li>
-                                    );
-                                 })}
-                              </ul>
+                              {companyData && (
+                                 <ul className="list-group list-group-flush rounded-3">
+                                    <UserCompanyAccordion companyData={companyData} />
+                                 </ul>
+                              )}
                            </div>
                         </div>
                      </div>
@@ -140,6 +150,15 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
                               <UserCardDetails info="Last Name:" result={userData?.surname} edit={edit} func={surnameChange} />
                               <UserCardDetails info="Email:" result={userData?.email} />
                               <UserCardDetails info="Phone Number:" type="number" result={userData?.phoneNumber} edit={edit} func={phoneChange} />
+                              {edit && (
+                                 <UserCardDetails
+                                    info="Position:"
+                                    result={userData?.positionInCompany}
+                                    edit={edit}
+                                    func={positionChange}
+                                    placeholder="Please enter a value here"
+                                 />
+                              )}
                               <UserCardDetails info="Address:" result={userData?.address} edit={edit} func={addressChange} horLine={false} />
                            </div>
                         </div>

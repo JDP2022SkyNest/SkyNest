@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "text" }) => {
+const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "text", placeholder = "" }) => {
    const [change, setChange] = useState(false);
 
    return (
@@ -18,6 +18,7 @@ const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "tex
                         func(e);
                         setChange(true);
                      }}
+                     placeholder={placeholder}
                      className={`form-control border-${change ? "warning" : "info"}`}
                   />
                </div>
