@@ -17,4 +17,6 @@ public interface FolderService {
       UUID currentUserId,
       UUID bucketEntityId,
       UUID parentFolderEntityId);
+
+  FolderResponse getFolderDetails(UUID uuid);
 }

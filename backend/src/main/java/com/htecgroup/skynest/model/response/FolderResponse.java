@@ -6,12 +6,12 @@ import java.util.UUID;
 
 @Data
 public class FolderResponse {
-
-  private UUID createdById;
-
+  private UUID id;
+  private String createdOn;
+  private String modifiedOn;
+  private String deletedOn;
   private String name;
-
-  private UUID bucketId;
-
+  private UUID createdById;
   private UUID parentFolderId;
+  private UUID bucketId;
 }

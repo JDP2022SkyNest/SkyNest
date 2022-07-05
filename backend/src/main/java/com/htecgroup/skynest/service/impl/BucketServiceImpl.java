@@ -60,7 +60,7 @@ public class BucketServiceImpl implements BucketService {
 
     BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
 
-    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.ACTION_CREATE);
+    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.CREATE);
 
     return modelMapper.map(savedBucketEntity, BucketResponse.class);
   }
@@ -71,7 +71,7 @@ public class BucketServiceImpl implements BucketService {
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
 
-    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_VIEW);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
     return bucketResponse;
   }
@@ -87,7 +87,7 @@ public class BucketServiceImpl implements BucketService {
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
 
-    actionService.recordAction(new HashSet<>(entityList), ActionType.ACTION_VIEW);
+    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
@@ -112,7 +112,7 @@ public class BucketServiceImpl implements BucketService {
     BucketDto deletedBucketDto = bucketDto.deleteBucket();
     BucketEntity bucketEntity =
         bucketRepository.save(modelMapper.map(deletedBucketDto, BucketEntity.class));
-    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_DELETE);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.DELETE);
   }
 
   @Override
@@ -124,7 +124,7 @@ public class BucketServiceImpl implements BucketService {
     BucketDto restoreBucketDto = bucketDto.restoreBucket();
     BucketEntity bucketEntity =
         bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
-    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.ACTION_RESTORE);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.RESTORE);
   }
 
   @Override
@@ -141,7 +141,7 @@ public class BucketServiceImpl implements BucketService {
     modelMapper.map(bucketEditRequest, bucketEntity);
     BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
 
-    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.ACTION_EDIT);
+    actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.EDIT);
     return modelMapper.map(savedBucketEntity, BucketResponse.class);
   }
 }

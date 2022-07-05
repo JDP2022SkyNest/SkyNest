@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
@@ -51,7 +52,7 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public FolderEntity setNewFolder(
-      FolderEntity folderEntity,
+      FolderEntity setFolderEntity,
       UUID currentUserId,
       UUID bucketEntityId,
       UUID parentFolderEntityId) {
@@ -60,9 +61,17 @@ public class FolderServiceImpl implements FolderService {
         modelMapper.map(bucketService.findBucketById(bucketEntityId), BucketEntity.class);
     FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
 
-    folderEntity.setParentFolder(parentFolderEntity);
-    folderEntity.setBucket(bucketEntity);
-    folderEntity.setCreatedBy(currentUser);
-    return folderEntity;
+    setFolderEntity.setParentFolder(parentFolderEntity);
+    setFolderEntity.setBucket(bucketEntity);
+    setFolderEntity.setCreatedBy(currentUser);
+    return setFolderEntity;
+  }
+
+  @Override
+  public FolderResponse getFolderDetails(UUID uuid) {
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    FolderResponse folderResponse = modelMapper.map(folderEntity, FolderResponse.class);
+    return folderResponse;
   }
 }
