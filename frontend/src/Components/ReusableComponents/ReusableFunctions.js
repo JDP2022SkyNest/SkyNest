@@ -224,7 +224,7 @@ export const editCompany = async (accessToken, payload, error, success, func) =>
    func();
 };
 
-export const addToCompany = async (accessToken,id,success,error) => {
+export const addToCompany = async (accessToken, id, error, success) => {
    try {
       await AxiosInstance.put(`/users/${id}/company/add`, {
          headers: { Authorization: accessToken },
@@ -236,7 +236,7 @@ export const addToCompany = async (accessToken,id,success,error) => {
    }
 };
 
-export const removeToCompany = async (accessToken,id,success,error) => {
+export const removeFromCompany = async (accessToken, id, error, success) => {
    try {
       await AxiosInstance.put(`/users/${id}/company/remove`, {
          headers: { Authorization: accessToken },

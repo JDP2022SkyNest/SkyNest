@@ -1,9 +1,9 @@
-import React,{ useState ,useContext} from "react";
+import React, { useState, useContext } from "react";
 import { Accordion } from "react-bootstrap";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as VscIcons from "react-icons/vsc";
-import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
+import { disableUser, enableUser, promoteUser, demoteUser, addToCompany, removeFromCompany } from "../ReusableComponents/ReusableFunctions";
 import GlobalContext from "../context/GlobalContext";
 
 const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
@@ -86,6 +86,28 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                            className="btn alert-warning text-dark"
                         >
                            Demote
+                        </button>
+                     )}
+                     {elem.company === "" && (
+                        <button
+                           onClick={async () => {
+                              await addToCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
+                              setChange(!change);
+                           }}
+                           className="btn alert-info text-white ml-2"
+                        >
+                           Add to Company
+                        </button>
+                     )}
+                     {userCompany === elem.company && (
+                        <button
+                           onClick={async () => {
+                              await removeFromCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
+                              setChange(!change);
+                           }}
+                           className="btn alert-info text-dark ml-2"
+                        >
+                           Remove From Company
                         </button>
                      )}
                   </div>
