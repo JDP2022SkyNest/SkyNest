@@ -12,6 +12,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
    const accessToken = localStorage.accessToken;
 
    const { userCompany, userID } = useContext(GlobalContext);
+   console.log(elem);
    console.log(userCompany);
 
    return (
@@ -49,7 +50,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
             {!elem.enabled && <p className="text-muted">Disabled</p>}
             <p>
                <span className="font-weight-bold">Company: </span>
-               {elem.company}
+               {elem.companyName}
             </p>
             <p>
                <span className="font-weight-bold">Email: </span>
@@ -88,7 +89,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                            Demote
                         </button>
                      )}
-                     {elem.company === "" && (
+                     {elem.companyName === "" && (
                         <button
                            onClick={async () => {
                               await addToCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
@@ -99,7 +100,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                            Add to Company
                         </button>
                      )}
-                     {userCompany === elem.company && (
+                     {userCompany === elem.companyName && (
                         <button
                            onClick={async () => {
                               await removeFromCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
