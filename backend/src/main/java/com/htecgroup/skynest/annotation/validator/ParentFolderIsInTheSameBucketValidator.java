@@ -29,12 +29,11 @@ public class ParentFolderIsInTheSameBucketValidator
     BucketEntity bucketEntity =
         modelMapper.map(
             bucketService.findBucketById(folderCreateRequest.getBucketId()), BucketEntity.class);
-    FolderEntity parentFolderEntity;
-    if (folderCreateRequest.getParentFolderId() != null) {
-      parentFolderEntity = folderRepository.findFolderById(folderCreateRequest.getParentFolderId());
-    } else {
+    if (folderCreateRequest.getParentFolderId() == null) {
       return true;
     }
+    FolderEntity parentFolderEntity =
+        folderRepository.findFolderById(folderCreateRequest.getParentFolderId());
 
     if (bucketEntity.getId() != parentFolderEntity.getBucket().getId()) {
       return false;
