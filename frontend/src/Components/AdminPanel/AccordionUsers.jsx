@@ -5,11 +5,16 @@ import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as VscIcons from "react-icons/vsc";
 import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
+import { useContext } from "react";
+import GlobalContext from "../context/GlobalContext";
 
-const AccordionUsers = ({ elem, index, setChange, change, userID, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
+const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
    const [youSure, setYouSure] = useState(false);
    const userRoleName = elem.roleName.slice(5);
    const accessToken = localStorage.accessToken;
+
+   const { userCompany, userID } = useContext(GlobalContext);
+   console.log(userCompany);
 
    return (
       <Accordion.Item eventKey={index} className={`${!elem.verified}`}>

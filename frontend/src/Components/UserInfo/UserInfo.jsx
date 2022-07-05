@@ -9,8 +9,10 @@ import LoaderAnimation from "../Loader/LoaderAnimation";
 import UserCompanyAccordion from "./UserCompanyAccordion";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import { useContext } from "react";
+import GlobalContext from "../context/GlobalContext";
 
-const UserInfo = ({ userID, accessToken, setAccessToken }) => {
+const UserInfo = () => {
    const [userData, setUserData] = useState();
    const [companyData, setCompanyData] = useState();
    const [clonedData, setClonedData] = useState();
@@ -18,6 +20,8 @@ const UserInfo = ({ userID, accessToken, setAccessToken }) => {
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
    const [edit, setEdit] = useState(false);
+
+   const {userID,accessToken,setAccessToken} = useContext(GlobalContext)
 
    const role = userData?.roleName.slice(5).toUpperCase();
 

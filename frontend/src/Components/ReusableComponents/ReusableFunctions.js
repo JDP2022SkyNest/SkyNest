@@ -192,6 +192,17 @@ export const getCompany = async (accessToken, stateToChange, error) => {
    }
 };
 
+export const getCompanyName = async (accessToken, stateToChange) => {
+   try {
+      let response = await AxiosInstance.get("/companies", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data.name);
+   } catch (err) {
+      console.error(err);
+   }
+};
+
 export const editCompany = async (accessToken, payload, error, success, func) => {
    try {
       await AxiosInstance.put(
