@@ -51,9 +51,9 @@ const SignUp = () => {
             const messages = err.response.data.messages;
             const allMessages = messages.map((el, index) => {
                return (
-                  <p key={index} className="alert alert-danger text-danger text-center my-2">
+                  <span key={index} className="d-block alert alert-danger text-danger text-center my-2">
                      {el[0].toUpperCase() + el.slice(1)}
-                  </p>
+                  </span>
                );
             });
             setMultiError(allMessages);
