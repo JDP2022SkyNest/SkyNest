@@ -12,8 +12,6 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
    const accessToken = localStorage.accessToken;
 
    const { userCompany, userID } = useContext(GlobalContext);
-   console.log(elem);
-   console.log(userCompany);
 
    return (
       <Accordion.Item eventKey={index} className={`${!elem.verified}`}>
@@ -48,10 +46,12 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
          <Accordion.Body>
             {!elem.verified && <p className="text-danger">Unverified</p>}
             {!elem.enabled && <p className="text-muted">Disabled</p>}
-            <p>
-               <span className="font-weight-bold">Company: </span>
-               {elem.companyName}
-            </p>
+            {elem.companyName && (
+               <p>
+                  <span className="font-weight-bold">Company: </span>
+                  {elem.companyName}
+               </p>
+            )}
             <p>
                <span className="font-weight-bold">Email: </span>
                {elem.email}
@@ -92,23 +92,23 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                      {elem.companyName === null && (
                         <button
                            onClick={async () => {
-                              await addToCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
+                              await addToCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn alert-info text-white ml-2"
+                           className="btn alert-info text-dark ml-2"
                         >
-                           Add to Company
+                           Add
                         </button>
                      )}
                      {userCompany === elem.companyName && (
                         <button
                            onClick={async () => {
-                              await removeFromCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
+                              await removeFromCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn alert-info text-dark ml-2"
+                           className="btn alert-light border text-dark ml-2"
                         >
-                           Remove From Company
+                           Remove
                         </button>
                      )}
                   </div>
