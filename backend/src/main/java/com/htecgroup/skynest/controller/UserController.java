@@ -58,6 +58,7 @@ public class UserController {
                                 + "\"address\": \"Local address\","
                                 + "\"roleName\": \"role_admin\","
                                 + "\"positionInCompany\": \"Software Engineer\","
+                                + "\"companyName\": \"HTEC Group\","
                                 + "\"enabled\": \"true\","
                                 + "\"verified\": \"true\"},"
                                 + "{\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
@@ -68,6 +69,7 @@ public class UserController {
                                 + "\"address\": \"Local address\","
                                 + "\"roleName\": \"role_worker\","
                                 + "\"positionInCompany\": \"Software Engineer\","
+                                + "\"companyName\": \"HTEC Group\","
                                 + "\"enabled\": \"false\","
                                 + "\"verified\": \"false\"}]")
                   })
@@ -125,6 +127,7 @@ public class UserController {
                                 + "  \"address\": \"Local address\","
                                 + "  \"roleName\": \"role_worker\","
                                 + "  \"positionInCompany\": \"Software Engineer\","
+                                + "  \"companyName\": \"HTEC Group\","
                                 + "  \"enabled\": \"false\","
                                 + "  \"verified\": \"true\"}")
                   })
@@ -215,6 +218,7 @@ public class UserController {
                                 + "  \"address\": \"Local address\","
                                 + "  \"roleName\": \"role_worker\","
                                 + "  \"positionInCompany\": \"Software Engineer\","
+                                + "  \"companyName\": \"HTEC Group\","
                                 + "  \"enabled\": \"false\","
                                 + "  \"verified\": \"true\"}")
                   })
