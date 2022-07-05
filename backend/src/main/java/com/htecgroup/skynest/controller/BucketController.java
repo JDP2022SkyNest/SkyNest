@@ -4,6 +4,7 @@ import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.model.response.FolderFileResponse;
 import com.htecgroup.skynest.service.BucketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -164,7 +165,7 @@ public class BucketController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}")
+  @GetMapping("/{uuid}/info")
   public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID uuid) {
     BucketResponse bucketResponse = bucketService.getBucketDetails(uuid);
     ResponseEntity<BucketResponse> bucketResponseEntity =
@@ -431,5 +432,13 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketService.editBucket(bucketEditRequest, uuid), HttpStatus.OK);
     return bucketResponseEntity;
+  }
+
+  @GetMapping("/{uuid}")
+  public ResponseEntity<FolderFileResponse> getBucketContent(@PathVariable UUID uuid) {
+    FolderFileResponse folderFileResponse = bucketService.getBucketContent(uuid);
+    ResponseEntity<FolderFileResponse> folderFileResponseEntity =
+        new ResponseEntity<>(folderFileResponse, HttpStatus.OK);
+    return folderFileResponseEntity;
   }
 }

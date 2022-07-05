@@ -145,9 +145,10 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public FolderFileResponse getBucketContent(UUID bucketId) {
 
-    List<FolderEntity> allFolders = folderRepository.findAllByBucketAndParentFolder(bucketId, null);
+    List<FolderEntity> allFolders =
+        folderRepository.findAllByBucketIdAndParentFolderId(bucketId, null);
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByBucketAndParentFolder(bucketId, null);
+        fileMetadataRepository.findAllByBucketIdAndParentFolderId(bucketId, null);
     List<FolderResponse> allFoldersResponse =
         allFolders.stream()
             .map(folder -> modelMapper.map(folder, FolderResponse.class))
