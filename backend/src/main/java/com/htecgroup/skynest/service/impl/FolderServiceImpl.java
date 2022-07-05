@@ -41,7 +41,7 @@ public class FolderServiceImpl implements FolderService {
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     folderEntity =
-        setNewFolder(
+        createFolder(
             folderEntity,
             loggedUserDto.getUuid(),
             folderCreateRequest.getBucketId(),
@@ -50,9 +50,8 @@ public class FolderServiceImpl implements FolderService {
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
 
-  @Override
-  public FolderEntity setNewFolder(
-      FolderEntity setFolderEntity,
+  private FolderEntity createFolder(
+      FolderEntity folderEntity,
       UUID currentUserId,
       UUID bucketEntityId,
       UUID parentFolderEntityId) {
@@ -61,10 +60,11 @@ public class FolderServiceImpl implements FolderService {
         modelMapper.map(bucketService.findBucketById(bucketEntityId), BucketEntity.class);
     FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
 
-    setFolderEntity.setParentFolder(parentFolderEntity);
-    setFolderEntity.setBucket(bucketEntity);
-    setFolderEntity.setCreatedBy(currentUser);
-    return setFolderEntity;
+    folderEntity.setParentFolder(parentFolderEntity);
+    folderEntity.setBucket(bucketEntity);
+    folderEntity.setCreatedBy(currentUser);
+
+    return folderEntity;
   }
 
   @Override

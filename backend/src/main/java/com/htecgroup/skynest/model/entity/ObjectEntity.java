@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -32,6 +29,7 @@ public class ObjectEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "created_by", nullable = false)
+  @With
   private UserEntity createdBy;
 
   private String name;
