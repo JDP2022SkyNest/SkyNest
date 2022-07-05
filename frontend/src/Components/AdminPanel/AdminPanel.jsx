@@ -14,7 +14,7 @@ import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetWarningMsg from "../ReusableComponents/SetWarningMsg";
 
-const AdminPanel = ({ userID }) => {
+const AdminPanel = () => {
    const [usersData, setUsersData] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -51,7 +51,6 @@ const AdminPanel = ({ userID }) => {
          key={elem.id}
          setChange={setChange}
          change={change}
-         userID={userID}
          setErrorMsg={setErrorMsg}
          setSuccessMsg={setSuccessMsg}
          setWarningMsg={setWarningMsg}
