@@ -53,7 +53,8 @@ public class RegistrationController {
                                 + "  \"phoneNumber\": \"38166575757\","
                                 + "  \"address\": \"Local address\","
                                 + "  \"roleName\": \"role_worker\","
-                                + "  \"positionInCompany\": \"Software Engineer\"}")
+                                + "  \"positionInCompany\": \"Software Engineer\","
+                                + "  \"companyName\": \"null\"}")
                   })
             }),
         @ApiResponse(
