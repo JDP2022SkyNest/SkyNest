@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -38,17 +39,12 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity folderEntity = modelMapper.map(folderCreateRequest, FolderEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UserEntity currentUser = userRepository.getById(loggedUserDto.getUuid());
-    BucketEntity bucketEntity =
-        modelMapper.map(
-            bucketService.findBucketById(folderCreateRequest.getBucketId()), BucketEntity.class);
-
-    FolderEntity parentFolderEntity = null;
-    if (folderCreateRequest.getParentFolderId() != null) {
-      parentFolderEntity = folderRepository.findFolderById(folderCreateRequest.getParentFolderId());
-    }
-
-    folderEntity = setNewFolder(folderEntity, currentUser, bucketEntity, parentFolderEntity);
+    folderEntity =
+        setNewFolder(
+            folderEntity,
+            loggedUserDto.getUuid(),
+            folderCreateRequest.getBucketId(),
+            folderCreateRequest.getParentFolderId());
     folderEntity = folderRepository.save(folderEntity);
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
@@ -56,9 +52,14 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public FolderEntity setNewFolder(
       FolderEntity folderEntity,
-      UserEntity currentUser,
-      BucketEntity bucketEntity,
-      FolderEntity parentFolderEntity) {
+      UUID currentUserId,
+      UUID bucketEntityId,
+      UUID parentFolderEntityId) {
+    UserEntity currentUser = userRepository.getById(currentUserId);
+    BucketEntity bucketEntity =
+        modelMapper.map(bucketService.findBucketById(bucketEntityId), BucketEntity.class);
+    FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
+
     folderEntity.setParentFolder(parentFolderEntity);
     folderEntity.setBucket(bucketEntity);
     folderEntity.setCreatedBy(currentUser);

@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.annotation.validator;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
+import com.htecgroup.skynest.exception.folder.ParentFolderDoesntExistException;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
@@ -26,14 +27,17 @@ public class ParentFolderIsInTheSameBucketValidator
   public boolean isValid(
       FolderCreateRequest folderCreateRequest,
       ConstraintValidatorContext constraintValidatorContext) {
-    BucketEntity bucketEntity =
-        modelMapper.map(
-            bucketService.findBucketById(folderCreateRequest.getBucketId()), BucketEntity.class);
     if (folderCreateRequest.getParentFolderId() == null) {
       return true;
     }
+    BucketEntity bucketEntity =
+        modelMapper.map(
+            bucketService.findBucketById(folderCreateRequest.getBucketId()), BucketEntity.class);
+
     FolderEntity parentFolderEntity =
-        folderRepository.findFolderById(folderCreateRequest.getParentFolderId());
+        folderRepository
+            .findById(folderCreateRequest.getParentFolderId())
+            .orElseThrow(ParentFolderDoesntExistException::new);
 
     if (bucketEntity.getId() != parentFolderEntity.getBucket().getId()) {
       return false;

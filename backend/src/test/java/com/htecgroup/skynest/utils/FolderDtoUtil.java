@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.utils;
 
+import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 
@@ -11,6 +12,8 @@ public class FolderDtoUtil {
   protected static final LocalDateTime currentDateTime = LocalDateTime.now();
   protected static BucketEntity bucketEntityUtil = BucketEntityUtil.getPrivateBucket();
 
+  protected static BucketDto bucketDtoUtil = BucketDtoUtil.getNotDeletedBucket();
+
   protected static String name = "FolderName";
 
   public static FolderDto getFolderWithoutParent() {
@@ -20,10 +23,10 @@ public class FolderDtoUtil {
             currentDateTime,
             currentDateTime,
             null,
-            UserEntityUtil.getVerified(),
+            UserDtoUtil.getVerified(),
             name,
             null,
-            bucketEntityUtil);
+            bucketDtoUtil);
     return folderDto;
   }
 
@@ -34,10 +37,10 @@ public class FolderDtoUtil {
             currentDateTime,
             currentDateTime,
             null,
-            UserEntityUtil.getVerified(),
+            UserDtoUtil.getVerified(),
             name,
-            FolderEntityUtil.getFolderWithoutParent(),
-            bucketEntityUtil);
+            FolderDtoUtil.getFolderWithoutParent(),
+            bucketDtoUtil);
     return folderDto;
   }
 }

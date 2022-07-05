@@ -1,8 +1,5 @@
 package com.htecgroup.skynest.model.dto;
 
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.FolderEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,11 +19,11 @@ public class FolderDto {
 
   @With private LocalDateTime deletedOn;
 
-  private UserEntity createdBy;
+  @With private UserDto createdBy;
 
   private String name;
 
-  private FolderEntity parentFolder;
+  @With private FolderDto parentFolder;
 
-  private BucketEntity bucket;
+  @With private BucketDto bucket;
 }

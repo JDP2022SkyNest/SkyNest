@@ -1,13 +1,12 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
-import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 public interface FolderService {
   FolderResponse createFolder(
@@ -15,7 +14,7 @@ public interface FolderService {
 
   FolderEntity setNewFolder(
       FolderEntity folderEntity,
-      UserEntity currentUser,
-      BucketEntity bucketEntity,
-      FolderEntity parentFolderEntity);
+      UUID currentUserId,
+      UUID bucketEntityId,
+      UUID parentFolderEntityId);
 }
