@@ -38,7 +38,7 @@ public class LoggedUserDtoUtil extends BasicUtil {
         UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
         name,
         surname,
-        null,
+        CompanyDtoUtil.getCompanyDto(),
         email,
         password,
         positionInCompany,
