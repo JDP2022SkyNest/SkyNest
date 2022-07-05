@@ -28,4 +28,5 @@ public class BasicUtil {
   protected static String address = "Address";
   protected static String phoneNumber = "381123456789";
   protected static String positionInCompany = "Software Engineer";
+  protected static String companyName = "HTEC Group";
 }
