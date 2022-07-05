@@ -21,7 +21,7 @@ const UserInfo = () => {
    const [loading, setLoading] = useState(false);
    const [edit, setEdit] = useState(false);
 
-   const {userID,accessToken,setAccessToken} = useContext(GlobalContext)
+   const { userID, accessToken, setAccessToken } = useContext(GlobalContext);
 
    const role = userData?.roleName.slice(5).toUpperCase();
 
