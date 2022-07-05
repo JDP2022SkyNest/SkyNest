@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.model.response;
 
-import com.htecgroup.skynest.model.dto.CompanyDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,6 @@ public class LoggedUserResponse {
   private String name;
   private String surname;
   private String positionInCompany;
-  private CompanyDto company;
+  private String companyName;
   @With private List<String> roles;
 }
