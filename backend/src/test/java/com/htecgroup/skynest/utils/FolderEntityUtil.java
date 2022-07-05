@@ -13,23 +13,18 @@ public final class FolderEntityUtil {
   protected static BucketEntity bucketEntityUtil = BucketEntityUtil.getPrivateBucket();
 
   public static FolderEntity getFolderWithoutParent() {
-    FolderEntity folderEntity = new FolderEntity(null, bucketEntityUtil);
-    folderEntity.setName("FolderName");
-    folderEntity.setCreatedBy(UserEntityUtil.getVerified());
-    return folderEntity;
+    return FolderEntity.builder().parentFolder(null).bucket(bucketEntityUtil).build();
   }
 
   public static FolderEntity getFolderWithParent() {
-    FolderEntity folderEntity = new FolderEntity(getFolderWithoutParent(), bucketEntityUtil);
-    folderEntity.setName("FolderName");
-    folderEntity.setCreatedBy(UserEntityUtil.getVerified());
-    return folderEntity;
+    return FolderEntity.builder()
+        .parentFolder(getFolderWithoutParent())
+        .bucket(bucketEntityUtil)
+        .build();
   }
 
   public static FolderEntity getDeletedFolder() {
     FolderEntity folderEntity = new FolderEntity(null, bucketEntityUtil);
-    folderEntity.setName("FolderName");
-    folderEntity.setCreatedBy(UserEntityUtil.getVerified());
     folderEntity.setDeletedOn(LocalDateTime.now());
     return folderEntity;
   }
