@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class LoggedUserResponse {
   private UUID uuid;
+  private String username;
   private String name;
   private String surname;
   private String positionInCompany;
