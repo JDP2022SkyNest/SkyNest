@@ -22,6 +22,7 @@ const SignUp = () => {
    const [buttonText, setButtonText] = useState("REGISTER");
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
+   const [multiError, setMultiError] = useState("");
 
    const navigate = useNavigate();
 
@@ -47,7 +48,15 @@ const SignUp = () => {
          } else if (err.response.status === 0) {
             setErrorMsg("Server Timeout");
          } else {
-            setErrorMsg(err.response.data.messages);
+            const messages = err.response.data.messages;
+            const allMessages = messages.map((el, index) => {
+               return (
+                  <p key={index} className="alert alert-danger text-danger text-center my-2">
+                     {el[0].toUpperCase() + el.slice(1)}
+                  </p>
+               );
+            });
+            setMultiError(allMessages);
             console.log(err.response.status);
          }
       }
@@ -74,6 +83,10 @@ const SignUp = () => {
       setErrorMsg("");
    }, [email]);
 
+   useEffect(() => {
+      setMultiError("");
+   }, [name, surname, email, phoneNumber, address]);
+
    return (
       <CenteredContainer>
          <form onSubmit={handleSubmit}>
@@ -81,6 +94,7 @@ const SignUp = () => {
             <p className="mb-4 p-0 text-center text-secondary">Create your account</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
+            <p className={multiError ? "w-100" : "d-none"}>{multiError}</p>
             <fieldset disabled={loading}>
                <div className="row">
                   <div className="col-md-6">
