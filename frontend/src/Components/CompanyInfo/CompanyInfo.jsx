@@ -20,7 +20,7 @@ const CompanyInfo = () => {
    const [successMsg, setSuccessMsg] = useState("");
    const accessToken = localStorage.accessToken;
 
-   const { userRole } = useContext(GlobalContext);
+   const { userRole, setUserCompany } = useContext(GlobalContext);
 
    const getCompanyData = async () => {
       setLoading(true);
@@ -73,7 +73,13 @@ const CompanyInfo = () => {
                         {edit ? (
                            <div className="d-flex flex-row-reverse">
                               <div className="mb-2 mr-1">
-                                 <button onClick={onCompanyEdit} className="btn btn-secondary">
+                                 <button
+                                    onClick={() => {
+                                       onCompanyEdit();
+                                       setUserCompany(clonedData.name);
+                                    }}
+                                    className="btn btn-secondary"
+                                 >
                                     Update
                                  </button>
                               </div>
