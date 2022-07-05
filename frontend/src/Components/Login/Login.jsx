@@ -69,6 +69,27 @@ const Login = () => {
       // eslint-disable-next-line
    }, [token]);
 
+   {
+      /*
+   useEffect(()=> {
+
+        if(loading){
+            updateToken()
+        }
+
+        let time = 1000 * 60 * 30
+
+        let interval =  setInterval(()=> {
+            if(token){
+                updateToken()
+            }
+        }, time)
+        return ()=> clearInterval(interval)
+
+    }, [token, loading])
+    */
+   }
+
    useEffect(() => {
       emailRef.current.focus();
    }, []);
