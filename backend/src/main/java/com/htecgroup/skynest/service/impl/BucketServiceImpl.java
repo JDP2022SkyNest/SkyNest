@@ -6,14 +6,16 @@ import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
+import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.model.response.FolderFileResponse;
+import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
+import com.htecgroup.skynest.repository.FileMetadataRepository;
+import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.BucketService;
@@ -39,6 +41,8 @@ public class BucketServiceImpl implements BucketService {
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
   private UserRepository userRepository;
+  private FolderRepository folderRepository;
+  private FileMetadataRepository fileMetadataRepository;
 
   private ActionService actionService;
 
@@ -66,7 +70,7 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public BucketResponse getBucket(UUID uuid) {
+  public BucketResponse getBucketDetails(UUID uuid) {
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
@@ -136,5 +140,24 @@ public class BucketServiceImpl implements BucketService {
 
     actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.EDIT);
     return modelMapper.map(savedBucketEntity, BucketResponse.class);
+  }
+
+  @Override
+  public FolderFileResponse getBucketContent(UUID bucketId) {
+
+    List<FolderEntity> allFolders = folderRepository.findAllByBucketAndParentFolder(bucketId, null);
+    List<FileMetadataEntity> allFiles =
+        fileMetadataRepository.findAllByBucketAndParentFolder(bucketId, null);
+    List<FolderResponse> allFoldersResponse =
+        allFolders.stream()
+            .map(folder -> modelMapper.map(folder, FolderResponse.class))
+            .collect(Collectors.toList());
+    List<FileResponse> allFilesResponse =
+        allFiles.stream()
+            .map(file -> modelMapper.map(file, FileResponse.class))
+            .collect(Collectors.toList());
+    FolderFileResponse folderFileResponse =
+        new FolderFileResponse(allFoldersResponse, allFilesResponse);
+    return folderFileResponse;
   }
 }

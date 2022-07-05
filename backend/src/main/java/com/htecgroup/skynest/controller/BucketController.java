@@ -166,7 +166,7 @@ public class BucketController {
       })
   @GetMapping("/{uuid}")
   public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID uuid) {
-    BucketResponse bucketResponse = bucketService.getBucket(uuid);
+    BucketResponse bucketResponse = bucketService.getBucketDetails(uuid);
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
     return bucketResponseEntity;
