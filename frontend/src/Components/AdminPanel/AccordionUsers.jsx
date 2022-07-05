@@ -1,11 +1,9 @@
-import React from "react";
-import { useState } from "react";
+import React,{ useState ,useContext} from "react";
 import { Accordion } from "react-bootstrap";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as VscIcons from "react-icons/vsc";
 import { disableUser, enableUser, promoteUser, demoteUser } from "../ReusableComponents/ReusableFunctions";
-import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
 
 const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
@@ -49,6 +47,10 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
          <Accordion.Body>
             {!elem.verified && <p className="text-danger">Unverified</p>}
             {!elem.enabled && <p className="text-muted">Disabled</p>}
+            <p>
+               <span className="font-weight-bold">Company: </span>
+               {elem.company}
+            </p>
             <p>
                <span className="font-weight-bold">Email: </span>
                {elem.email}
