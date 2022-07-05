@@ -89,7 +89,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                            Demote
                         </button>
                      )}
-                     {elem.companyName === "" && (
+                     {elem.companyName === null && (
                         <button
                            onClick={async () => {
                               await addToCompany(accessToken, elem.id, setErrorMsg, setWarningMsg);
