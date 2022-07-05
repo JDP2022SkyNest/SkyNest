@@ -110,12 +110,15 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserResponse> listAllUsers() {
+    UUID myCompanyId = currentUserService.getLoggedUser().getCompany().getId();
     List<UserEntity> entityList = userRepository.findAll();
     return entityList.stream()
+        .filter(e -> e.getCompany() == null || e.getCompany().getId().equals(myCompanyId))
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
   }
 
+  @Override
   public void authorizeAccessForChangePassword(UUID uuid) {
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UUID loggedUserUuid = loggedUserDto.getUuid();
