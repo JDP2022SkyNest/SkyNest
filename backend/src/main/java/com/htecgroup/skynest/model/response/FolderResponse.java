@@ -11,7 +11,7 @@ public class FolderResponse {
   private String modifiedOn;
   private String deletedOn;
   private String name;
-  private String createdById;
-  private String parentFolderId;
-  private String bucketId;
+  private UUID createdById;
+  private UUID parentFolderId;
+  private UUID bucketId;
 }
