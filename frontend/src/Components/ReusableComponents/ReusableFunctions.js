@@ -218,7 +218,9 @@ export const editCompany = async (accessToken, payload, error, success, func) =>
       );
       success("Company Info Changed");
    } catch (err) {
-      error(err.response.data.messages);
+      const message = err.response.data.messages[0];
+      const finalMsg = message[0].toUpperCase() + message.slice(1);
+      error(finalMsg);
       console.error(err);
    }
    func();

@@ -143,7 +143,7 @@ const UserInfo = () => {
                            </div>
                         </div>
                      </div>
-                     <div className="col-lg-8 mb-5">
+                     <div className="col-lg-8 mb-3">
                         <div className="card mb-3 shadow">
                            <div className="card-body">
                               <UserCardDetails info="Name:" result={userData?.name} edit={edit} func={nameChange} />
