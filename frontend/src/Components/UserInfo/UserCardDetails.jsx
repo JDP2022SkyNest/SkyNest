@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "text", placeholder = false }) => {
+const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "text", placeholder = "" }) => {
    const [change, setChange] = useState(false);
 
    return (

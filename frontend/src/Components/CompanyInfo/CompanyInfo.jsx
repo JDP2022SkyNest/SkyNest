@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import NavbarPanel from "../ReusableComponents/NavbarPanel";
 import ROUTES from "../Routes/ROUTES";
@@ -8,6 +8,8 @@ import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import "./CompanyInfo.css";
 import CompanyDetails from "./CompanyDetails";
+import GlobalContext from "../context/GlobalContext";
+import ROLE from "../Roles/Roles";
 
 const CompanyInfo = () => {
    const [companyData, setCompanyData] = useState();
@@ -17,6 +19,8 @@ const CompanyInfo = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const accessToken = localStorage.accessToken;
+
+   const { userRole } = useContext(GlobalContext);
 
    const getCompanyData = async () => {
       setLoading(true);
@@ -65,26 +69,28 @@ const CompanyInfo = () => {
                            <CompanyDetails companyData={companyData} edit={edit} clonedData={clonedData} setClonedData={setClonedData} />
                         </div>
                      </div>
-                     {edit ? (
-                        <div className="d-flex flex-row-reverse">
-                           <div className="mb-2 mr-1">
-                              <button onClick={onCompanyEdit} className="btn btn-secondary">
-                                 Update
+                     <div className={`${userRole !== ROLE.ADMIN && "d-none"}`}>
+                        {edit ? (
+                           <div className="d-flex flex-row-reverse">
+                              <div className="mb-2 mr-1">
+                                 <button onClick={onCompanyEdit} className="btn btn-secondary">
+                                    Update
+                                 </button>
+                              </div>
+                              <div className="mb-2 mr-1">
+                                 <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
+                                    Cancel
+                                 </button>
+                              </div>
+                           </div>
+                        ) : (
+                           <div className="d-flex flex-row-reverse mb-2 mr-1">
+                              <button onClick={() => setEdit(!edit)} className="btn btn-secondary">
+                                 Edit
                               </button>
                            </div>
-                           <div className="mb-2 mr-1">
-                              <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
-                                 Cancel
-                              </button>
-                           </div>
-                        </div>
-                     ) : (
-                        <div className="d-flex flex-row-reverse mb-2 mr-1">
-                           <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
-                              Edit
-                           </button>
-                        </div>
-                     )}
+                        )}
+                     </div>
                   </div>
                )}
             </div>
