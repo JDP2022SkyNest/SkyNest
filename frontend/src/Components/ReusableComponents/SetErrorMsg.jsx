@@ -6,7 +6,7 @@ import { alertTimeout } from "./ReusableFunctions";
 const SetErrorMsg = ({
    errorMsg,
    setErrorMsg,
-   customStyle = "alert alert-danger text-danger text-center col-12 col-sm-6 offset-0 offset-sm-3 mt-3 mb-0",
+   customStyle = "alert alert-danger text-danger text-center col-sm-6 offset-0 offset-sm-3 mt-3 mb-0",
 }) => {
    useEffect(() => {
       if (errorMsg !== "") {
@@ -16,7 +16,7 @@ const SetErrorMsg = ({
    }, [errorMsg]);
 
    return (
-      <p className={errorMsg ? customStyle : "d-none"}>
+      <p className={errorMsg ? `${customStyle} col-12` : "d-none"}>
          {errorMsg}
          <TiCions.TiDeleteOutline
             onClick={() => {
