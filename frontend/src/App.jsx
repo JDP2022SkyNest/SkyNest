@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./Components/HomePage/HomePage";
 import Login from "./Components/Login/Login";
@@ -12,17 +12,19 @@ import AdminPanel from "./Components/AdminPanel/AdminPanel";
 import ResendEmail from "./Components/ResendEmail/ResendEmail";
 import NoToken from "./Components/Routes/NoToken";
 import AdminRoute from "./Components/Routes/AdminRoute";
-import { getUserData } from "./Components/ReusableComponents/ReusableFunctions";
+import { getCompanyName, getUserData } from "./Components/ReusableComponents/ReusableFunctions";
 import UserInfo from "./Components/UserInfo/UserInfo";
 import CompanyInfo from "./Components/CompanyInfo/CompanyInfo";
+import { useContext } from "react";
+import GlobalContext from "./Components/context/GlobalContext";
 
 const App = () => {
-   const [accessToken, setAccessToken] = useState(localStorage.accessToken);
-   const [userRole, setUserRole] = useState("");
-   const [userID, setUserID] = useState("");
+   const { setUserCompany, accessToken, setUserID, setUserRole } = useContext(GlobalContext);
 
    useEffect(() => {
       getUserData(accessToken, setUserRole, setUserID);
+      getCompanyName(accessToken, setUserCompany);
+      // eslint-disable-next-line
    }, [accessToken]);
 
    return (
@@ -31,8 +33,8 @@ const App = () => {
             path="/"
             exact
             element={
-               <ProtectedRoute accessToken={accessToken}>
-                  <HomePage setAccessToken={setAccessToken} userRole={userRole} userID={userID} />
+               <ProtectedRoute>
+                  <HomePage />
                </ProtectedRoute>
             }
          />
@@ -40,8 +42,8 @@ const App = () => {
             path="login"
             exact
             element={
-               <NoToken accessToken={accessToken}>
-                  <Login setAccessToken={setAccessToken} />
+               <NoToken>
+                  <Login />
                </NoToken>
             }
          />
@@ -49,7 +51,7 @@ const App = () => {
             path="signup"
             exact
             element={
-               <NoToken accessToken={accessToken}>
+               <NoToken>
                   <SignUp />
                </NoToken>
             }
@@ -58,7 +60,7 @@ const App = () => {
             path="forgot-password"
             exact
             element={
-               <NoToken accessToken={accessToken}>
+               <NoToken>
                   <ForgotPassword />
                </NoToken>
             }
@@ -67,7 +69,7 @@ const App = () => {
             path="confirm-password"
             exact
             element={
-               <NoToken accessToken={accessToken}>
+               <NoToken>
                   <ConfirmPassword />
                </NoToken>
             }
@@ -76,7 +78,7 @@ const App = () => {
             path="resend-email"
             exact
             element={
-               <NoToken accessToken={accessToken}>
+               <NoToken>
                   <ResendEmail />
                </NoToken>
             }
@@ -85,8 +87,8 @@ const App = () => {
             path="admin-panel"
             exact
             element={
-               <AdminRoute userRole={userRole} accessToken={accessToken}>
-                  <AdminPanel userID={userID} />
+               <AdminRoute>
+                  <AdminPanel />
                </AdminRoute>
             }
          />
@@ -94,8 +96,8 @@ const App = () => {
             path="user-info"
             exact
             element={
-               <ProtectedRoute accessToken={accessToken}>
-                  <UserInfo userID={userID} accessToken={accessToken} setAccessToken={setAccessToken} />
+               <ProtectedRoute>
+                  <UserInfo />
                </ProtectedRoute>
             }
          />
@@ -103,15 +105,15 @@ const App = () => {
             path="company-info"
             exact
             element={
-               <ProtectedRoute accessToken={accessToken}>
+               <ProtectedRoute>
                   <CompanyInfo />
                </ProtectedRoute>
             }
          />
-         <Route path="user-info" exact element={<UserInfo userID={userID} />} />
+         <Route path="user-info" exact element={<UserInfo />} />
 
          {/* Other Paths */}
-         <Route path="*" element={<RedirectRoute accessToken={accessToken} />} />
+         <Route path="*" element={<RedirectRoute />} />
       </Routes>
    );
 };

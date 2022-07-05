@@ -192,6 +192,17 @@ export const getCompany = async (accessToken, stateToChange, error) => {
    }
 };
 
+export const getCompanyName = async (accessToken, stateToChange) => {
+   try {
+      let response = await AxiosInstance.get("/companies", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data.name);
+   } catch (err) {
+      console.error(err);
+   }
+};
+
 export const editCompany = async (accessToken, payload, error, success, func) => {
    try {
       await AxiosInstance.put(
@@ -211,6 +222,38 @@ export const editCompany = async (accessToken, payload, error, success, func) =>
       console.error(err);
    }
    func();
+};
+
+export const addToCompany = async (accessToken, id, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/users/${id}/company/add`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("User added to your company");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.error(err);
+   }
+};
+
+export const removeFromCompany = async (accessToken, id, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/users/${id}/company/remove`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("User removed from your company");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.error(err);
+   }
 };
 
 export const openFullscreen = () => {

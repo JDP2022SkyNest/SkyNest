@@ -1,15 +1,14 @@
 package com.htecgroup.skynest.model.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
-public enum ActionType {
-  CREATE("create"),
+@Getter
+public enum AccessType {
   VIEW("view"),
   DOWNLOAD("download"),
   EDIT("edit"),
-  MOVE("move"),
-  DELETE("delete"),
-  RESTORE("restore");
-  public final String text;
+  OWNER("owner");
+  final String text;
 }
