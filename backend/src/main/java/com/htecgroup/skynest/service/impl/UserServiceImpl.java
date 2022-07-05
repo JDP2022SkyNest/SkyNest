@@ -110,9 +110,14 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserResponse> listAllUsers() {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    if (loggedUserDto.getCompany() == null) {
+      return userRepository.findByCompanyIsNull().stream()
+          .map(e -> modelMapper.map(e, UserResponse.class))
+          .collect(Collectors.toList());
+    }
     UUID myCompanyId = currentUserService.getLoggedUser().getCompany().getId();
-    List<UserEntity> entityList = userRepository.findAll();
-    return entityList.stream()
+    return userRepository.findAll().stream()
         .filter(e -> e.getCompany() == null || e.getCompany().getId().equals(myCompanyId))
         .map(e -> modelMapper.map(e, UserResponse.class))
         .collect(Collectors.toList());
