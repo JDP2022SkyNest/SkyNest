@@ -144,8 +144,8 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public StorageContentResponse getBucketContent(UUID bucketId) {
 
-    List<FolderResponse> allFoldersResponse = folderService.getAllFoldersFromRoot(bucketId);
-    List<FileResponse> allFilesResponse = fileService.getAllFilesFromRoot(bucketId);
+    List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
+    List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(allFoldersResponse, allFilesResponse);
     return storageContentResponse;

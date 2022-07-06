@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class StorageContentResponse {
 
-  private List<FolderResponse> folderResponseList;
-  private List<FileResponse> fileResponseList;
+  private List<FolderResponse> folders;
+  private List<FileResponse> files;
 }

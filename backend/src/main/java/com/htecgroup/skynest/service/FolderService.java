@@ -9,7 +9,7 @@ public interface FolderService {
 
   FolderResponse getFolderDetails(UUID uuid);
 
-  List<FolderResponse> getAllFoldersFromRoot(UUID bucketId);
+  List<FolderResponse> getAllRootFolders(UUID bucketId);
 
   List<FolderResponse> getAllFoldersFromParent(UUID parentFolderId);
 }
