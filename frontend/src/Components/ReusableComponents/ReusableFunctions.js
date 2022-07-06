@@ -180,15 +180,17 @@ export const demoteUser = async (accessToken, id, error, success) => {
    }
 };
 
-export const getCompany = async (accessToken, stateToChange, error) => {
+export const getCompany = async (accessToken, stateToChange, error, info = true) => {
    try {
       let response = await AxiosInstance.get("/companies", {
          headers: { Authorization: accessToken },
       });
       stateToChange(response.data);
    } catch (err) {
-      error(err.response.data.messages);
-      console.error(err);
+      if (info) {
+         error(err.response.data.messages);
+         console.error(err);
+      }
    }
 };
 

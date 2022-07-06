@@ -59,7 +59,7 @@ const UserInfo = () => {
          if (userID) {
             setLoading(true);
             await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
-            await getCompany(accessToken, setCompanyData, setErrorMsg);
+            await getCompany(accessToken, setCompanyData, setErrorMsg, false);
             setLoading(false);
          }
       };
@@ -136,10 +136,12 @@ const UserInfo = () => {
                         </div>
                         <div className="card mb-4 mb-lg-0 shadow">
                            <div className="card-body p-0">
-                              {companyData && (
+                              {companyData ? (
                                  <ul className="list-group list-group-flush rounded-3">
                                     <UserCompanyAccordion companyData={companyData} />
                                  </ul>
+                              ) : (
+                                 <div className="m-3 text-center text-muted">User not part of any company</div>
                               )}
                            </div>
                         </div>
