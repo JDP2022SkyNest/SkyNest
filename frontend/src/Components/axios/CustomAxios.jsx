@@ -19,9 +19,7 @@ CustomAxios.interceptors.response.use(
       const status = err.response ? err.response.status : "null";
       if (status === 401) {
          axios
-            .get("http://localhost:8080/token/refresh", {
-               "refresh-token": localStorage.getItem("refreshToken"),
-            })
+            .get("http://localhost:8080/token/refresh", { params: localStorage.getItem("refreshToken") })
             .then((response) => {
                localStorage.setItem("refresh-token", response.data[`refresh-token`]);
                localStorage.setItem("token", response.data.accessToken);
