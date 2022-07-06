@@ -4,8 +4,8 @@ import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 
-import java.util.List;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 public interface FolderService {
@@ -16,5 +16,5 @@ public interface FolderService {
 
   List<FolderResponse> getAllRootFolders(UUID bucketId);
 
-  List<FolderResponse> getAllFoldersFromParent(UUID parentFolderId);
+  List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId);
 }

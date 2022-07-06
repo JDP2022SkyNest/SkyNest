@@ -111,7 +111,7 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
-  public List<FileResponse> getAllFilesFromParent(UUID parentFolderId) {
+  public List<FileResponse> getAllFilesWithParent(UUID parentFolderId) {
     List<FileMetadataEntity> allFiles =
         fileMetadataRepository.findAllByParentFolderId(parentFolderId);
     return getFiles(allFiles);

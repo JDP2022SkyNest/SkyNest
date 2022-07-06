@@ -18,8 +18,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -85,7 +85,7 @@ public class FolderServiceImpl implements FolderService {
   }
 
   @Override
-  public List<FolderResponse> getAllFoldersFromParent(UUID parentFolderId) {
+  public List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId) {
     List<FolderEntity> allFolders = folderRepository.findAllByParentFolderId(parentFolderId);
     return getFolders(allFolders);
   }

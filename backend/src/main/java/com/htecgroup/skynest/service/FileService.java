@@ -17,5 +17,5 @@ public interface FileService {
 
   List<FileResponse> getAllRootFiles(UUID bucketId);
 
-  List<FileResponse> getAllFilesFromParent(UUID parentFolderId);
+  List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
 }
