@@ -13,7 +13,7 @@ public final class FolderEntityUtil {
   protected static BucketEntity bucketEntityUtil = BucketEntityUtil.getPrivateBucket();
 
   public static FolderEntity getFolderWithoutParent() {
-    return FolderEntity.builder().parentFolder(null).bucket(bucketEntityUtil).build();
+    return FolderEntity.builder().bucket(bucketEntityUtil).build();
   }
 
   public static FolderEntity getFolderWithParent() {

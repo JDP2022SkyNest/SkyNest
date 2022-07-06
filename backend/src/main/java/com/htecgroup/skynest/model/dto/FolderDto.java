@@ -31,4 +31,9 @@ public class FolderDto {
   public FolderDto deleteFolder() {
     return this.withDeletedOn(LocalDateTime.now());
   }
+
+  public boolean isDeleted() {
+    if (deletedOn != null) return true;
+    else return false;
+  }
 }

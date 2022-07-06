@@ -28,7 +28,7 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public void removeFolder(UUID uuid) {
     FolderDto folderDto = modelMapper.map(folderRepository.findFolderById(uuid), FolderDto.class);
-    if (folderDto.getDeletedOn() != null) {
+    if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
     FolderDto deletedFolderDto = folderDto.deleteFolder();
