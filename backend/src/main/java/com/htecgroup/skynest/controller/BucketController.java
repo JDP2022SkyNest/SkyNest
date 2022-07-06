@@ -4,7 +4,7 @@ import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
-import com.htecgroup.skynest.model.response.FolderFileResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.service.BucketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -435,10 +435,10 @@ public class BucketController {
   }
 
   @GetMapping("/{uuid}")
-  public ResponseEntity<FolderFileResponse> getBucketContent(@PathVariable UUID uuid) {
-    FolderFileResponse folderFileResponse = bucketService.getBucketContent(uuid);
-    ResponseEntity<FolderFileResponse> folderFileResponseEntity =
-        new ResponseEntity<>(folderFileResponse, HttpStatus.OK);
+  public ResponseEntity<StorageContentResponse> getBucketContent(@PathVariable UUID uuid) {
+    StorageContentResponse storageContentResponse = bucketService.getBucketContent(uuid);
+    ResponseEntity<StorageContentResponse> folderFileResponseEntity =
+        new ResponseEntity<>(storageContentResponse, HttpStatus.OK);
     return folderFileResponseEntity;
   }
 }

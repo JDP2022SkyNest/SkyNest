@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,5 +26,24 @@ public class FolderServiceImpl implements FolderService {
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
     FolderResponse folderResponse = modelMapper.map(folderEntity, FolderResponse.class);
     return folderResponse;
+  }
+
+  @Override
+  public List<FolderResponse> getAllFoldersFromRoot(UUID bucketId) {
+    List<FolderEntity> allFolders =
+        folderRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
+    return getFolderResponses(allFolders);
+  }
+
+  @Override
+  public List<FolderResponse> getAllFoldersFromParent(UUID parentFolderId) {
+    List<FolderEntity> allFolders = folderRepository.findAllByParentFolderId(parentFolderId);
+    return getFolderResponses(allFolders);
+  }
+
+  private List<FolderResponse> getFolderResponses(List<FolderEntity> allFolders) {
+    return allFolders.stream()
+        .map(folder -> modelMapper.map(folder, FolderResponse.class))
+        .collect(Collectors.toList());
   }
 }

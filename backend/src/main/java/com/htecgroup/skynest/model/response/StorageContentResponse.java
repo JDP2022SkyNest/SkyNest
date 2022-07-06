@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class FolderFileResponse {
+public class StorageContentResponse {
 
   private List<FolderResponse> folderResponseList;
   private List<FileResponse> fileResponseList;

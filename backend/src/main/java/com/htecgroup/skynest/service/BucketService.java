@@ -5,7 +5,7 @@ import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
-import com.htecgroup.skynest.model.response.FolderFileResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,5 +28,5 @@ public interface BucketService {
   BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
 
-  FolderFileResponse getBucketContent(UUID bucketId);
+  StorageContentResponse getBucketContent(UUID bucketId);
 }

@@ -6,20 +6,19 @@ import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.model.entity.ActionType;
+import com.htecgroup.skynest.model.entity.BucketEntity;
+import com.htecgroup.skynest.model.entity.CompanyEntity;
+import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
-import com.htecgroup.skynest.model.response.FolderFileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
-import com.htecgroup.skynest.repository.FileMetadataRepository;
-import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.BucketService;
-import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,8 @@ public class BucketServiceImpl implements BucketService {
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
   private UserRepository userRepository;
-  private FolderRepository folderRepository;
-  private FileMetadataRepository fileMetadataRepository;
+  private FolderService folderService;
+  private FileService fileService;
 
   private ActionService actionService;
 
@@ -143,22 +142,12 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public FolderFileResponse getBucketContent(UUID bucketId) {
+  public StorageContentResponse getBucketContent(UUID bucketId) {
 
-    List<FolderEntity> allFolders =
-        folderRepository.findAllByBucketIdAndParentFolderId(bucketId, null);
-    List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByBucketIdAndParentFolderId(bucketId, null);
-    List<FolderResponse> allFoldersResponse =
-        allFolders.stream()
-            .map(folder -> modelMapper.map(folder, FolderResponse.class))
-            .collect(Collectors.toList());
-    List<FileResponse> allFilesResponse =
-        allFiles.stream()
-            .map(file -> modelMapper.map(file, FileResponse.class))
-            .collect(Collectors.toList());
-    FolderFileResponse folderFileResponse =
-        new FolderFileResponse(allFoldersResponse, allFilesResponse);
-    return folderFileResponse;
+    List<FolderResponse> allFoldersResponse = folderService.getAllFoldersFromRoot(bucketId);
+    List<FileResponse> allFilesResponse = fileService.getAllFilesFromRoot(bucketId);
+    StorageContentResponse storageContentResponse =
+        new StorageContentResponse(allFoldersResponse, allFilesResponse);
+    return storageContentResponse;
   }
 }

@@ -33,7 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,6 +101,26 @@ public class FileServiceImpl implements FileService {
 
     return new FileDownloadResponse(
         fileMetadataEntity.getName(), fileMetadataEntity.getType(), fileContents);
+  }
+
+  @Override
+  public List<FileResponse> getAllFilesFromRoot(UUID bucketId) {
+    List<FileMetadataEntity> allFiles =
+        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
+    return getFileResponses(allFiles);
+  }
+
+  @Override
+  public List<FileResponse> getAllFilesFromParent(UUID parentFolderId) {
+    List<FileMetadataEntity> allFiles =
+        fileMetadataRepository.findAllByParentFolderId(parentFolderId);
+    return getFileResponses(allFiles);
+  }
+
+  private List<FileResponse> getFileResponses(List<FileMetadataEntity> allFiles) {
+    return allFiles.stream()
+        .map(folder -> modelMapper.map(folder, FileResponse.class))
+        .collect(Collectors.toList());
   }
 
   private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
