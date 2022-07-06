@@ -91,11 +91,12 @@ const UserInfo = () => {
                      <div className="col-lg-4">
                         <div className="card mb-4">
                            <div className="card-body text-center shadow">
-                              <img
-                                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                                 alt="avatar"
-                                 className="rounded-circle img-fluid avatar-icon-width"
-                              />
+                              <div className="rounded-circle img-fluid avatar-icon-width border border-mutted">
+                                 <div className="text-dark">
+                                    {userData.name[0]}
+                                    {userData.surname[0]}
+                                 </div>
+                              </div>
                               <h5 className="my-3">
                                  {userData?.name} {userData?.surname}
                               </h5>
