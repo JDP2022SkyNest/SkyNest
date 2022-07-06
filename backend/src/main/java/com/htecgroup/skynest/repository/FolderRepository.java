@@ -13,4 +13,6 @@ public interface FolderRepository extends JpaRepository<FolderEntity, UUID> {
   List<FolderEntity> findAllByBucketIdAndParentFolderIsNull(UUID bucketId);
 
   List<FolderEntity> findAllByParentFolderId(UUID parentFolderId);
+
+  FolderEntity findFolderById(UUID uuid);
 }

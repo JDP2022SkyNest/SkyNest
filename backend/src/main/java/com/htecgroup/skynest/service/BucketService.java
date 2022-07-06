@@ -29,4 +29,6 @@ public interface BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
 
   StorageContentResponse getBucketContent(UUID bucketId);
+
+  BucketDto findBucketByName(String name);
 }
