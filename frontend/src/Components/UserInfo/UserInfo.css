@@ -1,5 +1,16 @@
 .avatar-icon-width {
    width: 150px;
+   height: 150px;
+   position: relative;
+   left: 50%;
+   transform: translate(-50%);
+   display: grid;
+   place-items: center;
+   background-color: var(--latte);
+}
+
+.avatar-icon-width div {
+   font-size: 60px;
 }
 
 .user-page-body {

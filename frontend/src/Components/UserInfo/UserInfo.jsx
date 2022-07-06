@@ -59,7 +59,7 @@ const UserInfo = () => {
          if (userID) {
             setLoading(true);
             await getPersonalData(userID, accessToken, setUserData, setErrorMsg);
-            await getCompany(accessToken, setCompanyData, setErrorMsg);
+            await getCompany(accessToken, setCompanyData, setErrorMsg, false);
             setLoading(false);
          }
       };
@@ -91,11 +91,12 @@ const UserInfo = () => {
                      <div className="col-lg-4">
                         <div className="card mb-4">
                            <div className="card-body text-center shadow">
-                              <img
-                                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                                 alt="avatar"
-                                 className="rounded-circle img-fluid avatar-icon-width"
-                              />
+                              <div className="rounded-circle img-fluid avatar-icon-width border border-mutted">
+                                 <div className="text-dark">
+                                    {userData.name[0]}
+                                    {userData.surname[0]}
+                                 </div>
+                              </div>
                               <h5 className="my-3">
                                  {userData?.name} {userData?.surname}
                               </h5>
@@ -135,10 +136,12 @@ const UserInfo = () => {
                         </div>
                         <div className="card mb-4 mb-lg-0 shadow">
                            <div className="card-body p-0">
-                              {companyData && (
+                              {companyData ? (
                                  <ul className="list-group list-group-flush rounded-3">
                                     <UserCompanyAccordion companyData={companyData} />
                                  </ul>
+                              ) : (
+                                 <div className="m-3 text-center text-muted">User not part of any company</div>
                               )}
                            </div>
                         </div>
