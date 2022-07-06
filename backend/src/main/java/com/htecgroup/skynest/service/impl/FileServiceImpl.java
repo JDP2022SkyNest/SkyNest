@@ -72,6 +72,7 @@ public class FileServiceImpl implements FileService {
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
     } catch (IOException e) {
+      log.error(e);
       throw new FileIOException();
     }
   }
@@ -144,6 +145,7 @@ public class FileServiceImpl implements FileService {
       Object objectId = operations.store(inputStream, name, type);
       return objectId.toString();
     } catch (MongoException e) {
+      log.error(e);
       throw new FileIOException();
     }
   }
@@ -219,6 +221,7 @@ public class FileServiceImpl implements FileService {
       InputStream inputStream = operations.getResource(gridFSFile).getInputStream();
       return new InputStreamResource(inputStream);
     } catch (IOException | MongoException e) {
+      log.error(e);
       throw new FileIOException();
     }
   }
