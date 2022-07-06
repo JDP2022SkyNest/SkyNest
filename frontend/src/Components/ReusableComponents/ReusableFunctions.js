@@ -56,6 +56,17 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
    }
 };
 
+export const updateToken = async () => {
+   try {
+      let response = await AxiosInstance.get("/token/refresh", { params: localStorage.getItem("refreshToken") });
+      console.log(response);
+   } catch (err) {
+      if (err.response.status) {
+         console.log("error");
+      }
+   }
+};
+
 export const editUserData = async (accessToken, id, payload, success, error, func) => {
    try {
       await AxiosInstance.put(
