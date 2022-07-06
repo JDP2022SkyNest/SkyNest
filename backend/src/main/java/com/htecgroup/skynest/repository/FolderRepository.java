@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface FolderRepository extends JpaRepository<FolderEntity, UUID> {}
+public interface FolderRepository extends JpaRepository<FolderEntity, UUID> {
+
+  FolderEntity findFolderById(UUID uuid);
+}

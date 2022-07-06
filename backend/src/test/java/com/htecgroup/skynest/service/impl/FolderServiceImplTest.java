@@ -2,12 +2,13 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
+import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.utils.FolderEntityUtil;
+import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,38 @@ class FolderServiceImplTest {
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
+
+  @Test
+  void createFolder_without_parent() {
+    FolderEntity exceptedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
+    when(userRepository.getById(any())).thenReturn(UserEntityUtil.getVerified());
+    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    doReturn(FolderEntityUtil.getFolderWithoutParent())
+        .when(folderRepository)
+        .findFolderById(any());
+    when(folderRepository.save(any())).thenReturn(exceptedFolderEntity);
+
+    FolderCreateRequest folderCreateRequest = FolderCreateRequestUtil.get();
+    FolderResponse actualFolderResponse = folderService.createFolder(folderCreateRequest);
+    this.assertFolderEntityAndFolderResponse(exceptedFolderEntity, actualFolderResponse);
+  }
+
+  @Test
+  void createFolder_with_parent() {
+    FolderEntity exceptedFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
+    when(userRepository.getById(any())).thenReturn(UserEntityUtil.getVerified());
+    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    doReturn(FolderEntityUtil.getFolderWithParent()).when(folderRepository).findFolderById(any());
+    when(folderRepository.save(any())).thenReturn(exceptedFolderEntity);
+
+    FolderCreateRequest folderCreateRequest = FolderCreateRequestUtil.get();
+    FolderResponse actualFolderResponse = folderService.createFolder(folderCreateRequest);
+    this.assertFolderEntityAndFolderResponse(exceptedFolderEntity, actualFolderResponse);
+    Assertions.assertEquals(
+        exceptedFolderEntity.getParentFolder().getId(), actualFolderResponse.getParentFolderId());
+  }
 
   @Test
   void when_getFolderDetails_ShouldThrowFolderNotFound() {
