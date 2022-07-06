@@ -34,7 +34,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
          <div className="row">
             <div className="col-sm-4 p-2">Address:</div>
             {!edit ? (
-               <div className="col-sm-8 p-2 text-mutted">{companyData.name}</div>
+               <div className="col-sm-8 p-2 text-mutted">{companyData.address}</div>
             ) : (
                <div className="col-sm-8">
                   <input type="text" onChange={(e) => onAddressChange(e)} value={clonedData.address} className="form-control border-info" />
