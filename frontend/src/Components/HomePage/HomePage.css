@@ -20,3 +20,10 @@
   background-color: var(--latte);
   height: 100vh;
 }
+
+.latte-background {
+  padding: 10px 15px;
+  background-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}

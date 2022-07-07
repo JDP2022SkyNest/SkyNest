@@ -13,6 +13,7 @@ import * as RiCions from "react-icons/ri";
 import "./HomePage.css";
 import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
+import AddFolderModal from "./AddFolderModal";
 
 const HomePage = () => {
    const navigate = useNavigate();
@@ -44,8 +45,11 @@ const HomePage = () => {
             </Container>
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
-         <div className="container mt-5">
-            <div></div>
+         <div className="container">
+            <div className="px-5 py-2 my-3 rounded">
+               <AddFolderModal />
+            </div>
+            <div className="p-1 bg-white rounded">DATA</div>
          </div>
          <Footer />
       </div>
