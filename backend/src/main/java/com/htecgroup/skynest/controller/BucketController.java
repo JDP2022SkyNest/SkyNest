@@ -485,7 +485,7 @@ public class BucketController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping
+  @GetMapping("/deleted")
   public List<BucketResponse> getAllDeletedBuckets() {
     List<BucketResponse> listOfBuckets = bucketService.listAllDeletedBuckets();
     return listOfBuckets;

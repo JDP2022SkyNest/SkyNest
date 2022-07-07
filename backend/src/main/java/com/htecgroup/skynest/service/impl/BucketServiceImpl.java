@@ -94,7 +94,7 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public List<BucketResponse> listAllBuckets() {
-    List<BucketEntity> entityList = bucketRepository.findAll();
+    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
