@@ -103,7 +103,7 @@ public class BucketController {
     return bucketResponseEntity;
   }
 
-  @Operation(summary = "Get bucket with given uuid")
+  @Operation(summary = "Get bucket details")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -164,9 +164,9 @@ public class BucketController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}")
-  public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID uuid) {
-    BucketResponse bucketResponse = bucketService.getBucket(uuid);
+  @GetMapping("/{bucketId}/info")
+  public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID bucketId) {
+    BucketResponse bucketResponse = bucketService.getBucket(bucketId);
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
     return bucketResponseEntity;
@@ -288,13 +288,13 @@ public class BucketController {
                   })
             })
       })
-  @PutMapping("delete/{uuid}")
-  public ResponseEntity<Boolean> deleteBucket(@PathVariable UUID uuid) {
-    bucketService.deleteBucket(uuid);
+  @PutMapping("/{bucketId}/delete")
+  public ResponseEntity<Boolean> deleteBucket(@PathVariable UUID bucketId) {
+    bucketService.deleteBucket(bucketId);
     return ResponseEntity.ok(true);
   }
 
-  @Operation(summary = "Restore Bucket")
+  @Operation(summary = "Restore bucket")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -352,9 +352,9 @@ public class BucketController {
                   })
             })
       })
-  @PutMapping("/{uuid}/restore")
-  public ResponseEntity<Boolean> restoreBucket(@PathVariable UUID uuid) {
-    bucketService.restoreBucket(uuid);
+  @PutMapping("/{bucketId}/restore")
+  public ResponseEntity<Boolean> restoreBucket(@PathVariable UUID bucketId) {
+    bucketService.restoreBucket(bucketId);
     return ResponseEntity.ok(true);
   }
 
@@ -425,11 +425,11 @@ public class BucketController {
                   })
             })
       })
-  @PutMapping("/{uuid}")
+  @PutMapping("/{bucketId}")
   public ResponseEntity<BucketResponse> editBucket(
-      @Valid @RequestBody BucketEditRequest bucketEditRequest, @PathVariable UUID uuid) {
+      @Valid @RequestBody BucketEditRequest bucketEditRequest, @PathVariable UUID bucketId) {
     ResponseEntity<BucketResponse> bucketResponseEntity =
-        new ResponseEntity<>(bucketService.editBucket(bucketEditRequest, uuid), HttpStatus.OK);
+        new ResponseEntity<>(bucketService.editBucket(bucketEditRequest, bucketId), HttpStatus.OK);
     return bucketResponseEntity;
   }
 }
