@@ -346,7 +346,7 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Restored is already enabled.\"],"
+                            "{\"messages\":[\"Bucket is already restored.\"],"
                                 + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
@@ -419,7 +419,7 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Bucket is already disabled.\"],"
+                            "{\"messages\":[\"Bucket is already deleted.\"],"
                                 + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
