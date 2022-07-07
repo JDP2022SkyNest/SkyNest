@@ -1,5 +1,16 @@
 .avatar-icon-width {
    width: 150px;
+   height: 150px;
+   position: relative;
+   left: 50%;
+   transform: translate(-50%);
+   display: grid;
+   place-items: center;
+   background-color: var(--latte);
+}
+
+.avatar-icon-width div {
+   font-size: 60px;
 }
 
 .user-page-body {
@@ -63,13 +74,6 @@
 .manager-text {
    color: rgb(115, 161, 22);
 }
-.custom-btn {
-   width: 70px;
-   background-color: black;
-   color: white;
-   margin: 0.5rem;
-   padding: 0.2rem;
-   border-radius: 0.5rem;
-}
+
 
 

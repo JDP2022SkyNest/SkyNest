@@ -21,7 +21,7 @@ const UserInfo = () => {
    const [loading, setLoading] = useState(false);
    const [edit, setEdit] = useState(false);
 
-   const {userID,accessToken,setAccessToken} = useContext(GlobalContext)
+   const { userID, accessToken, setAccessToken } = useContext(GlobalContext);
 
    const role = userData?.roleName.slice(5).toUpperCase();
 
@@ -91,29 +91,26 @@ const UserInfo = () => {
                      <div className="col-lg-4">
                         <div className="card mb-4">
                            <div className="card-body text-center shadow">
-                              <img
-                                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                                 alt="avatar"
-                                 className="rounded-circle img-fluid avatar-icon-width"
-                              />
+                              <div className="rounded-circle img-fluid avatar-icon-width border border-mutted">
+                                 <div className="text-dark">
+                                    {userData.name[0]}
+                                    {userData.surname[0]}
+                                 </div>
+                              </div>
                               <h5 className="my-3">
                                  {userData?.name} {userData?.surname}
                               </h5>
                               <p className="text-muted mb-1">
                                  {userData?.positionInCompany === null ? "Position not set" : userData.positionInCompany}
                               </p>
-                              <p className={`${role === "ADMIN" ? "admin-text" : `${role === "WORKER" ? "text-secondary" : "manager-text"}`}`}>
-                                 {role}
-                              </p>
+                              <p className="admin-dark">{role}</p>
                               <div className="d-flex justify-content-center mb-2">
                                  <button
                                     type="button"
                                     onClick={() => {
                                        setEdit(!edit);
                                     }}
-                                    className={`btn ${
-                                       role === "ADMIN" ? "admin-button" : `${role === "WORKER" ? "btn-secondary" : "manager-button"}`
-                                    }`}
+                                    className={edit ? `custom-btn` : "custom-btn-action"}
                                  >
                                     {edit ? "Cancel" : "Edit"}
                                  </button>
@@ -122,11 +119,7 @@ const UserInfo = () => {
                                        onUserLogout(accessToken, setAccessToken);
                                     }}
                                     type="button"
-                                    className={`btn ${
-                                       role === "ADMIN"
-                                          ? "admin-edit-button"
-                                          : `${role === "WORKER" ? "btn-outline-secondary ml-1" : "manager-edit-button"}`
-                                    }`}
+                                    className="custom-btn-action"
                                  >
                                     Logout
                                  </button>
@@ -148,7 +141,7 @@ const UserInfo = () => {
                            <div className="card-body">
                               <UserCardDetails info="Name:" result={userData?.name} edit={edit} func={nameChange} />
                               <UserCardDetails info="Last Name:" result={userData?.surname} edit={edit} func={surnameChange} />
-                              <UserCardDetails info="Email:" result={userData?.email} />
+                              <UserCardDetails info="Email:" result={userData?.email} edit={edit} />
                               <UserCardDetails info="Phone Number:" type="number" result={userData?.phoneNumber} edit={edit} func={phoneChange} />
                               {edit && (
                                  <UserCardDetails
@@ -164,7 +157,7 @@ const UserInfo = () => {
                         </div>
                         {edit && (
                            <div className="d-flex flex-row-reverse mb-2 mr-1">
-                              <button onClick={onUserInfoChanged} className="btn btn-secondary">
+                              <button onClick={onUserInfoChanged} className="custom-btn-action">
                                  Update
                               </button>
                            </div>

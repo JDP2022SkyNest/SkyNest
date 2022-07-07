@@ -14,9 +14,26 @@
   --normal-font-size: 1rem;
   --z-fixed: 100;
 }
-.custom-btn {
-  width: 70px;
+.custom-btn-action {
+  width: 6rem;
+  background-color: var(--mate-black);
+  color: var(--latte);
   margin: 0.5rem;
   padding: 0.2rem;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
 }
+
+.custom-btn {
+  width: 6rem;
+  color: var(--mate-black);
+  background-color: var(--latte);
+  margin: 0.5rem;
+  padding: 0.2rem;
+  border-radius: 0.3rem;
+}
+
+.custom-btn:hover {
+  color: var(--latte);
+  background-color: var(--mate-black);
+}
+

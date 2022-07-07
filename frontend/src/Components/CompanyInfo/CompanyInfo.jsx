@@ -73,19 +73,19 @@ const CompanyInfo = () => {
                         {edit ? (
                            <div className="d-flex flex-row-reverse">
                               <div className="mb-2 mr-1">
-                                 <button onClick={onCompanyEdit} className="btn btn-secondary">
+                                 <button onClick={onCompanyEdit} className="custom-btn-action">
                                     Update
                                  </button>
                               </div>
                               <div className="mb-2 mr-1">
-                                 <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary">
+                                 <button onClick={() => setEdit(!edit)} className="custom-btn">
                                     Cancel
                                  </button>
                               </div>
                            </div>
                         ) : (
                            <div className="d-flex flex-row-reverse mb-2 mr-1">
-                              <button onClick={() => setEdit(!edit)} className="btn btn-secondary">
+                              <button onClick={() => setEdit(!edit)} className="custom-btn-action">
                                  Edit
                               </button>
                            </div>

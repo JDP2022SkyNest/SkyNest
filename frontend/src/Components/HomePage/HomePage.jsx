@@ -29,7 +29,6 @@ const HomePage = () => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="d-none mr-auto d-md-block navbar-brand text-light">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {
