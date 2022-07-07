@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -87,7 +88,7 @@ public class FolderServiceImpl implements FolderService {
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
 
     if (folderEntity.getDeletedOn() != null) {
-      // throw new FolderAlreadyDeletedException();
+      throw new FolderAlreadyDeletedException();
     }
     folderEntity.setName(folderEditRequest.getName().trim());
 

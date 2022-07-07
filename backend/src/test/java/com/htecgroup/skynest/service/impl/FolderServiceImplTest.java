@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
@@ -102,6 +103,20 @@ class FolderServiceImplTest {
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
     verify(folderRepository, times(1)).findById(any());
     verify(folderRepository, times(1)).save(any());
+  }
+
+  @Test
+  void when_edit_deletedFolder_ShouldThrowFolderAlreadyDeleted() {
+    FolderEntity folderEntity = FolderEntityUtil.getDeletedFolder();
+    FolderEditRequest folderEditRequest = FolderEditRequestUtil.get();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    String expectedErrorMessage = FolderAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyDeletedException.class,
+            () -> folderService.editFolder(folderEditRequest, UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(folderRepository, times(1)).findById(any());
   }
 
   private void assertFolderEntityAndFolderResponse(
