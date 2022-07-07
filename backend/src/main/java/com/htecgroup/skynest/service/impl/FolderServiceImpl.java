@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
+import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
@@ -8,9 +9,9 @@ import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.FolderService;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class FolderServiceImpl implements FolderService {
 
   private UserRepository userRepository;
 
-  private BucketService bucketService;
+  private BucketRepository bucketRepository;
 
   @Override
   public FolderResponse createFolder(
@@ -59,7 +60,8 @@ public class FolderServiceImpl implements FolderService {
       UUID parentFolderEntityId) {
     UserEntity currentUser = userRepository.getById(currentUserId);
     BucketEntity bucketEntity =
-        modelMapper.map(bucketService.findBucketById(bucketEntityId), BucketEntity.class);
+        bucketRepository.findById(bucketEntityId).orElseThrow(BucketNotFoundException::new);
+    bucketEntity = modelMapper.map(bucketEntity, BucketEntity.class);
     FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
 
     folderEntity.setParentFolder(parentFolderEntity);
