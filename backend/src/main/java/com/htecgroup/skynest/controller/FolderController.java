@@ -2,7 +2,6 @@ package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
-import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.service.FolderService;
@@ -180,7 +179,7 @@ public class FolderController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = BucketResponse.class),
+                  schema = @Schema(implementation = FolderResponse.class),
                   examples = {
                     @ExampleObject(
                         value =
