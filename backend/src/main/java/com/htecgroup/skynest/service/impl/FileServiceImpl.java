@@ -154,9 +154,9 @@ public class FileServiceImpl implements FileService {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
     UUID bucketCreatorId = bucket.getCreatedBy().getId();
-    UUID fileCreatorId = fileMetadataEntity.getCreatedBy().getId();
+    UUID curentUserId = currentUserService.getLoggedUser().getUuid();
 
-    if (!bucket.getIsPublic() && !bucketCreatorId.equals(fileCreatorId))
+    if (!bucket.getIsPublic() && !bucketCreatorId.equals(curentUserId))
       throw new BucketAccessDeniedException();
   }
 
