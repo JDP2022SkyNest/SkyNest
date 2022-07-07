@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -14,15 +14,33 @@ import "./HomePage.css";
 import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
 import AddFolderModal from "./AddFolderModal";
+import { useEffect } from "react";
+import Folder from "./Profile/Folder";
+import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(false);
+   const [allFolders, setAllFolders] = useState([]);
+   const [errorMsg, setErrorMsg] = useState("");
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };
 
    const { setAccessToken, userRole, userID } = useContext(GlobalContext);
+   const accessToken = localStorage.accessToken;
+
+   useEffect(() => {
+      getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+   }, [accessToken]);
+
+   const allData = allFolders.map((elem, index) => {
+      return (
+         <div key={index} className="data-folder">
+            <Folder elem={elem} />
+         </div>
+      );
+   });
 
    return (
       <div className="home-page-body">
@@ -46,10 +64,11 @@ const HomePage = () => {
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container">
+            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
             <div className="py-2 my-3 rounded">
                <AddFolderModal />
             </div>
-            <div className="p-1 bg-white rounded">DATA</div>
+            <div className="bg-white">{allData}</div>
          </div>
          <Footer />
       </div>

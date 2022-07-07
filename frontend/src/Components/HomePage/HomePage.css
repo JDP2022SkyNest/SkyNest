@@ -19,6 +19,7 @@
 .home-page-body {
   background-color: var(--latte);
   height: 100vh;
+  margin-bottom: 40px;
 }
 
 .latte-background {
@@ -26,4 +27,12 @@
   background-color: white;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.data-folder {
+  display: inline-block;
+  margin: 10px;
+  cursor: pointer;
+  width: 200px;
+  padding: 0;
 }

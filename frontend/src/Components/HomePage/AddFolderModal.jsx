@@ -56,7 +56,7 @@ const AddFolderModal = () => {
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Add Folder
          </span>
 
-         <Modal show={show} onHide={handleClose}>
+         <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
                <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="m-0 w-100 alert alert-danger text-danger text-center mb-3" />
                <SetSuccessMsg
