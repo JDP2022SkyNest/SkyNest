@@ -1,8 +1,9 @@
 package com.htecgroup.skynest.utils;
 
+import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.FolderDto;
+import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,7 +12,9 @@ public class FolderDtoUtil {
   protected static final LocalDateTime currentDateTime = LocalDateTime.now();
   protected static BucketEntity bucketEntityUtil = BucketEntityUtil.getPrivateBucket();
 
-  protected static UserEntity userEntityUtil = UserEntityUtil.getVerified();
+  protected static UserDto userEntityUtil = UserDtoUtil.getVerified();
+
+  protected static BucketDto bucketDtoUtil = BucketDtoUtil.getNotDeletedBucket();
 
   protected static String name = "FolderName";
 
@@ -25,7 +28,7 @@ public class FolderDtoUtil {
             .createdBy(userEntityUtil)
             .name("FolderName")
             .parentFolder(null)
-            .bucket(bucketEntityUtil)
+            .bucket(bucketDtoUtil)
             .build();
     return folderDto;
   }
@@ -39,8 +42,8 @@ public class FolderDtoUtil {
             .deletedOn(null)
             .createdBy(userEntityUtil)
             .name("FolderName")
-            .parentFolder(FolderEntityUtil.getFolderWithoutParent())
-            .bucket(bucketEntityUtil)
+            .parentFolder(getFolderWithoutParent())
+            .bucket(bucketDtoUtil)
             .build();
     return folderDto;
   }
@@ -54,8 +57,8 @@ public class FolderDtoUtil {
             .deletedOn(LocalDateTime.now())
             .createdBy(userEntityUtil)
             .name("FolderName")
-            .parentFolder(FolderEntityUtil.getFolderWithoutParent())
-            .bucket(bucketEntityUtil)
+            .parentFolder(getFolderWithoutParent())
+            .bucket(bucketDtoUtil)
             .build();
     return folderDto;
   }

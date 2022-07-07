@@ -26,4 +26,6 @@ public interface BucketService {
 
   BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
+
+  BucketDto findBucketByName(String name);
 }
