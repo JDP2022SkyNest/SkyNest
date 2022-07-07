@@ -83,6 +83,7 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.VIEW);
 
@@ -94,6 +95,7 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
     Resource fileContents = getFileContents(fileMetadataEntity.getContentId());
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.DOWNLOAD);
@@ -154,9 +156,9 @@ public class FileServiceImpl implements FileService {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
     UUID bucketCreatorId = bucket.getCreatedBy().getId();
-    UUID curentUserId = currentUserService.getLoggedUser().getUuid();
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
 
-    if (!bucket.getIsPublic() && !bucketCreatorId.equals(curentUserId))
+    if (!bucket.getIsPublic() && !currentUserId.equals(bucketCreatorId))
       throw new BucketAccessDeniedException();
   }
 
