@@ -16,7 +16,7 @@ import GlobalContext from "../context/GlobalContext";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(false);
+   const [sidebar, setSidebar] = useState(true);
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };

@@ -63,5 +63,13 @@
 .manager-text {
    color: rgb(115, 161, 22);
 }
+.custom-btn {
+   width: 70px;
+   background-color: black;
+   color: white;
+   margin: 0.5rem;
+   padding: 0.2rem;
+   border-radius: 0.5rem;
+}
 
 
