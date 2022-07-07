@@ -165,9 +165,9 @@ public class BucketController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}/info")
-  public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID uuid) {
-    BucketResponse bucketResponse = bucketService.getBucketDetails(uuid);
+  @GetMapping("/{bucketId}/info")
+  public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID bucketId) {
+    BucketResponse bucketResponse = bucketService.getBucketDetails(bucketId);
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
     return bucketResponseEntity;
