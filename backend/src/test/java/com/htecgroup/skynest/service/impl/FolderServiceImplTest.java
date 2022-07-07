@@ -18,8 +18,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -85,6 +84,22 @@ class FolderServiceImplTest {
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
     verify(folderRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void getAllRootFolders() {
+    List<FolderEntity> expectedFolders =
+        new ArrayList<>(Collections.singleton(FolderEntityUtil.getFolderWithoutParent()));
+    when(folderRepository.findAllByBucketIdAndParentFolderIsNull(any()))
+        .thenReturn(expectedFolders);
+
+    List<FolderResponse> actualFolders =
+        folderService.getAllRootFolders(
+            FolderEntityUtil.getFolderWithoutParent().getBucket().getId());
+
+    Assertions.assertEquals(expectedFolders.size(), actualFolders.size());
+    this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
+    verify(folderRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
   }
 
   private void assertFolderEntityAndFolderResponse(
