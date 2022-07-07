@@ -28,4 +28,6 @@ public interface BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
 
   BucketDto findBucketByName(String name);
+
+  List<BucketResponse> listAllDeletedBuckets();
 }
