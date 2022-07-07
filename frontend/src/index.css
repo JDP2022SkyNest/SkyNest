@@ -32,8 +32,23 @@
   border-radius: 0.3rem;
 }
 
+.custom-btn-you-sure {
+  width: 6rem;
+  color: var(--mate-black);
+  background-color: rgb(221, 164, 164);
+  margin: 0.5rem;
+  padding: 0.2rem;
+  border-radius: 0.3rem;
+}
+
 .custom-btn:hover {
   color: var(--latte);
   background-color: var(--mate-black);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 

@@ -21,14 +21,14 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                <div className="col-sm-8 p-2 text-mutted">{companyData.name}</div>
             ) : (
                <div className="col-sm-8">
-                  <input type="text" onChange={(e) => onNameChange(e)} value={clonedData.name} className="form-control border-info" />
+                  <input type="text" onChange={(e) => onNameChange(e)} value={clonedData.name} className="form-control border-white" />
                </div>
             )}
          </div>
          <hr />
          <div className="row">
             <div className="col-sm-4 p-2">Email:</div>
-            <div className="col-sm-8 p-2 text-mutted">{companyData.email}</div>
+            <div className="col-sm-8 p-2  text-mutted">{companyData.email}</div>
          </div>
          <hr />
          <div className="row">

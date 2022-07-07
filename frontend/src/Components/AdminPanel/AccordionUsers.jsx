@@ -122,7 +122,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                                  setChange(!change);
                               }
                            }}
-                           className="custom-btn"
+                           className={!youSure ? "custom-btn-action" : "custom-btn-you-sure"}
                         >
                            {!youSure ? "Disable" : "You sure?"}
                         </button>
