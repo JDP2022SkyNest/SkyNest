@@ -5,6 +5,8 @@ import com.htecgroup.skynest.model.entity.FolderEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FolderEntityUtil {
 
@@ -14,6 +16,7 @@ public final class FolderEntityUtil {
     FolderEntity folderEntity = new FolderEntity(null, bucketEntityUtil);
     folderEntity.setName("FolderName");
     folderEntity.setCreatedBy(UserEntityUtil.getVerified());
+    folderEntity.setId(UUID.randomUUID());
     return folderEntity;
   }
 

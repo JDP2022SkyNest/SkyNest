@@ -3,9 +3,11 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.utils.*;
@@ -31,6 +33,8 @@ class FolderServiceImplTest {
   @Mock private FolderRepository folderRepository;
   @Mock private BucketService bucketService;
   @Mock private CurrentUserService currentUserService;
+
+  @Mock private ActionService actionService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
 
@@ -83,6 +87,21 @@ class FolderServiceImplTest {
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
     verify(folderRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void editFolder() {
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
+
+    FolderEditRequest folderEditRequest = FolderEditRequestUtil.get();
+    FolderResponse actualFolderResponse =
+        folderService.editFolder(folderEditRequest, expectedFolderEntity.getId());
+
+    this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
+    verify(folderRepository, times(1)).findById(any());
+    verify(folderRepository, times(1)).save(any());
   }
 
   private void assertFolderEntityAndFolderResponse(
