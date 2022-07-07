@@ -41,11 +41,9 @@ public class FolderController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                            "{\"bucketId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"name\": \"Name\","
-                                + "  \"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "  \"description\": \"Description\","
-                                + "  \"size\": \"1000\"}")
+                                + "  \"parentFolderId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\"}")
                   })
             }),
         @ApiResponse(
@@ -59,7 +57,7 @@ public class FolderController {
                     @ExampleObject(
                         value =
                             "{\"messages\":[\"name cannot be null or empty\","
-                                + " \"description cannot be null or empty\"],"
+                                + " \"bucketId cannot be null or empty\"],"
                                 + " \"status\": \"400\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
@@ -137,7 +135,7 @@ public class FolderController {
             }),
         @ApiResponse(
             responseCode = "404",
-            description = "Bucket not found",
+            description = "Folder not found",
             content = {
               @Content(
                   mediaType = "application/json",
