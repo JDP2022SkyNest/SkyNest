@@ -260,6 +260,8 @@ export const removeFromCompany = async (accessToken, id, error, success) => {
    }
 };
 
+export const getAllBuckets = async () => {};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();

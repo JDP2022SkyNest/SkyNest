@@ -18,7 +18,6 @@ const AddFolderModal = () => {
    const accessToken = localStorage.accessToken;
 
    const createNewFolder = async () => {
-      console.log(accessToken);
       try {
          await AxiosInstance.post(
             "/buckets",
@@ -35,8 +34,12 @@ const AddFolderModal = () => {
             setDescription("");
          }, 2000);
       } catch (err) {
-         setErrorMsg("Error while creating a folder");
-         console.log(err);
+         if (err.response.status === 400) {
+            setErrorMsg("Inputs can't be empty");
+         } else {
+            setErrorMsg(err.response.data.messages);
+            console.log(err);
+         }
       }
    };
 
@@ -59,27 +62,27 @@ const AddFolderModal = () => {
                <SetSuccessMsg
                   successMsg={successMsg}
                   setSuccessMsg={setSuccessMsg}
-                  customStyle="m-0 w-100 alert alert-danger text-danger text-center mb-3"
+                  customStyle="m-0 w-100 alert alert-success text-success text-center mb-3"
                />
                <form onSubmit={onFormSubmit}>
                   <fieldset disabled={loading}>
-                     <div class="form-group row">
-                        <label for="nameInp" class="col-sm-3 col-form-label">
+                     <div className="form-group row">
+                        <label htmlFor="nameInp" className="col-sm-3 col-form-label">
                            Name:
                         </label>
-                        <div class="col-sm-9">
-                           <input value={name} onChange={(e) => setName(e.target.value)} class="form-control" id="nameInp" placeholder="Name" />
+                        <div className="col-sm-9">
+                           <input value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="nameInp" placeholder="Name" />
                         </div>
                      </div>
-                     <div class="form-group row">
-                        <label for="descrInp" class="col-sm-3 col-form-label">
+                     <div className="form-group row">
+                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
                            Description:
                         </label>
-                        <div class="col-sm-9">
+                        <div className="col-sm-9">
                            <input
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
-                              class="form-control"
+                              className="form-control"
                               id="descrInp"
                               placeholder="Description"
                            />
