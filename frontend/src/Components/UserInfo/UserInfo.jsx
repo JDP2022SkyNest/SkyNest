@@ -110,7 +110,7 @@ const UserInfo = () => {
                                     onClick={() => {
                                        setEdit(!edit);
                                     }}
-                                    className={edit ? `btn btn-outline-secondary button-width` : "btn btn-secondary button-width"}
+                                    className="btn btn-secondary button-width"
                                  >
                                     {edit ? "Cancel" : "Edit"}
                                  </button>
@@ -119,7 +119,7 @@ const UserInfo = () => {
                                        onUserLogout(accessToken, setAccessToken);
                                     }}
                                     type="button"
-                                    className="btn btn-secondary button-width ml-2"
+                                    className="btn btn-outline-secondary button-width ml-2"
                                  >
                                     Logout
                                  </button>
