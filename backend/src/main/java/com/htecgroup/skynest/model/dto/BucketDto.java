@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.model.dto;
 
 import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class BucketDto {
 
   @With private LocalDateTime deletedOn;
 
-  private UserEntity createdBy;
+  private UserDto createdBy;
 
   private String name;
 

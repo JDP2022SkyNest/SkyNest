@@ -4,6 +4,7 @@ import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.BucketEntity;
@@ -75,6 +76,21 @@ public class FolderServiceImpl implements FolderService {
     folderEntity.setCreatedBy(currentUser);
 
     return folderEntity;
+  }
+
+  @Override
+  public void removeFolder(UUID uuid) {
+    FolderDto folderDto =
+        modelMapper.map(
+            folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
+            FolderDto.class);
+    if (folderDto.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
+    FolderDto deletedFolderDto = folderDto.deleteFolder();
+    FolderEntity folderEntity =
+        folderRepository.save(modelMapper.map(deletedFolderDto, FolderEntity.class));
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.DELETE);
   }
 
   @Override

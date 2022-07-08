@@ -15,9 +15,7 @@ import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
@@ -37,6 +35,31 @@ class FolderServiceImplTest {
   @Mock private ActionService actionService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
+  @Captor private ArgumentCaptor<FolderEntity> captorFolderEntity;
+
+  @Test
+  void when_AlreadyDeletedFolder_deletedFolder_ShouldThrowFolderAlreadyDeleted() {
+    FolderEntity folderEntity = FolderEntityUtil.getDeletedFolder();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    String expectedErrorMessage = FolderAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyDeletedException.class,
+            () -> folderService.removeFolder(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_deleteFolder_ShouldDeleteFolder() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+
+    folderService.removeFolder(UUID.randomUUID());
+    Mockito.verify(folderRepository).save(captorFolderEntity.capture());
+
+    FolderEntity folderEntityVal = captorFolderEntity.getValue();
+    Assertions.assertNotNull(folderEntityVal.getDeletedOn());
+  }
 
   @Test
   void createFolder_without_parent() {

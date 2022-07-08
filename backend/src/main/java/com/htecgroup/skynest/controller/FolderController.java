@@ -27,7 +27,6 @@ import java.util.UUID;
 @Log4j2
 @Tag(name = "Folder API", description = "Folder-related operations")
 public class FolderController {
-
   private FolderService folderService;
 
   @Operation(summary = "Create new folder")
@@ -43,11 +42,9 @@ public class FolderController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"createdById\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                            "{\"bucketId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
                                 + "  \"name\": \"Name\","
-                                + "  \"companyId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "  \"description\": \"Description\","
-                                + "  \"size\": \"1000\"}")
+                                + "  \"parentFolderId\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\"}")
                   })
             }),
         @ApiResponse(
@@ -61,7 +58,7 @@ public class FolderController {
                     @ExampleObject(
                         value =
                             "{\"messages\":[\"name cannot be null or empty\","
-                                + " \"description cannot be null or empty\"],"
+                                + " \"bucketId cannot be null or empty\"],"
                                 + " \"status\": \"400\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
@@ -139,7 +136,7 @@ public class FolderController {
             }),
         @ApiResponse(
             responseCode = "404",
-            description = "Bucket not found",
+            description = "Folder not found",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -168,6 +165,70 @@ public class FolderController {
     ResponseEntity<FolderResponse> folderResponseEntity =
         new ResponseEntity<>(folderResponse, HttpStatus.OK);
     return folderResponseEntity;
+  }
+
+  @Operation(summary = "Remove Folder")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Folder successfully removed",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Folder not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Folder already removed",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder is already removed.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @PutMapping("delete/{uuid}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void removeFolder(@PathVariable UUID uuid) {
+    folderService.removeFolder(uuid);
   }
 
   @Operation(summary = "Edit folder name")
