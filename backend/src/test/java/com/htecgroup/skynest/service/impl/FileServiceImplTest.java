@@ -75,8 +75,9 @@ class FileServiceImplTest {
         fileService.editFileInfo(fileInfoEditRequest, expectedFileEntity.getId());
 
     this.assertFileEntityAndFileResponse(expectedFileEntity, actualFileResponse);
-    verify(fileMetadataRepository, times(1)).findById(any());
-    verify(fileMetadataRepository, times(1)).save(any());
+    verify(fileMetadataRepository, times(1)).findById(expectedFileEntity.getId());
+    verify(fileMetadataRepository, times(1)).save(expectedFileEntity);
+    verifyNoMoreInteractions(fileMetadataRepository);
   }
 
   private void assertFileEntityAndFileResponse(
