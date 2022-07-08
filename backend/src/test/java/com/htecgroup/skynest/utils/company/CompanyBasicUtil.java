@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class CompanyBasicUtil {
-  protected static final UUID id = UUID.randomUUID();
+  protected static final UUID id = UUID.fromString("959c005c-4d6b-4dc8-a395-a77ae4e4de5c");
   protected static final LocalDateTime createdOn = null;
   protected static final LocalDateTime modifiedOn = null;
   protected static final LocalDateTime deletedOn = null;
