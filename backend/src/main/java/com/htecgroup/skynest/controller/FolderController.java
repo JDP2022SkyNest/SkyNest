@@ -225,8 +225,8 @@ public class FolderController {
             })
       })
   @PutMapping("delete/{uuid}")
-  public ResponseEntity<Boolean> removeFolder(@PathVariable UUID uuid) {
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void removeFolder(@PathVariable UUID uuid) {
     folderService.removeFolder(uuid);
-    return ResponseEntity.ok(true);
   }
 }
