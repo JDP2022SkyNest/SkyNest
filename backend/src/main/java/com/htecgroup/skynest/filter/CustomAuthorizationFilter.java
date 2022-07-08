@@ -22,6 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @AllArgsConstructor
@@ -80,11 +82,20 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
       ExceptionUtil.writeToResponse(errorMessage, response);
     } catch (Exception ex) {
       log.error(ex);
+
+      List<String> messages = new ArrayList<>();
+      Throwable currentException = ex;
+      while (currentException != null && currentException != currentException.getCause()) {
+        messages.add(currentException.getLocalizedMessage());
+        currentException = currentException.getCause();
+      }
+
       ErrorMessage errorMessage =
           new ErrorMessage(
-              ex.getMessage(),
+              messages,
               HttpStatus.INTERNAL_SERVER_ERROR.value(),
               DateTimeUtil.currentTimeFormatted());
+
       ExceptionUtil.writeToResponse(errorMessage, response);
     }
   }

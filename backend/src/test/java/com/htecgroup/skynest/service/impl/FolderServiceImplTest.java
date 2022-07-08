@@ -4,9 +4,9 @@ import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
@@ -18,8 +18,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,7 +28,7 @@ class FolderServiceImplTest {
 
   @Spy @InjectMocks FolderServiceImpl folderService;
   @Mock private FolderRepository folderRepository;
-  @Mock private BucketService bucketService;
+  @Mock private BucketRepository bucketRepository;
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
@@ -39,7 +38,8 @@ class FolderServiceImplTest {
     FolderEntity exceptedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     when(userRepository.getById(any())).thenReturn(UserEntityUtil.getVerified());
-    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    when(bucketRepository.findById(any()))
+        .thenReturn(Optional.of(BucketEntityUtil.getPrivateBucket()));
     doReturn(FolderEntityUtil.getFolderWithoutParent())
         .when(folderRepository)
         .findFolderById(any());
@@ -55,7 +55,8 @@ class FolderServiceImplTest {
     FolderEntity exceptedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
     when(userRepository.getById(any())).thenReturn(UserEntityUtil.getVerified());
-    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    when(bucketRepository.findById(any()))
+        .thenReturn(Optional.of(BucketEntityUtil.getPrivateBucket()));
     doReturn(FolderEntityUtil.getFolderWithParent()).when(folderRepository).findFolderById(any());
     when(folderRepository.save(any())).thenReturn(exceptedFolderEntity);
 
@@ -83,6 +84,22 @@ class FolderServiceImplTest {
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
     verify(folderRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void getAllRootFolders() {
+    List<FolderEntity> expectedFolders =
+        new ArrayList<>(Collections.singleton(FolderEntityUtil.getFolderWithoutParent()));
+    when(folderRepository.findAllByBucketIdAndParentFolderIsNull(any()))
+        .thenReturn(expectedFolders);
+
+    List<FolderResponse> actualFolders =
+        folderService.getAllRootFolders(
+            FolderEntityUtil.getFolderWithoutParent().getBucket().getId());
+
+    Assertions.assertEquals(expectedFolders.size(), actualFolders.size());
+    this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
+    verify(folderRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
   }
 
   private void assertFolderEntityAndFolderResponse(
