@@ -3,6 +3,7 @@ import { OverlayTrigger, Tooltip, Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import { deleteBucket } from "../ReusableComponents/ReusableFunctions";
 import BucketInfo from "./BucketInfo";
+import EditBucketModal from "./EditBucketModal";
 
 const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -35,7 +36,9 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      >
                         Bucket Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">Edit bucket</Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
+                     </Dropdown.Item>
                      <Dropdown.Item
                         onClick={async () => {
                            await deleteBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
@@ -52,15 +55,17 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
                <BucketInfo elem={elem} />
-               <button
-                  onClick={(e) => {
-                     e.preventDefault();
-                     handleClose();
-                  }}
-                  className="btn btn-secondary button-width"
-               >
-                  Close
-               </button>
+               <div className="mt-4 d-flex justify-content-end">
+                  <button
+                     onClick={(e) => {
+                        e.preventDefault();
+                        handleClose();
+                     }}
+                     className="ml-2 btn btn-secondary button-width"
+                  >
+                     Close
+                  </button>
+               </div>
             </Modal.Body>
          </Modal>
       </div>
