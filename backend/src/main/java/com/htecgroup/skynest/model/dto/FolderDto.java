@@ -30,7 +30,6 @@ public class FolderDto {
   }
 
   public boolean isDeleted() {
-    if (deletedOn != null) return true;
-    else return false;
+    return deletedOn != null;
   }
 }
