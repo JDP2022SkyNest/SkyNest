@@ -11,34 +11,34 @@ const UserCompanyAccordion = ({ companyData }) => {
             </Accordion.Header>
             <Accordion.Body>
                <div className="row">
-                  <div className="col-sm-3">Name:</div>
+                  <strong className="col-sm-3">Name:</strong>
                   <div className="col-sm-9 text-mutted">{companyData.name}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-3">Email:</div>
+                  <strong className="col-sm-3">Email:</strong>
                   <div className="col-sm-9 text-mutted">{companyData.email}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-3">Address:</div>
+                  <strong className="col-sm-3">Address:</strong>
                   <div className="col-sm-9 text-mutted">{companyData.address}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-3">Phone Number:</div>
+                  <strong className="col-sm-3">Phone Number:</strong>
                   <div className="col-sm-9 text-mutted">{companyData.phoneNumber}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-3">Pib</div>
+                  <strong className="col-sm-3">Pib</strong>
                   <div className="col-sm-9 text-mutted">{companyData.pib}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-3">Tier</div>
+                  <strong className="col-sm-3">Tier</strong>
                   <div className="col-sm-9 text-mutted">{companyData.tierName}</div>
-               </div>   
+               </div>
             </Accordion.Body>
          </Accordion.Item>
       </Accordion>
