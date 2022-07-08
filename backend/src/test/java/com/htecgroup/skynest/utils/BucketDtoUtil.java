@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.dto.BucketDto;
+import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 
 import java.time.LocalDateTime;
@@ -15,13 +16,15 @@ public class BucketDtoUtil {
   protected static Long size = 1000L;
   protected static boolean privateBucket = false;
 
+  protected static UserDto userDtoUtil = UserDtoUtil.getVerified();
+
   public static BucketDto getDeletedBucket() {
     return new BucketDto(
         UUID.randomUUID(),
         currentDateTime,
         currentDateTime,
         currentDateTime,
-        BucketEntityUtil.getPrivateBucket().getCreatedBy(),
+        userDtoUtil,
         name,
         companyEntity,
         description,
@@ -35,7 +38,7 @@ public class BucketDtoUtil {
         currentDateTime,
         currentDateTime,
         null,
-        BucketEntityUtil.getPrivateBucket().getCreatedBy(),
+        userDtoUtil,
         name,
         companyEntity,
         description,
@@ -49,7 +52,7 @@ public class BucketDtoUtil {
         currentDateTime,
         currentDateTime,
         null,
-        BucketEntityUtil.getOtherPrivateBucket().getCreatedBy(),
+        userDtoUtil,
         name,
         companyEntity,
         description,
