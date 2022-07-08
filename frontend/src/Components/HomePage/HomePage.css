@@ -64,3 +64,8 @@ transform: translate(-50%,-50%) scale(0.8);
 .custom-rounded {
   border-radius: 10px !important;
 }
+
+.is-private {
+  display: flex;
+  align-items: center;
+}
