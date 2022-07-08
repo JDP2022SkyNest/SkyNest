@@ -98,7 +98,7 @@ public class FolderController {
     return folderResponseEntity;
   }
 
-  @Operation(summary = "Get folder with given uuid")
+  @Operation(summary = "Get folder info")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -158,9 +158,9 @@ public class FolderController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}/info")
-  public ResponseEntity<FolderResponse> getFolderDetails(@PathVariable UUID uuid) {
-    FolderResponse folderResponse = folderService.getFolderDetails(uuid);
+  @GetMapping("/{folderId}/info")
+  public ResponseEntity<FolderResponse> getFolderDetails(@PathVariable UUID folderId) {
+    FolderResponse folderResponse = folderService.getFolderDetails(folderId);
     ResponseEntity<FolderResponse> folderResponseEntity =
         new ResponseEntity<>(folderResponse, HttpStatus.OK);
     return folderResponseEntity;
