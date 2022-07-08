@@ -141,7 +141,7 @@ const UserInfo = () => {
                            <div className="card-body">
                               <UserCardDetails info={<strong>Name:</strong>} result={userData?.name} edit={edit} func={nameChange}></UserCardDetails>
                               <UserCardDetails info={<strong>Last Name:</strong>} result={userData?.surname} edit={edit} func={surnameChange} />
-                              <UserCardDetails info={<strong>Email:</strong>} result={userData?.email} edit={edit} />
+                              <UserCardDetails info={<strong>Email:</strong>} result={userData?.email} />
                               <UserCardDetails
                                  info={<strong>Phone Number:</strong>}
                                  type="number"
