@@ -13,4 +13,6 @@ public interface FileService {
   FileResponse getFileMetadata(UUID fileId);
 
   FileDownloadResponse downloadFile(UUID fileId);
+
+  FileResponse deleteFile(UUID fileId);
 }

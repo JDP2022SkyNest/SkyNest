@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
 import com.htecgroup.skynest.repository.BucketRepository;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -58,6 +60,29 @@ class FileServiceImplTest {
         () -> {
           fileService.downloadFile(fileMetadata.getId());
         });
+    verify(fileMetadataRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void deleteFile_ThrowsFileNotFound() {
+    UUID fileId = FileMetadataEntityUtil.getFileMetadataEntity().getId();
+
+    when(fileMetadataRepository.findById(fileId)).thenReturn(Optional.empty());
+
+    Assertions.assertThrows(FileNotFoundException.class, () -> fileService.deleteFile(fileId));
+    verify(fileMetadataRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void deleteFile_ThrowsFileAlreadyDeleted() {
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getFileMetadataEntity();
+    fileMetadataEntity.setDeletedOn(LocalDateTime.now());
+    UUID fileId = fileMetadataEntity.getId();
+
+    when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(fileMetadataEntity));
+
+    Assertions.assertThrows(
+        FileAlreadyDeletedException.class, () -> fileService.deleteFile(fileId));
     verify(fileMetadataRepository, times(1)).findById(any());
   }
 }

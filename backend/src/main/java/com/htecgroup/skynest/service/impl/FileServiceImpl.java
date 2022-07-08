@@ -5,6 +5,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
+import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -99,6 +101,19 @@ public class FileServiceImpl implements FileService {
 
     return new FileDownloadResponse(
         fileMetadataEntity.getName(), fileMetadataEntity.getType(), fileContents);
+  }
+
+  @Override
+  public FileResponse deleteFile(UUID fileId) {
+
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
+    fileMetadataEntity.setDeletedOn(LocalDateTime.now());
+    fileMetadataRepository.save(fileMetadataEntity);
+
+    return modelMapper.map(fileMetadataEntity, FileResponse.class);
   }
 
   private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
