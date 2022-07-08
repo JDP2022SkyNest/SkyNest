@@ -5,7 +5,7 @@ import AxiosInstance from "../axios/AxiosInstance";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 
-const AddFolderModal = () => {
+const AddFolderModal = ({ refreshBuckets }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
    const [description, setDescription] = useState("");
@@ -32,6 +32,7 @@ const AddFolderModal = () => {
             setShow(false);
             setName("");
             setDescription("");
+            refreshBuckets();
          }, 2000);
       } catch (err) {
          if (err.response.status === 400) {

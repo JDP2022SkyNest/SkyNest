@@ -15,7 +15,7 @@ import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
 import AddFolderModal from "./AddFolderModal";
 import { useEffect } from "react";
-import Folder from "./Profile/Folder";
+import Folder from "./Folder";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 
 const HomePage = () => {
@@ -33,6 +33,10 @@ const HomePage = () => {
    useEffect(() => {
       getAllBuckets(accessToken, setAllFolders, setErrorMsg);
    }, [accessToken]);
+
+   const refreshBuckets = async () => {
+      await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+   };
 
    const allData = allFolders.map((elem, index) => {
       return (
@@ -66,7 +70,7 @@ const HomePage = () => {
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
             <div className="py-2 my-3 rounded">
-               <AddFolderModal />
+               <AddFolderModal refreshBuckets={refreshBuckets} />
             </div>
             <div className="bg-white">{allData}</div>
          </div>
