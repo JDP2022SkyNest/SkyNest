@@ -54,7 +54,7 @@ const AddFolderModal = ({ refreshBuckets }) => {
    return (
       <>
          <span onClick={handleShow} className="latte-background custom-rounded">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Add Folder
+            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">

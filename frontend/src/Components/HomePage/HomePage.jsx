@@ -37,7 +37,6 @@ const HomePage = () => {
    }, [accessToken]);
 
    const refreshBuckets = async () => {
-      console.log("CALLBACK");
       await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
    };
 
