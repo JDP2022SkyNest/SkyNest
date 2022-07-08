@@ -31,8 +31,6 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
          setSuccessMsg("Bucket Eddited");
          setTimeout(() => {
             setShow(false);
-            setName("");
-            setDescription("");
             refreshBuckets();
          }, 2000);
       } catch (err) {
