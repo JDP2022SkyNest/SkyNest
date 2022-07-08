@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service;
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,4 +18,6 @@ public interface FolderService {
   List<FolderResponse> getAllRootFolders(UUID bucketId);
 
   List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId);
+
+  StorageContentResponse getFolderContent(UUID folderId);
 }
