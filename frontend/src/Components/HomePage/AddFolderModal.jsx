@@ -90,14 +90,14 @@ const AddFolderModal = ({ refreshBuckets }) => {
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-info">Create</button>
+                        <button className="btn btn-secondary button-width">Create</button>
                         <button
                            onClick={(e) => {
                               e.preventDefault();
                               handleClose();
                               setErrorMsg("");
                            }}
-                           className="ml-2 btn btn-secondary"
+                           className="ml-2 btn btn-outline-secondary button-width"
                         >
                            Close
                         </button>

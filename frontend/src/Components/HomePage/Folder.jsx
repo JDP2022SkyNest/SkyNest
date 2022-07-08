@@ -57,7 +57,7 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      e.preventDefault();
                      handleClose();
                   }}
-                  className="ml-2 btn btn-secondary"
+                  className="btn btn-secondary button-width"
                >
                   Close
                </button>
