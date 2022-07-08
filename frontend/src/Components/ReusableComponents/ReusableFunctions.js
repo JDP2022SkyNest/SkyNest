@@ -191,15 +191,17 @@ export const demoteUser = async (accessToken, id, error, success) => {
    }
 };
 
-export const getCompany = async (accessToken, stateToChange, error) => {
+export const getCompany = async (accessToken, stateToChange, error, info = true) => {
    try {
       let response = await AxiosInstance.get("/companies", {
          headers: { Authorization: accessToken },
       });
       stateToChange(response.data);
    } catch (err) {
-      error(err.response.data.messages);
-      console.error(err);
+      if (info) {
+         error(err.response.data.messages);
+         console.error(err);
+      }
    }
 };
 
@@ -229,7 +231,9 @@ export const editCompany = async (accessToken, payload, error, success, func) =>
       );
       success("Company Info Changed");
    } catch (err) {
-      error(err.response.data.messages);
+      const message = err.response.data.messages[0];
+      const finalMsg = message[0].toUpperCase() + message.slice(1);
+      error(finalMsg);
       console.error(err);
    }
    func();
@@ -264,6 +268,34 @@ export const removeFromCompany = async (accessToken, id, error, success) => {
    } catch (err) {
       error(err.response.data.messages);
       console.error(err);
+   }
+};
+
+export const getAllBuckets = async (accessToken, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get("/buckets", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const deleteBucket = async (accessToken, bucketId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/buckets/${bucketId}/delete`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
    }
 };
 

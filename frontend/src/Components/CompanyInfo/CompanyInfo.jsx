@@ -20,7 +20,7 @@ const CompanyInfo = () => {
    const [successMsg, setSuccessMsg] = useState("");
    const accessToken = localStorage.accessToken;
 
-   const { userRole } = useContext(GlobalContext);
+   const { userRole, setUserCompany } = useContext(GlobalContext);
 
    const getCompanyData = async () => {
       setLoading(true);
@@ -59,12 +59,12 @@ const CompanyInfo = () => {
                <LoaderAnimation />
             </div>
          ) : (
-            <div className="">
+            <div className="container">
                <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
                <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
                {!!companyData && (
-                  <div className="col-12 col-sm-10 col-md-10 col-lg-6 offset-sm-1 offset-md-1 offset-lg-3 mb-5 py-3">
-                     <div className="card mb-3 shadow">
+                  <div className="col-12 col-sm-10 col-md-10 col-lg-6 offset-sm-1 offset-md-1 offset-lg-3 p-0 pb-2 pt-3">
+                     <div className="card mb-3 shadow mb-3">
                         <div className="card-body">
                            <CompanyDetails companyData={companyData} edit={edit} clonedData={clonedData} setClonedData={setClonedData} />
                         </div>
@@ -73,7 +73,13 @@ const CompanyInfo = () => {
                         {edit ? (
                            <div className="d-flex flex-row-reverse">
                               <div className="mb-2 mr-1">
-                                 <button onClick={onCompanyEdit} className="custom-btn-action">
+                                 <button
+                                    onClick={() => {
+                                       onCompanyEdit();
+                                       setUserCompany(clonedData.name);
+                                    }}
+                                    className="btn btn-secondary"
+                                 >
                                     Update
                                  </button>
                               </div>

@@ -16,7 +16,7 @@
 .user-page-body {
    background-color: var(--latte);
    min-height: 100vh;
-   padding-bottom: 50px;
+   padding-bottom: 40px;
 }
 
 .no-arrow {

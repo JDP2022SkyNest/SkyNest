@@ -33,7 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +74,7 @@ public class FileServiceImpl implements FileService {
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
     } catch (IOException e) {
+      log.error(e);
       throw new FileIOException();
     }
   }
@@ -82,6 +85,7 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.VIEW);
 
@@ -93,12 +97,33 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
     Resource fileContents = getFileContents(fileMetadataEntity.getContentId());
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.DOWNLOAD);
 
     return new FileDownloadResponse(
         fileMetadataEntity.getName(), fileMetadataEntity.getType(), fileContents);
+  }
+
+  @Override
+  public List<FileResponse> getAllRootFiles(UUID bucketId) {
+    List<FileMetadataEntity> allFiles =
+        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
+    return asFileResponseList(allFiles);
+  }
+
+  @Override
+  public List<FileResponse> getAllFilesWithParent(UUID parentFolderId) {
+    List<FileMetadataEntity> allFiles =
+        fileMetadataRepository.findAllByParentFolderId(parentFolderId);
+    return asFileResponseList(allFiles);
+  }
+
+  private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
+    return allFiles.stream()
+        .map(folder -> modelMapper.map(folder, FileResponse.class))
+        .collect(Collectors.toList());
   }
 
   private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
@@ -144,6 +169,7 @@ public class FileServiceImpl implements FileService {
       Object objectId = operations.store(inputStream, name, type);
       return objectId.toString();
     } catch (MongoException e) {
+      log.error(e);
       throw new FileIOException();
     }
   }
@@ -152,9 +178,9 @@ public class FileServiceImpl implements FileService {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
     UUID bucketCreatorId = bucket.getCreatedBy().getId();
-    UUID fileCreatorId = fileMetadataEntity.getCreatedBy().getId();
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
 
-    if (!bucket.getIsPublic() && !bucketCreatorId.equals(fileCreatorId))
+    if (!bucket.getIsPublic() && !currentUserId.equals(bucketCreatorId))
       throw new BucketAccessDeniedException();
   }
 
@@ -219,6 +245,7 @@ public class FileServiceImpl implements FileService {
       InputStream inputStream = operations.getResource(gridFSFile).getInputStream();
       return new InputStreamResource(inputStream);
     } catch (IOException | MongoException e) {
+      log.error(e);
       throw new FileIOException();
     }
   }

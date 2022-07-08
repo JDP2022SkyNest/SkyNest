@@ -13,11 +13,12 @@ import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
+import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.BucketService;
-import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ public class BucketServiceImpl implements BucketService {
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
   private UserRepository userRepository;
+  private FolderService folderService;
+  private FileService fileService;
 
   private ActionService actionService;
 
@@ -66,7 +69,7 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public BucketResponse getBucket(UUID uuid) {
+  public BucketResponse getBucketDetails(UUID uuid) {
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
@@ -74,6 +77,13 @@ public class BucketServiceImpl implements BucketService {
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
     return bucketResponse;
+  }
+
+  @Override
+  public BucketDto findBucketByName(String name) {
+    BucketEntity bucketEntity =
+        bucketRepository.findBucketByName(name).orElseThrow(BucketNotFoundException::new);
+    return modelMapper.map(bucketEntity, BucketDto.class);
   }
 
   @Override
@@ -136,5 +146,15 @@ public class BucketServiceImpl implements BucketService {
 
     actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.EDIT);
     return modelMapper.map(savedBucketEntity, BucketResponse.class);
+  }
+
+  @Override
+  public StorageContentResponse getBucketContent(UUID bucketId) {
+
+    List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
+    List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
+    StorageContentResponse storageContentResponse =
+        new StorageContentResponse(allFoldersResponse, allFilesResponse);
+    return storageContentResponse;
   }
 }

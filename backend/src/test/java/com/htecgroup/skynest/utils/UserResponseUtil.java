@@ -16,6 +16,7 @@ public class UserResponseUtil extends BasicUtil {
         address,
         roleWorkerEntity.getName(),
         positionInCompany,
+        companyName,
         false,
         false);
   }

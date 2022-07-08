@@ -106,7 +106,7 @@ public class UserController {
     return listOfUsers;
   }
 
-  @Operation(summary = "Get user with given uuid")
+  @Operation(summary = "Get user")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -189,15 +189,15 @@ public class UserController {
       })
   @PreAuthorize(
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
-  @GetMapping("/{uuid}")
-  public ResponseEntity<UserResponse> getUser(@PathVariable UUID uuid) {
-    UserResponse userResponse = userService.getUser(uuid);
+  @GetMapping("/{userId}")
+  public ResponseEntity<UserResponse> getUser(@PathVariable UUID userId) {
+    UserResponse userResponse = userService.getUser(userId);
     ResponseEntity<UserResponse> userResponseEntity =
         new ResponseEntity<>(userResponse, HttpStatus.OK);
     return userResponseEntity;
   }
 
-  @Operation(summary = "Edit user with given uuid")
+  @Operation(summary = "Edit user")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -280,16 +280,16 @@ public class UserController {
       })
   @PreAuthorize(
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
-  @PutMapping("/{uuid}")
+  @PutMapping("/{userId}")
   public ResponseEntity<UserResponse> editUser(
-      @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID uuid) {
+      @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID userId) {
     ResponseEntity<UserResponse> responseEntity =
-        new ResponseEntity<>(userService.editUser(uuid, userEditRequest), HttpStatus.OK);
+        new ResponseEntity<>(userService.editUser(userId, userEditRequest), HttpStatus.OK);
     log.info("User is successfully edited.");
     return responseEntity;
   }
 
-  @Operation(summary = "Delete user with given uuid")
+  @Operation(summary = "Delete user")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -359,9 +359,9 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @DeleteMapping("/{uuid}")
-  public ResponseEntity<String> deleteUser(@PathVariable UUID uuid) {
-    userService.deleteUser(uuid);
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<String> deleteUser(@PathVariable UUID userId) {
+    userService.deleteUser(userId);
     String deleteSuccess = "User was successfully deleted from database";
     log.info(deleteSuccess);
     return ResponseEntity.ok(deleteSuccess);
@@ -427,13 +427,13 @@ public class UserController {
       })
   @PreAuthorize(
       "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
-  @PutMapping("/password-change/{uuid}")
+  @PutMapping("/{userId}/password-change")
   public ResponseEntity<Boolean> changePassword(
       @Valid @RequestBody UserChangePasswordRequest userChangePasswordRequest,
-      @PathVariable UUID uuid) {
-    userService.authorizeAccessForChangePassword(uuid);
-    userService.changePassword(userChangePasswordRequest, uuid);
-    log.info("User with id {} successfully changed their password", uuid);
+      @PathVariable UUID userId) {
+    userService.authorizeAccessForChangePassword(userId);
+    userService.changePassword(userChangePasswordRequest, userId);
+    log.info("User with id {} successfully changed their password", userId);
     return ResponseEntity.ok(true);
   }
 
@@ -496,10 +496,10 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/enable")
-  public ResponseEntity<Boolean> enableUser(@PathVariable UUID uuid) {
-    userService.enableUser(uuid);
-    log.info("User with id {} was successfully enabled", uuid);
+  @PutMapping("/{userId}/enable")
+  public ResponseEntity<Boolean> enableUser(@PathVariable UUID userId) {
+    userService.enableUser(userId);
+    log.info("User with id {} was successfully enabled", userId);
     return ResponseEntity.ok(true);
   }
 
@@ -562,10 +562,10 @@ public class UserController {
             })
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/disable")
-  public ResponseEntity<Boolean> disableUser(@PathVariable UUID uuid) {
-    userService.disableUser(uuid);
-    log.info("User with id {} was successfully disabled", uuid);
+  @PutMapping("/{userId}/disable")
+  public ResponseEntity<Boolean> disableUser(@PathVariable UUID userId) {
+    userService.disableUser(userId);
+    log.info("User with id {} was successfully disabled", userId);
     return ResponseEntity.ok(true);
   }
 
@@ -628,10 +628,10 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/promote")
-  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID uuid) {
-    userService.promoteUser(uuid);
-    log.info("User with id {} was successfully promoted to manager", uuid);
+  @PutMapping("/{userId}/promote")
+  public ResponseEntity<Boolean> promoteUser(@PathVariable UUID userId) {
+    userService.promoteUser(userId);
+    log.info("User with id {} was successfully promoted to manager", userId);
     return ResponseEntity.ok(true);
   }
 
@@ -694,10 +694,10 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/demote")
-  public ResponseEntity<Boolean> demoteUser(@PathVariable UUID uuid) {
-    userService.demoteUser(uuid);
-    log.info("User with id {} was successfully demoted to worker", uuid);
+  @PutMapping("/{userId}/demote")
+  public ResponseEntity<Boolean> demoteUser(@PathVariable UUID userId) {
+    userService.demoteUser(userId);
+    log.info("User with id {} was successfully demoted to worker", userId);
     return ResponseEntity.ok(true);
   }
 
@@ -745,7 +745,7 @@ public class UserController {
     return ResponseEntity.ok(loggedUser);
   }
 
-  @Operation(summary = "Add company for user")
+  @Operation(summary = "Add user to current user's company")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -806,14 +806,14 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/company/add")
-  public ResponseEntity<Boolean> addCompanyForUser(@PathVariable UUID uuid) {
-    userService.addCompanyForUser(uuid);
-    log.info("Successfully added company to user {}", uuid);
+  @PutMapping("/{userId}/company/add")
+  public ResponseEntity<Boolean> addCompanyForUser(@PathVariable UUID userId) {
+    userService.addCompanyForUser(userId);
+    log.info("Successfully added company to user {}", userId);
     return ResponseEntity.ok(true);
   }
 
-  @Operation(summary = "Remove company for user")
+  @Operation(summary = "Remove user from current user's company")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -872,10 +872,10 @@ public class UserController {
             }),
       })
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  @PutMapping("/{uuid}/company/remove")
-  public ResponseEntity<Boolean> removeCompanyForUser(@PathVariable UUID uuid) {
-    userService.removeCompany(uuid);
-    log.info("Successfully removed company for user {}", uuid);
+  @PutMapping("/{userId}/company/remove")
+  public ResponseEntity<Boolean> removeCompanyForUser(@PathVariable UUID userId) {
+    userService.removeCompany(userId);
+    log.info("Successfully removed company for user {}", userId);
     return ResponseEntity.ok(true);
   }
 }
