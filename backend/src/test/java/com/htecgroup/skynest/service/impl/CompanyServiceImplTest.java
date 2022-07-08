@@ -56,12 +56,15 @@ class CompanyServiceImplTest {
 
   @Test
   void addCompany_NonExistingTier() {
-    when(tierRepository.findByName(anyString())).thenReturn(Optional.ofNullable(null));
+    when(tierRepository.findByName(anyString())).thenReturn(Optional.empty());
 
     CompanyAddRequest companyAddRequest = CompanyAddRequestUtil.get();
 
-    Assertions.assertThrows(
-        NonExistingTierException.class, () -> companyService.addCompany(companyAddRequest));
+    String expectedErrorMessage = NonExistingTierException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            NonExistingTierException.class, () -> companyService.addCompany(companyAddRequest));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
@@ -83,12 +86,16 @@ class CompanyServiceImplTest {
   void editCompany_UserNotInAnyCompany() {
     CompanyEditRequest companyEditRequest = CompanyEditRequestUtil.get();
 
-    when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.ofNullable(null));
+    when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.empty());
 
     CompanyEditRequest companyEditRequest1 = CompanyEditRequestUtil.get();
 
-    Assertions.assertThrows(
-        UserNotInAnyCompanyException.class, () -> companyService.editCompany(companyEditRequest));
+    String expectedErrorMessage = UserNotInAnyCompanyException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserNotInAnyCompanyException.class,
+            () -> companyService.editCompany(companyEditRequest));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
@@ -106,9 +113,13 @@ class CompanyServiceImplTest {
   void findCompanyById_CompanyNotFound() {
     UUID uuid = CompanyEntityUtil.get().getId();
 
-    when(companyRepository.findById(any())).thenReturn(Optional.ofNullable(null));
+    when(companyRepository.findById(any())).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(CompanyNotFoundException.class, () -> companyService.findById(uuid));
+    String expectedErrorMessage = CompanyNotFoundException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            CompanyNotFoundException.class, () -> companyService.findById(uuid));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
@@ -125,10 +136,13 @@ class CompanyServiceImplTest {
 
   @Test
   void getMyCompany_UserNotInAnyCompany() {
-    when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.ofNullable(null));
+    when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(
-        UserNotInAnyCompanyException.class, () -> companyService.getMyCompany());
+    String expectedErrorMessage = UserNotInAnyCompanyException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            UserNotInAnyCompanyException.class, () -> companyService.getMyCompany());
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   private void assertCompanyEntityAndCompanyDto(
