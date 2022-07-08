@@ -18,8 +18,9 @@
 
 .home-page-body {
   background-color: var(--latte);
-  height: 100vh;
+  min-height: 100vh;
   margin-bottom: 40px;
+  padding-bottom: 20px;
 }
 
 .latte-background {
@@ -30,9 +31,36 @@
 }
 
 .data-folder {
-  display: inline-block;
   margin: 10px;
   cursor: pointer;
-  width: 200px;
   padding: 0;
+}
+
+.btn-primary {
+  position: absolute !important;
+  top: -20px !important;
+  right: 13px !important;
+  transform: translate(0,-50%) scale(1.2) !important;
+  background-color: var(--latte) !important;
+  border-radius: 50% !important;
+  height: 20px !important;
+  width: 20px !important;
+  cursor: pointer !important;
+  border-color: transparent !important;
+  color: black !important;
+}
+
+.dots-icon {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%,-50%) scale(0.8);
+}
+
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+.custom-rounded {
+  border-radius: 10px !important;
 }

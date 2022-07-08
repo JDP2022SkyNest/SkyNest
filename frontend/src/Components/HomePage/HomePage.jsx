@@ -17,12 +17,14 @@ import AddFolderModal from "./AddFolderModal";
 import { useEffect } from "react";
 import Folder from "./Folder";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(false);
    const [allFolders, setAllFolders] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
+   const [successMsg, setSuccessMsg] = useState("");
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };
@@ -35,16 +37,13 @@ const HomePage = () => {
    }, [accessToken]);
 
    const refreshBuckets = async () => {
+      console.log("CALLBACK");
       await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
    };
 
-   const allData = allFolders.map((elem, index) => {
-      return (
-         <div key={index} className="data-folder">
-            <Folder elem={elem} />
-         </div>
-      );
-   });
+   const allData = allFolders.map((elem, index) => (
+      <Folder elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+   ));
 
    return (
       <div className="home-page-body">
@@ -69,10 +68,15 @@ const HomePage = () => {
          <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
             <div className="py-2 my-3 rounded">
                <AddFolderModal refreshBuckets={refreshBuckets} />
             </div>
-            <div className="bg-white">{allData}</div>
+            <div>
+               <div className="container">
+                  <div className="row">{allData}</div>
+               </div>
+            </div>
          </div>
          <Footer />
       </div>
