@@ -275,7 +275,7 @@ export const getAllBuckets = async (accessToken, stateToChange, error) => {
 export const deleteBucket = async (accessToken, bucketId, error, success) => {
    try {
       await AxiosInstance.put(
-         `/buckets/delete/${bucketId}`,
+         `/buckets/${bucketId}/delete`,
          {},
          {
             headers: { Authorization: accessToken },
