@@ -169,7 +169,7 @@ public class CompanyController {
     return responseEntity;
   }
 
-  @Operation(summary = "Edit a company")
+  @Operation(summary = "Edit current user's company")
   @ApiResponses(
       value = {
         @ApiResponse(
