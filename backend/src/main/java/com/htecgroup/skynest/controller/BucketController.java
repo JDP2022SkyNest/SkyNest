@@ -439,7 +439,7 @@ public class BucketController {
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Buckets returned",
+            description = "Bucket contents returned",
             content = {
               @Content(
                   mediaType = "application/json",
