@@ -260,6 +260,34 @@ export const removeFromCompany = async (accessToken, id, error, success) => {
    }
 };
 
+export const getAllBuckets = async (accessToken, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get("/buckets", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const deleteBucket = async (accessToken, bucketId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/buckets/${bucketId}/delete`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();

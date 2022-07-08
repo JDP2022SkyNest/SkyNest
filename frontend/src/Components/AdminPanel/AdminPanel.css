@@ -48,3 +48,7 @@
 .manager-badge {
    background-color: rgb(86, 121, 18);
 }
+
+.button-width {
+   min-width: 90px !important;
+}

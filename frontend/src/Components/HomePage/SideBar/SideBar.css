@@ -8,6 +8,7 @@
    width: 280px;
    transform: translateX(-100%);
    transition: all 0.4s;
+   z-index: 101;
 }
 
 .side-bar li {
