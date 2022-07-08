@@ -1,9 +1,6 @@
 package com.htecgroup.skynest.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.With;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,6 +8,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class FolderDto {
   private UUID id;
   private LocalDateTime createdOn;
@@ -26,4 +24,12 @@ public class FolderDto {
   @With private FolderDto parentFolder;
 
   @With private BucketDto bucket;
+
+  public FolderDto deleteFolder() {
+    return this.withDeletedOn(LocalDateTime.now());
+  }
+
+  public boolean isDeleted() {
+    return deletedOn != null;
+  }
 }
