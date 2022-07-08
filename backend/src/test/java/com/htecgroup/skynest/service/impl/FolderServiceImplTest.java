@@ -102,8 +102,9 @@ class FolderServiceImplTest {
         folderService.editFolder(folderEditRequest, expectedFolderEntity.getId());
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
-    verify(folderRepository, times(1)).findById(any());
-    verify(folderRepository, times(1)).save(any());
+    verify(folderRepository, times(1)).findById(expectedFolderEntity.getId());
+    verify(folderRepository, times(1)).save(expectedFolderEntity);
+    verifyNoMoreInteractions(folderRepository);
   }
 
   @Test
