@@ -107,17 +107,17 @@ public class FileServiceImpl implements FileService {
   public List<FileResponse> getAllRootFiles(UUID bucketId) {
     List<FileMetadataEntity> allFiles =
         fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
-    return getFiles(allFiles);
+    return asFileResponseList(allFiles);
   }
 
   @Override
   public List<FileResponse> getAllFilesWithParent(UUID parentFolderId) {
     List<FileMetadataEntity> allFiles =
         fileMetadataRepository.findAllByParentFolderId(parentFolderId);
-    return getFiles(allFiles);
+    return asFileResponseList(allFiles);
   }
 
-  private List<FileResponse> getFiles(List<FileMetadataEntity> allFiles) {
+  private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
     return allFiles.stream()
         .map(folder -> modelMapper.map(folder, FileResponse.class))
         .collect(Collectors.toList());

@@ -83,16 +83,16 @@ public class FolderServiceImpl implements FolderService {
   public List<FolderResponse> getAllRootFolders(UUID bucketId) {
     List<FolderEntity> allFolders =
         folderRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
-    return getFolders(allFolders);
+    return asFolderResponseList(allFolders);
   }
 
   @Override
   public List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId) {
     List<FolderEntity> allFolders = folderRepository.findAllByParentFolderId(parentFolderId);
-    return getFolders(allFolders);
+    return asFolderResponseList(allFolders);
   }
 
-  private List<FolderResponse> getFolders(List<FolderEntity> allFolders) {
+  private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {
     return allFolders.stream()
         .map(folder -> modelMapper.map(folder, FolderResponse.class))
         .collect(Collectors.toList());
