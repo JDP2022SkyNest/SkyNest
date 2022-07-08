@@ -443,22 +443,40 @@ public class BucketController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = BucketResponse.class),
+                  schema = @Schema(implementation = StorageContentResponse.class),
                   examples = {
                     @ExampleObject(
                         value =
-                            "[{\"bucketId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
-                                + "\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "\"name\": \"Name\","
-                                + "\"companyId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
-                                + "\"description\": \"Description\","
-                                + "\"size\": \"1000\"},"
-                                + "{\"bucketId\": \"79362ab6-f914-11ec-b939-0242ac120002\","
-                                + "\"id\": \"u7yd987h-0a79-42dd-961s-7sfh564kdv2s\","
-                                + "\"name\": \"Name2\","
-                                + "\"companyId\": \"b2d6b109-624c-4509-8544-5ad8d3a2a88f\","
-                                + "\"description\": \"Description2\","
-                                + "\"size\": \"1200\"}]")
+                            "{\"folders\":["
+                                + "{\"id\": \"0b3f68e4-fc6e-11ec-8ee4-0242ac120003\","
+                                + "  \"createdOn\": \"2022-07-05T14:23:30\","
+                                + "  \"modifiedOn\": \"2022-07-05T14:23:30\","
+                                + "  \"deletedOn\": null,"
+                                + "  \"name\": \"folder2\","
+                                + "  \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "  \"parentFolderId\": null,"
+                                + "  \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\"}],"
+                                + "\"files\":["
+                                + " {\"id\": \"6759ea31-ae80-4224-a4e2-9e24fdfeebcb\","
+                                + "   \"createdOn\": \"2022-07-05T12:44:28\","
+                                + "   \"modifiedOn\": \"2022-07-05T12:44:28\","
+                                + "   \"deletedOn\": null,"
+                                + "   \"name\": \"MicrosoftTeams-image (6).png\","
+                                + "   \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "   \"parentFolderId\": null,"
+                                + "   \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\","
+                                + "   \"type\": \"image/png\","
+                                + "   \"size\": \"82786\"},"
+                                + " {\"id\": \"be318599-df9b-42a9-95eb-6ec3e74a7a07\","
+                                + "   \"createdOn\": \"2022-07-05T12:32:24\","
+                                + "   \"modifiedOn\": \"2022-07-05T12:32:24\","
+                                + "   \"deletedOn\": null,"
+                                + "   \"name\": \"SkyNest Sprint 2 (1).pptx\","
+                                + "   \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "   \"parentFolderId\": null,"
+                                + "   \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\","
+                                + "   \"type\": \"application/vnd.openxmlformats-officedocument.presentationml.presentation\","
+                                + "   \"size\": \"1946683\"}]}")
                   })
             }),
         @ApiResponse(
@@ -489,8 +507,8 @@ public class BucketController {
   @GetMapping("/{uuid}")
   public ResponseEntity<StorageContentResponse> getBucketContent(@PathVariable UUID uuid) {
     StorageContentResponse storageContentResponse = bucketService.getBucketContent(uuid);
-    ResponseEntity<StorageContentResponse> folderFileResponseEntity =
+    ResponseEntity<StorageContentResponse> storageContentResponseEntity =
         new ResponseEntity<>(storageContentResponse, HttpStatus.OK);
-    return folderFileResponseEntity;
+    return storageContentResponseEntity;
   }
 }
