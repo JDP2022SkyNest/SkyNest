@@ -274,7 +274,7 @@ export const getAllBuckets = async (accessToken, stateToChange, error) => {
 
 export const deleteBucket = async (accessToken, bucketId, error, success) => {
    try {
-      const response = await AxiosInstance.put(
+      await AxiosInstance.put(
          `/buckets/delete/${bucketId}`,
          {},
          {

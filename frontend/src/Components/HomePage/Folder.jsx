@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { OverlayTrigger, Tooltip, Dropdown } from "react-bootstrap";
+import { OverlayTrigger, Tooltip, Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import { deleteBucket } from "../ReusableComponents/ReusableFunctions";
+import BucketInfo from "./BucketInfo";
 
 const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
-   const [youSure, setYouSure] = useState(false);
+   const [show, setShow] = useState(false);
+   const handleClose = () => setShow(false);
+   const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
    return (
@@ -24,7 +27,14 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      <BsCions.BsThreeDotsVertical className="dots-icon" aria-expanded="false" />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                     <Dropdown.Item className="text-dark">Bucket Info</Dropdown.Item>
+                     <Dropdown.Item
+                        onClick={() => {
+                           handleShow();
+                        }}
+                        className="text-dark"
+                     >
+                        Bucket Info
+                     </Dropdown.Item>
                      <Dropdown.Item className="text-dark">Edit bucket</Dropdown.Item>
                      <Dropdown.Item
                         onClick={async () => {
@@ -39,6 +49,20 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                </Dropdown>
             </div>
          </div>
+         <Modal show={show} onHide={handleClose} className="mt-3">
+            <Modal.Body>
+               <BucketInfo elem={elem} />
+               <button
+                  onClick={(e) => {
+                     e.preventDefault();
+                     handleClose();
+                  }}
+                  className="ml-2 btn btn-secondary"
+               >
+                  Close
+               </button>
+            </Modal.Body>
+         </Modal>
       </div>
    );
 };
