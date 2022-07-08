@@ -38,7 +38,7 @@
 
 .btn-primary {
   position: absolute !important;
-  top: -20px !important;
+  top: -50px !important;
   right: 13px !important;
   transform: translate(0,-50%) scale(1.2) !important;
   background-color: var(--latte) !important;
