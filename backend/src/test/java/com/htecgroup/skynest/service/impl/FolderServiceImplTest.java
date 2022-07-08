@@ -38,7 +38,7 @@ class FolderServiceImplTest {
   @Test
   void when_AlreadyDeletedFolder_deletedFolder_ShouldThrowFolderAlreadyDeleted() {
     FolderEntity folderEntity = FolderEntityUtil.getDeletedFolder();
-    doReturn(folderEntity).when(folderRepository).findFolderById(any());
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
     String expectedErrorMessage = FolderAlreadyDeletedException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
@@ -50,7 +50,7 @@ class FolderServiceImplTest {
   @Test
   void when_deleteFolder_ShouldDeleteFolder() {
     FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
-    doReturn(folderEntity).when(folderRepository).findFolderById(any());
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
 
     folderService.removeFolder(UUID.randomUUID());
     Mockito.verify(folderRepository).save(captorFolderEntity.capture());
