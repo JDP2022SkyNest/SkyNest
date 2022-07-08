@@ -55,7 +55,6 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
                <BucketInfo elem={elem} />
-
                <div className="mt-4 d-flex justify-content-end">
                   <button
                      onClick={(e) => {

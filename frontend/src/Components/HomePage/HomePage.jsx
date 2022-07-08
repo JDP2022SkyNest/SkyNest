@@ -21,7 +21,7 @@ import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(false);
+   const [sidebar, setSidebar] = useState(true);
    const [allFolders, setAllFolders] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -50,7 +50,6 @@ const HomePage = () => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="d-none mr-auto d-md-block navbar-brand text-light">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {
