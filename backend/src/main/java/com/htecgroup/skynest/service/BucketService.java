@@ -5,6 +5,7 @@ import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface BucketService {
 
   BucketResponse createBucket(BucketCreateRequest bucketCreateRequest);
 
-  BucketResponse getBucket(UUID uuid);
+  BucketResponse getBucketDetails(UUID uuid);
 
   List<BucketResponse> listAllBuckets();
 
@@ -26,6 +27,8 @@ public interface BucketService {
 
   BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
+
+  StorageContentResponse getBucketContent(UUID bucketId);
 
   BucketDto findBucketByName(String name);
 

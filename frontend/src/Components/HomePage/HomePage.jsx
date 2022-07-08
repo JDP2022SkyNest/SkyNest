@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -13,15 +13,36 @@ import * as RiCions from "react-icons/ri";
 import "./HomePage.css";
 import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
+import AddFolderModal from "./AddFolderModal";
+import { useEffect } from "react";
+import Folder from "./Folder";
+import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(false);
+   const [allFolders, setAllFolders] = useState([]);
+   const [errorMsg, setErrorMsg] = useState("");
+   const [successMsg, setSuccessMsg] = useState("");
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };
 
    const { setAccessToken, userRole, userID } = useContext(GlobalContext);
+   const accessToken = localStorage.accessToken;
+
+   useEffect(() => {
+      getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+   }, [accessToken]);
+
+   const refreshBuckets = async () => {
+      await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+   };
+
+   const allData = allFolders.map((elem, index) => (
+      <Folder elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+   ));
 
    return (
       <div className="home-page-body">
@@ -44,8 +65,17 @@ const HomePage = () => {
             </Container>
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
-         <div className="container mt-5">
-            <div></div>
+         <div className="container">
+            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+            <div className="py-2 my-3 rounded">
+               <AddFolderModal refreshBuckets={refreshBuckets} />
+            </div>
+            <div>
+               <div className="container">
+                  <div className="row">{allData}</div>
+               </div>
+            </div>
          </div>
          <Footer />
       </div>

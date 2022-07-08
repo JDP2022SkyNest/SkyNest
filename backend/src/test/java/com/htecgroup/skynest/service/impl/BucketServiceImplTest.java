@@ -69,7 +69,8 @@ class BucketServiceImplTest {
     BucketEntity expectedBucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(expectedBucketEntity));
 
-    BucketResponse actualBucketResponse = bucketService.getBucket(expectedBucketEntity.getId());
+    BucketResponse actualBucketResponse =
+        bucketService.getBucketDetails(expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
     verify(bucketRepository, times(1)).findById(any());
