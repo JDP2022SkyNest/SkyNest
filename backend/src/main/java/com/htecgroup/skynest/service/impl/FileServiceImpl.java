@@ -5,10 +5,12 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
+import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
@@ -99,6 +101,23 @@ public class FileServiceImpl implements FileService {
 
     return new FileDownloadResponse(
         fileMetadataEntity.getName(), fileMetadataEntity.getType(), fileContents);
+  }
+
+  @Override
+  public FileResponse editFileInfo(FileInfoEditRequest fileInfoEditRequest, UUID fileId) {
+
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    if (fileMetadataEntity.getDeletedOn() != null) {
+      throw new FileAlreadyDeletedException();
+    }
+    fileInfoEditRequest.setName(fileInfoEditRequest.getName().trim());
+
+    modelMapper.map(fileInfoEditRequest, fileMetadataEntity);
+    FileMetadataEntity savedFileEntity = fileMetadataRepository.save(fileMetadataEntity);
+
+    actionService.recordAction(Collections.singleton(savedFileEntity), ActionType.EDIT);
+    return modelMapper.map(savedFileEntity, FileResponse.class);
   }
 
   private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {

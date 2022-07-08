@@ -11,9 +11,9 @@ public class FileResponse {
   private String modifiedOn;
   private String deletedOn;
   private String name;
-  private String createdById;
-  private String parentFolderId;
-  private String bucketId;
+  private UUID createdById;
+  private UUID parentFolderId;
+  private UUID bucketId;
   private String type;
   private String size;
 }

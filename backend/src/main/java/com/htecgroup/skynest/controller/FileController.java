@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -365,5 +367,94 @@ public class FileController {
     ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);
 
     return responseEntity;
+  }
+
+  @Operation(summary = "Edit file info")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "file info successfully edited",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = FileResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"1d132ffe-51c0-43fb-aaed-290d4501b8dd\",\n"
+                                + "    \"createdOn\": \"2022-06-03 16:18:12\",\n"
+                                + "    \"modifiedOn\": \"2022-06-03 16:18:12\",\n"
+                                + "    \"deletedOn\": null,\n"
+                                + "    \"name\": \"change user role.sql\",\n"
+                                + "    \"createdById\": \"67898b3b-4d5f-4a51-95e2-3808b4dfc903\",\n"
+                                + "    \"parentFolderId\": null,\n"
+                                + "    \"bucketId\": \"1ebdec68-f6d7-11ec-8822-0242ac160002\",\n"
+                                + "    \"type\": \"application/x-sql\",\n"
+                                + "    \"size\": \"499\"\n"
+                                + "}")
+                  }),
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User does not have access to bucket\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"file with id ff52209c-f913-11ec-b939-0242ac120002 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PutMapping("/{fileId}")
+  public ResponseEntity<FileResponse> editFileInfo(
+      @Valid @RequestBody FileInfoEditRequest fileInfoEditRequest, @PathVariable UUID fileId) {
+    ResponseEntity<FileResponse> fileResponseEntity =
+        new ResponseEntity<>(fileService.editFileInfo(fileInfoEditRequest, fileId), HttpStatus.OK);
+    return fileResponseEntity;
   }
 }

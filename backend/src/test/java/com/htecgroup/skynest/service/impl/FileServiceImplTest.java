@@ -2,10 +2,13 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
+import com.htecgroup.skynest.model.request.FileInfoEditRequest;
+import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
+import com.htecgroup.skynest.utils.FileEditRequestUtil;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -59,5 +62,30 @@ class FileServiceImplTest {
           fileService.downloadFile(fileMetadata.getId());
         });
     verify(fileMetadataRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void editFileInfo() {
+    FileMetadataEntity expectedFileEntity = FileMetadataEntityUtil.getFileMetadataEntity();
+    when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(expectedFileEntity));
+    when(fileMetadataRepository.save(any())).thenReturn(expectedFileEntity);
+
+    FileInfoEditRequest fileInfoEditRequest = FileEditRequestUtil.get();
+    FileResponse actualFileResponse =
+        fileService.editFileInfo(fileInfoEditRequest, expectedFileEntity.getId());
+
+    this.assertFileEntityAndFileResponse(expectedFileEntity, actualFileResponse);
+    verify(fileMetadataRepository, times(1)).findById(any());
+    verify(fileMetadataRepository, times(1)).save(any());
+  }
+
+  private void assertFileEntityAndFileResponse(
+      FileMetadataEntity expectedFileEntity, FileResponse actualFileResponse) {
+    Assertions.assertEquals(
+        expectedFileEntity.getCreatedBy().getId(), actualFileResponse.getCreatedById());
+    Assertions.assertEquals(expectedFileEntity.getName(), actualFileResponse.getName());
+    Assertions.assertEquals(
+        expectedFileEntity.getBucket().getId(), actualFileResponse.getBucketId());
+    Assertions.assertEquals(expectedFileEntity.getType(), actualFileResponse.getType());
   }
 }
