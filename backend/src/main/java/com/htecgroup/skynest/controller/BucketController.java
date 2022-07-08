@@ -4,6 +4,7 @@ import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.service.BucketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -166,7 +167,7 @@ public class BucketController {
       })
   @GetMapping("/{bucketId}/info")
   public ResponseEntity<BucketResponse> getBucket(@PathVariable UUID bucketId) {
-    BucketResponse bucketResponse = bucketService.getBucket(bucketId);
+    BucketResponse bucketResponse = bucketService.getBucketDetails(bucketId);
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketResponse, HttpStatus.OK);
     return bucketResponseEntity;
@@ -431,5 +432,83 @@ public class BucketController {
     ResponseEntity<BucketResponse> bucketResponseEntity =
         new ResponseEntity<>(bucketService.editBucket(bucketEditRequest, bucketId), HttpStatus.OK);
     return bucketResponseEntity;
+  }
+
+  @Operation(summary = "Get bucket contents")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Bucket contents returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StorageContentResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"folders\":["
+                                + "{\"id\": \"0b3f68e4-fc6e-11ec-8ee4-0242ac120003\","
+                                + "  \"createdOn\": \"2022-07-05T14:23:30\","
+                                + "  \"modifiedOn\": \"2022-07-05T14:23:30\","
+                                + "  \"deletedOn\": null,"
+                                + "  \"name\": \"folder2\","
+                                + "  \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "  \"parentFolderId\": null,"
+                                + "  \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\"}],"
+                                + "\"files\":["
+                                + " {\"id\": \"6759ea31-ae80-4224-a4e2-9e24fdfeebcb\","
+                                + "   \"createdOn\": \"2022-07-05T12:44:28\","
+                                + "   \"modifiedOn\": \"2022-07-05T12:44:28\","
+                                + "   \"deletedOn\": null,"
+                                + "   \"name\": \"MicrosoftTeams-image (6).png\","
+                                + "   \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "   \"parentFolderId\": null,"
+                                + "   \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\","
+                                + "   \"type\": \"image/png\","
+                                + "   \"size\": \"82786\"},"
+                                + " {\"id\": \"be318599-df9b-42a9-95eb-6ec3e74a7a07\","
+                                + "   \"createdOn\": \"2022-07-05T12:32:24\","
+                                + "   \"modifiedOn\": \"2022-07-05T12:32:24\","
+                                + "   \"deletedOn\": null,"
+                                + "   \"name\": \"SkyNest Sprint 2 (1).pptx\","
+                                + "   \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "   \"parentFolderId\": null,"
+                                + "   \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\","
+                                + "   \"type\": \"application/vnd.openxmlformats-officedocument.presentationml.presentation\","
+                                + "   \"size\": \"1946683\"}]}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping("/{uuid}")
+  public ResponseEntity<StorageContentResponse> getBucketContent(@PathVariable UUID uuid) {
+    StorageContentResponse storageContentResponse = bucketService.getBucketContent(uuid);
+    ResponseEntity<StorageContentResponse> storageContentResponseEntity =
+        new ResponseEntity<>(storageContentResponse, HttpStatus.OK);
+    return storageContentResponseEntity;
   }
 }
