@@ -110,7 +110,7 @@ const UserInfo = () => {
                                     onClick={() => {
                                        setEdit(!edit);
                                     }}
-                                    className={edit ? `custom-btn` : "custom-btn-action"}
+                                    className={edit ? `btn btn-outline-secondary button-width` : "btn btn-secondary button-width"}
                                  >
                                     {edit ? "Cancel" : "Edit"}
                                  </button>
@@ -119,7 +119,7 @@ const UserInfo = () => {
                                        onUserLogout(accessToken, setAccessToken);
                                     }}
                                     type="button"
-                                    className="custom-btn-action"
+                                    className="btn btn-secondary button-width ml-2"
                                  >
                                     Logout
                                  </button>
@@ -171,7 +171,7 @@ const UserInfo = () => {
                         </div>
                         {edit && (
                            <div className="d-flex flex-row-reverse mb-2 mr-1">
-                              <button onClick={onUserInfoChanged} className="custom-btn-action">
+                              <button onClick={onUserInfoChanged} className="btn btn-secondary button-width">
                                  Update
                               </button>
                            </div>

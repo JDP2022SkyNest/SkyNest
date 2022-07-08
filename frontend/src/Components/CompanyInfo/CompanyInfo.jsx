@@ -78,20 +78,20 @@ const CompanyInfo = () => {
                                        onCompanyEdit();
                                        setUserCompany(clonedData.name);
                                     }}
-                                    className="btn btn-secondary"
+                                    className="btn btn-secondary ml-2"
                                  >
                                     Update
                                  </button>
                               </div>
                               <div className="mb-2 mr-1">
-                                 <button onClick={() => setEdit(!edit)} className="custom-btn">
+                                 <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary button-width">
                                     Cancel
                                  </button>
                               </div>
                            </div>
                         ) : (
                            <div className="d-flex flex-row-reverse mb-2 mr-1">
-                              <button onClick={() => setEdit(!edit)} className="custom-btn-action">
+                              <button onClick={() => setEdit(!edit)} className="btn btn-secondary button-width">
                                  Edit
                               </button>
                            </div>
