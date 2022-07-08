@@ -55,15 +55,18 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
                <BucketInfo elem={elem} />
-               <button
-                  onClick={(e) => {
-                     e.preventDefault();
-                     handleClose();
-                  }}
-                  className="ml-2 btn btn-secondary"
-               >
-                  Close
-               </button>
+
+               <div className="mt-4 d-flex justify-content-end">
+                  <button
+                     onClick={(e) => {
+                        e.preventDefault();
+                        handleClose();
+                     }}
+                     className="ml-2 btn btn-secondary button-width"
+                  >
+                     Close
+                  </button>
+               </div>
             </Modal.Body>
          </Modal>
       </div>
