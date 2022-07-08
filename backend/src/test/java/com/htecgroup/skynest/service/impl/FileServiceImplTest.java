@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,7 +40,7 @@ class FileServiceImplTest {
 
   @Test
   void getFileMetadata_ThrowsFileNotFound() {
-    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getFileMetadataEntity();
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.get();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
         FileNotFoundException.class,
@@ -53,7 +52,7 @@ class FileServiceImplTest {
 
   @Test
   void downloadFile_ThrowsFileNotFound() {
-    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getFileMetadataEntity();
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.get();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
         FileNotFoundException.class,
@@ -65,24 +64,35 @@ class FileServiceImplTest {
 
   @Test
   void deleteFile_ThrowsFileNotFound() {
-    UUID fileId = FileMetadataEntityUtil.getFileMetadataEntity().getId();
+    UUID fileId = FileMetadataEntityUtil.get().getId();
 
     when(fileMetadataRepository.findById(fileId)).thenReturn(Optional.empty());
 
-    Assertions.assertThrows(FileNotFoundException.class, () -> fileService.deleteFile(fileId));
-    verify(fileMetadataRepository, times(1)).findById(any());
+    String expectedErrorMessage = FileNotFoundException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(FileNotFoundException.class, () -> fileService.deleteFile(fileId));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+
+    verify(fileMetadataRepository, times(1)).findById(fileId);
+    verify(actionService, times(0)).recordAction(any(), any());
+    verify(actionService, times(0)).recordAction(any(), any(), any());
   }
 
   @Test
   void deleteFile_ThrowsFileAlreadyDeleted() {
-    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getFileMetadataEntity();
-    fileMetadataEntity.setDeletedOn(LocalDateTime.now());
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getDeleted();
     UUID fileId = fileMetadataEntity.getId();
 
-    when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(fileMetadataEntity));
+    when(fileMetadataRepository.findById(fileId)).thenReturn(Optional.of(fileMetadataEntity));
 
-    Assertions.assertThrows(
-        FileAlreadyDeletedException.class, () -> fileService.deleteFile(fileId));
-    verify(fileMetadataRepository, times(1)).findById(any());
+    String expectedErrorMessage = FileAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FileAlreadyDeletedException.class, () -> fileService.deleteFile(fileId));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+
+    verify(fileMetadataRepository, times(1)).findById(fileId);
+    verify(actionService, times(0)).recordAction(any(), any());
+    verify(actionService, times(0)).recordAction(any(), any(), any());
   }
 }

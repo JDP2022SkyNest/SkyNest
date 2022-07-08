@@ -33,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -110,7 +109,7 @@ public class FileServiceImpl implements FileService {
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
-    fileMetadataEntity.setDeletedOn(LocalDateTime.now());
+    fileMetadataEntity.delete();
     fileMetadataRepository.save(fileMetadataEntity);
 
     return modelMapper.map(fileMetadataEntity, FileResponse.class);

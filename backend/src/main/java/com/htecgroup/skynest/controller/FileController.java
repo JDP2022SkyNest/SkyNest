@@ -371,7 +371,7 @@ public class FileController {
   @ApiResponses(
       value = {
         @ApiResponse(
-            responseCode = "200",
+            responseCode = "204",
             description = "Successfully deleted a file",
             content = {
               @Content(
@@ -450,11 +450,10 @@ public class FileController {
             })
       })
   @DeleteMapping("/{fileId}")
-  public ResponseEntity<Boolean> deleteFile(@PathVariable UUID fileId) {
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteFile(@PathVariable UUID fileId) {
 
     FileResponse fileResponse = fileService.deleteFile(fileId);
     log.info("File {} successfully deleted", fileResponse.getName());
-
-    return ResponseEntity.ok(true);
   }
 }

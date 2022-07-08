@@ -37,4 +37,8 @@ public class ObjectEntity implements Serializable {
   public boolean isDeleted() {
     return deletedOn != null;
   }
+
+  public void delete() {
+    deletedOn = LocalDateTime.now();
+  }
 }
