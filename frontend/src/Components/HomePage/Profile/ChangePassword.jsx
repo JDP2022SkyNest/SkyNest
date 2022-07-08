@@ -25,7 +25,7 @@ const ChangePassword = ({ userID }) => {
    const handlePasswordChange = async () => {
       try {
          await AxiosInstance.put(
-            `/users/${userID}/password-change/`,
+            `/users/${userID}/password-change`,
             {
                currentPassword,
                newPassword,
