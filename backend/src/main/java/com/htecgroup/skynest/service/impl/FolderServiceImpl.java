@@ -47,12 +47,11 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity folderEntity = modelMapper.map(folderCreateRequest, FolderEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    folderEntity =
-        createFolder(
-            folderEntity,
-            loggedUserDto.getUuid(),
-            folderCreateRequest.getBucketId(),
-            folderCreateRequest.getParentFolderId());
+    createFolder(
+        folderEntity,
+        loggedUserDto.getUuid(),
+        folderCreateRequest.getBucketId(),
+        folderCreateRequest.getParentFolderId());
     folderEntity = folderRepository.save(folderEntity);
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
@@ -83,9 +82,9 @@ public class FolderServiceImpl implements FolderService {
   }
 
   @Override
-  public FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID uuid) {
+  public FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID folderId) {
     FolderEntity folderEntity =
-        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
 
     if (folderEntity.getDeletedOn() != null) {
       throw new FolderAlreadyDeletedException();

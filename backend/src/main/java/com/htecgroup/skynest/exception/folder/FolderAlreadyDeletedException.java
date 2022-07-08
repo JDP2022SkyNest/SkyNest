@@ -7,6 +7,6 @@ public class FolderAlreadyDeletedException extends SkyNestBaseException {
   public static final String MESSAGE = "Folder already deleted";
 
   public FolderAlreadyDeletedException() {
-    super(MESSAGE, HttpStatus.NOT_FOUND);
+    super(MESSAGE, HttpStatus.CONFLICT);
   }
 }

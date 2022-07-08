@@ -238,9 +238,9 @@ public class FolderController {
       })
   @PutMapping("/{uuid}")
   public ResponseEntity<FolderResponse> editFolder(
-      @Valid @RequestBody FolderEditRequest folderEditRequest, @PathVariable UUID uuid) {
+      @Valid @RequestBody FolderEditRequest folderEditRequest, @PathVariable UUID folderId) {
     ResponseEntity<FolderResponse> folderResponseEntity =
-        new ResponseEntity<>(folderService.editFolder(folderEditRequest, uuid), HttpStatus.OK);
+        new ResponseEntity<>(folderService.editFolder(folderEditRequest, folderId), HttpStatus.OK);
     return folderResponseEntity;
   }
 }

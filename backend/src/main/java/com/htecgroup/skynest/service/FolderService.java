@@ -14,5 +14,5 @@ public interface FolderService {
 
   FolderResponse getFolderDetails(UUID uuid);
 
-  FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID uuid);
+  FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID folderId);
 }
