@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
+import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.UserRepository;
@@ -17,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -59,5 +59,34 @@ class FileServiceImplTest {
           fileService.downloadFile(fileMetadata.getId());
         });
     verify(fileMetadataRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void getAllRootFiles() {
+    List<FileMetadataEntity> expectedFiles =
+        new ArrayList<>(Collections.singleton(FileMetadataEntityUtil.getFileMetadataEntity()));
+    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
+        .thenReturn(expectedFiles);
+
+    List<FileResponse> actualFiles =
+        fileService.getAllRootFiles(
+            FileMetadataEntityUtil.getFileMetadataEntity().getBucket().getId());
+
+    Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
+    this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
+    verify(fileMetadataRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
+  }
+
+  private void assertFileMetadataEntityAndFileResponse(
+      FileMetadataEntity expectedFileMetadataEntity, FileResponse actualFileResponse) {
+    Assertions.assertEquals(expectedFileMetadataEntity.getId(), actualFileResponse.getId());
+    Assertions.assertEquals(
+        expectedFileMetadataEntity.getCreatedBy().getId().toString(),
+        actualFileResponse.getCreatedById());
+    Assertions.assertEquals(expectedFileMetadataEntity.getName(), actualFileResponse.getName());
+    Assertions.assertEquals(
+        expectedFileMetadataEntity.getBucket().getId().toString(),
+        actualFileResponse.getBucketId());
+    Assertions.assertEquals(expectedFileMetadataEntity.getType(), actualFileResponse.getType());
   }
 }

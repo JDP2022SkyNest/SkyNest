@@ -18,6 +18,7 @@ public final class BucketEntityUtil {
 
   public static BucketEntity getPrivateBucket() {
     BucketEntity bucketEntity = new BucketEntity(companyEntity, description, size, privateBucket);
+    bucketEntity.setId(UUID.fromString("2d0d675d-db5e-4729-9308-2e5c3e9d5007"));
     bucketEntity.setName("Name");
     bucketEntity.setCreatedBy(UserEntityUtil.getVerified());
     return bucketEntity;
