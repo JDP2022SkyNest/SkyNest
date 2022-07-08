@@ -33,7 +33,7 @@ public class FileController {
 
   private final FileService fileService;
 
-  @Operation(summary = "Upload a new file to a bucket")
+  @Operation(summary = "Upload file to a bucket")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -166,9 +166,9 @@ public class FileController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PostMapping(path = "/bucket/{uuid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(path = "/bucket/{bucketId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<FileResponse> uploadFileToBucket(
-      @PathVariable(name = "uuid") UUID bucketId, @RequestPart("file") MultipartFile file) {
+      @PathVariable UUID bucketId, @RequestPart("file") MultipartFile file) {
 
     FileResponse fileResponse = fileService.uploadFile(file, bucketId);
 
@@ -176,7 +176,7 @@ public class FileController {
     return responseEntity;
   }
 
-  @Operation(summary = "Download a file")
+  @Operation(summary = "Download file")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -261,8 +261,8 @@ public class FileController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping(path = "/{uuid}")
-  public ResponseEntity<Resource> downloadFile(@PathVariable(name = "uuid") UUID fileId) {
+  @GetMapping(path = "/{fileId}")
+  public ResponseEntity<Resource> downloadFile(@PathVariable UUID fileId) {
 
     FileDownloadResponse fileDownloadResponse = fileService.downloadFile(fileId);
 
@@ -277,7 +277,7 @@ public class FileController {
     return responseEntity;
   }
 
-  @Operation(summary = "Get file info")
+  @Operation(summary = "Get file details")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -358,8 +358,8 @@ public class FileController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}/info")
-  public ResponseEntity<FileResponse> getFileDetails(@PathVariable(name = "uuid") UUID fileId) {
+  @GetMapping("/{fileId}/info")
+  public ResponseEntity<FileResponse> getFileDetails(@PathVariable UUID fileId) {
 
     FileResponse fileResponse = fileService.getFileMetadata(fileId);
     ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);

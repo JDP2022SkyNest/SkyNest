@@ -73,7 +73,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                               await promoteUser(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn alert-success text-success"
+                           className="btn btn-secondary button-width"
                         >
                            Promote
                         </button>
@@ -84,7 +84,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                               await demoteUser(accessToken, elem.id, setErrorMsg, setWarningMsg);
                               setChange(!change);
                            }}
-                           className="btn alert-warning text-dark"
+                           className="btn btn-outline-secondary button-width"
                         >
                            Demote
                         </button>
@@ -95,7 +95,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                               await addToCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn alert-info text-dark ml-2"
+                           className="btn btn-secondary ml-2 button-width"
                         >
                            Add
                         </button>
@@ -106,7 +106,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                               await removeFromCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               setChange(!change);
                            }}
-                           className="btn alert-light border text-dark ml-2"
+                           className="btn btn-outline-secondary ml-2 button-width"
                         >
                            Remove
                         </button>
@@ -122,7 +122,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                                  setChange(!change);
                               }
                            }}
-                           className={`btn alert-${!youSure ? "danger" : "dark"}`}
+                           className={`btn button-width btn-${!youSure ? "outline-secondary" : "secondary"}`}
                         >
                            {!youSure ? "Disable" : "You sure?"}
                         </button>
@@ -132,7 +132,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                               await enableUser(accessToken, elem.id, setErrorMsg);
                               setChange(!change);
                            }}
-                           className="btn btn-outline-dark"
+                           className="btn btn-secondary button-width"
                         >
                            Enable
                         </button>
