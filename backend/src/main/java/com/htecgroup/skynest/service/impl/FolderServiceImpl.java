@@ -2,8 +2,11 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
+import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
@@ -14,6 +17,7 @@ import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.FileService;
 import com.htecgroup.skynest.service.FolderService;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,18 +46,19 @@ public class FolderServiceImpl implements FolderService {
 
   private BucketRepository bucketRepository;
 
+  private ActionService actionService;
+
   @Override
   public FolderResponse createFolder(
       @Valid @ParentFolderIsInTheSameBucket FolderCreateRequest folderCreateRequest) {
     FolderEntity folderEntity = modelMapper.map(folderCreateRequest, FolderEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    folderEntity =
-        createFolder(
-            folderEntity,
-            loggedUserDto.getUuid(),
-            folderCreateRequest.getBucketId(),
-            folderCreateRequest.getParentFolderId());
+    createFolder(
+        folderEntity,
+        loggedUserDto.getUuid(),
+        folderCreateRequest.getBucketId(),
+        folderCreateRequest.getParentFolderId());
     folderEntity = folderRepository.save(folderEntity);
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
@@ -73,6 +79,21 @@ public class FolderServiceImpl implements FolderService {
     folderEntity.setCreatedBy(currentUser);
 
     return folderEntity;
+  }
+
+  @Override
+  public void removeFolder(UUID uuid) {
+    FolderDto folderDto =
+        modelMapper.map(
+            folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
+            FolderDto.class);
+    if (folderDto.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
+    FolderDto deletedFolderDto = folderDto.deleteFolder();
+    FolderEntity folderEntity =
+        folderRepository.save(modelMapper.map(deletedFolderDto, FolderEntity.class));
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.DELETE);
   }
 
   @Override
