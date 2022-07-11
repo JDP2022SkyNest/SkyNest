@@ -2,8 +2,10 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
@@ -126,6 +128,22 @@ class FolderServiceImplTest {
     Assertions.assertEquals(expectedFolders.size(), actualFolders.size());
     this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
     verify(folderRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
+  }
+
+  @Test
+  void moveFolderToBucket() {
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
+
+    MoveFolderToBucketRequest moveFolderToBucketRequest = MoveFolderToBucketRequestUtil.get();
+    folderService.moveFolderToBucket(moveFolderToBucketRequest, UUID.randomUUID());
+
+    Mockito.verify(folderRepository).save(captorFolderEntity.capture());
+    Assertions.assertEquals(captorFolderEntity.getValue().getBucket(), bucketEntity);
+    verify(folderRepository, times(1)).findById(any());
+    verify(bucketRepository, times(1)).findById(any());
   }
 
   private void assertFolderEntityAndFolderResponse(

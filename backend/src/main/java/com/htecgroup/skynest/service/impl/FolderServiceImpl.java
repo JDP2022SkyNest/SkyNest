@@ -3,6 +3,8 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyInsideBucketException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyInsideFolderException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -11,6 +13,8 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
+import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
@@ -111,6 +115,37 @@ public class FolderServiceImpl implements FolderService {
   public List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId) {
     List<FolderEntity> allFolders = folderRepository.findAllByParentFolderId(parentFolderId);
     return asFolderResponseList(allFolders);
+  }
+
+  @Override
+  public void moveFolderToBucket(MoveFolderToBucketRequest moveFolderToBucketRequest, UUID uuid) {
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    BucketEntity bucketEntity =
+        bucketRepository
+            .findById(moveFolderToBucketRequest.getDestinationBucketId())
+            .orElseThrow(BucketNotFoundException::new);
+    if (folderEntity.getBucket().getId() == bucketEntity.getId()) {
+      throw new FolderAlreadyInsideBucketException();
+    }
+    folderEntity.setBucket(bucketEntity);
+    folderRepository.save(folderEntity);
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
+  }
+
+  @Override
+  public void moveFolderToFolder(MoveFolderToFolderRequest moveFolderRequest, UUID uuid) {
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    FolderEntity parentFolderEntity =
+        folderRepository
+            .findById(moveFolderRequest.getDestinationParentFolderId())
+            .orElseThrow(FolderNotFoundException::new);
+    if (folderEntity.getParentFolder().getId() == parentFolderEntity.getId()) {
+      throw new FolderAlreadyInsideFolderException();
+    }
+    folderEntity.setParentFolder(parentFolderEntity);
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
   }
 
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {

@@ -1,8 +1,8 @@
 package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.dto.BucketDto;
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.UserDto;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,7 +10,7 @@ import java.util.UUID;
 public class BucketDtoUtil {
 
   protected static final LocalDateTime currentDateTime = LocalDateTime.now();
-  protected static final CompanyEntity companyEntity = new CompanyEntity();
+  protected static final CompanyDto companyDto = new CompanyDto();
   protected static String name = "Name";
   protected static String description = "Description";
   protected static Long size = 1000L;
@@ -26,7 +26,7 @@ public class BucketDtoUtil {
         currentDateTime,
         userDtoUtil,
         name,
-        companyEntity,
+        companyDto,
         description,
         size,
         privateBucket);
@@ -40,7 +40,7 @@ public class BucketDtoUtil {
         null,
         userDtoUtil,
         name,
-        companyEntity,
+        companyDto,
         description,
         size,
         privateBucket);
@@ -54,7 +54,7 @@ public class BucketDtoUtil {
         null,
         userDtoUtil,
         name,
-        companyEntity,
+        companyDto,
         description,
         size,
         privateBucket);
