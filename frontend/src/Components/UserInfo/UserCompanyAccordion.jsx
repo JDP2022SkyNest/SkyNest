@@ -11,32 +11,32 @@ const UserCompanyAccordion = ({ companyData }) => {
             </Accordion.Header>
             <Accordion.Body>
                <div className="row">
-                  <div className="col-sm-4">Name:</div>
+                  <strong className="col-sm-4">Name:</strong>
                   <div className="col-sm-8 text-mutted">{companyData.name}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-4">Email:</div>
+                  <strong className="col-sm-4">Email:</strong>
                   <div className="col-sm-8 text-mutted">{companyData.email}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-4">Address:</div>
+                  <strong className="col-sm-4">Address:</strong>
                   <div className="col-sm-8 text-mutted">{companyData.address}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-4">Phone Number:</div>
+                  <strong className="col-sm-4">Phone Number:</strong>
                   <div className="col-sm-8 text-mutted">{companyData.phoneNumber}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-4">Pib</div>
+                  <strong className="col-sm-4">Pib</strong>
                   <div className="col-sm-8 text-mutted">{companyData.pib}</div>
                </div>
                <hr />
                <div className="row">
-                  <div className="col-sm-4">Tier</div>
+                  <strong className="col-sm-4">Tier</strong>
                   <div className="col-sm-8 text-mutted">{companyData.tierName}</div>
                </div>
             </Accordion.Body>

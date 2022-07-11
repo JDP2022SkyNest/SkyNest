@@ -1,6 +1,6 @@
 import React from "react";
 
-const BucketInfo = ({ elem }) => {
+const FolderInfo = ({ elem }) => {
    return (
       <div className="container-fluid">
          <div className="row">
@@ -9,8 +9,8 @@ const BucketInfo = ({ elem }) => {
          </div>
          <hr className="m-1" />
          <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">Description:</div>
-            <small className="col-sm-9 p-2 text-mutted">{elem.description}</small>
+            <div className="col-sm-3 p-2 font-weight-bold">Created on:</div>
+            <small className="col-sm-9 p-2 text-mutted">{elem.createdOn}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
@@ -19,8 +19,8 @@ const BucketInfo = ({ elem }) => {
          </div>
          <hr className="m-1" />
          <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">CompanyID:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.companyId}</small>
+            <div className="col-sm-3 p-2 font-weight-bold">ID:</div>
+            <small className="col-sm-8 p-2 text-mutted">{elem.id}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
@@ -29,8 +29,8 @@ const BucketInfo = ({ elem }) => {
          </div>
          <hr className="m-1" />
          <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">Size:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.size}</small>
+            <div className="col-sm-3 p-2 font-weight-bold">Parent:</div>
+            <small className="col-sm-8 p-2 text-mutted">{elem.parentFolderId !== null ? elem.parentFolderId : "No Parent Folder"}</small>
          </div>
          <hr className="m-1" />
          <div className="row mb-4">
@@ -41,4 +41,4 @@ const BucketInfo = ({ elem }) => {
    );
 };
 
-export default BucketInfo;
+export default FolderInfo;

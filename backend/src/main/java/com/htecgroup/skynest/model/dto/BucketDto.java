@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.model.dto;
 
-import com.htecgroup.skynest.model.entity.CompanyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class BucketDto {
 
   private String name;
 
-  private CompanyEntity company;
+  private CompanyDto company;
 
   private String description;
 
