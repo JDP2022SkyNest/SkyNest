@@ -10,7 +10,7 @@ public class BucketResponseUtil {
         BucketEntityUtil.getPrivateBucket().getId(),
         BucketEntityUtil.getPrivateBucket().getCreatedBy().getId(),
         "Name",
-        BucketDtoUtil.companyEntity.getId(),
+        BucketDtoUtil.companyDto.getId(),
         "Description",
         1000L,
         false);
