@@ -16,10 +16,10 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <div key={index} className="card custom-rounded bucket-hover">
             <div className="card-body p-2 px-3">
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
-                  <h5 className="card-title">{elem.name.length > 16 ? `${elem.name.slice(0, 16)}...` : elem.name}</h5>
+                  <h5 className="w-75 card-title text-overflow">{elem.name}</h5>
                </OverlayTrigger>
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.description}</Tooltip>}>
-                  <small className="text-muted">{elem.description.length > 18 ? `${elem.description.slice(0, 18)}...` : elem.description}</small>
+                  <div className="text-muted text-overflow">{elem.description}</div>
                </OverlayTrigger>
             </div>
             <div>
