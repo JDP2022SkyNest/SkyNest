@@ -7,10 +7,15 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
+import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.FolderService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,6 +38,8 @@ class BucketServiceImplTest {
   @Mock private ActionService actionService;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private BucketServiceImpl bucketService;
+  @Mock private FolderService folderService;
+  @Mock private FileService fileService;
 
   @Captor private ArgumentCaptor<BucketEntity> captorBucketEntity;
 
@@ -61,6 +68,28 @@ class BucketServiceImplTest {
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
     verify(bucketRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void getBucketContent() {
+
+    List<FolderResponse> expectedFolderResponseList =
+        new ArrayList<>(Collections.singleton(FolderResponseUtil.getRootFolder()));
+    when(folderService.getAllRootFolders(any())).thenReturn(expectedFolderResponseList);
+
+    List<FileResponse> expectedFileResponseList =
+        new ArrayList<>(Collections.singleton(FileResponseUtil.getRootFile()));
+    when(fileService.getAllRootFiles(any())).thenReturn(expectedFileResponseList);
+
+    StorageContentResponse expectedStorageContentResponse =
+        new StorageContentResponse(expectedFolderResponseList, expectedFileResponseList);
+
+    UUID bucketId = FolderEntityUtil.getFolderWithoutParent().getBucket().getId();
+    StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
+
+    Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
+    verify(folderService, times(1)).getAllRootFolders(bucketId);
+    verify(fileService, times(1)).getAllRootFiles(bucketId);
   }
 
   @Test

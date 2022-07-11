@@ -4,12 +4,15 @@ import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.FileService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,7 @@ class FolderServiceImplTest {
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
   @Mock private ActionService actionService;
+  @Mock private FileService fileService;
   @Captor private ArgumentCaptor<FolderEntity> captorFolderEntity;
 
   @Test
@@ -143,6 +147,30 @@ class FolderServiceImplTest {
         .findAllByParentFolderId(folderEntity.getParentFolder().getId());
   }
 
+  @Test
+  void getFolderContent() {
+
+    List<FolderEntity> expectedFolderEntities =
+        new ArrayList<>(Collections.singleton(FolderEntityUtil.getFolderWithParent()));
+    when(folderRepository.findAllByParentFolderId(any())).thenReturn(expectedFolderEntities);
+
+    List<FileResponse> expectedFileResponseList =
+        new ArrayList<>(Collections.singleton(FileResponseUtil.getFileWithParent()));
+    when(fileService.getAllFilesWithParent(any())).thenReturn(expectedFileResponseList);
+
+    List<FolderResponse> expectedFolderResponseList =
+        new ArrayList<>(Collections.singleton(FolderResponseUtil.getFolderWithParent()));
+    StorageContentResponse expectedStorageContentResponse =
+        new StorageContentResponse(expectedFolderResponseList, expectedFileResponseList);
+
+    UUID parentId = FolderEntityUtil.getFolderWithParent().getParentFolder().getId();
+    StorageContentResponse actualStorageContentResponse = folderService.getFolderContent(parentId);
+
+    Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
+    verify(folderRepository, times(1)).findAllByParentFolderId(parentId);
+    verify(fileService, times(1)).getAllFilesWithParent(parentId);
+  }
+
   private void assertFolderEntityAndFolderResponse(
       FolderEntity expectedFolderEntity, FolderResponse actualFolderResponse) {
     Assertions.assertEquals(
@@ -151,4 +179,16 @@ class FolderServiceImplTest {
     Assertions.assertEquals(
         expectedFolderEntity.getBucket().getId(), actualFolderResponse.getBucketId());
   }
+
+  //  private void assertStorageResponse(StorageContentResponse expectedStorageContentResponse,
+  // StorageContentResponse actualStorageContentResponse) {
+  //
+  // Assertions.assertEquals(expectedStorageContentResponse.getFolders().size(),actualStorageContentResponse.getFolders().size());
+  //
+  // Assertions.assertEquals(expectedStorageContentResponse.getFiles().size(),actualStorageContentResponse.getFiles().size());
+  //
+  // Assertions.assertEquals(expectedStorageContentResponse.getFolders().get(0),actualStorageContentResponse.getFolders().get(0));
+  //
+  // Assertions.assertEquals(expectedStorageContentResponse.getFiles().get(0),actualStorageContentResponse.getFiles().get(0));
+  //  }
 }

@@ -98,16 +98,14 @@ class FileServiceImplTest {
       FileMetadataEntity expectedFileMetadataEntity, FileResponse actualFileResponse) {
     Assertions.assertEquals(expectedFileMetadataEntity.getId(), actualFileResponse.getId());
     Assertions.assertEquals(
-        expectedFileMetadataEntity.getCreatedBy().getId().toString(),
-        actualFileResponse.getCreatedById());
+        expectedFileMetadataEntity.getCreatedBy().getId(), actualFileResponse.getCreatedById());
     Assertions.assertEquals(expectedFileMetadataEntity.getName(), actualFileResponse.getName());
     Assertions.assertEquals(
-        expectedFileMetadataEntity.getBucket().getId().toString(),
-        actualFileResponse.getBucketId());
+        expectedFileMetadataEntity.getBucket().getId(), actualFileResponse.getBucketId());
     Assertions.assertEquals(expectedFileMetadataEntity.getType(), actualFileResponse.getType());
     if (expectedFileMetadataEntity.getParentFolder() != null) {
       Assertions.assertEquals(
-          expectedFileMetadataEntity.getParentFolder().getId().toString(),
+          expectedFileMetadataEntity.getParentFolder().getId(),
           actualFileResponse.getParentFolderId());
     }
   }
