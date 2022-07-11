@@ -304,7 +304,6 @@ export const bucketContent = async (accessToken, bucketId, stateToChange) => {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
          headers: { Authorization: accessToken },
       });
-      console.log(response);
       stateToChange(response);
    } catch (err) {
       console.log(err);

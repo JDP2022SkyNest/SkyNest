@@ -19,21 +19,19 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
             <div
                onClick={() => {
-                  console.clear();
-                  console.log(elem.bucketId);
                   redirectTo(navigate, `${elem.bucketId}`, 1);
                }}
                className="card-body p-2 px-3"
             >
-               <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
-                  <div className="w-75 card-title text-overflow" style={{ fontSize: "18px" }}>
-                     <TiCions.TiCloudStorageOutline className="cloud-icon-align mr-1" fill="var(--gold)" />
-                     {elem.name}
-                  </div>
-               </OverlayTrigger>
-               <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.description}</Tooltip>}>
-                  <div className="text-muted text-overflow">{elem.description}</div>
-               </OverlayTrigger>
+               {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}> */}
+               <div className="w-75 card-title text-overflow" style={{ fontSize: "18px" }}>
+                  <TiCions.TiCloudStorageOutline className="cloud-icon-align mr-1" fill="var(--gold)" />
+                  {elem.name}
+               </div>
+               {/* </OverlayTrigger> */}
+               {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.description}</Tooltip>}> */}
+               <div className="text-muted text-overflow">{elem.description}</div>
+               {/* </OverlayTrigger> */}
             </div>
             <div>
                <Dropdown>

@@ -26,9 +26,7 @@ const DynamicRoute = () => {
       await bucketContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => (
-      <Folders index={index} elem={elem} />
-   ));
+   const allData = data?.data?.folders.map((elem, index) => <Folders elem={elem} index={index} key={index} />);
 
    return (
       <div className="home-page-body">
