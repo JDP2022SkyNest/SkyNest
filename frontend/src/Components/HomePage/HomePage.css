@@ -16,6 +16,11 @@
   bottom: 2px;
 }
 
+.cloud-icon-align {
+  position: relative;
+  bottom: 1px;
+}
+
 .home-page-body {
   background-color: var(--latte);
   min-height: 100vh;

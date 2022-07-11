@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { OverlayTrigger, Tooltip, Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
-import * as MdCions from "react-icons/md";
+import * as TiCions from "react-icons/ti";
 import { deleteBucket, redirectTo } from "../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
@@ -25,10 +25,10 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
             <div className="card-body p-2 px-3">
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
-                  <h5 className="w-75 card-title text-overflow">
-                     <MdCions.MdOutlineStarOutline className="main-icon-align mr-2" fill="var(--gold)" />
+                  <div className="w-75 card-title text-overflow" style={{ fontSize: "18px" }}>
+                     <TiCions.TiCloudStorageOutline className="cloud-icon-align mr-1" fill="var(--gold)" />
                      {elem.name}
-                  </h5>
+                  </div>
                </OverlayTrigger>
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.description}</Tooltip>}>
                   <div className="text-muted text-overflow">{elem.description}</div>
