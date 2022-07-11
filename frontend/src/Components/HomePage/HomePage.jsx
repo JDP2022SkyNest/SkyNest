@@ -21,7 +21,7 @@ import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(false);
+   const [sidebar, setSidebar] = useState(true);
    const [allFolders, setAllFolders] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");

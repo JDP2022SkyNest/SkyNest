@@ -27,7 +27,7 @@ const AddFolderModal = ({ refreshBuckets }) => {
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Folder Created");
+         setSuccessMsg("Bucket Created");
          setTimeout(() => {
             setShow(false);
             setName("");

@@ -19,6 +19,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
             <div
                onClick={() => {
+                  console.clear();
                   console.log(elem.bucketId);
                   redirectTo(navigate, `${elem.bucketId}`, 1);
                }}

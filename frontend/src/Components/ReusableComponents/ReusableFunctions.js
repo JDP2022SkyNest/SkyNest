@@ -292,7 +292,7 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
             headers: { Authorization: accessToken },
          }
       );
-      success("Successfully Deleted");
+      success("Bucket Successfully Deleted");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
