@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { OverlayTrigger, Tooltip, Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
-import { deleteBucket } from "../ReusableComponents/ReusableFunctions";
+import * as MdCions from "react-icons/md";
+import { deleteBucket, redirectTo } from "../ReusableComponents/ReusableFunctions";
+import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
 
@@ -9,27 +11,38 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
+   const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
    return (
-      <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
-         <div key={index} className="card custom-rounded bucket-hover">
+      <div
+         onClick={() => {
+            console.log(elem.bucketId);
+            redirectTo(navigate, `${elem.bucketId}`, 1);
+         }}
+         className="col-12 col-sm-6 col-md-4 col-lg-3 p-1"
+      >
+         <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
             <div className="card-body p-2 px-3">
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
-                  <h5 className="w-75 card-title text-overflow">{elem.name}</h5>
+                  <h5 className="w-75 card-title text-overflow">
+                     <MdCions.MdOutlineStarOutline className="main-icon-align mr-2" fill="var(--gold)" />
+                     {elem.name}
+                  </h5>
                </OverlayTrigger>
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.description}</Tooltip>}>
                   <div className="text-muted text-overflow">{elem.description}</div>
                </OverlayTrigger>
             </div>
             <div>
-               <Dropdown>
+               <Dropdown onClick={(e) => e.stopPropagation()}>
                   <Dropdown.Toggle>
                      <BsCions.BsThreeDotsVertical className="dots-icon" aria-expanded="false" />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                      <Dropdown.Item
-                        onClick={() => {
+                        onClick={(e) => {
+                           e.stopPropagation();
                            handleShow();
                         }}
                         className="text-dark"

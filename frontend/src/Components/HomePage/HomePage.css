@@ -89,3 +89,7 @@ hr {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

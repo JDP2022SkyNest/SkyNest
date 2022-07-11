@@ -299,6 +299,17 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
    }
 };
 
+export const bucketContent = async (accessToken, bucketId) => {
+   try {
+      let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
+         headers: { Authorization: accessToken },
+      });
+      console.log(response);
+   } catch (err) {
+      console.log(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
