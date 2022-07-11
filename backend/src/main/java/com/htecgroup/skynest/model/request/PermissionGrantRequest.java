@@ -16,8 +16,8 @@ public class PermissionGrantRequest {
   @NotNull(message = "user id cannot be null or empty")
   private UUID grantedTo;
 
-  @NotNull(message = "bucket id cannot be null or empty")
-  private UUID bucketId;
+  @NotNull(message = "object id cannot be null or empty")
+  private UUID objectId;
 
   @Pattern(regexp = "(view)|(download)|(edit)|(owner)")
   private String access;

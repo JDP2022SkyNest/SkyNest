@@ -54,7 +54,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     BucketEntity bucket =
         bucketRepository
-            .findById(permissionGrantRequest.getBucketId())
+            .findById(permissionGrantRequest.getObjectId())
             .orElseThrow(BucketNotFoundException::new);
 
     permission.setGrantedBy(currentUser);
@@ -65,7 +65,7 @@ public class PermissionServiceImpl implements PermissionService {
         new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
 
     currentUserHasPermissionForBucket(
-        permissionGrantRequest.getBucketId(),
+        permissionGrantRequest.getObjectId(),
         AccessType.valueOf(accessType.getName().toUpperCase()));
 
     if (permissionRepository.existsById(
