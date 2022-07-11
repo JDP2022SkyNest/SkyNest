@@ -48,6 +48,7 @@
   cursor: pointer !important;
   border-color: transparent !important;
   color: black !important;
+  transition: 500ms !important;
 }
 
 .dots-icon {
