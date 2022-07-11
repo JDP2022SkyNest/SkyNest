@@ -61,12 +61,15 @@ public class PermissionServiceImpl implements PermissionService {
     permission.setGrantedTo(targetUser);
     permission.setAccess(accessType);
     permission.setObject(bucket);
+    permission.setId(
+        new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
 
     currentUserHasPermissionForBucket(
         permissionGrantRequest.getBucketId(),
         AccessType.valueOf(accessType.getName().toUpperCase()));
 
-    if (permissionRepository.existsByGrantedToIdAndObjectId(targetUser.getId(), bucket.getId()))
+    if (permissionRepository.existsById(
+        new UserObjectAccessKey(targetUser.getId(), bucket.getId())))
       throw new PermissionAlreadyExistsException();
 
     UserObjectAccessEntity savedPermission = permissionRepository.save(permission);
@@ -81,7 +84,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserObjectAccessEntity permission =
         permissionRepository
-            .findByGrantedToIdAndObjectId(currentUserId, bucketId)
+            .findById(new UserObjectAccessKey(currentUserId, bucketId))
             .orElseThrow(BucketAccessDeniedException::new);
 
     AccessType actualAccessType =

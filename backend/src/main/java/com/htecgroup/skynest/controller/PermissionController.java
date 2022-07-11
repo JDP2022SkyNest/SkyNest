@@ -25,7 +25,7 @@ public class PermissionController {
   private final PermissionService permissionService;
 
   @PostMapping("/grant/bucket")
-  public ResponseEntity<PermissionResponse> getPermissions(
+  public ResponseEntity<PermissionResponse> grantPermissions(
       @Valid @RequestBody PermissionGrantRequest permissionGrantRequest) {
 
     ResponseEntity<PermissionResponse> response =
