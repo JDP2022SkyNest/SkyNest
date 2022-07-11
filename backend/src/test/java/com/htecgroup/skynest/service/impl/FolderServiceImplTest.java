@@ -6,6 +6,7 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
+import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
@@ -137,13 +138,30 @@ class FolderServiceImplTest {
     BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
 
-    MoveFolderToBucketRequest moveFolderToBucketRequest = MoveFolderToBucketRequestUtil.get();
+    MoveFolderToBucketRequest moveFolderToBucketRequest = MoveFolderRequestUtil.getToBucket();
     folderService.moveFolderToBucket(moveFolderToBucketRequest, UUID.randomUUID());
 
     Mockito.verify(folderRepository).save(captorFolderEntity.capture());
     Assertions.assertEquals(captorFolderEntity.getValue().getBucket(), bucketEntity);
     verify(folderRepository, times(1)).findById(any());
     verify(bucketRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void moveFolderToFolder() {
+    UUID uuid = UUID.randomUUID();
+    MoveFolderToFolderRequest moveFolderToFolderRequest = MoveFolderRequestUtil.getToFolder();
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(uuid)).thenReturn(Optional.of(expectedFolderEntity));
+    FolderEntity parentFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(moveFolderToFolderRequest.getDestinationParentFolderId()))
+        .thenReturn(Optional.of(parentFolderEntity));
+
+    folderService.moveFolderToFolder(moveFolderToFolderRequest, uuid);
+
+    Mockito.verify(folderRepository).save(captorFolderEntity.capture());
+    Assertions.assertEquals(captorFolderEntity.getValue().getParentFolder(), parentFolderEntity);
+    verify(folderRepository, times(2)).findById(any());
   }
 
   private void assertFolderEntityAndFolderResponse(

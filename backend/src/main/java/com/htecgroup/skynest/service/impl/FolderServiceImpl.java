@@ -145,6 +145,7 @@ public class FolderServiceImpl implements FolderService {
       throw new FolderAlreadyInsideFolderException();
     }
     folderEntity.setParentFolder(parentFolderEntity);
+    folderRepository.save(folderEntity);
     actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
   }
 
