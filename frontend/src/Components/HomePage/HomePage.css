@@ -24,8 +24,7 @@
 .home-page-body {
   background-color: var(--latte);
   min-height: 100vh;
-  margin-bottom: 40px;
-  padding-bottom: 20px;
+  padding-bottom: 60px;
 }
 
 .latte-background {
