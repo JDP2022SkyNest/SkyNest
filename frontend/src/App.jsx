@@ -17,6 +17,7 @@ import UserInfo from "./Components/UserInfo/UserInfo";
 import CompanyInfo from "./Components/CompanyInfo/CompanyInfo";
 import { useContext } from "react";
 import GlobalContext from "./Components/context/GlobalContext";
+import DynamicRoute from "./Components/HomePage/DynamicRoute";
 
 const App = () => {
    const { setUserCompany, accessToken, setUserID, setUserRole } = useContext(GlobalContext);
@@ -35,6 +36,15 @@ const App = () => {
             element={
                <ProtectedRoute>
                   <HomePage />
+               </ProtectedRoute>
+            }
+         />
+         <Route
+            path="/:routeId"
+            exact
+            element={
+               <ProtectedRoute>
+                  <DynamicRoute />
                </ProtectedRoute>
             }
          />
