@@ -15,15 +15,15 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    const accessToken = localStorage.accessToken;
 
    return (
-      <div
-         onClick={() => {
-            console.log(elem.bucketId);
-            redirectTo(navigate, `${elem.bucketId}`, 1);
-         }}
-         className="col-12 col-sm-6 col-md-4 col-lg-3 p-1"
-      >
+      <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
          <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
-            <div className="card-body p-2 px-3">
+            <div
+               onClick={() => {
+                  console.log(elem.bucketId);
+                  redirectTo(navigate, `${elem.bucketId}`, 1);
+               }}
+               className="card-body p-2 px-3"
+            >
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
                   <div className="w-75 card-title text-overflow" style={{ fontSize: "18px" }}>
                      <TiCions.TiCloudStorageOutline className="cloud-icon-align mr-1" fill="var(--gold)" />
@@ -35,7 +35,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                </OverlayTrigger>
             </div>
             <div>
-               <Dropdown onClick={(e) => e.stopPropagation()}>
+               <Dropdown>
                   <Dropdown.Toggle>
                      <BsCions.BsThreeDotsVertical className="dots-icon" aria-expanded="false" />
                   </Dropdown.Toggle>

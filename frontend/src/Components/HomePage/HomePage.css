@@ -76,10 +76,6 @@ transform: translate(-50%,-50%) scale(0.8);
   align-items: center;
 }
 
-hr {
-  margin: 0 !important;
-}
-
 .bucket-hover:hover {
  background-color: whitesmoke;
 }

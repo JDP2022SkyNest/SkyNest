@@ -21,7 +21,7 @@ import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(true);
+   const [sidebar, setSidebar] = useState(false);
    const [allFolders, setAllFolders] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -65,11 +65,7 @@ const HomePage = () => {
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container">
-            <SetErrorMsg
-               errorMsg={errorMsg}
-               setErrorMsg={setErrorMsg}
-               customStyle="alert alert-danger text-danger text-center col-12 mt-3"
-            />
+            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
             <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
             <div className="py-2 my-3 rounded">
                <AddFolderModal refreshBuckets={refreshBuckets} />
