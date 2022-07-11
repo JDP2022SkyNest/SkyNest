@@ -34,8 +34,8 @@ const BucketInfo = ({ elem }) => {
          </div>
          <hr />
          <div className="row mb-4">
-            <div className="col-sm-3 p-2 font-weight-bold">Public:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.isPublic ? "True" : "False"}</small>
+            <div className="col-sm-3 p-2 font-weight-bold">Visibility:</div>
+            <small className="col-sm-8 p-2 text-mutted">{elem.isPublic ? "Public" : "Private"}</small>
          </div>
       </div>
    );

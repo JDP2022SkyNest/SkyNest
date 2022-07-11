@@ -5,7 +5,7 @@ import { deleteBucket } from "../ReusableComponents/ReusableFunctions";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
 
-const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
+const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
@@ -13,7 +13,7 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
 
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
-         <div key={index} className="card custom-rounded">
+         <div key={index} className="card custom-rounded bucket-hover">
             <div className="card-body p-2 px-3">
                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
                   <h5 className="card-title">{elem.name.length > 16 ? `${elem.name.slice(0, 16)}...` : elem.name}</h5>
@@ -72,4 +72,4 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    );
 };
 
-export default Folder;
+export default Bucket;

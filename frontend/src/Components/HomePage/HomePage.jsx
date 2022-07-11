@@ -15,7 +15,7 @@ import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
 import AddFolderModal from "./AddFolderModal";
 import { useEffect } from "react";
-import Folder from "./Folder";
+import Bucket from "./Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
@@ -41,7 +41,7 @@ const HomePage = () => {
    };
 
    const allData = allFolders.map((elem, index) => (
-      <Folder elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+      <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
    return (
