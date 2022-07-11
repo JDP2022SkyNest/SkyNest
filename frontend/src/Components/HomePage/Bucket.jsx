@@ -65,7 +65,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                </Dropdown>
             </div>
          </div>
-         <Modal show={show} onHide={handleClose} className="mt-3">
+         <Modal onClick={(e) => e.stopPropagation()} show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
                <BucketInfo elem={elem} />
                <div className="mt-4 d-flex justify-content-end">

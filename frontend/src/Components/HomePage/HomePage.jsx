@@ -65,7 +65,11 @@ const HomePage = () => {
          </Navbar>
          <SideBar sidebar={sidebar} userRole={userRole} />
          <div className="container">
-            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+            <SetErrorMsg
+               errorMsg={errorMsg}
+               setErrorMsg={setErrorMsg}
+               customStyle="alert alert-danger text-danger text-center col-12 mt-3"
+            />
             <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
             <div className="py-2 my-3 rounded">
                <AddFolderModal refreshBuckets={refreshBuckets} />
