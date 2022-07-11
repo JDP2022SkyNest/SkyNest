@@ -299,12 +299,13 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
    }
 };
 
-export const bucketContent = async (accessToken, bucketId) => {
+export const bucketContent = async (accessToken, bucketId, stateToChange) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
          headers: { Authorization: accessToken },
       });
       console.log(response);
+      stateToChange(response);
    } catch (err) {
       console.log(err);
    }

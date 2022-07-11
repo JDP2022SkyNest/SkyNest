@@ -13,7 +13,7 @@ import * as RiCions from "react-icons/ri";
 import "./HomePage.css";
 import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
-import AddFolderModal from "./AddFolderModal";
+import AddBucketModal from "./AddFolderModal";
 import { useEffect } from "react";
 import Bucket from "./Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
@@ -21,7 +21,7 @@ import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(true);
+   const [sidebar, setSidebar] = useState(false);
    const [allFolders, setAllFolders] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -68,7 +68,7 @@ const HomePage = () => {
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
             <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
             <div className="py-2 my-3 rounded">
-               <AddFolderModal refreshBuckets={refreshBuckets} />
+               <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
             <div>
                <div className="container">

@@ -17,7 +17,7 @@ const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "tex
                      onChange={(e) => {
                         if (func) {
                            func(e);
-                           setChange(true);
+                           setChange(!change);
                         }
                      }}
                      placeholder={placeholder}
