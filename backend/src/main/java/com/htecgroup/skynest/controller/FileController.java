@@ -435,9 +435,9 @@ public class FileController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"file with id ff52209c-f913-11ec-b939-0242ac120002 doesn't exist\"],"
+                            "{\"messages\":[\"File not found\"],"
                                 + " \"status\": \"404\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
                   })
             }),
         @ApiResponse(
