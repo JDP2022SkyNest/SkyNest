@@ -310,6 +310,17 @@ export const bucketContent = async (accessToken, bucketId, stateToChange) => {
    }
 };
 
+export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
+   window.addEventListener(
+      "resize",
+      () => {
+         const stateToChange = window.innerWidth;
+         if (stateToChange < 1200) setStateToChange(false);
+      },
+      false
+   );
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
