@@ -7,10 +7,9 @@ import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponen
 import { useNavigate } from "react-router-dom";
 import ChangePassword from "./ChangePassword";
 import ROUTES from "../../Routes/ROUTES";
-import ROLE from "..//../Roles/Roles";
 import "./Profile.css";
 
-const Profile = ({ setAccessToken, userRole, userID }) => {
+const Profile = ({ setAccessToken, userID }) => {
    const accessToken = localStorage.accessToken;
 
    const navigate = useNavigate();
@@ -23,7 +22,7 @@ const Profile = ({ setAccessToken, userRole, userID }) => {
          variant="dark"
          menuVariant="dark"
       >
-         <div className={userRole === ROLE.ADMIN ? "dropdown-menu-admin" : "dropdown-menu-worker"}>
+         <div className="dropdown-menu-admin">
             <Dropdown.Item
                onClick={() => {
                   redirectTo(navigate, ROUTES.USERINFO, 1);

@@ -1,5 +1,5 @@
 .side-bar {
-   position: absolute;
+   position: fixed;
    background-color: var(--mate-black);
    color: var(--smoke);
    top: 0;
@@ -8,7 +8,9 @@
    width: 280px;
    transform: translateX(-100%);
    transition: all 0.4s;
-   z-index: 101;
+   z-index: 1;
+   overflow-x: hidden;
+   overflow-y:hidden;
 }
 
 .side-bar li {
@@ -20,28 +22,8 @@
    gap: 1rem; 
 }
 
-.side-bar li:hover {
-   background-color: var(--smoke);
-   color: var(--mate-black);
-}
-
 .side-bar-open {
    transform: translateX(0%);
-}
-
-.logo-sidebar {
-   margin-top: 40vh;
-   width: 180px;
-   margin-left: 50px;
-   animation: logoRotation 360s linear infinite reverse;
-}
-
-.logo-sidebar-admin {
-   margin-top: 40vh;
-   filter: sepia(100);
-   width: 180px;
-   margin-left: 50px;
-   animation: logoRotation 360s linear infinite reverse;
 }
 
 .side-bar-admin li:hover {
@@ -50,7 +32,7 @@
 }
 
 .logo-sidebar-admin {
-   margin-top:  35vh;
+   margin-top:  45vh;
    filter: sepia(100);
    width: 180px;
    margin-left: 50px;

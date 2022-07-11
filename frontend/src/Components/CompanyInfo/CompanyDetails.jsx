@@ -16,23 +16,23 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
    return (
       <section className="container">
          <div className="row">
-            <div className="col-sm-4 p-2">Name:</div>
+            <strong className="col-sm-4 p-2">Name:</strong>
             {!edit ? (
                <div className="col-sm-8 p-2 text-mutted">{companyData.name}</div>
             ) : (
                <div className="col-sm-8">
-                  <input type="text" onChange={(e) => onNameChange(e)} value={clonedData.name} className="form-control border-info" />
+                  <input type="text" onChange={(e) => onNameChange(e)} value={clonedData.name} className="form-control border-white" />
                </div>
             )}
          </div>
          <hr />
          <div className="row">
-            <div className="col-sm-4 p-2">Email:</div>
-            <div className="col-sm-8 p-2 text-mutted">{companyData.email}</div>
+            <strong className="col-sm-4 p-2">Email:</strong>
+            <div className="col-sm-8 p-2  text-mutted">{companyData.email}</div>
          </div>
          <hr />
          <div className="row">
-            <div className="col-sm-4 p-2">Address:</div>
+            <strong className="col-sm-4 p-2">Address:</strong>
             {!edit ? (
                <div className="col-sm-8 p-2 text-mutted">{companyData.address}</div>
             ) : (
@@ -43,7 +43,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
          </div>
          <hr />
          <div className="row">
-            <div className="col-sm-4 p-2">Phone Number:</div>
+            <strong className="col-sm-4 p-2">Phone Number:</strong>
 
             {!edit ? (
                <div className="col-sm-8 p-2 text-mutted">{companyData.phoneNumber}</div>
@@ -55,12 +55,12 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
          </div>
          <hr />
          <div className="row">
-            <div className="col-sm-4 p-2">PIB:</div>
+            <strong className="col-sm-4 p-2">PIB:</strong>
             <div className="col-sm-8 p-2 text-mutted">{companyData.pib}</div>
          </div>
          <hr />
          <div className="row">
-            <div className="col-sm-4 p-2">Tier:</div>
+            <strong className="col-sm-4 p-2">Tier:</strong>
             <div className="col-sm-8 p-2 text-mutted">{companyData.tierName}</div>
          </div>
       </section>
