@@ -3,6 +3,7 @@ package com.htecgroup.skynest.controller;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.service.FolderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,6 +27,7 @@ import java.util.UUID;
 @Log4j2
 @Tag(name = "Folder API", description = "Folder-related operations")
 public class FolderController {
+
   private FolderService folderService;
 
   @Operation(summary = "Create new folder")
@@ -228,5 +230,83 @@ public class FolderController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void removeFolder(@PathVariable UUID uuid) {
     folderService.removeFolder(uuid);
+  }
+
+  @Operation(summary = "Get folder contents")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Folder contents returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StorageContentResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"folders\":["
+                                + "{\"id\": \"0b3f68e4-fc6e-11ec-8ee4-0242ac120003\","
+                                + "  \"createdOn\": \"2022-07-05T14:23:30\","
+                                + "  \"modifiedOn\": \"2022-07-05T14:23:30\","
+                                + "  \"deletedOn\": null,"
+                                + "  \"name\": \"folder1\","
+                                + "  \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "  \"parentFolderId\": \"fe7b8a58-f6b4-4e7a-89aa-70a18e7469dc\","
+                                + "  \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\"}],"
+                                + "\"files\":["
+                                + " {\"id\": \"6759ea31-ae80-4224-a4e2-9e24fdfeebcb\","
+                                + "   \"createdOn\": \"2022-07-05T12:44:28\","
+                                + "   \"modifiedOn\": \"2022-07-05T12:44:28\","
+                                + "   \"deletedOn\": null,"
+                                + "   \"name\": \"MicrosoftTeams-image.png\","
+                                + "   \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "   \"parentFolderId\": \"fe7b8a58-f6b4-4e7a-89aa-70a18e7469dc\","
+                                + "   \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\","
+                                + "   \"type\": \"image/png\","
+                                + "   \"size\": \"82786\"},"
+                                + " {\"id\": \"be318599-df9b-42a9-95eb-6ec3e74a7a07\","
+                                + "   \"createdOn\": \"2022-07-05T12:32:24\","
+                                + "   \"modifiedOn\": \"2022-07-05T12:32:24\","
+                                + "   \"deletedOn\": null,"
+                                + "   \"name\": \"SkyNest Sprint 3.pptx\","
+                                + "   \"createdById\": \"55ff7452-5513-47f3-be82-59c34cb80140\","
+                                + "   \"parentFolderId\": \"fe7b8a58-f6b4-4e7a-89aa-70a18e7469dc\","
+                                + "   \"bucketId\": \"0b091ce5-8b42-4dfe-878a-7cb7382ebae6\","
+                                + "   \"type\": \"application/vnd.openxmlformats-officedocument.presentationml.presentation\","
+                                + "   \"size\": \"1946683\"}]}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping("/{folderId}")
+  public ResponseEntity<StorageContentResponse> getFolderContent(@PathVariable UUID folderId) {
+    StorageContentResponse storageContentResponse = folderService.getFolderContent(folderId);
+    ResponseEntity<StorageContentResponse> storageContentResponseEntity =
+        new ResponseEntity<>(storageContentResponse, HttpStatus.OK);
+    return storageContentResponseEntity;
   }
 }
