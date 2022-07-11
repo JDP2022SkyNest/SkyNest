@@ -65,13 +65,12 @@ class FileServiceImplTest {
   @Test
   void getAllRootFiles() {
     List<FileMetadataEntity> expectedFiles =
-        new ArrayList<>(Collections.singleton(FileMetadataEntityUtil.getFileMetadataEntity()));
+        new ArrayList<>(Collections.singleton(FileMetadataEntityUtil.get()));
     when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
         .thenReturn(expectedFiles);
 
     List<FileResponse> actualFiles =
-        fileService.getAllRootFiles(
-            FileMetadataEntityUtil.getFileMetadataEntity().getBucket().getId());
+        fileService.getAllRootFiles(FileMetadataEntityUtil.get().getBucket().getId());
 
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
