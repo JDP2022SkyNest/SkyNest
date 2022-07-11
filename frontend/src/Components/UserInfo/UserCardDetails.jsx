@@ -15,8 +15,10 @@ const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "tex
                      type={type}
                      value={`${result === null ? "" : result}`}
                      onChange={(e) => {
-                        func(e);
-                        setChange(true);
+                        if (func) {
+                           func(e);
+                           setChange(!change);
+                        }
                      }}
                      placeholder={placeholder}
                      className={`form-control border-white`}
