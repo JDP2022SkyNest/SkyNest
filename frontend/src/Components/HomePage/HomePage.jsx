@@ -13,7 +13,7 @@ import * as RiCions from "react-icons/ri";
 import "./HomePage.css";
 import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
-import AddBucketModal from "./AddFolderModal";
+import AddBucketModal from "./AddBucketModal";
 import { useEffect } from "react";
 import Bucket from "./Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
