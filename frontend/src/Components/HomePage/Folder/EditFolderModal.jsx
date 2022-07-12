@@ -53,7 +53,7 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
    return (
       <>
          <div onClick={handleShow} className="text-dark">
-            Edit Bucket
+            Edit Folder
          </div>
 
          <Modal show={show} onHide={handleClose} className="mt-3">

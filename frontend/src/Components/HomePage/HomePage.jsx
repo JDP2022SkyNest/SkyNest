@@ -70,13 +70,17 @@ const HomePage = () => {
          <SideBar sidebar={!isMobile && sidebar} userRole={userRole} />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
-            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+            <SetSuccessMsg
+               successMsg={successMsg}
+               setSuccessMsg={setSuccessMsg}
+               customStyle="alert alert-success text-success text-center col-12 mt-3"
+            />
             <div className="py-2 my-3 rounded">
                <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
             <div>
                <div className="container">
-                  <div className="row">{allData}</div>
+                  <div className="row data-folder">{allData}</div>
                </div>
             </div>
          </div>

@@ -3,7 +3,7 @@ import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as AiCions from "react-icons/ai";
 import { deleteFolder } from "../../ReusableComponents/ReusableFunctions";
-import EditBucketModal from "../Bucket/EditBucketModal";
+import EditFolderModal from "./EditFolderModal";
 import FolderInfo from "./FolderInfo";
 import { useNavigate } from "react-router-dom";
 
@@ -45,7 +45,7 @@ const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
                         Folder Info
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
-                        <EditBucketModal refresh={refresh} elem={elem} />
+                        <EditFolderModal refresh={refresh} elem={elem} />
                      </Dropdown.Item>
                      <Dropdown.Item
                         onClick={async () => {
