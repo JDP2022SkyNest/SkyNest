@@ -18,8 +18,6 @@ const DynamicFolderRoute = () => {
    const FolderLength = data?.data?.folders.length;
    const FilesLength = data?.data?.files.length;
 
-   console.log(data);
-
    useEffect(() => {
       folderContent(accessToken, routeId, setData);
    }, [routeId, accessToken]);

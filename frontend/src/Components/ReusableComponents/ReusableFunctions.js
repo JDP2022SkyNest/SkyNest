@@ -332,7 +332,6 @@ export const folderContent = async (accessToken, folderId, stateToChange) => {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
-      console.log("foldercontent");
    } catch (err) {
       console.log(err);
    }
