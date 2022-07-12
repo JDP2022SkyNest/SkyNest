@@ -1,32 +1,23 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.action.ActionNotFoundException;
 import com.htecgroup.skynest.exception.action.ActionTypeNotFoundException;
-import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.model.entity.ActionEntity;
 import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.ActionTypeEntity;
 import com.htecgroup.skynest.model.entity.ObjectEntity;
 import com.htecgroup.skynest.repository.ActionRepository;
 import com.htecgroup.skynest.repository.ActionTypeRepository;
-import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -43,7 +34,6 @@ public class ActionServiceImpl implements ActionService {
   private final ActionTypeRepository actionTypeRepository;
   private final UserRepository userRepository;
   private final CurrentUserService currentUserService;
-  private final ObjectRepository objectRepository;
 
   @Override
   public ActionEntity recordAction(Set<ObjectEntity> objects, ActionType actionType) {
@@ -119,22 +109,5 @@ public class ActionServiceImpl implements ActionService {
     else
       return actionRepository.findAllByObjectIdAndTypeAndNotRevokedOrderByPerformedOnDesc(
           objectId, actionTypeEntity);
-  }
-
-  @AfterReturning("@annotation(recordAction)")
-  public void recordAction(JoinPoint joinPoint, RecordAction recordAction) {
-    UUID objectId = parseAnnotationObjectId(joinPoint, recordAction);
-    ActionType actionType = recordAction.actionType();
-
-    ObjectEntity objectEntity =
-        objectRepository.findById(objectId).orElseThrow(ObjectNotFoundException::new);
-    recordAction(Collections.singleton(objectEntity), actionType);
-  }
-
-  private UUID parseAnnotationObjectId(JoinPoint joinPoint, RecordAction recordAction) {
-    Object[] args = joinPoint.getArgs();
-    ExpressionParser elParser = new SpelExpressionParser();
-    Expression expression = elParser.parseExpression(recordAction.objectId());
-    return UUID.fromString((String) expression.getValue(args));
   }
 }
