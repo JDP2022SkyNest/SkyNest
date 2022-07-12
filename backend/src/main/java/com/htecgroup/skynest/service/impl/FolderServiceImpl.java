@@ -11,8 +11,8 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
-import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
+import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
@@ -138,11 +138,13 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public StorageContentResponse getFolderContent(UUID folderId) {
-    if (!folderRepository.existsById(folderId)) throw new FolderNotFoundException();
+    FolderEntity parentFolder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
     return storageContentResponse;
   }
 
