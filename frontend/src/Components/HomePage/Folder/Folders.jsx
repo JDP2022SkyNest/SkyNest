@@ -7,7 +7,7 @@ import EditFolderModal from "./EditFolderModal";
 import FolderInfo from "./FolderInfo";
 import { useNavigate } from "react-router-dom";
 
-const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
+const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);

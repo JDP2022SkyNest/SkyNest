@@ -4,11 +4,9 @@ import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const EditBucketModal = ({ refreshBuckets, elem }) => {
+const EditFolderModal = ({ refresh, elem }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState(elem.name);
-   const [description, setDescription] = useState(elem.description);
-   const [isPublic, setIsPublic] = useState(elem.isPublic);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -20,18 +18,16 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
    const editBucket = async () => {
       try {
          await AxiosInstance.put(
-            `/buckets/${elem.bucketId}`,
+            `/folders/${elem.id}`,
             {
                name,
-               description,
-               isPublic,
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Bucket Eddited");
+         setSuccessMsg("Folder Edited");
          setTimeout(() => {
             setShow(false);
-            refreshBuckets();
+            refresh();
          }, 2000);
       } catch (err) {
          if (err.response.status === 400) {
@@ -74,43 +70,6 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
                            <input value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="nameInp" placeholder="Name" />
                         </div>
                      </div>
-                     <div className="form-group row">
-                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
-                           Description:
-                        </label>
-                        <div className="col-sm-9">
-                           <input
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              className="form-control"
-                              id="descrInp"
-                              placeholder="Description"
-                           />
-                        </div>
-                     </div>
-                     <div className="form-group row">
-                        <label htmlFor="privateInp" className="col-sm-3 col-form-label">
-                           Visibility:
-                        </label>
-                        <div className="col-sm-9 is-private">
-                           <button
-                              onClick={() => {
-                                 setIsPublic(false);
-                              }}
-                              className={`btn btn-${!isPublic ? "secondary" : "outline-white"} btn-sm`}
-                           >
-                              Private
-                           </button>
-                           <button
-                              onClick={() => {
-                                 setIsPublic(true);
-                              }}
-                              className={`btn btn-${isPublic ? "secondary" : "outline-white"} btn-sm ml-2`}
-                           >
-                              Public
-                           </button>
-                        </div>
-                     </div>
                      <div className="mt-4 d-flex justify-content-end">
                         <button onClick={() => onFormSubmit()} className="btn btn-secondary button-width">
                            Edit
@@ -134,4 +93,4 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
    );
 };
 
-export default EditBucketModal;
+export default EditFolderModal;
