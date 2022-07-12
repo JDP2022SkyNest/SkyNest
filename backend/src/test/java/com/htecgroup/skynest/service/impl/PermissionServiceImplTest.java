@@ -44,41 +44,42 @@ class PermissionServiceImplTest {
   @BeforeEach
   void setUp() {}
 
-  @Test
-  void grantPermissionForBucket() {
-    //
-    // when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
-    //    when(userRepository.findById(LoggedUserDtoUtil.getLoggedAdminUser().getUuid()))
-    //        .thenReturn(Optional.of(UserEntityUtil.getAdmin()));
-    //    when(userRepository.findById(UserEntityUtil.getVerified().getId()))
-    //        .thenReturn(Optional.ofNullable(UserEntityUtil.getVerified()));
-    //    when(accessTypeRepository.findByName(AccessType.VIEW.getText()))
-    //        .thenReturn(Optional.of(AccessTypeEntityUtil.get(AccessType.VIEW)));
-    //    when(bucketRepository.findById(BucketEntityUtil.getPrivateBucket().getId()))
-    //        .thenReturn(Optional.of(BucketEntityUtil.getPrivateBucket()));
-    //    when(permissionRepository.findById(
-    //            new UserObjectAccessKey(
-    //                UserEntityUtil.getAdmin().getId(),
-    // BucketEntityUtil.getPrivateBucket().getId())))
-    //        .thenReturn(
-    //            Optional.of(
-    //                new UserObjectAccessEntity(
-    //                    new UserObjectAccessKey(
-    //                        UserEntityUtil.getAdmin().getId(),
-    //                        BucketEntityUtil.getPrivateBucket().getId()),
-    //                    UserEntityUtil.getAdmin(),
-    //                    BucketEntityUtil.getPrivateBucket(),
-    //                    null,
-    //                    AccessTypeEntityUtil.get(AccessType.OWNER),
-    //                    UserEntityUtil.getAdmin())));
-    //    when(permissionRepository.save())
-    //
-    //    PermissionGrantRequest grantViewPermissionRequest =
-    //        PermissionGrantRequestUtil.get(AccessType.VIEW);
-    //    PermissionResponse permissionResponse =
-    //        permissionService.grantPermissionForBucket(grantViewPermissionRequest);
-    //    Assertions.assertEquals(new PermissionResponse(UserEntityUtil.getVerified()));
-  }
+  //  @Test
+  //  void grantPermissionForBucket() {
+  //
+  // when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
+  //    when(userRepository.findById(LoggedUserDtoUtil.getLoggedAdminUser().getUuid()))
+  //        .thenReturn(Optional.of(UserEntityUtil.getAdmin()));
+  //    when(userRepository.findById(UserEntityUtil.getVerified().getId()))
+  //        .thenReturn(Optional.ofNullable(UserEntityUtil.getVerified()));
+  //    when(accessTypeRepository.findByName(AccessType.VIEW.getText()))
+  //        .thenReturn(Optional.of(AccessTypeEntityUtil.get(AccessType.VIEW)));
+  //    when(bucketRepository.findById(BucketEntityUtil.getPrivateBucket().getId()))
+  //        .thenReturn(Optional.of(BucketEntityUtil.getPrivateBucket()));
+  //
+  //      UserObjectAccessKey userObjectAccessKey =
+  //              new UserObjectAccessKey(
+  //                      UserEntityUtil.getAdmin().getId(),
+  // BucketEntityUtil.getPrivateBucket().getId());
+  //      UserObjectAccessEntity userObjectAccess =
+  //              new UserObjectAccessEntity(
+  //                      userObjectAccessKey,
+  //                      UserEntityUtil.getAdmin(),
+  //                      BucketEntityUtil.getPrivateBucket(),
+  //                      null,
+  //                      AccessTypeEntityUtil.get(AccessType.VIEW),
+  //                      UserEntityUtil.getAdmin());
+  //
+  //      when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccess));
+  //
+  //    //        when(permissionRepository.save())
+  //
+  //    PermissionGrantRequest grantViewPermissionRequest =
+  //        PermissionGrantRequestUtil.get(AccessType.VIEW);
+  //    PermissionResponse permissionResponse =
+  //        permissionService.grantPermissionForBucket(grantViewPermissionRequest);
+  //    //    Assertions.assertEquals(new PermissionResponse(UserEntityUtil.getVerified()));
+  //  }
 
   @Test
   void grantPermissionForBucket_ThrowsException_WhenRequestedUserDoesNotExist() {
