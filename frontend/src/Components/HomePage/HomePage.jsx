@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo, getAllBuckets, sideBarCloseOnPhone } from "../ReusableComponents/ReusableFunctions";
@@ -10,14 +10,12 @@ import ToolBar from "../HomePage/ToolBar/ToolBar";
 import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
 import * as RiCions from "react-icons/ri";
-import "./HomePage.css";
-import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
-import AddBucketModal from "./AddBucketModal";
-import { useEffect } from "react";
-import Bucket from "./Bucket";
+import AddBucketModal from "./Bucket/AddBucketModal";
+import Bucket from "./Bucket/Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import "./HomePage.css";
 
 const HomePage = () => {
    const navigate = useNavigate();

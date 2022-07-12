@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { OverlayTrigger, Tooltip, Dropdown, Modal } from "react-bootstrap";
+import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as AiCions from "react-icons/ai";
-import { deleteBucket } from "../ReusableComponents/ReusableFunctions";
-import EditBucketModal from "./EditBucketModal";
+import { deleteFolder } from "../../ReusableComponents/ReusableFunctions";
+import EditBucketModal from "../Bucket/EditBucketModal";
 import FolderInfo from "./FolderInfo";
+import { useNavigate } from "react-router-dom";
 
 const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
+   const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
    return (
@@ -17,20 +19,15 @@ const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
          <div className="card custom-rounded bucket-hover cursor-pointer">
             <div
                onClick={() => {
-                  console.clear();
-                  console.log(elem.bucketId);
+                  navigate(`/folder/${elem.id}`, { replace: true });
                }}
                className="card-body p-2 px-3"
             >
-               {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}> */}
                <div className="w-75 card-title text-overflow" style={{ fontSize: "18px" }}>
                   <AiCions.AiFillFolderOpen className="main-icon-align mr-1" fill="var(--gold)" />
                   {elem.name}
                </div>
-               {/* </OverlayTrigger> */}
-               {/* <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.createdOn}</Tooltip>}> */}
                <div className="text-muted text-overflow">{elem.createdOn}</div>
-               {/* </OverlayTrigger> */}
             </div>
             <div>
                <Dropdown>
@@ -52,12 +49,12 @@ const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
                      </Dropdown.Item>
                      <Dropdown.Item
                         onClick={async () => {
-                           await deleteBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
+                           await deleteFolder(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                            refresh();
                         }}
                         className="text-dark"
                      >
-                        Delete bucket
+                        Delete folder
                      </Dropdown.Item>
                   </Dropdown.Menu>
                </Dropdown>

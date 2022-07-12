@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
-import AxiosInstance from "../axios/AxiosInstance";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import AxiosInstance from "../../axios/AxiosInstance";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
 const EditBucketModal = ({ refreshBuckets, elem }) => {
    const [show, setShow] = useState(false);

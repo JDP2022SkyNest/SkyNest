@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import * as AiCions from "react-icons/ai";
-import AxiosInstance from "../axios/AxiosInstance";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import AxiosInstance from "../../axios/AxiosInstance";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const AddBucketModal = ({ refreshBuckets }) => {
+const AddFolderModal = ({ refresh, bucketId }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
    const [description, setDescription] = useState("");
@@ -17,24 +17,26 @@ const AddBucketModal = ({ refreshBuckets }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const createNewBucket = async () => {
+   const createNewFolder = async () => {
       try {
          await AxiosInstance.post(
-            "/buckets",
+            "/folders",
             {
                name,
-               description,
+               parentFolderId: null,
+               bucketId,
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Bucket Created");
+         setSuccessMsg("Folder Created");
          setTimeout(() => {
             setShow(false);
             setName("");
             setDescription("");
-            refreshBuckets();
+            refresh();
          }, 2000);
       } catch (err) {
+         console.log(bucketId);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {
@@ -47,14 +49,14 @@ const AddBucketModal = ({ refreshBuckets }) => {
    const onFormSubmit = async (e) => {
       e.preventDefault();
       setLoading(true);
-      await createNewBucket();
+      await createNewFolder();
       setLoading(false);
    };
 
    return (
       <>
          <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
+            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
@@ -110,4 +112,4 @@ const AddBucketModal = ({ refreshBuckets }) => {
    );
 };
 
-export default AddBucketModal;
+export default AddFolderModal;

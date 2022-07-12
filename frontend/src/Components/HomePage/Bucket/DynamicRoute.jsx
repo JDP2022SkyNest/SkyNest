@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { bucketContent } from "../ReusableComponents/ReusableFunctions";
-import NavbarPanel from "../ReusableComponents/NavbarPanel";
-import ROUTES from "../Routes/ROUTES";
-import Footer from "../Footer/Footer";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import AddFolderModal from "./AddFolderModal";
-import Folders from "./Folders";
+import { bucketContent } from "../../ReusableComponents/ReusableFunctions";
+import NavbarPanel from "../../ReusableComponents/NavbarPanel";
+import ROUTES from "../../Routes/ROUTES";
+import Footer from "../../Footer/Footer";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import AddFolderModal from "../Folder/AddFolderModal";
+import Folders from "../Folder/Folders";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -26,7 +26,9 @@ const DynamicRoute = () => {
       await bucketContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => <Folders elem={elem} index={index} key={index} />);
+   const allData = data?.data?.folders.map((elem, index) => (
+      <Folders elem={elem} index={index} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+   ));
 
    return (
       <div className="home-page-body">
