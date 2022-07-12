@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
-import AxiosInstance from "../axios/AxiosInstance";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import * as AiCions from "react-icons/ai";
+import AxiosInstance from "../../axios/AxiosInstance";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const EditBucketModal = ({ refreshBuckets, elem }) => {
+const AddFolderModal = ({ refresh, bucketId }) => {
    const [show, setShow] = useState(false);
-   const [name, setName] = useState(elem.name);
-   const [description, setDescription] = useState(elem.description);
-   const [isPublic, setIsPublic] = useState(elem.isPublic);
+   const [name, setName] = useState("");
+   const [description, setDescription] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -17,25 +17,27 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const editBucket = async () => {
+   const createNewFolder = async () => {
       try {
-         await AxiosInstance.put(
-            `/buckets/${elem.bucketId}`,
+         await AxiosInstance.post(
+            "/folders",
             {
                name,
-               description,
-               isPublic,
+               parentFolderId: null,
+               bucketId,
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Bucket Eddited");
+         setSuccessMsg("Folder Created");
          setTimeout(() => {
             setShow(false);
-            refreshBuckets();
+            setName("");
+            setDescription("");
+            refresh();
          }, 2000);
       } catch (err) {
+         console.log(bucketId);
          if (err.response.status === 400) {
-            console.log(err);
             setErrorMsg("Inputs can't be empty");
          } else {
             setErrorMsg(err.response.data.messages);
@@ -44,17 +46,18 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
       }
    };
 
-   const onFormSubmit = async () => {
+   const onFormSubmit = async (e) => {
+      e.preventDefault();
       setLoading(true);
-      await editBucket();
+      await createNewFolder();
       setLoading(false);
    };
 
    return (
       <>
-         <div onClick={handleShow} className="text-dark">
-            Edit Bucket
-         </div>
+         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
+            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
+         </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
@@ -64,7 +67,7 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
                   setSuccessMsg={setSuccessMsg}
                   customStyle="m-0 w-100 alert alert-success text-success text-center mb-3"
                />
-               <form>
+               <form onSubmit={onFormSubmit}>
                   <fieldset disabled={loading}>
                      <div className="form-group row">
                         <label htmlFor="nameInp" className="col-sm-3 col-form-label">
@@ -88,33 +91,8 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
                            />
                         </div>
                      </div>
-                     <div className="form-group row">
-                        <label htmlFor="privateInp" className="col-sm-3 col-form-label">
-                           Visibility:
-                        </label>
-                        <div className="col-sm-9 is-private">
-                           <button
-                              onClick={() => {
-                                 setIsPublic(false);
-                              }}
-                              className={`btn btn-${!isPublic ? "secondary" : "outline-white"} btn-sm`}
-                           >
-                              Private
-                           </button>
-                           <button
-                              onClick={() => {
-                                 setIsPublic(true);
-                              }}
-                              className={`btn btn-${isPublic ? "secondary" : "outline-white"} btn-sm ml-2`}
-                           >
-                              Public
-                           </button>
-                        </div>
-                     </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button onClick={() => onFormSubmit()} className="btn btn-secondary button-width">
-                           Edit
-                        </button>
+                        <button className="btn btn-secondary button-width">Create</button>
                         <button
                            onClick={(e) => {
                               e.preventDefault();
@@ -134,4 +112,4 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
    );
 };
 
-export default EditBucketModal;
+export default AddFolderModal;

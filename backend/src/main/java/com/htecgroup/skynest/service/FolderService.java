@@ -6,6 +6,7 @@ import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
 import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,4 +29,6 @@ public interface FolderService {
   void moveFolderToBucket(MoveFolderToBucketRequest moveFolderToBucketRequest, UUID uuid);
 
   void moveFolderToFolder(MoveFolderToFolderRequest moveFolderRequest, UUID uuid);
+
+  StorageContentResponse getFolderContent(UUID folderId);
 }

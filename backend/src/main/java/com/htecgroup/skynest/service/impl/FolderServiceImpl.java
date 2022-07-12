@@ -16,12 +16,15 @@ import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
 import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
+import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.FileService;
 import com.htecgroup.skynest.service.FolderService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -42,6 +45,7 @@ public class FolderServiceImpl implements FolderService {
   private ModelMapper modelMapper;
   private FolderRepository folderRepository;
   private CurrentUserService currentUserService;
+  private FileService fileService;
 
   private UserRepository userRepository;
 
@@ -166,6 +170,16 @@ public class FolderServiceImpl implements FolderService {
     folderEntity.setParentFolder(parentFolderEntity);
     folderRepository.save(folderEntity);
     actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
+  }
+
+  @Override
+  public StorageContentResponse getFolderContent(UUID folderId) {
+    if (!folderRepository.existsById(folderId)) throw new FolderNotFoundException();
+    List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
+    List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
+    StorageContentResponse storageContentResponse =
+        new StorageContentResponse(allFoldersResponse, allFilesResponse);
+    return storageContentResponse;
   }
 
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {
