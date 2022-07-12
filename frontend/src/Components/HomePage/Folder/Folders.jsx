@@ -14,6 +14,8 @@ const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
    const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
+   const timeFrame = elem.createdOn.replace("T", " @ ");
+
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
          <div className="card custom-rounded bucket-hover cursor-pointer">
@@ -27,7 +29,7 @@ const Folders = ({ elem, refresh, setErrorMsg, setSuccessMsg }) => {
                   <AiCions.AiFillFolderOpen className="main-icon-align mr-1" fill="var(--gold)" />
                   {elem.name}
                </div>
-               <div className="text-muted text-overflow">{elem.createdOn}</div>
+               <div className="text-muted text-overflow">{timeFrame}</div>
             </div>
             <div>
                <Dropdown>
