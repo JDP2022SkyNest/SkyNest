@@ -4,6 +4,7 @@ import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
@@ -33,9 +34,10 @@ class FolderServiceImplTest {
   @Mock private FolderRepository folderRepository;
   @Mock private BucketRepository bucketRepository;
   @Mock private CurrentUserService currentUserService;
+
+  @Mock private ActionService actionService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
-  @Mock private ActionService actionService;
   @Mock private FileService fileService;
   @Captor private ArgumentCaptor<FolderEntity> captorFolderEntity;
 
@@ -113,6 +115,36 @@ class FolderServiceImplTest {
         folderService.getFolderDetails(expectedFolderEntity.getId());
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
+    verify(folderRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void editFolder() {
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
+
+    FolderEditRequest folderEditRequest = FolderEditRequestUtil.get();
+    FolderResponse actualFolderResponse =
+        folderService.editFolder(folderEditRequest, expectedFolderEntity.getId());
+
+    this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
+    verify(folderRepository, times(1)).findById(expectedFolderEntity.getId());
+    verify(folderRepository, times(1)).save(expectedFolderEntity);
+    verifyNoMoreInteractions(folderRepository);
+  }
+
+  @Test
+  void when_edit_deletedFolder_ShouldThrowFolderAlreadyDeleted() {
+    FolderEntity folderEntity = FolderEntityUtil.getDeletedFolder();
+    FolderEditRequest folderEditRequest = FolderEditRequestUtil.get();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    String expectedErrorMessage = FolderAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyDeletedException.class,
+            () -> folderService.editFolder(folderEditRequest, UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(folderRepository, times(1)).findById(any());
   }
 
