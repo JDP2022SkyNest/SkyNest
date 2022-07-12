@@ -179,16 +179,4 @@ class FolderServiceImplTest {
     Assertions.assertEquals(
         expectedFolderEntity.getBucket().getId(), actualFolderResponse.getBucketId());
   }
-
-  //  private void assertStorageResponse(StorageContentResponse expectedStorageContentResponse,
-  // StorageContentResponse actualStorageContentResponse) {
-  //
-  // Assertions.assertEquals(expectedStorageContentResponse.getFolders().size(),actualStorageContentResponse.getFolders().size());
-  //
-  // Assertions.assertEquals(expectedStorageContentResponse.getFiles().size(),actualStorageContentResponse.getFiles().size());
-  //
-  // Assertions.assertEquals(expectedStorageContentResponse.getFolders().get(0),actualStorageContentResponse.getFolders().get(0));
-  //
-  // Assertions.assertEquals(expectedStorageContentResponse.getFiles().get(0),actualStorageContentResponse.getFiles().get(0));
-  //  }
 }
