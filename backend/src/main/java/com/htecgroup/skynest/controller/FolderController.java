@@ -358,11 +358,13 @@ public class FolderController {
                   })
             })
       })
-  @PutMapping("move/{uuid}/toFolder")
+  @PutMapping("/{folderId}/move/{destinationFolderId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void moveFolderToFolder(
-      @Valid @RequestBody MoveFolderToFolderRequest moveFolderRequest, @PathVariable UUID uuid) {
-    folderService.moveFolderToFolder(moveFolderRequest, uuid);
+      @Valid @RequestBody MoveFolderToFolderRequest moveFolderRequest,
+      @PathVariable UUID folderId,
+      @PathVariable UUID destinationFolderId) {
+    folderService.moveFolderToFolder(moveFolderRequest, folderId);
   }
 
   @Operation(summary = "Get folder contents")
