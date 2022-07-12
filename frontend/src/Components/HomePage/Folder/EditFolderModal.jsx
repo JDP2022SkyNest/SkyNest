@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
-import * as AiCions from "react-icons/ai";
-import AxiosInstance from "../axios/AxiosInstance";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import AxiosInstance from "../../axios/AxiosInstance";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const AddBucketModal = ({ refreshBuckets }) => {
+const EditFolderModal = ({ refresh, elem }) => {
    const [show, setShow] = useState(false);
-   const [name, setName] = useState("");
-   const [description, setDescription] = useState("");
+   const [name, setName] = useState(elem.name);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -17,25 +15,23 @@ const AddBucketModal = ({ refreshBuckets }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const createNewBucket = async () => {
+   const editBucket = async () => {
       try {
-         await AxiosInstance.post(
-            "/buckets",
+         await AxiosInstance.put(
+            `/folders/${elem.id}`,
             {
                name,
-               description,
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Bucket Created");
+         setSuccessMsg("Folder Edited");
          setTimeout(() => {
             setShow(false);
-            setName("");
-            setDescription("");
-            refreshBuckets();
+            refresh();
          }, 2000);
       } catch (err) {
          if (err.response.status === 400) {
+            console.log(err);
             setErrorMsg("Inputs can't be empty");
          } else {
             setErrorMsg(err.response.data.messages);
@@ -44,18 +40,17 @@ const AddBucketModal = ({ refreshBuckets }) => {
       }
    };
 
-   const onFormSubmit = async (e) => {
-      e.preventDefault();
+   const onFormSubmit = async () => {
       setLoading(true);
-      await createNewBucket();
+      await editBucket();
       setLoading(false);
    };
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
-         </span>
+         <div onClick={handleShow} className="text-dark">
+            Edit Folder
+         </div>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
@@ -65,7 +60,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
                   setSuccessMsg={setSuccessMsg}
                   customStyle="m-0 w-100 alert alert-success text-success text-center mb-3"
                />
-               <form onSubmit={onFormSubmit}>
+               <form>
                   <fieldset disabled={loading}>
                      <div className="form-group row">
                         <label htmlFor="nameInp" className="col-sm-3 col-form-label">
@@ -75,22 +70,10 @@ const AddBucketModal = ({ refreshBuckets }) => {
                            <input value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="nameInp" placeholder="Name" />
                         </div>
                      </div>
-                     <div className="form-group row">
-                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
-                           Description:
-                        </label>
-                        <div className="col-sm-9">
-                           <input
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              className="form-control"
-                              id="descrInp"
-                              placeholder="Description"
-                           />
-                        </div>
-                     </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-secondary button-width">Create</button>
+                        <button onClick={() => onFormSubmit()} className="btn btn-secondary button-width">
+                           Edit
+                        </button>
                         <button
                            onClick={(e) => {
                               e.preventDefault();
@@ -110,4 +93,4 @@ const AddBucketModal = ({ refreshBuckets }) => {
    );
 };
 
-export default AddBucketModal;
+export default EditFolderModal;

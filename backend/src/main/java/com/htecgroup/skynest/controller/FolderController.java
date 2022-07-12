@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
@@ -293,6 +294,21 @@ public class FolderController {
                   })
             }),
         @ApiResponse(
+            responseCode = "404",
+            description = "Folder not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
@@ -308,5 +324,79 @@ public class FolderController {
     ResponseEntity<StorageContentResponse> storageContentResponseEntity =
         new ResponseEntity<>(storageContentResponse, HttpStatus.OK);
     return storageContentResponseEntity;
+  }
+
+  @Operation(summary = "Edit folder name")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Folder successfully edited",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = FolderResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"a6fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "  \"name\": \"Name\","
+                                + "  \"createdById\": \"db8ca962-ccb3-44d7-98ba-0692dab47d35\","
+                                + "  \"parentFolderId\": \"c58f6502-9de1-418b-9b04-dddc94f58bba\","
+                                + "  \"bucketId\": \"31f66147-e491-4cdc-9e8f-b4d5c1652d23\"}")
+                  }),
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Folder not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder with id ff52209c-f913-11ec-b939-0242ac120002 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Folder already deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder is already deleted.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @PutMapping("/{folderId}")
+  public ResponseEntity<FolderResponse> editFolder(
+      @Valid @RequestBody FolderEditRequest folderEditRequest, @PathVariable UUID folderId) {
+    ResponseEntity<FolderResponse> folderResponseEntity =
+        new ResponseEntity<>(folderService.editFolder(folderEditRequest, folderId), HttpStatus.OK);
+    return folderResponseEntity;
   }
 }
