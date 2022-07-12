@@ -58,7 +58,12 @@ public class FileServiceImpl implements FileService {
   @Transactional(rollbackFor = Exception.class)
   public FileResponse uploadFileToBucket(MultipartFile multipartFile, UUID bucketId) {
 
-    FileMetadataEntity emptyFileMetadata = initFileMetadataWithBucket(multipartFile, bucketId);
+    FileMetadataEntity emptyFileMetadata =
+        initFileMetadataWithBucket(
+            multipartFile.getOriginalFilename(),
+            multipartFile.getSize(),
+            multipartFile.getContentType(),
+            bucketId);
 
     checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
     checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
@@ -72,7 +77,12 @@ public class FileServiceImpl implements FileService {
   @Transactional(rollbackFor = Exception.class)
   public FileResponse uploadFileToFolder(MultipartFile multipartFile, UUID folderId) {
 
-    FileMetadataEntity emptyFileMetadata = initFileMetadataWithFolder(multipartFile, folderId);
+    FileMetadataEntity emptyFileMetadata =
+        initFileMetadataWithFolder(
+            multipartFile.getOriginalFilename(),
+            multipartFile.getSize(),
+            multipartFile.getContentType(),
+            folderId);
 
     checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
     checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
@@ -145,7 +155,10 @@ public class FileServiceImpl implements FileService {
         .collect(Collectors.toList());
   }
 
-  private FileMetadataEntity initFileMetadata(String name, long size, String type) {
+  private FileMetadataEntity initFileMetadata(
+      String name, long size, String type, UUID bucketId, UUID folderId) {
+
+    if (bucketId != null && folderId != null) throw new IllegalArgumentException();
 
     UserEntity currentUserEntity =
         userRepository
@@ -160,43 +173,29 @@ public class FileServiceImpl implements FileService {
     fileMetadataEntity.setSize(size);
     fileMetadataEntity.setType(type);
 
+    BucketEntity bucket;
+    FolderEntity parentFolder;
+    if (bucketId != null) {
+      parentFolder = null;
+      bucket = bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+    } else {
+      parentFolder = folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+      bucket = parentFolder.getBucket();
+    }
+    fileMetadataEntity.setBucket(bucket);
+    fileMetadataEntity.setParentFolder(parentFolder);
+
     return fileMetadataEntity;
   }
 
   private FileMetadataEntity initFileMetadataWithBucket(
-      MultipartFile multipartFile, UUID bucketId) {
-
-    FileMetadataEntity emptyFileMetadata =
-        initFileMetadata(
-            multipartFile.getOriginalFilename(),
-            multipartFile.getSize(),
-            multipartFile.getContentType());
-
-    BucketEntity bucketEntity =
-        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
-
-    emptyFileMetadata.setBucket(bucketEntity);
-    emptyFileMetadata.setParentFolder(null);
-
-    return emptyFileMetadata;
+      String name, long size, String type, UUID bucketId) {
+    return initFileMetadata(name, size, type, bucketId, null);
   }
 
   private FileMetadataEntity initFileMetadataWithFolder(
-      MultipartFile multipartFile, UUID folderId) {
-
-    FileMetadataEntity emptyFileMetadata =
-        initFileMetadata(
-            multipartFile.getOriginalFilename(),
-            multipartFile.getSize(),
-            multipartFile.getContentType());
-
-    FolderEntity folder =
-        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
-
-    emptyFileMetadata.setBucket(folder.getBucket());
-    emptyFileMetadata.setParentFolder(folder);
-
-    return emptyFileMetadata;
+      String name, long size, String type, UUID folderId) {
+    return initFileMetadata(name, size, type, null, folderId);
   }
 
   private FileMetadataEntity storeFileContents(
