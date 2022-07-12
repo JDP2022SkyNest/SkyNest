@@ -64,30 +64,53 @@ class FileServiceImplTest {
 
   @Test
   void getAllRootFiles() {
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(FileMetadataEntityUtil.get()));
+        new ArrayList<>(Collections.singleton(fileMetadataEntity));
     when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
         .thenReturn(expectedFiles);
 
     List<FileResponse> actualFiles =
         fileService.getAllRootFiles(FileMetadataEntityUtil.get().getBucket().getId());
+        fileService.getAllRootFiles(fileMetadataEntity.getBucket().getId());
 
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
-    verify(fileMetadataRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
+    verify(fileMetadataRepository, times(1))
+        .findAllByBucketIdAndParentFolderIsNull(fileMetadataEntity.getBucket().getId());
+  }
+
+  @Test
+  void getAllFilesWithParent() {
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    List<FileMetadataEntity> expectedFiles =
+        new ArrayList<>(Collections.singleton(fileMetadataEntity));
+    when(fileMetadataRepository.findAllByParentFolderId(any())).thenReturn(expectedFiles);
+
+    List<FileResponse> actualFiles =
+        fileService.getAllFilesWithParent(fileMetadataEntity.getParentFolder().getId());
+
+    Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
+    this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
+    verify(fileMetadataRepository, times(1))
+        .findAllByParentFolderId(fileMetadataEntity.getParentFolder().getId());
   }
 
   private void assertFileMetadataEntityAndFileResponse(
       FileMetadataEntity expectedFileMetadataEntity, FileResponse actualFileResponse) {
     Assertions.assertEquals(expectedFileMetadataEntity.getId(), actualFileResponse.getId());
     Assertions.assertEquals(
-        expectedFileMetadataEntity.getCreatedBy().getId().toString(),
-        actualFileResponse.getCreatedById());
+        expectedFileMetadataEntity.getCreatedBy().getId(), actualFileResponse.getCreatedById());
     Assertions.assertEquals(expectedFileMetadataEntity.getName(), actualFileResponse.getName());
     Assertions.assertEquals(
-        expectedFileMetadataEntity.getBucket().getId().toString(),
-        actualFileResponse.getBucketId());
+        expectedFileMetadataEntity.getBucket().getId(), actualFileResponse.getBucketId());
     Assertions.assertEquals(expectedFileMetadataEntity.getType(), actualFileResponse.getType());
+    if (expectedFileMetadataEntity.getParentFolder() != null) {
+      Assertions.assertEquals(
+          expectedFileMetadataEntity.getParentFolder().getId(),
+          actualFileResponse.getParentFolderId());
+    }
   }
 
   @Test

@@ -27,17 +27,21 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
          </div>
          <hr />
          <div className="row">
-            <strong className="col-sm-4 p-2">Email:</strong>
-            <div className="col-sm-8 p-2  text-mutted">{companyData.email}</div>
+            {!edit && (
+               <>
+                  <strong className="col-sm-4 p-2">Email:</strong>
+                  <div className="col-sm-8 p-2  text-mutted">{companyData.email}</div>
+               </>
+            )}
          </div>
-         <hr />
+         {!edit && <hr />}
          <div className="row">
             <strong className="col-sm-4 p-2">Address:</strong>
             {!edit ? (
                <div className="col-sm-8 p-2 text-mutted">{companyData.address}</div>
             ) : (
                <div className="col-sm-8">
-                  <input type="text" onChange={(e) => onAddressChange(e)} value={clonedData.address} className="form-control border-info" />
+                  <input type="text" onChange={(e) => onAddressChange(e)} value={clonedData.address} className="form-control border-white" />
                </div>
             )}
          </div>
@@ -49,19 +53,27 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                <div className="col-sm-8 p-2 text-mutted">{companyData.phoneNumber}</div>
             ) : (
                <div className="col-sm-8">
-                  <input type="number" onChange={(e) => onPhoneChange(e)} value={clonedData.phoneNumber} className="form-control border-info" />
+                  <input type="number" onChange={(e) => onPhoneChange(e)} value={clonedData.phoneNumber} className="form-control border-white" />
                </div>
             )}
          </div>
-         <hr />
+         {!edit && <hr />}
          <div className="row">
-            <strong className="col-sm-4 p-2">PIB:</strong>
-            <div className="col-sm-8 p-2 text-mutted">{companyData.pib}</div>
+            {!edit && (
+               <>
+                  <strong className="col-sm-4 p-2">PIB:</strong>
+                  <div className="col-sm-8 p-2 text-mutted">{companyData.pib}</div>
+               </>
+            )}
          </div>
-         <hr />
+         {!edit && <hr />}
          <div className="row">
-            <strong className="col-sm-4 p-2">Tier:</strong>
-            <div className="col-sm-8 p-2 text-mutted">{companyData.tierName}</div>
+            {!edit && (
+               <>
+                  <strong className="col-sm-4 p-2">Tier:</strong>
+                  <div className="col-sm-8 p-2 text-mutted">{companyData.tierName}</div>
+               </>
+            )}
          </div>
       </section>
    );
