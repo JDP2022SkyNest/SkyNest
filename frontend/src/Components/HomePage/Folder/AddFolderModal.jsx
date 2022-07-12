@@ -4,8 +4,10 @@ import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import { useContext } from "react";
+import GlobalContext from "../../context/GlobalContext";
 
-const AddFolderModal = ({ refresh, bucketId }) => {
+const AddFolderModal = ({ refresh, parentFolderId }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
@@ -16,14 +18,16 @@ const AddFolderModal = ({ refresh, bucketId }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
+   const { stateBucketId } = useContext(GlobalContext);
+
    const createNewFolder = async () => {
       try {
          await AxiosInstance.post(
             "/folders",
             {
                name,
-               parentFolderId: null,
-               bucketId,
+               parentFolderId,
+               bucketId: stateBucketId,
             },
             { headers: { Authorization: accessToken } }
          );
@@ -34,7 +38,6 @@ const AddFolderModal = ({ refresh, bucketId }) => {
             refresh();
          }, 2000);
       } catch (err) {
-         console.log(bucketId);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {

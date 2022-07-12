@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { bucketContent } from "../../ReusableComponents/ReusableFunctions";
+import { folderContent } from "../../ReusableComponents/ReusableFunctions";
 import NavbarPanel from "../../ReusableComponents/NavbarPanel";
 import ROUTES from "../../Routes/ROUTES";
 import Footer from "../../Footer/Footer";
@@ -18,12 +18,14 @@ const DynamicFolderRoute = () => {
    const FolderLength = data?.data?.folders.length;
    const FilesLength = data?.data?.files.length;
 
+   console.log(data);
+
    useEffect(() => {
-      bucketContent(accessToken, routeId, setData);
+      folderContent(accessToken, routeId, setData);
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
-      await bucketContent(accessToken, routeId, setData);
+      await folderContent(accessToken, routeId, setData);
    };
 
    const allData = data?.data?.folders.map((elem, index) => <Folders elem={elem} index={index} key={index} />);
@@ -39,7 +41,7 @@ const DynamicFolderRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <div className="py-2 my-3 rounded">
-               <AddFolderModal bucketId={routeId} refresh={refreshFoldersAndFiles} />
+               <AddFolderModal parentFolderId={routeId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>
                <div className="container">
