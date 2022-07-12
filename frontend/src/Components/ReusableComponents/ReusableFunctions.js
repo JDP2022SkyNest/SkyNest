@@ -292,11 +292,49 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
             headers: { Authorization: accessToken },
          }
       );
-      success("Successfully Deleted");
+      success("Bucket Successfully Deleted");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
    }
+};
+
+export const deleteFolder = async (accessToken, folderId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/delete/${folderId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const bucketContent = async (accessToken, bucketId, stateToChange) => {
+   try {
+      let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response);
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
+   window.addEventListener(
+      "resize",
+      () => {
+         const stateToChange = window.innerWidth;
+         if (stateToChange < 1200) setStateToChange(false);
+      },
+      false
+   );
 };
 
 export const openFullscreen = () => {

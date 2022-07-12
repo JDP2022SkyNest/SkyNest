@@ -1,26 +1,33 @@
 import React, { useState } from "react";
-import { OverlayTrigger, Tooltip, Dropdown, Modal } from "react-bootstrap";
+import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
-import { deleteBucket } from "../ReusableComponents/ReusableFunctions";
+import * as TiCions from "react-icons/ti";
+import { deleteBucket, redirectTo } from "../../ReusableComponents/ReusableFunctions";
+import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
 
-const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
+const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
+   const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
-         <div key={index} className="card custom-rounded">
-            <div className="card-body p-2 px-3">
-               <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.name}</Tooltip>}>
-                  <h5 className="card-title">{elem.name.length > 16 ? `${elem.name.slice(0, 16)}...` : elem.name}</h5>
-               </OverlayTrigger>
-               <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{elem.description}</Tooltip>}>
-                  <small className="text-muted">{elem.description.length > 18 ? `${elem.description.slice(0, 18)}...` : elem.description}</small>
-               </OverlayTrigger>
+         <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
+            <div
+               onClick={() => {
+                  redirectTo(navigate, `bucket/${elem.bucketId}`, 1);
+               }}
+               className="card-body p-2 px-3"
+            >
+               <div className="w-75 card-title text-overflow" style={{ fontSize: "18px" }}>
+                  <TiCions.TiCloudStorageOutline className="cloud-icon-align mr-1" fill="var(--gold)" />
+                  {elem.name}
+               </div>
+               <div className="text-muted text-overflow">{elem.description}</div>
             </div>
             <div>
                <Dropdown>
@@ -29,7 +36,8 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                      <Dropdown.Item
-                        onClick={() => {
+                        onClick={(e) => {
+                           e.stopPropagation();
                            handleShow();
                         }}
                         className="text-dark"
@@ -52,7 +60,7 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                </Dropdown>
             </div>
          </div>
-         <Modal show={show} onHide={handleClose} className="mt-3">
+         <Modal onClick={(e) => e.stopPropagation()} show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
                <BucketInfo elem={elem} />
                <div className="mt-4 d-flex justify-content-end">
@@ -72,4 +80,4 @@ const Folder = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    );
 };
 
-export default Folder;
+export default Bucket;

@@ -141,32 +141,39 @@ const UserInfo = () => {
                      <div className="col-lg-8 mb-3">
                         <div className="card mb-3 shadow">
                            <div className="card-body">
-                              <UserCardDetails info={<strong>Name:</strong>} result={userData?.name} edit={edit} func={nameChange}></UserCardDetails>
-                              <UserCardDetails info={<strong>Last Name:</strong>} result={userData?.surname} edit={edit} func={surnameChange} />
-                              <UserCardDetails info={<strong>Email:</strong>} result={userData?.email} />
-                              <UserCardDetails
-                                 info={<strong>Phone Number:</strong>}
-                                 type="number"
-                                 result={userData?.phoneNumber}
-                                 edit={edit}
-                                 func={phoneChange}
-                              />
-                              {edit && (
+                              <div className="container">
                                  <UserCardDetails
-                                    info={<strong>Position:</strong>}
-                                    result={userData?.positionInCompany}
+                                    info={<strong>Name:</strong>}
+                                    result={userData?.name}
                                     edit={edit}
-                                    func={positionChange}
-                                    placeholder="Please enter a value here"
+                                    func={nameChange}
+                                 ></UserCardDetails>
+                                 <UserCardDetails info={<strong>Last Name:</strong>} result={userData?.surname} edit={edit} func={surnameChange} />
+                                 <UserCardDetails info={<strong>Email:</strong>} result={userData?.email} edit={edit} />
+                                 <UserCardDetails
+                                    info={<strong>Phone Number:</strong>}
+                                    type="number"
+                                    result={userData?.phoneNumber}
+                                    edit={edit}
+                                    func={phoneChange}
                                  />
-                              )}
-                              <UserCardDetails
-                                 info={<strong>Address:</strong>}
-                                 result={userData?.address}
-                                 edit={edit}
-                                 func={addressChange}
-                                 horLine={false}
-                              />
+                                 {edit && (
+                                    <UserCardDetails
+                                       info={<strong>Position:</strong>}
+                                       result={userData?.positionInCompany}
+                                       edit={edit}
+                                       func={positionChange}
+                                       placeholder="Please enter a value here"
+                                    />
+                                 )}
+                                 <UserCardDetails
+                                    info={<strong>Address:</strong>}
+                                    result={userData?.address}
+                                    edit={edit}
+                                    func={addressChange}
+                                    horLine={false}
+                                 />
+                              </div>
                            </div>
                         </div>
                         {edit && (
