@@ -105,8 +105,9 @@ public class FolderServiceImpl implements FolderService {
   public FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID folderId) {
     FolderEntity folderEntity =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
 
-    if (folderEntity.getDeletedOn() != null) {
+    if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
     folderEntity.setName(folderEditRequest.getName().trim());
