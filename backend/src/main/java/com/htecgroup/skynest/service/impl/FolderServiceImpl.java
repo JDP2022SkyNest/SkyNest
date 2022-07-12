@@ -11,6 +11,7 @@ import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
+import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
@@ -98,6 +99,24 @@ public class FolderServiceImpl implements FolderService {
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
     FolderResponse folderResponse = modelMapper.map(folderEntity, FolderResponse.class);
     return folderResponse;
+  }
+
+  @Override
+  public FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID folderId) {
+    FolderEntity folderEntity =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
+
+    if (folderDto.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
+    folderEntity.setName(folderEditRequest.getName().trim());
+
+    modelMapper.map(folderEditRequest, folderEntity);
+    FolderEntity saveFolderEntity = folderRepository.save(folderEntity);
+
+    actionService.recordAction(Collections.singleton(saveFolderEntity), ActionType.EDIT);
+    return modelMapper.map(saveFolderEntity, FolderResponse.class);
   }
 
   @Override
