@@ -293,6 +293,21 @@ public class FolderController {
                   })
             }),
         @ApiResponse(
+            responseCode = "404",
+            description = "Folder not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {

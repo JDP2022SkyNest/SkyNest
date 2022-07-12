@@ -119,6 +119,7 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public StorageContentResponse getFolderContent(UUID folderId) {
+    if (!folderRepository.existsById(folderId)) throw new FolderNotFoundException();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
     StorageContentResponse storageContentResponse =
