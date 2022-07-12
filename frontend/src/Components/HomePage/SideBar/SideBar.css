@@ -1,5 +1,5 @@
 .side-bar {
-   position: absolute;
+   position: fixed;
    background-color: var(--mate-black);
    color: var(--smoke);
    top: 0;
@@ -8,7 +8,9 @@
    width: 280px;
    transform: translateX(-100%);
    transition: all 0.4s;
-   z-index: 101;
+   z-index: 1;
+   overflow-x: hidden;
+   overflow-y:hidden;
 }
 
 .side-bar li {

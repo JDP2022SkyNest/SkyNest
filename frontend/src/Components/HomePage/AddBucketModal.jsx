@@ -5,7 +5,7 @@ import AxiosInstance from "../axios/AxiosInstance";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 
-const AddFolderModal = ({ refresh, bucketId }) => {
+const AddBucketModal = ({ refreshBuckets }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
    const [description, setDescription] = useState("");
@@ -17,23 +17,22 @@ const AddFolderModal = ({ refresh, bucketId }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const createNewFolder = async () => {
+   const createNewBucket = async () => {
       try {
          await AxiosInstance.post(
-            "/folders",
+            "/buckets",
             {
                name,
-               parentFolderId: null,
-               bucketId,
+               description,
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Folder Created");
+         setSuccessMsg("Bucket Created");
          setTimeout(() => {
             setShow(false);
             setName("");
             setDescription("");
-            refresh();
+            refreshBuckets();
          }, 2000);
       } catch (err) {
          if (err.response.status === 400) {
@@ -48,14 +47,14 @@ const AddFolderModal = ({ refresh, bucketId }) => {
    const onFormSubmit = async (e) => {
       e.preventDefault();
       setLoading(true);
-      await createNewFolder();
+      await createNewBucket();
       setLoading(false);
    };
 
    return (
       <>
          <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
+            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
@@ -111,4 +110,4 @@ const AddFolderModal = ({ refresh, bucketId }) => {
    );
 };
 
-export default AddFolderModal;
+export default AddBucketModal;
