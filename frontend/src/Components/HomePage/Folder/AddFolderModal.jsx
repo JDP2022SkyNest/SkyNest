@@ -8,7 +8,6 @@ import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 const AddFolderModal = ({ refresh, bucketId }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
-   const [description, setDescription] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -32,7 +31,6 @@ const AddFolderModal = ({ refresh, bucketId }) => {
          setTimeout(() => {
             setShow(false);
             setName("");
-            setDescription("");
             refresh();
          }, 2000);
       } catch (err) {
@@ -75,20 +73,6 @@ const AddFolderModal = ({ refresh, bucketId }) => {
                         </label>
                         <div className="col-sm-9">
                            <input value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="nameInp" placeholder="Name" />
-                        </div>
-                     </div>
-                     <div className="form-group row">
-                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
-                           Description:
-                        </label>
-                        <div className="col-sm-9">
-                           <input
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              className="form-control"
-                              id="descrInp"
-                              placeholder="Description"
-                           />
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
