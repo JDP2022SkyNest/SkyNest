@@ -12,7 +12,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class StorageContentResponse {
 
-  UUID bucketId;
+  private UUID bucketId;
   private List<FolderResponse> folders;
   private List<FileResponse> files;
 }
