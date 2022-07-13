@@ -20,7 +20,7 @@ import "./HomePage.css";
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(true);
-   const [allFolders, setAllFolders] = useState([]);
+   const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
@@ -37,14 +37,14 @@ const HomePage = () => {
    }, [isMobile]);
 
    useEffect(() => {
-      getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+      getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
    }, [accessToken]);
 
    const refreshBuckets = async () => {
-      await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+      await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
    };
 
-   const allData = allFolders.map((elem, index) => (
+   const allData = allBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
