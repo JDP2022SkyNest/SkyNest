@@ -63,7 +63,7 @@ class BucketServiceImplTest {
   void listAllDeletedBuckets() {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getDeletedBucket());
-    when(bucketRepository.findAllDeleted()).thenReturn(bucketEntityList);
+    when(bucketRepository.findAllByDeletedOnIsNotNull()).thenReturn(bucketEntityList);
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
     List<BucketResponse> actualResponse = bucketService.listAllDeletedBuckets();
