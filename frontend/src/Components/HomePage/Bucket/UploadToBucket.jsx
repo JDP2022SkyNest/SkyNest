@@ -4,8 +4,10 @@ import * as TiCions from "react-icons/ti";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import { useEffect } from "react";
 
-const UploadToBucket = ({ bucketId }) => {
+const UploadToBucket = ({ bucketId, refresh }) => {
+   const [file, setFile] = useState(null);
    const [show, setShow] = useState(false);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -16,15 +18,18 @@ const UploadToBucket = ({ bucketId }) => {
    const accessToken = localStorage.accessToken;
 
    const fileUpload = async () => {
+      let formData = new FormData();
+      formData.append("file", file);
+
       try {
-         await AxiosInstance.post(
-            `/files/bucket/${bucketId}`,
-            {
-               file: "as",
-            },
-            { headers: { Authorization: accessToken } }
-         );
+         await AxiosInstance.post(`/files/bucket/${bucketId}`, formData, {
+            headers: { Authorization: accessToken },
+         });
          setSuccessMsg("File Successfully Uploaded");
+         setTimeout(() => {
+            setShow(false);
+            refresh();
+         }, 2000);
       } catch (err) {
          setErrorMsg(err.response.data.error);
          console.log(err);
@@ -33,9 +38,13 @@ const UploadToBucket = ({ bucketId }) => {
 
    const onFormSubmit = async (e) => {
       e.preventDefault();
-      setLoading(true);
-      await fileUpload();
-      setLoading(false);
+      if (file !== null) {
+         setLoading(true);
+         await fileUpload();
+         setLoading(false);
+      } else {
+         setErrorMsg("Choose a file first");
+      }
    };
 
    return (
@@ -54,22 +63,22 @@ const UploadToBucket = ({ bucketId }) => {
                />
                <form onSubmit={onFormSubmit}>
                   <fieldset disabled={loading}>
-                     <div className="mb-3">
-                        <input className="form-control" type="file" id="formFile" />
-                     </div>
+                     <input onChange={(e) => setFile(e.target.files[0])} className="form-control" type="file" id="formFile" />
                   </fieldset>
-                  <button className="btn btn-secondary button-width">Upload</button>
-                  <button
-                     onClick={(e) => {
-                        e.preventDefault();
-                        handleClose();
-                        setErrorMsg("");
-                        setSuccessMsg("");
-                     }}
-                     className="ml-2 btn btn-outline-secondary button-width"
-                  >
-                     Close
-                  </button>
+                  <div className="mt-4 d-flex justify-content-end">
+                     <button className="btn btn-secondary button-width">Upload</button>
+                     <button
+                        onClick={(e) => {
+                           e.preventDefault();
+                           handleClose();
+                           setErrorMsg("");
+                           setSuccessMsg("");
+                        }}
+                        className="ml-2 btn btn-outline-secondary button-width"
+                     >
+                        Close
+                     </button>
+                  </div>
                </form>
             </Modal.Body>
          </Modal>

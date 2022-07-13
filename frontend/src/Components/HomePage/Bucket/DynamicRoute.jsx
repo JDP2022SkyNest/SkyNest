@@ -43,7 +43,7 @@ const DynamicRoute = () => {
             />
             <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
-               <UploadToBucket bucketId={data?.data?.bucketId} />
+               <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>
                <div className="container">
