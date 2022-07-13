@@ -156,9 +156,7 @@ public class FileServiceImpl implements FileService {
   }
 
   private FileMetadataEntity initFileMetadata(
-      String name, long size, String type, UUID bucketId, UUID folderId) {
-
-    if (bucketId != null && folderId != null) throw new IllegalArgumentException();
+      String name, long size, String type, BucketEntity bucket, FolderEntity parentFolder) {
 
     UserEntity currentUserEntity =
         userRepository
@@ -173,15 +171,6 @@ public class FileServiceImpl implements FileService {
     fileMetadataEntity.setSize(size);
     fileMetadataEntity.setType(type);
 
-    BucketEntity bucket;
-    FolderEntity parentFolder;
-    if (bucketId != null) {
-      parentFolder = null;
-      bucket = bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
-    } else {
-      parentFolder = folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
-      bucket = parentFolder.getBucket();
-    }
     fileMetadataEntity.setBucket(bucket);
     fileMetadataEntity.setParentFolder(parentFolder);
 
@@ -190,12 +179,22 @@ public class FileServiceImpl implements FileService {
 
   private FileMetadataEntity initFileMetadataWithBucket(
       String name, long size, String type, UUID bucketId) {
-    return initFileMetadata(name, size, type, bucketId, null);
+
+    FolderEntity parentFolder = null;
+    BucketEntity bucket =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+
+    return initFileMetadata(name, size, type, bucket, parentFolder);
   }
 
   private FileMetadataEntity initFileMetadataWithFolder(
       String name, long size, String type, UUID folderId) {
-    return initFileMetadata(name, size, type, null, folderId);
+
+    FolderEntity parentFolder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    BucketEntity bucket = parentFolder.getBucket();
+
+    return initFileMetadata(name, size, type, bucket, parentFolder);
   }
 
   private FileMetadataEntity storeFileContents(
