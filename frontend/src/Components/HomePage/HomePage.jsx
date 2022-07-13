@@ -16,6 +16,7 @@ import Bucket from "./Bucket/Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import "./HomePage.css";
+import LoaderAnimation from "../Loader/LoaderAnimation";
 
 const HomePage = () => {
    const navigate = useNavigate();
@@ -25,6 +26,7 @@ const HomePage = () => {
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
+   const [loader, setLoader] = useState(false);
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };
@@ -37,11 +39,18 @@ const HomePage = () => {
    }, [isMobile]);
 
    useEffect(() => {
-      getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
+      let getBuckets = async () => {
+         setLoader(true);
+         await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
+         setLoader(false);
+      };
+      getBuckets();
    }, [accessToken]);
 
    const refreshBuckets = async () => {
+      setLoader(true);
       await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
+      setLoader(false);
    };
 
    const allData = allBuckets.map((elem, index) => (
@@ -78,11 +87,15 @@ const HomePage = () => {
             <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
-            <div>
+            {!loader ? (
                <div className="container">
                   <div className="row data-folder">{allData}</div>
                </div>
-            </div>
+            ) : (
+               <div>
+                  <LoaderAnimation />
+               </div>
+            )}
          </div>
          <Footer />
       </div>
