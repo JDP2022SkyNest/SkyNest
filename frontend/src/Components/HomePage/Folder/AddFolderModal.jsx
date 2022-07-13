@@ -1,12 +1,11 @@
-import React, { useState,useContext } from "react";
+import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
-import GlobalContext from "../../context/GlobalContext";
 
-const AddFolderModal = ({ refresh, parentFolderId }) => {
+const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
@@ -17,8 +16,6 @@ const AddFolderModal = ({ refresh, parentFolderId }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const { stateBucketId } = useContext(GlobalContext);
-
    const createNewFolder = async () => {
       try {
          await AxiosInstance.post(
@@ -26,7 +23,7 @@ const AddFolderModal = ({ refresh, parentFolderId }) => {
             {
                name,
                parentFolderId,
-               bucketId: stateBucketId,
+               bucketId: bucketId,
             },
             { headers: { Authorization: accessToken } }
          );

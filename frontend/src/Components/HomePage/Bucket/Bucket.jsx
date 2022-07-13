@@ -6,8 +6,6 @@ import { deleteBucket, redirectTo } from "../../ReusableComponents/ReusableFunct
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
-import { useContext } from "react";
-import GlobalContext from "../../context/GlobalContext";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -16,14 +14,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
-   const { setStateBucketId } = useContext(GlobalContext);
-
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
          <div key={index} className="card custom-rounded bucket-hover cursor-pointer">
             <div
                onClick={() => {
-                  setStateBucketId(elem.bucketId);
                   redirectTo(navigate, `bucket/${elem.bucketId}`, 1);
                }}
                className="card-body p-2 px-3"
