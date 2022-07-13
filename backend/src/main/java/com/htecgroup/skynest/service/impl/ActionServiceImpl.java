@@ -14,8 +14,6 @@ import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.aspectj.lang.annotation.Aspect;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-@Aspect
-@EnableAspectJAutoProxy
 public class ActionServiceImpl implements ActionService {
 
   private final ActionRepository actionRepository;
