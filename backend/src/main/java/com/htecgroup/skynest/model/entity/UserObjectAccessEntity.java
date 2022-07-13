@@ -23,7 +23,7 @@ public class UserObjectAccessEntity implements Serializable {
 
   @Id private ObjectEntity object;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private LocalDateTime grantedOn;
 
   @ManyToOne
