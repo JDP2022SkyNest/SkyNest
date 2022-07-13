@@ -54,6 +54,9 @@ const HomePage = () => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
+               <div className="input-group" style={{ width: "200px" }}>
+                  <input type="text" className="form-control" aria-label="Text input with segmented dropdown button" placeholder="Search User" />
+               </div>
                <div className="d-flex">
                   <button
                      onClick={() => {
