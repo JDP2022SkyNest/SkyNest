@@ -26,7 +26,9 @@ const DynamicFolderRoute = () => {
       await folderContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => <Folders elem={elem} index={index} key={index} refresh={refreshFoldersAndFiles} />);
+   const allData = data?.data?.folders.map((elem, index) => (
+      <Folders elem={elem} index={index} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+   ));
 
    return (
       <div className="home-page-body">
