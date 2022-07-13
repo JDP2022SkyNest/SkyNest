@@ -28,7 +28,7 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
             },
             { headers: { Authorization: accessToken } }
          );
-         setSuccessMsg("Bucket Eddited");
+         setSuccessMsg("Bucket Edited");
          setTimeout(() => {
             setShow(false);
             refreshBuckets();

@@ -41,7 +41,7 @@ const DynamicRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <div className="py-2 my-3 rounded">
-               <AddFolderModal bucketId={routeId} refresh={refreshFoldersAndFiles} />
+               <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>
                <div className="container">
