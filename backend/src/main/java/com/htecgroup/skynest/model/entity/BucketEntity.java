@@ -30,7 +30,6 @@ public class BucketEntity extends ObjectEntity {
 
   @ElementCollection(targetClass = LambdaType.class)
   @CollectionTable(name = "lambda_on_bucket", joinColumns = @JoinColumn(name = "bucket_id"))
-  @Enumerated(EnumType.STRING)
   @Column(name = "lambda_name")
   private List<LambdaType> lambdaTypes;
 }
