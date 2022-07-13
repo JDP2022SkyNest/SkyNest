@@ -366,4 +366,15 @@ public class FileController {
 
     return responseEntity;
   }
+
+  @PutMapping(path = "/{fileId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<FileResponse> updateFileContent(
+      @PathVariable UUID fileId, @RequestPart("file") MultipartFile file) {
+
+    FileResponse fileResponse = fileService.updateFileContent(file, fileId);
+
+    ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);
+
+    return responseEntity;
+  }
 }

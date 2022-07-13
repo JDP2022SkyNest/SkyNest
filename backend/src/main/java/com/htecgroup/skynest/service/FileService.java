@@ -18,4 +18,6 @@ public interface FileService {
   List<FileResponse> getAllRootFiles(UUID bucketId);
 
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
+
+  FileResponse updateFileContent(MultipartFile multipartFile, UUID fileId);
 }

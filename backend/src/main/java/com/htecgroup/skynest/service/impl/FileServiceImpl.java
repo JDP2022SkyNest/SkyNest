@@ -66,13 +66,19 @@ public class FileServiceImpl implements FileService {
     checkBucketNotDeleted(emptyFileMetadata);
     checkBucketSizeExceedsMax(emptyFileMetadata);
 
+    FileMetadataEntity savedFileMetadata = uploadFileContents(emptyFileMetadata, multipartFile);
+
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
+    return modelMapper.map(savedFileMetadata, FileResponse.class);
+  }
+
+  private FileMetadataEntity uploadFileContents(
+      FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
     try {
       InputStream fileContents = multipartFile.getInputStream();
 
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
-      actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
-
-      return modelMapper.map(savedFileMetadata, FileResponse.class);
+      return savedFileMetadata;
     } catch (IOException e) {
       log.error(e);
       throw new FileIOException();
@@ -118,6 +124,34 @@ public class FileServiceImpl implements FileService {
     List<FileMetadataEntity> allFiles =
         fileMetadataRepository.findAllByParentFolderId(parentFolderId);
     return asFileResponseList(allFiles);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public FileResponse updateFileContent(MultipartFile multipartFile, UUID fileId) {
+
+    FileMetadataEntity fileMetadata =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+
+    fileMetadata.setType(multipartFile.getContentType());
+    fileMetadata.setSize(multipartFile.getSize());
+    String oldFileContentId = fileMetadata.getContentId();
+
+    FileMetadataEntity savedFileMetadata = uploadFileContents(fileMetadata, multipartFile);
+    deleteFileContents(oldFileContentId);
+
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
+    return modelMapper.map(savedFileMetadata, FileResponse.class);
+  }
+
+  private void deleteFileContents(String objectId) {
+    try {
+      if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
+      operations.delete(new Query(Criteria.where("_id").is(objectId)));
+    } catch (MongoException e) {
+      log.error(e);
+      throw new FileIOException();
+    }
   }
 
   private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
