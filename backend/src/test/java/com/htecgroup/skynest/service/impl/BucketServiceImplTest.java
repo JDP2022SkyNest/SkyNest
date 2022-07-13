@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
+import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -73,6 +74,7 @@ class BucketServiceImplTest {
   @Test
   void getBucketContent() {
 
+    when(bucketRepository.existsById(any())).thenReturn(true);
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getRootFolder()));
     when(folderService.getAllRootFolders(any())).thenReturn(expectedFolderResponseList);
@@ -81,15 +83,25 @@ class BucketServiceImplTest {
         new ArrayList<>(Collections.singleton(FileResponseUtil.getRootFile()));
     when(fileService.getAllRootFiles(any())).thenReturn(expectedFileResponseList);
 
-    StorageContentResponse expectedStorageContentResponse =
-        new StorageContentResponse(expectedFolderResponseList, expectedFileResponseList);
-
     UUID bucketId = FolderEntityUtil.getFolderWithoutParent().getBucket().getId();
+    StorageContentResponse expectedStorageContentResponse =
+        new StorageContentResponse(bucketId, expectedFolderResponseList, expectedFileResponseList);
+
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 
     Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
+    verify(bucketRepository, times(1)).existsById(bucketId);
     verify(folderService, times(1)).getAllRootFolders(bucketId);
     verify(fileService, times(1)).getAllRootFiles(bucketId);
+  }
+
+  @Test
+  void when_getBucketContent_ShouldThrowBucketNotFound() {
+    String expectedErrorMessage = BucketNotFoundException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            BucketNotFoundException.class, () -> bucketService.getBucketContent(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
