@@ -25,6 +25,8 @@ const HomePage = () => {
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
+   const [searchQuery, setSearchQuery] = useState("");
+
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };
@@ -44,10 +46,11 @@ const HomePage = () => {
       await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
    };
 
-   const allData = allFolders.map((elem, index) => (
-      <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
-   ));
-
+   const allData = allFolders
+      .filter((elem) => elem.name.toLowerCase().includes(searchQuery) || elem.description.toLowerCase().includes(searchQuery))
+      .map((elem, index) => (
+         <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+      ));
    return (
       <div className="home-page-body">
          <BackDrop sidebar={!isMobile && sidebar} closeSidebar={toggleSidebar} />
@@ -55,7 +58,13 @@ const HomePage = () => {
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
                <div className="input-group" style={{ width: "200px" }}>
-                  <input type="text" className="form-control" aria-label="Text input with segmented dropdown button" placeholder="Search User" />
+                  <input
+                     type="text"
+                     className="form-control"
+                     aria-label="Text input with segmented dropdown button"
+                     placeholder="Search Buckets"
+                     onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
+                  />
                </div>
                <div className="d-flex">
                   <button
