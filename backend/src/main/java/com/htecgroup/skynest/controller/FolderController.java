@@ -229,10 +229,10 @@ public class FolderController {
                   })
             })
       })
-  @PutMapping("delete/{uuid}")
+  @PutMapping("delete/{folderId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void removeFolder(@PathVariable UUID uuid) {
-    folderService.removeFolder(uuid);
+  public void removeFolder(@PathVariable UUID folderId) {
+    folderService.removeFolder(folderId);
   }
 
   @Operation(summary = "Move Folder")

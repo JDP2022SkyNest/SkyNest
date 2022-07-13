@@ -218,9 +218,10 @@ class FolderServiceImplTest {
   @Test
   void getFolderContent() {
 
-    when(folderRepository.existsById(any())).thenReturn(true);
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
     List<FolderEntity> expectedFolderEntities =
-        new ArrayList<>(Collections.singleton(FolderEntityUtil.getFolderWithParent()));
+        new ArrayList<>(Collections.singleton(folderEntity));
     when(folderRepository.findAllByParentFolderId(any())).thenReturn(expectedFolderEntities);
 
     List<FileResponse> expectedFileResponseList =
@@ -229,20 +230,21 @@ class FolderServiceImplTest {
 
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getFolderWithParent()));
+    UUID bucketId = folderEntity.getBucket().getId();
     StorageContentResponse expectedStorageContentResponse =
-        new StorageContentResponse(expectedFolderResponseList, expectedFileResponseList);
+        new StorageContentResponse(bucketId, expectedFolderResponseList, expectedFileResponseList);
 
     UUID parentId = FolderEntityUtil.getFolderWithParent().getParentFolder().getId();
     StorageContentResponse actualStorageContentResponse = folderService.getFolderContent(parentId);
 
     Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
+    verify(folderRepository, times(1)).findById(parentId);
     verify(folderRepository, times(1)).findAllByParentFolderId(parentId);
     verify(fileService, times(1)).getAllFilesWithParent(parentId);
   }
 
   @Test
   void when_getFolderContent_ShouldThrowFolderNotFound() {
-    when(folderRepository.existsById(any())).thenReturn(false);
     String expectedErrorMessage = FolderNotFoundException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
