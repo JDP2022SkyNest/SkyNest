@@ -9,7 +9,18 @@ export const GlobalProvider = ({ children }) => {
    const [userID, setUserID] = useState("");
 
    return (
-      <GlobalContext.Provider value={{ userCompany, setUserCompany, accessToken, setAccessToken, userRole, setUserRole, userID, setUserID }}>
+      <GlobalContext.Provider
+         value={{
+            userCompany,
+            setUserCompany,
+            accessToken,
+            setAccessToken,
+            userRole,
+            setUserRole,
+            userID,
+            setUserID,
+         }}
+      >
          {children}
       </GlobalContext.Provider>
    );

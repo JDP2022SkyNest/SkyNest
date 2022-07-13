@@ -11,15 +11,17 @@ const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "tex
                <div className="col-sm-9 p-2 text-mutted">{result}</div>
             ) : (
                <div className="col-sm-9">
-                   <input
+                  <input
                      type={type}
                      value={`${result === null ? "" : result}`}
                      onChange={(e) => {
-                        func(e);
-                        setChange(true);
+                        if (func) {
+                           func(e);
+                           setChange(!change);
+                        }
                      }}
                      placeholder={placeholder}
-                     className={`form-control border-${result === null || result === "" ? "danger" : `${change ? "warning" : "info"}`}`}
+                     className={`form-control border-white`}
                   />
                </div>
             )}

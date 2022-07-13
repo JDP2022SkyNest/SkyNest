@@ -33,8 +33,7 @@
 .admin-page-body {
    background-color: var(--latte);
    min-height: 100vh;
-   margin-bottom: 40px;
-   padding-bottom: 40px;
+   padding-bottom: 80px;
 }
 
 .card-title-style {

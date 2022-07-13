@@ -33,9 +33,11 @@ const Login = () => {
          let reposnse = await AxiosInstance.post("/public/login", { email, password });
          let { headers } = reposnse;
          let token = headers.authorization;
+         let refreshToken = headers[`refresh-token`];
          if (headers?.authorization) {
             setAccessToken(token);
             localStorage.setItem("accessToken", token);
+            localStorage.setItem("refresh-token", refreshToken);
             setSuccessMsg("Login Successful");
             redirectTo(navigate, ROUTES.HOME, 1000);
             setErrorMsg("");

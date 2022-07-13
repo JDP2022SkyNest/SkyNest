@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import * as AiCions from "react-icons/ai";
-import AxiosInstance from "../axios/AxiosInstance";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import AxiosInstance from "../../axios/AxiosInstance";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const AddFolderModal = ({ refreshBuckets }) => {
+const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
-   const [description, setDescription] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -20,10 +19,11 @@ const AddFolderModal = ({ refreshBuckets }) => {
    const createNewFolder = async () => {
       try {
          await AxiosInstance.post(
-            "/buckets",
+            "/folders",
             {
                name,
-               description,
+               parentFolderId,
+               bucketId: bucketId,
             },
             { headers: { Authorization: accessToken } }
          );
@@ -31,8 +31,7 @@ const AddFolderModal = ({ refreshBuckets }) => {
          setTimeout(() => {
             setShow(false);
             setName("");
-            setDescription("");
-            refreshBuckets();
+            refresh();
          }, 2000);
       } catch (err) {
          if (err.response.status === 400) {
@@ -53,8 +52,8 @@ const AddFolderModal = ({ refreshBuckets }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="latte-background custom-rounded">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
+         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
+            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
@@ -75,29 +74,15 @@ const AddFolderModal = ({ refreshBuckets }) => {
                            <input value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="nameInp" placeholder="Name" />
                         </div>
                      </div>
-                     <div className="form-group row">
-                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
-                           Description:
-                        </label>
-                        <div className="col-sm-9">
-                           <input
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              className="form-control"
-                              id="descrInp"
-                              placeholder="Description"
-                           />
-                        </div>
-                     </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-info">Create</button>
+                        <button className="btn btn-secondary button-width">Create</button>
                         <button
                            onClick={(e) => {
                               e.preventDefault();
                               handleClose();
                               setErrorMsg("");
                            }}
-                           className="ml-2 btn btn-secondary"
+                           className="ml-2 btn btn-outline-secondary button-width"
                         >
                            Close
                         </button>
