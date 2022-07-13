@@ -3,6 +3,7 @@ import { Modal } from "react-bootstrap";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import { useEffect } from "react";
 
 const EditFolderModal = ({ refresh, elem }) => {
    const [show, setShow] = useState(false);
@@ -14,6 +15,10 @@ const EditFolderModal = ({ refresh, elem }) => {
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
+
+   useEffect(() => {
+      setName(elem.name);
+   }, [elem]);
 
    const editBucket = async () => {
       try {
