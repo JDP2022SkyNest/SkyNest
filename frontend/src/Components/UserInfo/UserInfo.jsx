@@ -103,18 +103,14 @@ const UserInfo = () => {
                               <p className="text-muted mb-1">
                                  {userData?.positionInCompany === null ? "Position not set" : userData.positionInCompany}
                               </p>
-                              <p className={`${role === "ADMIN" ? "admin-text" : `${role === "WORKER" ? "text-secondary" : "manager-text"}`}`}>
-                                 {role}
-                              </p>
+                              <p className="admin-dark">{role}</p>
                               <div className="d-flex justify-content-center mb-2">
                                  <button
                                     type="button"
                                     onClick={() => {
                                        setEdit(!edit);
                                     }}
-                                    className={`btn ${
-                                       role === "ADMIN" ? "admin-button" : `${role === "WORKER" ? "btn-secondary" : "manager-button"}`
-                                    }`}
+                                    className="btn btn-secondary button-width"
                                  >
                                     {edit ? "Cancel" : "Edit"}
                                  </button>
@@ -123,11 +119,7 @@ const UserInfo = () => {
                                        onUserLogout(accessToken, setAccessToken);
                                     }}
                                     type="button"
-                                    className={`btn ${
-                                       role === "ADMIN"
-                                          ? "admin-edit-button"
-                                          : `${role === "WORKER" ? "btn-outline-secondary ml-1" : "manager-edit-button"}`
-                                    }`}
+                                    className="btn btn-outline-secondary button-width ml-2"
                                  >
                                     Logout
                                  </button>
@@ -149,25 +141,44 @@ const UserInfo = () => {
                      <div className="col-lg-8 mb-3">
                         <div className="card mb-3 shadow">
                            <div className="card-body">
-                              <UserCardDetails info="Name:" result={userData?.name} edit={edit} func={nameChange} />
-                              <UserCardDetails info="Last Name:" result={userData?.surname} edit={edit} func={surnameChange} />
-                              <UserCardDetails info="Email:" result={userData?.email} />
-                              <UserCardDetails info="Phone Number:" type="number" result={userData?.phoneNumber} edit={edit} func={phoneChange} />
-                              {edit && (
+                              <div className="container">
                                  <UserCardDetails
-                                    info="Position:"
-                                    result={userData?.positionInCompany}
+                                    info={<strong>Name:</strong>}
+                                    result={userData?.name}
                                     edit={edit}
-                                    func={positionChange}
-                                    placeholder="Please enter a value here"
+                                    func={nameChange}
+                                 ></UserCardDetails>
+                                 <UserCardDetails info={<strong>Last Name:</strong>} result={userData?.surname} edit={edit} func={surnameChange} />
+                                 <UserCardDetails info={<strong>Email:</strong>} result={userData?.email} edit={edit} />
+                                 <UserCardDetails
+                                    info={<strong>Phone Number:</strong>}
+                                    type="number"
+                                    result={userData?.phoneNumber}
+                                    edit={edit}
+                                    func={phoneChange}
                                  />
-                              )}
-                              <UserCardDetails info="Address:" result={userData?.address} edit={edit} func={addressChange} horLine={false} />
+                                 {edit && (
+                                    <UserCardDetails
+                                       info={<strong>Position:</strong>}
+                                       result={userData?.positionInCompany}
+                                       edit={edit}
+                                       func={positionChange}
+                                       placeholder="Please enter a value here"
+                                    />
+                                 )}
+                                 <UserCardDetails
+                                    info={<strong>Address:</strong>}
+                                    result={userData?.address}
+                                    edit={edit}
+                                    func={addressChange}
+                                    horLine={false}
+                                 />
+                              </div>
                            </div>
                         </div>
                         {edit && (
                            <div className="d-flex flex-row-reverse mb-2 mr-1">
-                              <button onClick={onUserInfoChanged} className="btn btn-secondary">
+                              <button onClick={onUserInfoChanged} className="btn btn-secondary button-width">
                                  Update
                               </button>
                            </div>

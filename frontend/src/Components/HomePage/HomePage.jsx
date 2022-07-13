@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets, sideBarCloseOnPhone } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -10,20 +10,20 @@ import ToolBar from "../HomePage/ToolBar/ToolBar";
 import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
 import * as RiCions from "react-icons/ri";
-import "./HomePage.css";
-import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
-import AddFolderModal from "./AddFolderModal";
-import { useEffect } from "react";
-import Folder from "./Folder";
+import AddBucketModal from "./Bucket/AddBucketModal";
+import Bucket from "./Bucket/Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import "./HomePage.css";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(false);
+   const [sidebar, setSidebar] = useState(true);
    const [allFolders, setAllFolders] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
+   // eslint-disable-next-line
+   const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
@@ -31,6 +31,10 @@ const HomePage = () => {
 
    const { setAccessToken, userRole, userID } = useContext(GlobalContext);
    const accessToken = localStorage.accessToken;
+
+   useEffect(() => {
+      sideBarCloseOnPhone(isMobile, setSidebar);
+   }, [isMobile]);
 
    useEffect(() => {
       getAllBuckets(accessToken, setAllFolders, setErrorMsg);
@@ -41,16 +45,15 @@ const HomePage = () => {
    };
 
    const allData = allFolders.map((elem, index) => (
-      <Folder elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
+      <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
    return (
       <div className="home-page-body">
-         <BackDrop sidebar={sidebar} closeSidebar={toggleSidebar} />
+         <BackDrop sidebar={!isMobile && sidebar} closeSidebar={toggleSidebar} />
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
-               <span className="d-none mr-auto d-md-block navbar-brand text-light">SkyNest</span>
                <div className="d-flex">
                   <button
                      onClick={() => {
@@ -64,16 +67,20 @@ const HomePage = () => {
                </div>
             </Container>
          </Navbar>
-         <SideBar sidebar={sidebar} userRole={userRole} />
+         <SideBar sidebar={!isMobile && sidebar} userRole={userRole} />
          <div className="container">
-            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
-            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
+            <SetSuccessMsg
+               successMsg={successMsg}
+               setSuccessMsg={setSuccessMsg}
+               customStyle="alert alert-success text-success text-center col-12 mt-3"
+            />
             <div className="py-2 my-3 rounded">
-               <AddFolderModal refreshBuckets={refreshBuckets} />
+               <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
             <div>
                <div className="container">
-                  <div className="row">{allData}</div>
+                  <div className="row data-folder">{allData}</div>
                </div>
             </div>
          </div>
