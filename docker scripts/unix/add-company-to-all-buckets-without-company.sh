@@ -1,3 +1,5 @@
+echo "HTEC group pib:"
+echo -e "\t105793138\n"
 echo "Pib of the company you want to add buckets to"
 read -p "pib: " pib
 echo "--DB password"
