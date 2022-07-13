@@ -27,7 +27,7 @@ const DynamicFolderRoute = () => {
    };
 
    const allData = data?.data?.folders.map((elem, index) => (
-      <Folders elem={elem} index={index} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+      <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
    return (

@@ -9,6 +9,7 @@ import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
+import Files from "../Files";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -28,8 +29,10 @@ const DynamicRoute = () => {
    };
 
    const allData = data?.data?.folders.map((elem, index) => (
-      <Folders elem={elem} index={index} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+      <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
+
+   const alLFiles = data?.data?.files.map((elem, index) => <Files elem={elem} key={index} />);
 
    return (
       <div className="home-page-body">
@@ -46,8 +49,9 @@ const DynamicRoute = () => {
                <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>
-               <div className="container">
-                  <div className="row data-folder">{allData}</div>
+               <div className="container data-folder">
+                  <div className="row">{allData}</div>
+                  <div className="row">{alLFiles}</div>
                </div>
             </div>
          </div>

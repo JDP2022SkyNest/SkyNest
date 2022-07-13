@@ -4,7 +4,6 @@ import * as TiCions from "react-icons/ti";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
-import { useEffect } from "react";
 
 const UploadToBucket = ({ bucketId, refresh }) => {
    const [file, setFile] = useState(null);
@@ -31,8 +30,12 @@ const UploadToBucket = ({ bucketId, refresh }) => {
             refresh();
          }, 2000);
       } catch (err) {
-         setErrorMsg(err.response.data.error);
-         console.log(err);
+         if (err.response.status) {
+            setErrorMsg("Bucket Deleted");
+         } else {
+            setErrorMsg(err.response.data.error);
+            console.log(err);
+         }
       }
    };
 
@@ -48,7 +51,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
    };
 
    return (
-      <div className="ml-1 latte-background custom-rounded">
+      <div className="ml-2 latte-background custom-rounded">
          <span onClick={handleShow}>
             <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload To Bucket
          </span>
