@@ -40,7 +40,7 @@ const DynamicFolderRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <div className="py-2 my-3 rounded">
+            <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>

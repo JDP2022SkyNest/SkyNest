@@ -75,7 +75,7 @@ const HomePage = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <div className="py-2 my-3 rounded">
+            <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
             <div>

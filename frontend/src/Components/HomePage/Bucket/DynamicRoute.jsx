@@ -8,6 +8,7 @@ import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
+import UploadToBucket from "./UploadToBucket";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -40,8 +41,9 @@ const DynamicRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <div className="py-2 my-3 rounded">
+            <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
+               <UploadToBucket bucketId={data?.data?.bucketId} />
             </div>
             <div>
                <div className="container">
