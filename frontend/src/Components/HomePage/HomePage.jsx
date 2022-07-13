@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo, getAllBuckets, sideBarCloseOnPhone } from "../ReusableComponents/ReusableFunctions";
@@ -10,19 +10,17 @@ import ToolBar from "../HomePage/ToolBar/ToolBar";
 import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
 import * as RiCions from "react-icons/ri";
-import "./HomePage.css";
-import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
-import AddBucketModal from "./AddBucketModal";
-import { useEffect } from "react";
-import Bucket from "./Bucket";
+import AddBucketModal from "./Bucket/AddBucketModal";
+import Bucket from "./Bucket/Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import "./HomePage.css";
 
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(true);
-   const [allFolders, setAllFolders] = useState([]);
+   const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
@@ -39,14 +37,14 @@ const HomePage = () => {
    }, [isMobile]);
 
    useEffect(() => {
-      getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+      getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
    }, [accessToken]);
 
    const refreshBuckets = async () => {
-      await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+      await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
    };
 
-   const allData = allFolders.map((elem, index) => (
+   const allData = allBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
@@ -72,13 +70,17 @@ const HomePage = () => {
          <SideBar sidebar={!isMobile && sidebar} userRole={userRole} />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
-            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+            <SetSuccessMsg
+               successMsg={successMsg}
+               setSuccessMsg={setSuccessMsg}
+               customStyle="alert alert-success text-success text-center col-12 mt-3"
+            />
             <div className="py-2 my-3 rounded">
                <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
             <div>
                <div className="container">
-                  <div className="row">{allData}</div>
+                  <div className="row data-folder">{allData}</div>
                </div>
             </div>
          </div>

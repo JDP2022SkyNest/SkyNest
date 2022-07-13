@@ -405,7 +405,7 @@ public class BucketController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Bucket with id ff52209c-f913-11ec-b939-0242ac120002 doesn't exist\"],"
+                            "{\"messages\":[\"Bucket not found\"],"
                                 + " \"status\": \"404\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
@@ -495,6 +495,21 @@ public class BucketController {
                   })
             }),
         @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
@@ -504,9 +519,9 @@ public class BucketController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{uuid}")
-  public ResponseEntity<StorageContentResponse> getBucketContent(@PathVariable UUID uuid) {
-    StorageContentResponse storageContentResponse = bucketService.getBucketContent(uuid);
+  @GetMapping("/{bucketId}")
+  public ResponseEntity<StorageContentResponse> getBucketContent(@PathVariable UUID bucketId) {
+    StorageContentResponse storageContentResponse = bucketService.getBucketContent(bucketId);
     ResponseEntity<StorageContentResponse> storageContentResponseEntity =
         new ResponseEntity<>(storageContentResponse, HttpStatus.OK);
     return storageContentResponseEntity;

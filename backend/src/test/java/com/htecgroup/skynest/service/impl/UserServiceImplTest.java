@@ -281,7 +281,7 @@ class UserServiceImplTest {
 
   @Test
   void when_EverythingFine_addCompanyForUser_SaveUserWithAddedCompany() {
-    CompanyEntity companyEntity = CompanyEntityUtil.getCompanyEntity();
+    CompanyEntity companyEntity = CompanyEntityUtil.get();
     UserDto userDto = UserDtoUtil.getVerified();
     when(currentUserService.getCompanyEntityFromLoggedUser())
         .thenReturn(Optional.of(companyEntity));

@@ -160,10 +160,12 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public StorageContentResponse getBucketContent(UUID bucketId) {
 
+    if (!bucketRepository.existsById(bucketId)) throw new BucketNotFoundException();
+
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
     return storageContentResponse;
   }
 }
