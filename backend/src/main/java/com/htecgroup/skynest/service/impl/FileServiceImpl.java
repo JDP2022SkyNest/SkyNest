@@ -6,6 +6,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.FileAlreadyInsideFolderException;
+import com.htecgroup.skynest.exception.file.FileAlreadyInsideRootException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
@@ -131,12 +132,25 @@ public class FileServiceImpl implements FileService {
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
-    if (fileMetadataEntity.getParentFolder().getId() == folderEntity.getId()) {
+    if (fileMetadataEntity.getParentFolder() != null
+        && fileMetadataEntity.getParentFolder().getId() == folderEntity.getId()) {
       throw new FileAlreadyInsideFolderException();
     }
     fileMetadataEntity.setParentFolder(folderEntity);
     fileMetadataRepository.save(fileMetadataEntity);
-    actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
+    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
+  }
+
+  @Override
+  public void moveFileToRoot(UUID fileId) {
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    if (fileMetadataEntity.getParentFolder() == null) {
+      throw new FileAlreadyInsideRootException();
+    }
+    fileMetadataEntity.setParentFolder(null);
+    fileMetadataRepository.save(fileMetadataEntity);
+    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
   }
 
   private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {

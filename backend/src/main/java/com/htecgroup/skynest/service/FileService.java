@@ -20,4 +20,6 @@ public interface FileService {
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
 
   void moveFile(UUID fileId, UUID destinationFolderId);
+
+  void moveFileToRoot(UUID fileId);
 }
