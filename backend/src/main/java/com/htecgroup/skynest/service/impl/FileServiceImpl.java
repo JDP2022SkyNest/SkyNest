@@ -66,23 +66,10 @@ public class FileServiceImpl implements FileService {
     checkBucketNotDeleted(emptyFileMetadata);
     checkBucketSizeExceedsMax(emptyFileMetadata);
 
-    FileMetadataEntity savedFileMetadata = uploadFileContents(emptyFileMetadata, multipartFile);
+    FileMetadataEntity savedFileMetadata = uploadFileContent(emptyFileMetadata, multipartFile);
 
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
     return modelMapper.map(savedFileMetadata, FileResponse.class);
-  }
-
-  private FileMetadataEntity uploadFileContents(
-      FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
-    try {
-      InputStream fileContents = multipartFile.getInputStream();
-
-      FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
-      return savedFileMetadata;
-    } catch (IOException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
   }
 
   @Override
@@ -137,14 +124,32 @@ public class FileServiceImpl implements FileService {
     fileMetadata.setSize(multipartFile.getSize());
     String oldFileContentId = fileMetadata.getContentId();
 
-    FileMetadataEntity savedFileMetadata = uploadFileContents(fileMetadata, multipartFile);
-    deleteFileContents(oldFileContentId);
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadata);
+    checkBucketNotDeleted(fileMetadata);
+    checkBucketSizeExceedsMax(fileMetadata);
+
+    FileMetadataEntity savedFileMetadata = uploadFileContent(fileMetadata, multipartFile);
+    deleteFileContent(oldFileContentId);
 
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
     return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
 
-  private void deleteFileContents(String objectId) {
+  private FileMetadataEntity uploadFileContent(
+      FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
+    try {
+      InputStream fileContents = multipartFile.getInputStream();
+
+      FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
+      return savedFileMetadata;
+    } catch (IOException e) {
+      log.error(e);
+      throw new FileIOException();
+    }
+  }
+
+  private void deleteFileContent(String objectId) {
     try {
       if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
       operations.delete(new Query(Criteria.where("_id").is(objectId)));
