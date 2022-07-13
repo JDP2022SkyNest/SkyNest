@@ -326,6 +326,17 @@ export const bucketContent = async (accessToken, bucketId, stateToChange) => {
    }
 };
 
+export const folderContent = async (accessToken, folderId, stateToChange) => {
+   try {
+      let response = await AxiosInstance.get(`/folders/${folderId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response);
+   } catch (err) {
+      console.log(err);
+   }
+};
+
 export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
    window.addEventListener(
       "resize",
