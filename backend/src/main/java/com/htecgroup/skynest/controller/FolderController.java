@@ -2,8 +2,6 @@ package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
-import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
-import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
@@ -279,7 +277,7 @@ public class FolderController {
             }),
         @ApiResponse(
             responseCode = "409",
-            description = "Folder is already inside the bucket",
+            description = "Folder is already inside the folder",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -287,17 +285,16 @@ public class FolderController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Folder is already inside the bucket.\"],"
+                            "{\"messages\":[\"Folder is already inside the folder.\"],"
                                 + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             })
       })
-  @PutMapping("move/{uuid}/toBucket")
+  @PutMapping("/{folderId}/move")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void moveFolderToBucket(
-      @Valid @RequestBody MoveFolderToBucketRequest moveFolderRequest, @PathVariable UUID uuid) {
-    folderService.moveFolderToBucket(moveFolderRequest, uuid);
+  public void moveFolderToRoot(@PathVariable UUID folderId) {
+    folderService.moveFolderToBucket(folderId);
   }
 
   @Operation(summary = "Move Folder")
@@ -361,10 +358,8 @@ public class FolderController {
   @PutMapping("/{folderId}/move/{destinationFolderId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void moveFolderToFolder(
-      @Valid @RequestBody MoveFolderToFolderRequest moveFolderRequest,
-      @PathVariable UUID folderId,
-      @PathVariable UUID destinationFolderId) {
-    folderService.moveFolderToFolder(moveFolderRequest, folderId);
+      @PathVariable UUID folderId, @PathVariable UUID destinationFolderId) {
+    folderService.moveFolderToFolder(folderId, destinationFolderId);
   }
 
   @Operation(summary = "Get folder contents")

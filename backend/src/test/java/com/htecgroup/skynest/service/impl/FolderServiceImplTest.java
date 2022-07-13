@@ -2,12 +2,9 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
-import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
-import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
-import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
@@ -169,35 +166,30 @@ class FolderServiceImplTest {
 
   @Test
   void moveFolderToBucket() {
-    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
-    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
-    when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
-
-    MoveFolderToBucketRequest moveFolderToBucketRequest = MoveFolderRequestUtil.getToBucket();
-    folderService.moveFolderToBucket(moveFolderToBucketRequest, UUID.randomUUID());
-
-    Mockito.verify(folderRepository).save(captorFolderEntity.capture());
-    Assertions.assertEquals(captorFolderEntity.getValue().getBucket(), bucketEntity);
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
+    folderService.moveFolderToBucket(UUID.randomUUID());
+    Assertions.assertNull(expectedFolderEntity.getParentFolder());
     verify(folderRepository, times(1)).findById(any());
-    verify(bucketRepository, times(1)).findById(any());
+    verify(folderRepository, times(1)).save(any());
   }
 
   @Test
   void moveFolderToFolder() {
     UUID uuid = UUID.randomUUID();
-    MoveFolderToFolderRequest moveFolderToFolderRequest = MoveFolderRequestUtil.getToFolder();
+    UUID destUUID = UUID.randomUUID();
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(uuid)).thenReturn(Optional.of(expectedFolderEntity));
     FolderEntity parentFolderEntity = FolderEntityUtil.getFolderWithoutParent();
-    when(folderRepository.findById(moveFolderToFolderRequest.getDestinationParentFolderId()))
-        .thenReturn(Optional.of(parentFolderEntity));
+    when(folderRepository.findById(destUUID)).thenReturn(Optional.of(parentFolderEntity));
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
 
-    folderService.moveFolderToFolder(moveFolderToFolderRequest, uuid);
+    folderService.moveFolderToFolder(uuid, destUUID);
 
-    Mockito.verify(folderRepository).save(captorFolderEntity.capture());
-    Assertions.assertEquals(captorFolderEntity.getValue().getParentFolder(), parentFolderEntity);
+    Assertions.assertNotNull(expectedFolderEntity.getParentFolder());
     verify(folderRepository, times(2)).findById(any());
+    verify(folderRepository, times(1)).save(any());
   }
 
   @Test

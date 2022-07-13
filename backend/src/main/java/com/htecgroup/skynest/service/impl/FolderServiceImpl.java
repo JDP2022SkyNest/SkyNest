@@ -14,8 +14,6 @@ import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
-import com.htecgroup.skynest.model.request.MoveFolderToBucketRequest;
-import com.htecgroup.skynest.model.request.MoveFolderToFolderRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
@@ -141,30 +139,25 @@ public class FolderServiceImpl implements FolderService {
   }
 
   @Override
-  public void moveFolderToBucket(MoveFolderToBucketRequest moveFolderToBucketRequest, UUID uuid) {
+  public void moveFolderToBucket(UUID folderId) {
     FolderEntity folderEntity =
-        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
-    BucketEntity bucketEntity =
-        bucketRepository
-            .findById(moveFolderToBucketRequest.getDestinationBucketId())
-            .orElseThrow(BucketNotFoundException::new);
-    if (folderEntity.getBucket().getId() == bucketEntity.getId()) {
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    if (folderEntity.getParentFolder() == null) {
       throw new FolderAlreadyInsideBucketException();
     }
-    folderEntity.setBucket(bucketEntity);
+    folderEntity.setParentFolder(null);
     folderRepository.save(folderEntity);
     actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
   }
 
   @Override
-  public void moveFolderToFolder(MoveFolderToFolderRequest moveFolderRequest, UUID uuid) {
+  public void moveFolderToFolder(UUID folderId, UUID destinationFolderId) {
     FolderEntity folderEntity =
-        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
     FolderEntity parentFolderEntity =
-        folderRepository
-            .findById(moveFolderRequest.getDestinationParentFolderId())
-            .orElseThrow(FolderNotFoundException::new);
-    if (folderEntity.getParentFolder().getId() == parentFolderEntity.getId()) {
+        folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    if (folderEntity.getParentFolder() != null
+        && folderEntity.getParentFolder().getId() == parentFolderEntity.getId()) {
       throw new FolderAlreadyInsideFolderException();
     }
     folderEntity.setParentFolder(parentFolderEntity);
