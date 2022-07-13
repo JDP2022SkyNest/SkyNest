@@ -5,14 +5,17 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
+import com.htecgroup.skynest.exception.file.FileAlreadyInsideFolderException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
+import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileService;
@@ -49,6 +52,8 @@ public class FileServiceImpl implements FileService {
   private final UserRepository userRepository;
   private final FileMetadataRepository fileMetadataRepository;
   private final ActionService actionService;
+
+  private final FolderRepository folderRepository;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -118,6 +123,20 @@ public class FileServiceImpl implements FileService {
     List<FileMetadataEntity> allFiles =
         fileMetadataRepository.findAllByParentFolderId(parentFolderId);
     return asFileResponseList(allFiles);
+  }
+
+  @Override
+  public void moveFile(UUID fileId, UUID destinationFolderId) {
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    FolderEntity folderEntity =
+        folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    if (fileMetadataEntity.getParentFolder().getId() == folderEntity.getId()) {
+      throw new FileAlreadyInsideFolderException();
+    }
+    fileMetadataEntity.setParentFolder(folderEntity);
+    fileMetadataRepository.save(fileMetadataEntity);
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
   }
 
   private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
