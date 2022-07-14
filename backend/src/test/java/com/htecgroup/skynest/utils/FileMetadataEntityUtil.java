@@ -7,12 +7,13 @@ import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileMetadataEntityUtil {
 
-  public static FileMetadataEntity getRootFileMetadataEntity() {
+  public static FileMetadataEntity get() {
 
     UserEntity user = UserEntityUtil.getVerified();
     BucketEntity bucket = BucketEntityUtil.getPrivateBucket();
@@ -47,5 +48,11 @@ public final class FileMetadataEntityUtil {
     fileMetadata.setName("ping-ports.sh");
 
     return fileMetadata;
+  }
+
+  public static FileMetadataEntity getDeleted() {
+    FileMetadataEntity fileMetadataEntity = get();
+    fileMetadataEntity.setDeletedOn(LocalDateTime.now());
+    return fileMetadataEntity;
   }
 }
