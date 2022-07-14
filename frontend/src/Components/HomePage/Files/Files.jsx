@@ -3,8 +3,9 @@ import * as AiCions from "react-icons/ai";
 import * as BsCions from "react-icons/bs";
 import { Dropdown, Modal } from "react-bootstrap";
 import FileInfo from "./FileInfo";
+import { fileDownload } from "../../ReusableComponents/ReusableFunctions";
 
-const Files = ({ elem }) => {
+const Files = ({ elem, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
@@ -35,7 +36,9 @@ const Files = ({ elem }) => {
                         File Info
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">Edit File</Dropdown.Item>
-                     <Dropdown.Item className="text-dark">Download File</Dropdown.Item>
+                     <Dropdown.Item onClick={() => fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg)} className="text-dark">
+                        Download File
+                     </Dropdown.Item>
                      <Dropdown.Item className="text-dark">Delete File</Dropdown.Item>
                   </Dropdown.Menu>
                </Dropdown>

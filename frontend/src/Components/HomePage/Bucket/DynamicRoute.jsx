@@ -32,7 +32,7 @@ const DynamicRoute = () => {
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
-   const alLFiles = data?.data?.files.map((elem, index) => <Files elem={elem} key={index} />);
+   const alLFiles = data?.data?.files.map((elem, index) => <Files elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />);
 
    return (
       <div className="home-page-body">
