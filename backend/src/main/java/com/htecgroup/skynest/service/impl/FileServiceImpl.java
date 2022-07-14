@@ -130,15 +130,13 @@ public class FileServiceImpl implements FileService {
 
   @Override
   @RecordAction(objectId = "[0].toString()", actionType = ActionType.DELETE)
-  public FileResponse deleteFile(UUID fileId) {
+  public void deleteFile(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
     fileMetadataEntity.delete();
     fileMetadataRepository.save(fileMetadataEntity);
-
-    return modelMapper.map(fileMetadataEntity, FileResponse.class);
   }
 
   private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {

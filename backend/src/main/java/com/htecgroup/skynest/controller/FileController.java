@@ -452,8 +452,6 @@ public class FileController {
   @DeleteMapping("/{fileId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteFile(@PathVariable UUID fileId) {
-
-    FileResponse fileResponse = fileService.deleteFile(fileId);
-    log.info("File {} successfully deleted", fileResponse.getName());
+    fileService.deleteFile(fileId);
   }
 }
