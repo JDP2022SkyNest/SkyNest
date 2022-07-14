@@ -519,7 +519,7 @@ public class FileController {
   @PutMapping("/{fileId}/move/{destinationFolderId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void moveFileToFolder(@PathVariable UUID fileId, @PathVariable UUID destinationFolderId) {
-    fileService.moveFile(fileId, destinationFolderId);
+    fileService.moveFileToFolder(fileId, destinationFolderId);
   }
 
   @Operation(summary = "Move File to root")

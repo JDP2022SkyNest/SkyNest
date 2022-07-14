@@ -142,28 +142,42 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
-  public void moveFile(UUID fileId, UUID destinationFolderId) {
-    FileMetadataEntity fileMetadataEntity =
-        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+  public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
+    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
-    if (fileMetadataEntity.getParentFolder() != null
-        && fileMetadataEntity.getParentFolder().getId() == folderEntity.getId()) {
-      throw new FileAlreadyInsideFolderException();
-    }
+    checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
     fileMetadataEntity.setParentFolder(folderEntity);
-    fileMetadataRepository.save(fileMetadataEntity);
-    actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
+    saveMoveFile(fileMetadataEntity);
   }
 
   @Override
   public void moveFileToRoot(UUID fileId) {
-    FileMetadataEntity fileMetadataEntity =
-        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
+    fileMetadataEntity.setParentFolder(null);
+    saveMoveFile(fileMetadataEntity);
+  }
+
+  private void checkIfFileAlreadyInsideFolder(
+      FileMetadataEntity fileMetadataEntity, FolderEntity folderEntity) {
+    if (fileMetadataEntity.getParentFolder() != null
+        && fileMetadataEntity.getParentFolder().getId() == folderEntity.getId()) {
+      throw new FileAlreadyInsideFolderException();
+    }
+  }
+
+  private void checkIfFileIsAlreadyInsideRoot(FileMetadataEntity fileMetadataEntity) {
     if (fileMetadataEntity.getParentFolder() == null) {
       throw new FileAlreadyInsideRootException();
     }
-    fileMetadataEntity.setParentFolder(null);
+  }
+
+  private FileMetadataEntity findFileMetaDataEntity(UUID fileId) {
+    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+  }
+
+  private void saveMoveFile(FileMetadataEntity fileMetadataEntity) {
     fileMetadataRepository.save(fileMetadataEntity);
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
   }

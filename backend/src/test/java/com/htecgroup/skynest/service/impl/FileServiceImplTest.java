@@ -125,7 +125,7 @@ class FileServiceImplTest {
     FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
     when(fileMetadataRepository.save(any())).thenReturn(expectedFileMetadataEntity);
-    fileService.moveFile(UUID.randomUUID(), UUID.randomUUID());
+    fileService.moveFileToFolder(UUID.randomUUID(), UUID.randomUUID());
 
     Assertions.assertNotNull(expectedFileMetadataEntity.getParentFolder());
     verify(fileMetadataRepository, times(1)).findById(any());
