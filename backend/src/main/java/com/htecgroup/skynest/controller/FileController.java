@@ -450,7 +450,7 @@ public class FileController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PutMapping("/{fileId}")
+  @PutMapping("/{fileId}/info")
   public ResponseEntity<FileResponse> editFileInfo(
       @Valid @RequestBody FileInfoEditRequest fileInfoEditRequest, @PathVariable UUID fileId) {
     ResponseEntity<FileResponse> fileResponseEntity =
