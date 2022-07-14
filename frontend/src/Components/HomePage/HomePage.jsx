@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
 import { redirectTo, getAllBuckets, sideBarCloseOnPhone } from "../ReusableComponents/ReusableFunctions";
@@ -10,23 +10,23 @@ import ToolBar from "../HomePage/ToolBar/ToolBar";
 import SideBar from "../HomePage/SideBar/SideBar";
 import BackDrop from "../HomePage/BackDrop/BackDrop";
 import * as RiCions from "react-icons/ri";
-import "./HomePage.css";
-import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
-import AddBucketModal from "./AddBucketModal";
-import { useEffect } from "react";
-import Bucket from "./Bucket";
+import AddBucketModal from "./Bucket/AddBucketModal";
+import Bucket from "./Bucket/Bucket";
 import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
+import "./HomePage.css";
+import LoaderAnimation from "../Loader/LoaderAnimation";
 
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(true);
-   const [allFolders, setAllFolders] = useState([]);
+   const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
+   const [loader, setLoader] = useState(false);
    const toggleSidebar = () => {
       setSidebar((prevState) => !prevState);
    };
@@ -39,14 +39,21 @@ const HomePage = () => {
    }, [isMobile]);
 
    useEffect(() => {
-      getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+      let getBuckets = async () => {
+         setLoader(true);
+         await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
+         setLoader(false);
+      };
+      getBuckets();
    }, [accessToken]);
 
    const refreshBuckets = async () => {
-      await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
+      setLoader(true);
+      await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
+      setLoader(false);
    };
 
-   const allData = allFolders.map((elem, index) => (
+   const allData = allBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
@@ -72,15 +79,23 @@ const HomePage = () => {
          <SideBar sidebar={!isMobile && sidebar} userRole={userRole} />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
-            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
-            <div className="py-2 my-3 rounded">
+            <SetSuccessMsg
+               successMsg={successMsg}
+               setSuccessMsg={setSuccessMsg}
+               customStyle="alert alert-success text-success text-center col-12 mt-3"
+            />
+            <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddBucketModal refreshBuckets={refreshBuckets} />
             </div>
-            <div>
+            {!loader ? (
                <div className="container">
-                  <div className="row">{allData}</div>
+                  <div className="row data-folder">{allData}</div>
                </div>
-            </div>
+            ) : (
+               <div>
+                  <LoaderAnimation />
+               </div>
+            )}
          </div>
          <Footer />
       </div>
