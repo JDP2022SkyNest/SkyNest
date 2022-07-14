@@ -36,11 +36,13 @@ public class JwtUtils {
   private static final String EMAIL_TOKEN_CLAIM = "Email token";
   private static final String PASSWORD_RESET_PURPOSE = "password reset";
   private static final String EMAIL_VERIFICATION_PURPOSE = "verification";
+  private static final String REGISTRATION_INVITE_PURPOSE = "registration invite";
   private static final String CLAIM_NAME = "roles";
 
   public static long ACCESS_TOKEN_EXPIRATION_MS;
   public static long REFRESH_TOKEN_EXPIRATION_MS;
   public static long EMAIL_TOKEN_EXPIRATION_MS;
+  public static long REGISTRATION_INVITE_TOKEN_EXPIRATION_MS;
   public static Algorithm ALGORITHM;
 
   private static String generate(
@@ -124,6 +126,16 @@ public class JwtUtils {
     }
   }
 
+  public static String generateRegistrationInviteToken(String email, String companyName) {
+    return JWT.create()
+        .withSubject(email)
+        .withPayload(Map.of("companyName", companyName))
+        .withExpiresAt(
+            new Date(System.currentTimeMillis() + REGISTRATION_INVITE_TOKEN_EXPIRATION_MS))
+        .withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE)
+        .sign(ALGORITHM);
+  }
+
   public static String getValidatedPasswordResetTokenContext(String token) {
     return validateEmailToken(token, JwtUtils.PASSWORD_RESET_PURPOSE);
   }
@@ -161,6 +173,11 @@ public class JwtUtils {
   @Value("${jwt.email-expiration-ms}")
   private void setEmailTokenExpirationMs(long expirationMs) {
     EMAIL_TOKEN_EXPIRATION_MS = expirationMs;
+  }
+
+  @Value("${jwt.registration-invite-expiration-ms}")
+  private void setRegisterInviteTokenExpirationMs(long expirationMs) {
+    REGISTRATION_INVITE_TOKEN_EXPIRATION_MS = expirationMs;
   }
 
   @Value("${jwt.secret}")
