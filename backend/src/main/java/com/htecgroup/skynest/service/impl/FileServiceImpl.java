@@ -5,6 +5,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
+import com.htecgroup.skynest.exception.file.FileCannotChangeTypeException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -120,9 +121,11 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadata =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
+    checkFileTypeNotChanged(fileMetadata, multipartFile.getContentType());
+
+    String oldFileContentId = fileMetadata.getContentId();
     fileMetadata.setType(multipartFile.getContentType());
     fileMetadata.setSize(multipartFile.getSize());
-    String oldFileContentId = fileMetadata.getContentId();
 
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadata);
@@ -134,6 +137,11 @@ public class FileServiceImpl implements FileService {
 
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
     return modelMapper.map(savedFileMetadata, FileResponse.class);
+  }
+
+  private void checkFileTypeNotChanged(FileMetadataEntity fileMetadata, String newFileType) {
+    String oldFileType = fileMetadata.getType();
+    if (!oldFileType.equals(newFileType)) throw new FileCannotChangeTypeException();
   }
 
   private FileMetadataEntity uploadFileContent(

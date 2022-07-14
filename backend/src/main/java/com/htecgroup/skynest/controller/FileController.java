@@ -406,7 +406,13 @@ public class FileController {
                         value =
                             "{\"messages\":[\"Failed to write file contents\"],"
                                 + " \"status\": \"400\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}"),
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Cannot change file type, please upload content as a new file.\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}",
+                        name = "different file type")
                   })
             }),
         @ApiResponse(
