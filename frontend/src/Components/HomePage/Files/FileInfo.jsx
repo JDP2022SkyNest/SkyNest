@@ -1,6 +1,9 @@
 import React from "react";
 
 const FileInfo = ({ elem }) => {
+   const timeFrame = elem.createdOn.replace("T", " @ ");
+   const fileSize = elem.size / 1024 / 1024;
+
    return (
       <div className="container-fluid">
          <div className="row">
@@ -19,8 +22,8 @@ const FileInfo = ({ elem }) => {
          </div>
          <hr className="m-1" />
          <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">Craeted:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.createdOn}</small>
+            <div className="col-sm-3 p-2 font-weight-bold">Created:</div>
+            <small className="col-sm-8 p-2 text-mutted">{timeFrame}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
@@ -30,7 +33,7 @@ const FileInfo = ({ elem }) => {
          <hr className="m-1" />
          <div className="row">
             <div className="col-sm-3 p-2 font-weight-bold">Size:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.size}</small>
+            <small className="col-sm-8 p-2 text-mutted">{fileSize < 0.5 ? `${fileSize.toFixed(4)} mb` : `${fileSize.toFixed(2)} mb`}</small>
          </div>
       </div>
    );
