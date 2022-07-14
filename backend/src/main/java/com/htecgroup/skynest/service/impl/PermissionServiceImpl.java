@@ -15,6 +15,7 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PermissionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PermissionServiceImpl implements PermissionService {
 
   private final CurrentUserService currentUserService;
@@ -74,7 +76,42 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserObjectAccessEntity savedPermission = permissionRepository.save(permission);
 
+    log.info(
+        "User {} ({}) granted {} permission for bucket {} ({}) to user {} ({})",
+        permission.getGrantedBy().getEmail(),
+        permission.getGrantedBy().getId(),
+        permission.getAccess().getName(),
+        permission.getObject().getName(),
+        permission.getObject().getId(),
+        permission.getGrantedTo().getEmail(),
+        permission.getGrantedTo().getId());
+
     return modelMapper.map(savedPermission, PermissionResponse.class);
+  }
+
+  @Override
+  public void grantOwnerForObject(ObjectEntity object) {
+
+    UserObjectAccessEntity permission = new UserObjectAccessEntity();
+
+    UserEntity currentUser =
+        userRepository
+            .findById(currentUserService.getLoggedUser().getUuid())
+            .orElseThrow(UserNotFoundException::new);
+
+    AccessTypeEntity accessType =
+        accessTypeRepository
+            .findByName(AccessType.OWNER.getText())
+            .orElseThrow(AccessTypeNotFoundException::new);
+
+    permission.setGrantedBy(currentUser);
+    permission.setGrantedTo(currentUser);
+    permission.setAccess(accessType);
+    permission.setObject(object);
+    permission.setId(
+        new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
+
+    permissionRepository.save(permission);
   }
 
   @Override
