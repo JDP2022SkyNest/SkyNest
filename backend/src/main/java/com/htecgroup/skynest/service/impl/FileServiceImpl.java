@@ -189,7 +189,6 @@ public class FileServiceImpl implements FileService {
     fileMetadataRepository.save(fileMetadataEntity);
   }
 
-  private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
   private FileMetadataEntity initFileMetadata(
       String name, long size, String type, BucketEntity bucket, FolderEntity parentFolder) {
 
