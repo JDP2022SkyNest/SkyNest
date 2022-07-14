@@ -326,6 +326,17 @@ export const bucketContent = async (accessToken, bucketId, stateToChange) => {
    }
 };
 
+export const folderContent = async (accessToken, folderId, stateToChange) => {
+   try {
+      let response = await AxiosInstance.get(`/folders/${folderId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response);
+   } catch (err) {
+      console.log(err);
+   }
+};
+
 export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
    window.addEventListener(
       "resize",
@@ -335,6 +346,26 @@ export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
       },
       false
    );
+};
+
+export const fileDownload = async (accessToken, fileId, fileName, error, success) => {
+   try {
+      const response = await AxiosInstance.get(`/files/${fileId}`, {
+         headers: { Authorization: accessToken },
+         responseType: "blob",
+      });
+      console.log(response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      success("File Downloaded");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
 };
 
 export const openFullscreen = () => {

@@ -55,6 +55,10 @@
   transition: 500ms !important;
 }
 
+.data-folder .files .btn-primary {
+  top: -20px !important;
+}
+
 .data-folder .dots-icon {
 position: absolute;
 top: 50%;
@@ -70,9 +74,30 @@ transform: translate(-50%,-50%) scale(0.8);
   border-radius: 10px !important;
 }
 
+.data-folder .custom-file-rounded {
+  border-radius: 30px !important;
+}
+
 .data-folder .is-private {
   display: flex;
   align-items: center;
+}
+
+.data-folder .hr-devider {
+  position: relative;
+  border-radius: 10px;
+  background-color: white;
+  opacity: 1;
+  height: 8px;
+  width: 100%;
+}
+
+.data-folder .bucket-hover {
+  transition: 200ms;
+}
+
+.file-text-width {
+  width: 82%;
 }
 
 .data-folder .bucket-hover:hover {

@@ -23,8 +23,10 @@ const App = () => {
    const { setUserCompany, accessToken, setUserID, setUserRole } = useContext(GlobalContext);
 
    useEffect(() => {
-      getUserData(accessToken, setUserRole, setUserID);
-      getCompanyName(accessToken, setUserCompany);
+      if (accessToken) {
+         getUserData(accessToken, setUserRole, setUserID);
+         getCompanyName(accessToken, setUserCompany);
+      }
       // eslint-disable-next-line
    }, [accessToken]);
 
