@@ -42,7 +42,7 @@ class FileServiceImplTest {
 
   @Test
   void getFileMetadata_ThrowsFileNotFound() {
-    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.get();
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getRootFileMetadataEntity();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
         FileNotFoundException.class,
@@ -54,7 +54,7 @@ class FileServiceImplTest {
 
   @Test
   void downloadFile_ThrowsFileNotFound() {
-    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.get();
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getRootFileMetadataEntity();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
         FileNotFoundException.class,
@@ -82,7 +82,7 @@ class FileServiceImplTest {
 
   @Test
   void getAllRootFiles() {
-    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.get();
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
     when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
@@ -131,7 +131,7 @@ class FileServiceImplTest {
 
   @Test
   void deleteFile_ThrowsFileNotFound() {
-    UUID fileId = FileMetadataEntityUtil.get().getId();
+    UUID fileId = FileMetadataEntityUtil.getRootFileMetadataEntity().getId();
 
     when(fileMetadataRepository.findById(fileId)).thenReturn(Optional.empty());
 
