@@ -55,15 +55,18 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
       }
    }
 };
+const refreshToken = window.localStorage[`refresh-token`];
 
-export const updateToken = async () => {
+export const getRefreshToken = async () => {
    try {
-      let response = await AxiosInstance.get("/token/refresh", { params: localStorage.getItem("refreshToken") });
-      console.log(response);
+      const response = await AxiosInstance.get("/token/refresh", {
+         headers: {
+            "refresh-token": refreshToken,
+         },
+      });
+      console.log(response.headers);
    } catch (err) {
-      if (err.response.status) {
-         console.log("error");
-      }
+      console.log("error");
    }
 };
 

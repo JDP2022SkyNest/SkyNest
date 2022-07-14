@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { redirectTo, emailVerification } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, emailVerification, getRefreshToken } from "../ReusableComponents/ReusableFunctions";
 import "./Login.css";
 import logoImage from "./assets/logoblackandwhite.svg";
 import AxiosInstance from "../axios/AxiosInstance";
@@ -62,6 +62,49 @@ const Login = () => {
       }
    };
 
+   AxiosInstance.interceptors.request.use(
+      (config) => {
+         // eslint-disable-next-line
+         const token = window.localStorage.getItem("accessToken", token);
+
+         if (token) {
+            config.headers["Authorization"] = "Bearer " + token;
+         }
+         // config.headers['Content-Type'] = 'application/json';
+         return config;
+      },
+      (error) => {
+         Promise.reject(error);
+      }
+   );
+
+   //Add a response interceptor
+
+   AxiosInstance.interceptors.response.use(
+      (response) => {
+         return response;
+      },
+      function (error) {
+         const originalRequest = error.config;
+
+         if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            const refreshToken = window.localStorage[`refresh-token`];
+            return AxiosInstance.get("/token/refresh", {
+               headers: {
+                  "refresh-token": refreshToken,
+               },
+            }).then((res) => {
+               if (res.status === 201) {
+                  window.localStorage.setAccessToken(res.data);
+                  AxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + window.localStorage.getItem("accessToken", token);
+                  return AxiosInstance(originalRequest);
+               }
+            });
+         }
+         return Promise.reject(error);
+      }
+   );
    useEffect(() => {
       if (token) {
          emailVerification(token, setSuccessMsg, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
