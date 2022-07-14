@@ -65,7 +65,7 @@ class FileServiceImplTest {
 
   @Test
   void editFileInfo() {
-    FileMetadataEntity expectedFileEntity = FileMetadataEntityUtil.getFileMetadataEntity();
+    FileMetadataEntity expectedFileEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(expectedFileEntity));
     when(fileMetadataRepository.save(any())).thenReturn(expectedFileEntity);
 
