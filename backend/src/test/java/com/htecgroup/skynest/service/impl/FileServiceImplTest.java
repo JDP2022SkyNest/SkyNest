@@ -2,12 +2,14 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
+import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
+import com.htecgroup.skynest.utils.FolderEntityUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,6 +94,13 @@ class FileServiceImplTest {
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
         .findAllByParentFolderId(fileMetadataEntity.getParentFolder().getId());
+  }
+
+  @Test
+  void moveFileToFolderTest() {
+    FileMetadataEntity expectedFileMetadataEntity =
+        FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
   }
 
   private void assertFileMetadataEntityAndFileResponse(
