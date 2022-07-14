@@ -31,4 +31,6 @@ public interface BucketService {
   StorageContentResponse getBucketContent(UUID bucketId);
 
   BucketDto findBucketByName(String name);
+
+  List<BucketResponse> listAllDeletedBuckets();
 }
