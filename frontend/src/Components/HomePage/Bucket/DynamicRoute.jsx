@@ -9,7 +9,7 @@ import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
-import Files from "../Files";
+import Files from "../Files/Files";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -32,7 +32,7 @@ const DynamicRoute = () => {
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
-   const alLFiles = data?.data?.files.map((elem, index) => <Files elem={elem} key={index} />);
+   const alLFiles = data?.data?.files.map((elem, index) => <Files elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />);
 
    return (
       <div className="home-page-body">
@@ -51,7 +51,8 @@ const DynamicRoute = () => {
             <div>
                <div className="container data-folder">
                   <div className="row">{allData}</div>
-                  <div className="row">{alLFiles}</div>
+                  {alLFiles?.length > 0 && <div className="my-2 mt-3 hr-devider" />}
+                  <div className="row files">{alLFiles}</div>
                </div>
             </div>
          </div>
