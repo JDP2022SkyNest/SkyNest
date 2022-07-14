@@ -66,7 +66,6 @@ const Login = () => {
       (config) => {
          // eslint-disable-next-line
          const token = window.localStorage.getItem("accessToken", token);
-
          if (token) {
             config.headers["Authorization"] = "Bearer " + token;
          }
@@ -89,7 +88,7 @@ const Login = () => {
 
          if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
-            const refreshToken = window.localStorage[`refresh-token`];
+            const refreshToken = getRefreshToken();
             return AxiosInstance.get("/token/refresh", {
                headers: {
                   "refresh-token": refreshToken,
@@ -97,7 +96,7 @@ const Login = () => {
             }).then((res) => {
                if (res.status === 201) {
                   window.localStorage.setAccessToken(res.data);
-                  AxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + window.localStorage.getItem("accessToken", token);
+                  AxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + getRefreshToken();
                   return AxiosInstance(originalRequest);
                }
             });

@@ -46,6 +46,8 @@ const HomePage = () => {
       await getAllBuckets(accessToken, setAllFolders, setErrorMsg);
    };
 
+   getRefreshToken();
+
    const allData = allFolders
       .filter((elem) => elem.name.toLowerCase().includes(searchQuery) || elem.description.toLowerCase().includes(searchQuery))
       .map((elem, index) => (

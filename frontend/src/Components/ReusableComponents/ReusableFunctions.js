@@ -64,7 +64,7 @@ export const getRefreshToken = async () => {
             "refresh-token": refreshToken,
          },
       });
-      console.log(response.headers);
+      return response.headers[`refresh-token`];
    } catch (err) {
       console.log("error");
    }
@@ -334,7 +334,7 @@ export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
       "resize",
       () => {
          const stateToChange = window.innerWidth;
-         if (stateToChange < 1200) setStateToChange(false);
+         if (stateToChange < 1200) setStateToChange(true);
       },
       false
    );
