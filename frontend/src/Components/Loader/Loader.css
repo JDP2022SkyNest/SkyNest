@@ -1,8 +1,8 @@
 .loader-circle-size {
-	width: 5rem;
-	height: 5rem;
+	width: 5rem !important;
+	height: 5rem !important;
 }
 
 .loader-text-size {
-	font-size: 20px;
+	font-size: 20px !important;
 }
