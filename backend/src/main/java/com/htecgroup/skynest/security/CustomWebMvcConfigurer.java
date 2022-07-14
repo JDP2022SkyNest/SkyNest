@@ -37,6 +37,7 @@ public class CustomWebMvcConfigurer implements WebMvcConfigurer {
             HttpHeaders.ORIGIN,
             HttpHeaders.ACCEPT,
             HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD,
-            HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
+            HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS,
+            HttpHeaders.CONTENT_DISPOSITION);
   }
 }
