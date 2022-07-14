@@ -42,4 +42,11 @@ public final class BucketEntityUtil {
     bucketEntity.setDeletedOn(LocalDateTime.now());
     return bucketEntity;
   }
+
+  public static BucketEntity getBucketWithActivatedLambdas() {
+    BucketEntity bucketEntity = getPrivateBucket();
+    List<LambdaType> lambdaTypes = new ArrayList<>();
+    lambdaTypes.add(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA);
+    return bucketEntity.withLambdaTypes(lambdaTypes);
+  }
 }

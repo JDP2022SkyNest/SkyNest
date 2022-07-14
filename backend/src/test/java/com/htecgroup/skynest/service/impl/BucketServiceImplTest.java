@@ -3,6 +3,8 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.lambda.LambdaAlreadyActivated;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -224,5 +226,33 @@ class BucketServiceImplTest {
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
     Assertions.assertNull(bucketEntity.getDeletedOn());
+  }
+
+  @Test
+  void when_lambdaAlreadyActive_activateLambda_ShouldThrowLambdaAlreadyActive() {
+    BucketEntity bucketEntity = BucketEntityUtil.getBucketWithActivatedLambdas();
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    String expectedErrorMessage = LambdaAlreadyActivated.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            LambdaAlreadyActivated.class,
+            () ->
+                bucketService.activateLambda(
+                    UUID.randomUUID(), LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_valid_activateLambda_ShouldSaveEntityWithActivatedLambdas() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.activateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertTrue(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
   }
 }
