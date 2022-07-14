@@ -55,6 +55,10 @@
   transition: 500ms !important;
 }
 
+.data-folder .files .btn-primary {
+  top: -20px !important;
+}
+
 .data-folder .dots-icon {
 position: absolute;
 top: 50%;
@@ -77,6 +81,10 @@ transform: translate(-50%,-50%) scale(0.8);
 .data-folder .is-private {
   display: flex;
   align-items: center;
+}
+
+.data-folder .bucket-hover {
+  transition: 200ms;
 }
 
 .data-folder .bucket-hover:hover {

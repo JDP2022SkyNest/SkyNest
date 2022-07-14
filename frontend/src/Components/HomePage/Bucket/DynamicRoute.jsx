@@ -9,7 +9,7 @@ import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
-import Files from "../Files";
+import Files from "../Files/Files";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -51,7 +51,7 @@ const DynamicRoute = () => {
             <div>
                <div className="container data-folder">
                   <div className="row">{allData}</div>
-                  <div className="row">{alLFiles}</div>
+                  <div className="row files">{alLFiles}</div>
                </div>
             </div>
          </div>
