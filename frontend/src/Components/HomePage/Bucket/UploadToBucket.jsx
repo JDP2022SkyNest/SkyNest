@@ -27,6 +27,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
          setSuccessMsg("File Successfully Uploaded");
          setTimeout(() => {
             setShow(false);
+            setFile(null);
             refresh();
          }, 2000);
       } catch (err) {
