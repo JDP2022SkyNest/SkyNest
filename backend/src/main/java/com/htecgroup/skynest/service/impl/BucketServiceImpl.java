@@ -44,6 +44,7 @@ public class BucketServiceImpl implements BucketService {
   private FileService fileService;
 
   private ActionService actionService;
+  private PermissionService permissionService;
 
   @Override
   public BucketResponse createBucket(BucketCreateRequest bucketCreateRequest) {
@@ -62,6 +63,8 @@ public class BucketServiceImpl implements BucketService {
     bucketEntity.setIsPublic(false);
 
     BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
+
+    permissionService.grantOwnerForObject(savedBucketEntity);
 
     actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.CREATE);
 
@@ -84,6 +87,15 @@ public class BucketServiceImpl implements BucketService {
     BucketEntity bucketEntity =
         bucketRepository.findBucketByName(name).orElseThrow(BucketNotFoundException::new);
     return modelMapper.map(bucketEntity, BucketDto.class);
+  }
+
+  @Override
+  public List<BucketResponse> listAllDeletedBuckets() {
+    List<BucketEntity> entityList = bucketRepository.findAllByDeletedOnIsNotNull();
+    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, BucketResponse.class))
+        .collect(Collectors.toList());
   }
 
   @Override

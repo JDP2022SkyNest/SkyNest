@@ -1,16 +1,19 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
+import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileIOException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
@@ -19,6 +22,7 @@ import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.PermissionService;
 import com.mongodb.MongoException;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +56,7 @@ public class FileServiceImpl implements FileService {
   private final UserRepository userRepository;
   private final FileMetadataRepository fileMetadataRepository;
   private final ActionService actionService;
+  private final PermissionService permissionService;
   private final FolderRepository folderRepository;
 
   @Override
@@ -99,6 +104,7 @@ public class FileServiceImpl implements FileService {
       InputStream fileContents = multipartFile.getInputStream();
 
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
+      permissionService.grantOwnerForObject(savedFileMetadata);
       actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
@@ -136,6 +142,23 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
+  public FileResponse editFileInfo(FileInfoEditRequest fileInfoEditRequest, UUID fileId) {
+
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    if (fileMetadataEntity.getDeletedOn() != null) {
+      throw new FileAlreadyDeletedException();
+    }
+    fileInfoEditRequest.setName(fileInfoEditRequest.getName().trim());
+
+    modelMapper.map(fileInfoEditRequest, fileMetadataEntity);
+    FileMetadataEntity savedFileEntity = fileMetadataRepository.save(fileMetadataEntity);
+
+    actionService.recordAction(Collections.singleton(savedFileEntity), ActionType.EDIT);
+    return modelMapper.map(savedFileEntity, FileResponse.class);
+  }
+
+  @Override
   public List<FileResponse> getAllRootFiles(UUID bucketId) {
     List<FileMetadataEntity> allFiles =
         fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
@@ -155,6 +178,18 @@ public class FileServiceImpl implements FileService {
         .collect(Collectors.toList());
   }
 
+  @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.DELETE)
+  public void deleteFile(UUID fileId) {
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
+    fileMetadataEntity.delete();
+    fileMetadataRepository.save(fileMetadataEntity);
+  }
+
+  private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
   private FileMetadataEntity initFileMetadata(
       String name, long size, String type, BucketEntity bucket, FolderEntity parentFolder) {
 

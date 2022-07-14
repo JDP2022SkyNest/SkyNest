@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service;
 
+import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +18,11 @@ public interface FileService {
 
   FileDownloadResponse downloadFile(UUID fileId);
 
+  FileResponse editFileInfo(FileInfoEditRequest fileInfoEditRequest, UUID fileId);
+
   List<FileResponse> getAllRootFiles(UUID bucketId);
 
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
+
+  void deleteFile(UUID fileId);
 }

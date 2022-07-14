@@ -18,7 +18,7 @@ public class BucketDtoUtil {
 
   protected static UserDto userDtoUtil = UserDtoUtil.getVerified();
 
-  public static BucketDto getDeletedBucket() {
+  public static BucketDto getCurrentUsersDeletedBucket() {
     return new BucketDto(
         UUID.randomUUID(),
         currentDateTime,
@@ -32,7 +32,7 @@ public class BucketDtoUtil {
         privateBucket);
   }
 
-  public static BucketDto getNotDeletedBucket() {
+  public static BucketDto getCurrentUsersNotDeletedBucket() {
     return new BucketDto(
         UUID.randomUUID(),
         currentDateTime,
@@ -46,13 +46,13 @@ public class BucketDtoUtil {
         privateBucket);
   }
 
-  public static BucketDto getOtherNotDeletedBucket() {
+  public static BucketDto getOtherUsersNotDeletedBucket() {
     return new BucketDto(
         UUID.randomUUID(),
         currentDateTime,
         currentDateTime,
         null,
-        userDtoUtil,
+        UserDtoUtil.getOtherUser(),
         name,
         companyDto,
         description,

@@ -60,6 +60,19 @@ class BucketServiceImplTest {
   }
 
   @Test
+  void listAllDeletedBuckets() {
+    List<BucketEntity> bucketEntityList =
+        Collections.singletonList(BucketEntityUtil.getDeletedBucket());
+    when(bucketRepository.findAllByDeletedOnIsNotNull()).thenReturn(bucketEntityList);
+
+    List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
+    List<BucketResponse> actualResponse = bucketService.listAllDeletedBuckets();
+
+    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+    this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
+  }
+
+  @Test
   void getBucket() {
     BucketEntity expectedBucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(expectedBucketEntity));
@@ -151,7 +164,7 @@ class BucketServiceImplTest {
 
   @Test
   void when_AlreadyDeletedBucket_deletedBucket_ShouldThrowBucketAlreadyDeleted() {
-    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
     String expectedErrorMessage = BucketAlreadyDeletedException.MESSAGE;
     Exception thrownException =
@@ -164,7 +177,7 @@ class BucketServiceImplTest {
 
   @Test
   void when_deleteBucket_ShouldDeleteBucket() {
-    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersNotDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
 
     bucketService.deleteBucket(UUID.randomUUID());
@@ -191,7 +204,7 @@ class BucketServiceImplTest {
 
   @Test
   void when_AlreadyRestoredBucket_restoreBucket_ShouldThrowBucketAlreadyRestored() {
-    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersNotDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
     String expectedErrorMessage = BucketAlreadyRestoredException.MESSAGE;
     Exception thrownException =
@@ -203,7 +216,7 @@ class BucketServiceImplTest {
 
   @Test
   void when_restoreBucket_ShouldRestoreBucket() {
-    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
 
     bucketService.restoreBucket(UUID.randomUUID());
