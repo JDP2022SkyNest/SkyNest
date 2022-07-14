@@ -14,4 +14,5 @@ public @interface RecordAction {
   public String objectId();
 
   public ActionType actionType();
+
 }

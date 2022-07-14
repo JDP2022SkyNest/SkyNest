@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.aspects;
 
 import com.htecgroup.skynest.annotation.actions.RecordAction;
-import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.ObjectEntity;
 import com.htecgroup.skynest.repository.ObjectRepository;
@@ -33,8 +32,7 @@ public class ActionsAop {
     UUID objectId = parseAnnotationObjectId(joinPoint, recordAction);
     ActionType actionType = recordAction.actionType();
 
-    ObjectEntity objectEntity =
-        objectRepository.findById(objectId).orElseThrow(ObjectNotFoundException::new);
+    ObjectEntity objectEntity = objectRepository.findById(objectId).get();
     actionService.recordAction(Collections.singleton(objectEntity), actionType);
   }
 
