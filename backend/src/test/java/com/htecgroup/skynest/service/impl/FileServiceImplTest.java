@@ -7,6 +7,7 @@ import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
+import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.utils.FileEditRequestUtil;
@@ -34,6 +35,7 @@ class FileServiceImplTest {
   @Mock private CurrentUserServiceImpl currentUserService;
   @Mock private BucketRepository bucketRepository;
   @Mock private UserRepository userRepository;
+  @Mock private FolderRepository folderRepository;
   @Mock private FileMetadataRepository fileMetadataRepository;
   @Mock private ActionService actionService;
 
@@ -118,7 +120,31 @@ class FileServiceImplTest {
   void moveFileToFolderTest() {
     FileMetadataEntity expectedFileMetadataEntity =
         FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    when(fileMetadataRepository.findById(any()))
+        .thenReturn(Optional.of(expectedFileMetadataEntity));
     FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    when(fileMetadataRepository.save(any())).thenReturn(expectedFileMetadataEntity);
+    fileService.moveFile(UUID.randomUUID(), UUID.randomUUID());
+
+    Assertions.assertNotNull(expectedFileMetadataEntity.getParentFolder());
+    verify(fileMetadataRepository, times(1)).findById(any());
+    verify(folderRepository, times(1)).findById(any());
+    verify(fileMetadataRepository, times(1)).save(any());
+  }
+
+  @Test
+  void moveFileToRoot() {
+    FileMetadataEntity expectedFileMetadataEntity =
+        FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    when(fileMetadataRepository.findById(any()))
+        .thenReturn(Optional.of(expectedFileMetadataEntity));
+    when(fileMetadataRepository.save(any())).thenReturn(expectedFileMetadataEntity);
+    fileService.moveFileToRoot(UUID.randomUUID());
+
+    Assertions.assertNull(expectedFileMetadataEntity.getParentFolder());
+    verify(fileMetadataRepository, times(1)).findById(any());
+    verify(fileMetadataRepository, times(1)).save(any());
   }
 
   private void assertFileMetadataEntityAndFileResponse(
