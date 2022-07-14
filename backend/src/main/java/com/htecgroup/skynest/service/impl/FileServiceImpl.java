@@ -77,10 +77,10 @@ public class FileServiceImpl implements FileService {
     checkBucketSizeExceedsMax(emptyFileMetadata);
 
     FileMetadataEntity savedFileMetadata = uploadFileContent(emptyFileMetadata, multipartFile);
-
+    permissionService.grantOwnerForObject(savedFileMetadata);
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
+
     return modelMapper.map(savedFileMetadata, FileResponse.class);
-    //return uploadFile(emptyFileMetadata, multipartFile);
   }
 
   @Override
@@ -100,23 +100,11 @@ public class FileServiceImpl implements FileService {
     checkFolderNotDeleted(emptyFileMetadata);
     checkBucketSizeExceedsMax(emptyFileMetadata);
 
-    return uploadFile(emptyFileMetadata, multipartFile);
-  }
+    FileMetadataEntity savedFileMetadata = uploadFileContent(emptyFileMetadata, multipartFile);
+    permissionService.grantOwnerForObject(savedFileMetadata);
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
 
-  private FileResponse uploadFile(
-      FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
-    try {
-      InputStream fileContents = multipartFile.getInputStream();
-
-      FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
-      permissionService.grantOwnerForObject(savedFileMetadata);
-      actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
-
-      return modelMapper.map(savedFileMetadata, FileResponse.class);
-    } catch (IOException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
+    return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
 
   @Override
@@ -197,8 +185,8 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity savedFileMetadata = uploadFileContent(fileMetadata, multipartFile);
     deleteFileContent(oldFileContentId);
-
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
+
     return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
 
@@ -211,7 +199,6 @@ public class FileServiceImpl implements FileService {
       FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
     try {
       InputStream fileContents = multipartFile.getInputStream();
-
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
       return savedFileMetadata;
     } catch (IOException e) {
