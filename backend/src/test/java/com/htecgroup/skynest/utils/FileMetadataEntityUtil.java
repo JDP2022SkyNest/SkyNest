@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileMetadataEntityUtil {
 
-  public static FileMetadataEntity get() {
+  public static FileMetadataEntity getRootFileMetadataEntity() {
 
     UserEntity user = UserEntityUtil.getVerified();
     BucketEntity bucket = BucketEntityUtil.getPrivateBucket();
@@ -51,7 +51,7 @@ public final class FileMetadataEntityUtil {
   }
 
   public static FileMetadataEntity getDeleted() {
-    FileMetadataEntity fileMetadataEntity = get();
+    FileMetadataEntity fileMetadataEntity = getRootFileMetadataEntity();
     fileMetadataEntity.setDeletedOn(LocalDateTime.now());
     return fileMetadataEntity;
   }

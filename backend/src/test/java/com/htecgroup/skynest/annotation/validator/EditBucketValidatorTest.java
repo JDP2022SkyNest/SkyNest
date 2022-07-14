@@ -26,7 +26,8 @@ public class EditBucketValidatorTest {
   @Test
   void isValid_EditableBucket() {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
-    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getNotDeletedBucket());
+    when(bucketService.findBucketById(any()))
+        .thenReturn(BucketDtoUtil.getCurrentUsersNotDeletedBucket());
 
     UUID uuid = UUID.randomUUID();
 
@@ -38,7 +39,8 @@ public class EditBucketValidatorTest {
   @Test
   void isValid_NonEditableBucket() {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
-    when(bucketService.findBucketById(any())).thenReturn(BucketDtoUtil.getOtherNotDeletedBucket());
+    when(bucketService.findBucketById(any()))
+        .thenReturn(BucketDtoUtil.getOtherUsersNotDeletedBucket());
 
     UUID uuid = UUID.randomUUID();
 
