@@ -70,6 +70,10 @@ transform: translate(-50%,-50%) scale(0.8);
   border-radius: 10px !important;
 }
 
+.data-folder .custom-file-rounded {
+  border-radius: 30px !important;
+}
+
 .data-folder .is-private {
   display: flex;
   align-items: center;
