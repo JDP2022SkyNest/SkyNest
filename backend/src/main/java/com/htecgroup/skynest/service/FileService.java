@@ -21,4 +21,6 @@ public interface FileService {
   List<FileResponse> getAllRootFiles(UUID bucketId);
 
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
+
+  void deleteFile(UUID fileId);
 }

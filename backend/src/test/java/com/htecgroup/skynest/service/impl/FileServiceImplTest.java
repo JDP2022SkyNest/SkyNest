@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
@@ -41,7 +42,7 @@ class FileServiceImplTest {
 
   @Test
   void getFileMetadata_ThrowsFileNotFound() {
-    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getRootFileMetadataEntity();
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.get();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
         FileNotFoundException.class,
@@ -53,7 +54,7 @@ class FileServiceImplTest {
 
   @Test
   void downloadFile_ThrowsFileNotFound() {
-    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.getRootFileMetadataEntity();
+    FileMetadataEntity fileMetadata = FileMetadataEntityUtil.get();
     when(fileMetadataRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(
         FileNotFoundException.class,
@@ -81,7 +82,7 @@ class FileServiceImplTest {
 
   @Test
   void getAllRootFiles() {
-    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.get();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
     when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
@@ -126,5 +127,39 @@ class FileServiceImplTest {
           expectedFileMetadataEntity.getParentFolder().getId(),
           actualFileResponse.getParentFolderId());
     }
+  }
+
+  @Test
+  void deleteFile_ThrowsFileNotFound() {
+    UUID fileId = FileMetadataEntityUtil.get().getId();
+
+    when(fileMetadataRepository.findById(fileId)).thenReturn(Optional.empty());
+
+    String expectedErrorMessage = FileNotFoundException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(FileNotFoundException.class, () -> fileService.deleteFile(fileId));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+
+    verify(fileMetadataRepository, times(1)).findById(fileId);
+    verify(actionService, times(0)).recordAction(any(), any());
+    verify(actionService, times(0)).recordAction(any(), any(), any());
+  }
+
+  @Test
+  void deleteFile_ThrowsFileAlreadyDeleted() {
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getDeleted();
+    UUID fileId = fileMetadataEntity.getId();
+
+    when(fileMetadataRepository.findById(fileId)).thenReturn(Optional.of(fileMetadataEntity));
+
+    String expectedErrorMessage = FileAlreadyDeletedException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FileAlreadyDeletedException.class, () -> fileService.deleteFile(fileId));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+
+    verify(fileMetadataRepository, times(1)).findById(fileId);
+    verify(actionService, times(0)).recordAction(any(), any());
+    verify(actionService, times(0)).recordAction(any(), any(), any());
   }
 }

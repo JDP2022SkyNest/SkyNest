@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
@@ -143,6 +144,17 @@ public class FileServiceImpl implements FileService {
     return allFiles.stream()
         .map(folder -> modelMapper.map(folder, FileResponse.class))
         .collect(Collectors.toList());
+  }
+
+  @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.DELETE)
+  public void deleteFile(UUID fileId) {
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
+    fileMetadataEntity.delete();
+    fileMetadataRepository.save(fileMetadataEntity);
   }
 
   private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
