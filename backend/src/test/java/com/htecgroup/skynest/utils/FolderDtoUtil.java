@@ -14,7 +14,7 @@ public class FolderDtoUtil {
 
   protected static UserDto userEntityUtil = UserDtoUtil.getVerified();
 
-  protected static BucketDto bucketDtoUtil = BucketDtoUtil.getNotDeletedBucket();
+  protected static BucketDto bucketDtoUtil = BucketDtoUtil.getCurrentUsersNotDeletedBucket();
 
   protected static String name = "FolderName";
 

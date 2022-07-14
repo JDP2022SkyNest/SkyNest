@@ -10,7 +10,9 @@ import java.util.UUID;
 
 public interface FileService {
 
-  FileResponse uploadFile(MultipartFile multipartFile, UUID bucketId);
+  FileResponse uploadFileToBucket(MultipartFile multipartFile, UUID bucketId);
+
+  FileResponse uploadFileToFolder(MultipartFile multipartFile, UUID folderId);
 
   FileResponse getFileMetadata(UUID fileId);
 
@@ -23,4 +25,6 @@ public interface FileService {
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
 
   FileResponse updateFileContent(MultipartFile multipartFile, UUID fileId);
+
+  void deleteFile(UUID fileId);
 }

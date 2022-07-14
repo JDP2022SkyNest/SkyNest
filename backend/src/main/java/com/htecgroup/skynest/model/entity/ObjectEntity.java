@@ -33,4 +33,12 @@ public class ObjectEntity implements Serializable {
   private UserEntity createdBy;
 
   private String name;
+
+  public boolean isDeleted() {
+    return deletedOn != null;
+  }
+
+  public void delete() {
+    deletedOn = LocalDateTime.now();
+  }
 }
