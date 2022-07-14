@@ -16,7 +16,7 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg }) => {
          <div className="cursor-pointer bg-white rounded">
             <div className="p-2 px-3">
                <div className="text-overflow file-text-width">
-                  <AiCions.AiOutlineFile className="main-icon-align mr-1" />
+                  <AiCions.AiOutlineFile className="main-icon-align mr-1" fill="var(--gold)" />
                   {elem.name}
                </div>
             </div>

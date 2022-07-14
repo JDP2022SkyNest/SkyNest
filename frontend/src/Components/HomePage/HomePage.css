@@ -83,12 +83,21 @@ transform: translate(-50%,-50%) scale(0.8);
   align-items: center;
 }
 
+.data-folder .hr-devider {
+  position: relative;
+  border-radius: 10px;
+  background-color: white;
+  opacity: 1;
+  height: 8px;
+  width: 100%;
+}
+
 .data-folder .bucket-hover {
   transition: 200ms;
 }
 
 .file-text-width {
-  width: 85%;
+  width: 82%;
 }
 
 .data-folder .bucket-hover:hover {

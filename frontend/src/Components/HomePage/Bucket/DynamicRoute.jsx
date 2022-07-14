@@ -51,6 +51,7 @@ const DynamicRoute = () => {
             <div>
                <div className="container data-folder">
                   <div className="row">{allData}</div>
+                  {alLFiles?.length > 0 && <div className="my-2 mt-3 hr-devider" />}
                   <div className="row files">{alLFiles}</div>
                </div>
             </div>
