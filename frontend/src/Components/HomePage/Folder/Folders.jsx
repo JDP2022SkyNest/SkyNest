@@ -39,7 +39,6 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                   <Dropdown.Menu>
                      <Dropdown.Item
                         onClick={(e) => {
-                           e.stopPropagation();
                            handleShow();
                         }}
                         className="text-dark"
@@ -47,7 +46,7 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                         Folder Info
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
-                        <EditFolderModal refresh={refresh} elem={elem} />
+                        <EditFolderModal elem={elem} refresh={refresh} />
                      </Dropdown.Item>
                      <Dropdown.Item
                         onClick={async () => {
