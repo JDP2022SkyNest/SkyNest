@@ -13,17 +13,17 @@ public class LambdaTypeConverter implements AttributeConverter<LambdaType, Strin
     if (lambdaType == null) {
       return null;
     }
-    return lambdaType.getCode();
+    return lambdaType.getDatabaseCode();
   }
 
   @Override
-  public LambdaType convertToEntityAttribute(String code) {
-    if (code == null) {
+  public LambdaType convertToEntityAttribute(String databaseCode) {
+    if (databaseCode == null) {
       return null;
     }
 
     return Stream.of(LambdaType.values())
-        .filter(c -> c.getCode().equals(code))
+        .filter(c -> c.getDatabaseCode().equals(databaseCode))
         .findFirst()
         .orElseThrow(IllegalArgumentException::new);
   }
