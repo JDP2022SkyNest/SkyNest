@@ -24,7 +24,7 @@ public interface FolderService {
 
   List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId);
 
-  void moveFolderToBucket(UUID folderId);
+  void moveFolderToRoot(UUID folderId);
 
   void moveFolderToFolder(UUID folderId, UUID destinationFolderId);
 

@@ -233,7 +233,7 @@ public class FolderController {
     folderService.removeFolder(folderId);
   }
 
-  @Operation(summary = "Move Folder")
+  @Operation(summary = "Move Folder to root")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -294,10 +294,10 @@ public class FolderController {
   @PutMapping("/{folderId}/move")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void moveFolderToRoot(@PathVariable UUID folderId) {
-    folderService.moveFolderToBucket(folderId);
+    folderService.moveFolderToRoot(folderId);
   }
 
-  @Operation(summary = "Move Folder")
+  @Operation(summary = "Move Folder to folder")
   @ApiResponses(
       value = {
         @ApiResponse(

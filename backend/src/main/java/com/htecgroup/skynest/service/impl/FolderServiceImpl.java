@@ -139,7 +139,7 @@ public class FolderServiceImpl implements FolderService {
   }
 
   @Override
-  public void moveFolderToBucket(UUID folderId) {
+  public void moveFolderToRoot(UUID folderId) {
     FolderEntity folderEntity =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
     if (folderEntity.getParentFolder() == null) {

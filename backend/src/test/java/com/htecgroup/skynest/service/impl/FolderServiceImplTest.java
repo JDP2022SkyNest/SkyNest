@@ -165,11 +165,11 @@ class FolderServiceImplTest {
   }
 
   @Test
-  void moveFolderToBucket() {
+  void moveFolderToBucketRoot() {
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
     when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
-    folderService.moveFolderToBucket(UUID.randomUUID());
+    folderService.moveFolderToRoot(UUID.randomUUID());
     Assertions.assertNull(expectedFolderEntity.getParentFolder());
     verify(folderRepository, times(1)).findById(any());
     verify(folderRepository, times(1)).save(any());
