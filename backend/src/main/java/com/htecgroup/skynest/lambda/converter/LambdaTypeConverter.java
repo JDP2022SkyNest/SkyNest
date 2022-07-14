@@ -1,4 +1,4 @@
-package com.htecgroup.skynest.util;
+package com.htecgroup.skynest.lambda.converter;
 
 import com.htecgroup.skynest.lambda.LambdaType;
 
