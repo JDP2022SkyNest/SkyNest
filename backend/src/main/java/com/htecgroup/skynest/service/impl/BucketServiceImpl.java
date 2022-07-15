@@ -99,14 +99,8 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public void deactivateLambda(UUID bucketId, LambdaType lambda) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
-    List<LambdaType> activatedLambdas = bucketEntity.getLambdaTypes();
-    // TODO: Exception after activateLambdaIsMerged
-    if (!activatedLambdas.contains(lambda)) {
-      throw new RuntimeException();
-    }
-    activatedLambdas.remove(lambda);
-    BucketEntity bucketWithRemovedLambda = bucketEntity.withLambdaTypes(activatedLambdas);
-    bucketRepository.save(bucketWithRemovedLambda);
+    bucketEntity.deactivateLambda(lambda);
+    bucketRepository.save(bucketEntity);
   }
 
   @Override

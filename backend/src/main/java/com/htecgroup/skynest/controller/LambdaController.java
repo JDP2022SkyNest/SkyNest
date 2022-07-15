@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -38,14 +38,8 @@ public class LambdaController {
   @ApiResponses(
       value = {
         @ApiResponse(
-            responseCode = "200",
-            description = "Lambda successfully deactivated for given bucket",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = LambdaType.class),
-                  examples = {@ExampleObject(value = "true")})
-            }),
+            responseCode = "204",
+            description = "Lambda successfully deactivated for given bucket"),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized request",
@@ -61,27 +55,12 @@ public class LambdaController {
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
-        @ApiResponse(
-            responseCode = "409",
-            description = "Lambda not active",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"Lambda is not active for bucket.\"],"
-                                + " \"status\": \"409\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
-                  })
-            }),
       })
   @PutMapping("/bucket/{bucketId}/deactivate")
-  public ResponseEntity<Boolean> deactivateLambdaForBucket(
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deactivateLambdaForBucket(
       @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
     bucketService.deactivateLambda(bucketId, lambda);
     log.info("Deactivated lambda {} for bucket {}", lambda.toString(), bucketId.toString());
-    return ResponseEntity.ok(true);
   }
 }
