@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -71,14 +71,8 @@ public class LambdaController {
   @ApiResponses(
       value = {
         @ApiResponse(
-            responseCode = "200",
-            description = "Lambda successfully activated for given bucket",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = LambdaType.class),
-                  examples = {@ExampleObject(value = "true")})
-            }),
+            responseCode = "204",
+            description = "Lambda successfully activated for given bucket"),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized request",
@@ -111,10 +105,10 @@ public class LambdaController {
             }),
       })
   @PutMapping("/bucket/{bucketId}/activate")
-  public ResponseEntity<Boolean> activateLambdaForBucket(
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void activateLambdaForBucket(
       @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
     bucketService.activateLambda(bucketId, lambda);
     log.info("Activated lambda {} for bucket {}", lambda.toString(), bucketId.toString());
-    return ResponseEntity.ok(true);
   }
 }

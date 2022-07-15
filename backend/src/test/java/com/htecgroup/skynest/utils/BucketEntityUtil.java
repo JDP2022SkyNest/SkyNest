@@ -8,8 +8,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +20,7 @@ public final class BucketEntityUtil {
   protected static boolean privateBucket = false;
 
   public static BucketEntity getPrivateBucket() {
-    List<LambdaType> lambdaTypeList = new ArrayList<>();
+    Set<LambdaType> lambdaTypeList = new HashSet<>();
     BucketEntity bucketEntity =
         new BucketEntity(companyEntity, description, size, privateBucket, lambdaTypeList);
     bucketEntity.setId(UUID.fromString("2d0d675d-db5e-4729-9308-2e5c3e9d5007"));
@@ -45,7 +45,7 @@ public final class BucketEntityUtil {
 
   public static BucketEntity getBucketWithActivatedLambdas() {
     BucketEntity bucketEntity = getPrivateBucket();
-    List<LambdaType> lambdaTypes = new ArrayList<>();
+    Set<LambdaType> lambdaTypes = new HashSet<>();
     lambdaTypes.add(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA);
     return bucketEntity.withLambdaTypes(lambdaTypes);
   }
