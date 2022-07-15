@@ -24,8 +24,7 @@ class AdminAndUserInSameCompanyValidatorTest {
 
   @Test
   void when_EverythingFine_isValid_ShouldReturnTrue() {
-    when(currentUserService.getLoggedUser())
-        .thenReturn(LoggedUserDtoUtil.getLoggedAdminWithCompany());
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
     when(userService.findUserById(any())).thenReturn(UserDtoUtil.getUserWithCompany());
     UUID uuid = UUID.randomUUID();
 
@@ -35,7 +34,7 @@ class AdminAndUserInSameCompanyValidatorTest {
   @Test
   void when_LoggedUserHasNoCompany_isValid_ShouldReturnFalse() {
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
-    when(userService.findUserById(any())).thenReturn(UserDtoUtil.getUserWithCompany());
+    when(userService.findUserById(any())).thenReturn(UserDtoUtil.getOtherUser());
     UUID uuid = UUID.randomUUID();
 
     Assertions.assertFalse(adminAndUserInSameCompanyValidator.isValid(uuid, null));
@@ -43,8 +42,7 @@ class AdminAndUserInSameCompanyValidatorTest {
 
   @Test
   void when_LoggedUserHasNoCompany_isValid_ShouldReturnTrue() {
-    when(currentUserService.getLoggedUser())
-        .thenReturn(LoggedUserDtoUtil.getLoggedAdminWithCompany());
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
     when(userService.findUserById(any())).thenReturn(UserDtoUtil.getVerified());
     UUID uuid = UUID.randomUUID();
 

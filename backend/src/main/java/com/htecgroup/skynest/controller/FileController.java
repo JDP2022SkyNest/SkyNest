@@ -172,7 +172,156 @@ public class FileController {
   public ResponseEntity<FileResponse> uploadFileToBucket(
       @PathVariable UUID bucketId, @RequestPart("file") MultipartFile file) {
 
-    FileResponse fileResponse = fileService.uploadFile(file, bucketId);
+    FileResponse fileResponse = fileService.uploadFileToBucket(file, bucketId);
+
+    ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);
+    return responseEntity;
+  }
+
+  @Operation(summary = "Upload file to a folder")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully uploaded a new file",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = FileResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"id\": \"1d132ffe-51c0-43fb-aaed-290d4501b8dd\",\n"
+                                + "    \"createdOn\": null,\n"
+                                + "    \"modifiedOn\": null,\n"
+                                + "    \"deletedOn\": null,\n"
+                                + "    \"name\": \"change user role.sql\",\n"
+                                + "    \"createdById\": \"67898b3b-4d5f-4a51-95e2-3808b4dfc903\",\n"
+                                + "    \"parentFolderId\": null,\n"
+                                + "    \"bucketId\": \"1ebdec68-f6d7-11ec-8822-0242ac160002\",\n"
+                                + "    \"type\": \"application/x-sql\",\n"
+                                + "    \"size\": \"499\"\n"
+                                + "}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "400",
+            description = "File IO error/Failed to write file contents",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Failed to write file contents\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User does not have access to bucket\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket/Folder/User not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "bucket",
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "folder",
+                        value =
+                            "{\"messages\":[\"Folder not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "user",
+                        value =
+                            "{\"messages\":[\"User not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Folder already deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder already deleted\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "419",
+            description = "Company/User buckets are full",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Company/User buckets don't have enough space\"],"
+                                + " \"status\": \"419\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PostMapping(path = "/folder/{folderId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<FileResponse> uploadFileToFolder(
+      @PathVariable UUID folderId, @RequestPart("file") MultipartFile file) {
+
+    FileResponse fileResponse = fileService.uploadFileToFolder(file, folderId);
 
     ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);
     return responseEntity;
@@ -456,6 +605,134 @@ public class FileController {
     ResponseEntity<FileResponse> fileResponseEntity =
         new ResponseEntity<>(fileService.editFileInfo(fileInfoEditRequest, fileId), HttpStatus.OK);
     return fileResponseEntity;
+  }
+
+  @Operation(summary = "Move File to folder")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "File successfully moved",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "File is already inside the folder",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File is already inside the folder.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @PutMapping("/{fileId}/move/{destinationFolderId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void moveFileToFolder(@PathVariable UUID fileId, @PathVariable UUID destinationFolderId) {
+    fileService.moveFileToFolder(fileId, destinationFolderId);
+  }
+
+  @Operation(summary = "Move File to root")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "File successfully moved",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "File is already inside the folder",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File is already inside the folder.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            })
+      })
+  @PutMapping("/{fileId}/move")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void moveFileToRoot(@PathVariable UUID fileId) {
+    fileService.moveFileToRoot(fileId);
   }
 
   @Operation(summary = "Delete a file")

@@ -18,10 +18,10 @@ public class UserEntity implements Serializable {
 
   @Id @GeneratedValue private UUID id;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private LocalDateTime createdOn;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private LocalDateTime modifiedOn;
 
   private LocalDateTime deletedOn;

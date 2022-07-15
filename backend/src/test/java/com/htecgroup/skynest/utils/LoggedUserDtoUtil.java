@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public class LoggedUserDtoUtil extends BasicUtil {
 
+  public static final CompanyDto companyDto = CompanyDtoUtil.getCompanyDto();
+
   public static LoggedUserDto getLoggedWorkerUser() {
     List<SimpleGrantedAuthority> authorities =
         Collections.singletonList(new SimpleGrantedAuthority(roleWorkerDto.getName()));
@@ -19,7 +21,7 @@ public class LoggedUserDtoUtil extends BasicUtil {
         UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
         name,
         surname,
-        null,
+        companyDto,
         email,
         password,
         positionInCompany,
@@ -36,27 +38,6 @@ public class LoggedUserDtoUtil extends BasicUtil {
 
     return new LoggedUserDto(
         UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
-        name,
-        surname,
-        null,
-        email,
-        password,
-        positionInCompany,
-        true,
-        true,
-        true,
-        true,
-        authorities);
-  }
-
-  public static LoggedUserDto getLoggedAdminWithCompany() {
-    List<SimpleGrantedAuthority> authorities =
-        Collections.singletonList(new SimpleGrantedAuthority(roleAdminDto.getName()));
-
-    CompanyDto companyDto = CompanyDtoUtil.getCompanyDto();
-
-    return new LoggedUserDto(
-        UUID.randomUUID(),
         name,
         surname,
         companyDto,
