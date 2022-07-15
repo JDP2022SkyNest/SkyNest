@@ -46,13 +46,13 @@ const DynamicFolderRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <div className="py-2 mt-2 mb-1 rounded d-flex">
+            <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToFolder folderId={routeId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>
-               <div className="container data-folder">
-                  <div className="row">{allData}</div>
+               <div className="container data-folder mt-0">
+                  {allData?.length > 0 && <div className="row mt-2">{allData}</div>}
                   {alLFiles?.length > 0 && <div className="my-2 mt-3 hr-devider" />}
                   <div className="row files">{alLFiles}</div>
                </div>
