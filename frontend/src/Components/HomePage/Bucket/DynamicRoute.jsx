@@ -6,6 +6,7 @@ import ROUTES from "../../Routes/ROUTES";
 import Footer from "../../Footer/Footer";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetInfoMsg from "../../ReusableComponents/SetInfoMsg";
 import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
@@ -16,12 +17,13 @@ const DynamicRoute = () => {
    const [data, setData] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
+   const [infoMsg, setInfoMsg] = useState("");
    const accessToken = localStorage.accessToken;
    const FolderLength = data?.data?.folders.length;
    const FilesLength = data?.data?.files.length;
 
    useEffect(() => {
-      bucketContent(accessToken, routeId, setData,setErrorMsg);
+      bucketContent(accessToken, routeId, setData, setErrorMsg);
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
@@ -33,7 +35,14 @@ const DynamicRoute = () => {
    ));
 
    const alLFiles = data?.data?.files.map((elem, index) => (
-      <Files elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+      <Files
+         elem={elem}
+         key={index}
+         setErrorMsg={setErrorMsg}
+         setSuccessMsg={setSuccessMsg}
+         setInfoMsg={setInfoMsg}
+         refresh={refreshFoldersAndFiles}
+      />
    ));
 
    return (
@@ -46,6 +55,7 @@ const DynamicRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
+            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />

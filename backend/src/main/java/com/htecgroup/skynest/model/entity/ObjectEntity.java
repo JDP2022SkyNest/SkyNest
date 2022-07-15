@@ -41,4 +41,8 @@ public class ObjectEntity implements Serializable {
   public void delete() {
     deletedOn = LocalDateTime.now();
   }
+
+  public void restore() {
+    deletedOn = null;
+  }
 }

@@ -24,4 +24,10 @@ public class FolderEntity extends ObjectEntity {
   @ManyToOne
   @JoinColumn(name = "bucket_id", nullable = false)
   private BucketEntity bucket;
+
+  @Override
+  public boolean isDeleted() {
+    return super.isDeleted()
+        || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
+  }
 }
