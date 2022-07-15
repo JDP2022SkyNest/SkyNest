@@ -24,4 +24,8 @@ public class FolderEntity extends ObjectEntity {
   @ManyToOne
   @JoinColumn(name = "bucket_id", nullable = false)
   private BucketEntity bucket;
+
+  public void moveToRoot(FolderEntity folderEntity) {
+    folderEntity.setParentFolder(null);
+  }
 }

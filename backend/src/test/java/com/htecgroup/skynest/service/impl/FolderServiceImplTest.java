@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyInsideFolderException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
@@ -165,18 +166,36 @@ class FolderServiceImplTest {
   }
 
   @Test
-  void moveFolderToBucketRoot() {
-    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
-    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
-    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
-    folderService.moveFolderToRoot(UUID.randomUUID());
-    Assertions.assertNull(expectedFolderEntity.getParentFolder());
-    verify(folderRepository, times(1)).findById(any());
-    verify(folderRepository, times(1)).save(any());
+  void when_folderAlreadyInsideFolder_shouldThrowFolderInsideFolderException() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    UUID uuid = FolderEntityUtil.getFolderWithParent().getId();
+    when(folderRepository.findById(uuid)).thenReturn(Optional.of(folderEntity));
+    FolderEntity parentFolder = FolderEntityUtil.getFolderWithoutParent();
+    UUID destinationUuid = FolderEntityUtil.getFolderWithoutParent().getId();
+    when(folderRepository.findById(destinationUuid)).thenReturn(Optional.of(parentFolder));
+
+    String expectedErrorMessage = FolderAlreadyInsideFolderException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyInsideFolderException.class,
+            () -> folderService.moveFolderToFolder(uuid, destinationUuid));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
-  void moveFolderToFolder() {
+  void when_moveFolderToBucketRoot_shouldMoveFolderToRoot() {
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
+    UUID folderUuid = FolderEntityUtil.getFolderWithParent().getId();
+    folderService.moveFolderToRoot(folderUuid);
+    Assertions.assertNull(expectedFolderEntity.getParentFolder());
+    verify(folderRepository, times(1)).findById(folderUuid);
+    verify(folderRepository, times(1)).save(expectedFolderEntity);
+  }
+
+  @Test
+  void when_moveFolderToFolder_shouldMoveFolderToFolder() {
     UUID uuid = UUID.randomUUID();
     UUID destUUID = UUID.randomUUID();
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
@@ -188,8 +207,9 @@ class FolderServiceImplTest {
     folderService.moveFolderToFolder(uuid, destUUID);
 
     Assertions.assertNotNull(expectedFolderEntity.getParentFolder());
-    verify(folderRepository, times(2)).findById(any());
-    verify(folderRepository, times(1)).save(any());
+    verify(folderRepository, times(1)).findById(uuid);
+    verify(folderRepository, times(1)).findById(destUUID);
+    verify(folderRepository, times(1)).save(expectedFolderEntity);
   }
 
   @Test

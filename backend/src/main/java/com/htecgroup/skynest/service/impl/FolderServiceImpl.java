@@ -141,27 +141,41 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public void moveFolderToRoot(UUID folderId) {
-    FolderEntity folderEntity =
-        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
-    if (folderEntity.getParentFolder() == null) {
-      throw new FolderAlreadyInsideBucketException();
-    }
-    folderEntity.setParentFolder(null);
-    folderRepository.save(folderEntity);
-    actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
+    FolderEntity folderEntity = findFolderEntity(folderId);
+    checkIfFolderAlreadyInsideRoot(folderEntity);
+    folderEntity.moveToRoot(folderEntity);
+    saveMoveFolder(folderEntity);
   }
 
   @Override
   public void moveFolderToFolder(UUID folderId, UUID destinationFolderId) {
-    FolderEntity folderEntity =
-        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    FolderEntity folderEntity = findFolderEntity(folderId);
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
+    folderEntity.setParentFolder(parentFolderEntity);
+    saveMoveFolder(folderEntity);
+  }
+
+  private FolderEntity findFolderEntity(UUID folderID) {
+    return folderRepository.findById(folderID).orElseThrow(FolderNotFoundException::new);
+  }
+
+  private void checkIfFolderAlreadyInsideRoot(FolderEntity folderEntity) {
+    if (folderEntity.getParentFolder() == null) {
+      throw new FolderAlreadyInsideBucketException();
+    }
+  }
+
+  private void checkIfFolderAlreadyInsideFolder(
+      FolderEntity folderEntity, FolderEntity parentFolderEntity) {
     if (folderEntity.getParentFolder() != null
         && folderEntity.getParentFolder().getId() == parentFolderEntity.getId()) {
       throw new FolderAlreadyInsideFolderException();
     }
-    folderEntity.setParentFolder(parentFolderEntity);
+  }
+
+  private void saveMoveFolder(FolderEntity folderEntity) {
     folderRepository.save(folderEntity);
     actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
   }
