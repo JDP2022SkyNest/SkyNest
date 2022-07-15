@@ -8,6 +8,8 @@ import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import AddFolderModal from "./AddFolderModal";
 import Folders from "../Folder/Folders";
+import UploadToFolder from "./UploadToFolder";
+import Files from "../Files/Files";
 
 const DynamicFolderRoute = () => {
    const { routeId } = useParams();
@@ -30,6 +32,10 @@ const DynamicFolderRoute = () => {
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
+   const alLFiles = data?.data?.files.map((elem, index) => (
+      <Files elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+   ));
+
    return (
       <div className="home-page-body">
          <NavbarPanel name={`Folders: ${FolderLength} - Files: ${FilesLength}`} searchBar={false} path={ROUTES.HOME} />
@@ -42,10 +48,13 @@ const DynamicFolderRoute = () => {
             />
             <div className="py-2 mt-2 mb-1 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
+               <UploadToFolder folderId={routeId} refresh={refreshFoldersAndFiles} />
             </div>
             <div>
-               <div className="container">
-                  <div className="row data-folder">{allData}</div>
+               <div className="container data-folder">
+                  <div className="row">{allData}</div>
+                  {alLFiles?.length > 0 && <div className="my-2 mt-3 hr-devider" />}
+                  <div className="row files">{alLFiles}</div>
                </div>
             </div>
          </div>
