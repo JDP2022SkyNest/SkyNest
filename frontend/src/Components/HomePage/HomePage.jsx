@@ -84,15 +84,17 @@ const HomePage = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <div className="py-2 mt-2 mb-1 rounded d-flex">
-               <AddBucketModal refreshBuckets={refreshBuckets} />
-            </div>
             {!loader ? (
-               <div className="container">
-                  <div className="row data-folder">{allData}</div>
+               <div>
+                  <div className="py-2 mt-2 mb-1 rounded d-flex">
+                     <AddBucketModal refreshBuckets={refreshBuckets} />
+                  </div>
+                  <div className="container">
+                     <div className="row data-folder">{allData}</div>
+                  </div>
                </div>
             ) : (
-               <div>
+               <div className="mt-5">
                   <LoaderAnimation />
                </div>
             )}
