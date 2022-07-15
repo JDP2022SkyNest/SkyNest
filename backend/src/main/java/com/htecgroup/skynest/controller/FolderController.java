@@ -340,6 +340,21 @@ public class FolderController {
                   })
             }),
         @ApiResponse(
+            responseCode = "405",
+            description = "Method not allowed",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder cannot be moved inside child folder\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "409",
             description = "Folder is already inside the folder",
             content = {

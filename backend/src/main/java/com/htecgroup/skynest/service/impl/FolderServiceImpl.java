@@ -2,10 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
-import com.htecgroup.skynest.exception.folder.FolderAlreadyInsideBucketException;
-import com.htecgroup.skynest.exception.folder.FolderAlreadyInsideFolderException;
-import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.exception.folder.*;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -176,7 +173,15 @@ public class FolderServiceImpl implements FolderService {
   }
 
   private void checkIfDestinationFolderIsChildFolder(
-      FolderEntity folderEntity, FolderEntity parentFolderEntity) {}
+      FolderEntity folderEntity, FolderEntity parentFolderEntity) {
+    List<FolderEntity> path = getPathToFolder(parentFolderEntity);
+    for (int i = 0; i < path.size(); i++) {
+      FolderEntity parent = path.get(i);
+      if (folderEntity.getId() == parent.getId()) {
+        throw new FolderCanNotBeMovedInsideChildFolderException();
+      }
+    }
+  }
 
   private void saveMoveFolder(FolderEntity folderEntity) {
     folderRepository.save(folderEntity);
