@@ -101,7 +101,8 @@ transform: translate(-50%,-50%) scale(0.8);
 }
 
 .data-folder .bucket-hover:hover {
- background-color: whitesmoke;
+  background-color: whitesmoke !important;
+  transform: scale(0.98);
 }
 
 .data-folder .bucket-hover:hover .btn-primary {
