@@ -21,7 +21,7 @@ const DynamicRoute = () => {
    const FilesLength = data?.data?.files.length;
 
    useEffect(() => {
-      bucketContent(accessToken, routeId, setData);
+      bucketContent(accessToken, routeId, setData,setErrorMsg);
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
