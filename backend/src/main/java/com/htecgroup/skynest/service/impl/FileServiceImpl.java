@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.actions.RecordAction;
+import com.htecgroup.skynest.event.UploadFileToExternalServiceEvent;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
@@ -26,6 +27,8 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -45,7 +48,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl implements FileService, ApplicationEventPublisherAware {
 
   private final GridFsOperations operations;
   private final ModelMapper modelMapper;
@@ -56,6 +59,13 @@ public class FileServiceImpl implements FileService {
   private final ActionService actionService;
   private final PermissionService permissionService;
   private final FolderRepository folderRepository;
+
+  private ApplicationEventPublisher publisher;
+
+  @Override
+  public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    publisher = applicationEventPublisher;
+  }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -72,6 +82,12 @@ public class FileServiceImpl implements FileService {
     checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
     checkBucketNotDeleted(emptyFileMetadata);
     checkBucketSizeExceedsMax(emptyFileMetadata);
+
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UploadFileToExternalServiceEvent event =
+        new UploadFileToExternalServiceEvent(
+            this, multipartFile, loggedUserDto.getUuid().toString());
+    publisher.publishEvent(event);
 
     return uploadFile(emptyFileMetadata, multipartFile);
   }
