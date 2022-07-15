@@ -24,6 +24,10 @@ public interface FileService {
 
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
 
+  void moveFileToFolder(UUID fileId, UUID destinationFolderId);
+
+  void moveFileToRoot(UUID fileId);
+
   FileResponse editFileContent(MultipartFile multipartFile, UUID fileId);
 
   void deleteFile(UUID fileId);
