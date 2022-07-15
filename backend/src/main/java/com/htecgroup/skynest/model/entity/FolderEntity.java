@@ -28,4 +28,10 @@ public class FolderEntity extends ObjectEntity {
   public void moveToRoot(FolderEntity folderEntity) {
     folderEntity.setParentFolder(null);
   }
+
+  @Override
+  public boolean isDeleted() {
+    return super.isDeleted()
+        || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
+  }
 }

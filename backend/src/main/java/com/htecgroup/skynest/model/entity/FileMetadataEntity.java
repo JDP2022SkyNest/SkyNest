@@ -31,6 +31,12 @@ public class FileMetadataEntity extends ObjectEntity {
   private long size;
   private String contentId;
 
+  @Override
+  public boolean isDeleted() {
+    return super.isDeleted()
+        || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
+  }
+
   public void moveToRoot(FileMetadataEntity fileMetadataEntity) {
     fileMetadataEntity.setParentFolder(null);
   }

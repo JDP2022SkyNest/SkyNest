@@ -5,7 +5,6 @@ import com.htecgroup.skynest.model.entity.FolderEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -31,7 +30,7 @@ public final class FolderEntityUtil {
 
   public static FolderEntity getDeletedFolder() {
     FolderEntity folderEntity = new FolderEntity(null, bucketEntityUtil);
-    folderEntity.setDeletedOn(LocalDateTime.now());
+    folderEntity.delete();
     return folderEntity;
   }
 }
