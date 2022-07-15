@@ -89,10 +89,21 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public void removeFolder(UUID uuid) {
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
     FolderDto folderDto =
         modelMapper.map(
             folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
             FolderDto.class);
+
+    log.info(
+        "User {} ({}) is attempting to delete folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderDto.getName(),
+        folderDto.getId());
+
     if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
