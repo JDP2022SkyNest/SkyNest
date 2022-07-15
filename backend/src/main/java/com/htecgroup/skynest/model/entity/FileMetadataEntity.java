@@ -34,4 +34,8 @@ public class FileMetadataEntity extends ObjectEntity {
   public void moveToRoot(FileMetadataEntity fileMetadataEntity) {
     fileMetadataEntity.setParentFolder(null);
   }
+
+  public void moveToFolder(FileMetadataEntity fileMetadataEntity, FolderEntity folderEntity) {
+    fileMetadataEntity.setParentFolder(folderEntity);
+  }
 }

@@ -176,7 +176,7 @@ public class FileServiceImpl implements FileService {
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
-    fileMetadataEntity.setParentFolder(folderEntity);
+    fileMetadataEntity.moveToFolder(fileMetadataEntity, folderEntity);
     saveMoveFile(fileMetadataEntity);
   }
 
