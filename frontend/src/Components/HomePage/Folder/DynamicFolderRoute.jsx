@@ -6,6 +6,7 @@ import ROUTES from "../../Routes/ROUTES";
 import Footer from "../../Footer/Footer";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetInfoMsg from "../../ReusableComponents/SetInfoMsg";
 import AddFolderModal from "./AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToFolder from "./UploadToFolder";
@@ -16,6 +17,7 @@ const DynamicFolderRoute = () => {
    const [data, setData] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
+   const [infoMsg, setInfoMsg] = useState("");
    const accessToken = localStorage.accessToken;
    const FolderLength = data?.data?.folders.length;
    const FilesLength = data?.data?.files.length;
@@ -33,7 +35,14 @@ const DynamicFolderRoute = () => {
    ));
 
    const alLFiles = data?.data?.files.map((elem, index) => (
-      <Files elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+      <Files
+         elem={elem}
+         key={index}
+         setErrorMsg={setErrorMsg}
+         setSuccessMsg={setSuccessMsg}
+         setInfoMsg={setInfoMsg}
+         refresh={refreshFoldersAndFiles}
+      />
    ));
 
    return (
@@ -46,6 +55,7 @@ const DynamicFolderRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
+            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToFolder folderId={routeId} refresh={refreshFoldersAndFiles} />
