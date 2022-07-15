@@ -52,7 +52,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
+         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
          </span>
 
