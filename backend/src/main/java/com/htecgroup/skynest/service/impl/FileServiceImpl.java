@@ -22,19 +22,13 @@ import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
+import com.htecgroup.skynest.service.FileContentService;
 import com.htecgroup.skynest.service.FileService;
 import com.htecgroup.skynest.service.PermissionService;
-import com.mongodb.MongoException;
-import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,8 +45,8 @@ import java.util.stream.Collectors;
 @Log4j2
 public class FileServiceImpl implements FileService {
 
-  private final GridFsOperations operations;
   private final ModelMapper modelMapper;
+  private final FileContentService fileContentService;
   private final CurrentUserServiceImpl currentUserService;
   private final BucketRepository bucketRepository;
   private final UserRepository userRepository;
@@ -119,7 +113,7 @@ public class FileServiceImpl implements FileService {
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
-    Resource fileContents = findFileContentById(fileMetadataEntity.getContentId());
+    Resource fileContents = fileContentService.findById(fileMetadataEntity.getContentId());
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.DOWNLOAD);
 
     return new FileDownloadResponse(
@@ -164,14 +158,16 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadata =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
-    checkFileTypeNotChanged(fileMetadata, multipartFile.getContentType());
+    String oldFileType = fileMetadata.getType();
+    String newFileType = multipartFile.getContentType();
+    if (!oldFileType.equals(newFileType)) throw new FileCannotChangeTypeException();
 
     fileMetadata.setType(multipartFile.getContentType());
     fileMetadata.setSize(multipartFile.getSize());
 
     String oldFileContentId = fileMetadata.getContentId();
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(fileMetadata, multipartFile);
-    deleteContentById(oldFileContentId);
+    fileContentService.deleteById(oldFileContentId);
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
 
     return modelMapper.map(savedFileMetadata, FileResponse.class);
@@ -200,7 +196,7 @@ public class FileServiceImpl implements FileService {
       InputStream fileContent = multipartFile.getInputStream();
 
       String fileContentId =
-          saveFileContent(fileMetadata.getName(), fileMetadata.getType(), fileContent);
+          fileContentService.save(fileMetadata.getName(), fileMetadata.getType(), fileContent);
       fileMetadata.setContentId(fileContentId);
 
       return fileMetadataRepository.save(fileMetadata);
@@ -212,41 +208,6 @@ public class FileServiceImpl implements FileService {
 
   private FileMetadataEntity findFileMetadataById(UUID fileId) {
     return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-  }
-
-  private InputStreamResource findFileContentById(String objectId) {
-    try {
-      if (StringUtils.isAllBlank(objectId)) throw new FileNotFoundException();
-
-      GridFSFile gridFSFile = operations.findOne(new Query(Criteria.where("_id").is(objectId)));
-      if (gridFSFile == null) throw new FileNotFoundException();
-
-      InputStream inputStream = operations.getResource(gridFSFile).getInputStream();
-      return new InputStreamResource(inputStream);
-    } catch (IOException | MongoException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
-  }
-
-  private String saveFileContent(String name, String type, InputStream fileContentStream) {
-    try {
-      Object objectId = operations.store(fileContentStream, name, type);
-      return objectId.toString();
-    } catch (MongoException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
-  }
-
-  private void deleteContentById(String objectId) {
-    try {
-      if (StringUtils.isAllBlank(objectId)) throw new FileNotFoundException();
-      operations.delete(new Query(Criteria.where("_id").is(objectId)));
-    } catch (MongoException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
   }
 
   private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
@@ -297,11 +258,6 @@ public class FileServiceImpl implements FileService {
     return initFileMetadata(name, size, type, bucket, parentFolder);
   }
 
-  private void checkFileTypeNotChanged(FileMetadataEntity fileMetadata, String newFileType) {
-    String oldFileType = fileMetadata.getType();
-    if (!oldFileType.equals(newFileType)) throw new FileCannotChangeTypeException();
-  }
-
   private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
@@ -316,17 +272,15 @@ public class FileServiceImpl implements FileService {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
 
-    if (bucket.getCompany() != null) {
-      UUID companyId = bucket.getCompany().getId();
+    UUID companyId = bucket.getCompany().getId();
 
-      LoggedUserDto currentUser = currentUserService.getLoggedUser();
-      if (currentUser.getCompany() == null) throw new BucketAccessDeniedException();
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+    if (currentUser.getCompany() == null) throw new BucketAccessDeniedException();
 
-      UUID currentUserCompanyId = currentUserService.getLoggedUser().getCompany().getId();
+    UUID currentUserCompanyId = currentUserService.getLoggedUser().getCompany().getId();
 
-      if (bucket.getIsPublic() && !currentUserCompanyId.equals(companyId))
-        throw new BucketAccessDeniedException();
-    }
+    if (bucket.getIsPublic() && !currentUserCompanyId.equals(companyId))
+      throw new BucketAccessDeniedException();
   }
 
   private void checkBucketNotDeleted(FileMetadataEntity fileMetadataEntity) {
@@ -346,23 +300,14 @@ public class FileServiceImpl implements FileService {
     long maxAllowedSize;
     long currentTotalSize;
 
-    if (bucket.getCompany() != null) {
+    CompanyEntity company = bucket.getCompany();
 
-      CompanyEntity company = bucket.getCompany();
+    UUID companyId = company.getId();
+    currentTotalSize = bucketRepository.sumSizeByCompanyId(companyId);
 
-      UUID companyId = company.getId();
-      currentTotalSize = bucketRepository.sumSizeByCompanyId(companyId);
-
-      TierEntity tierEntity = company.getTier();
-      TierType tierType = TierType.valueOf(tierEntity.getName().toUpperCase());
-      maxAllowedSize = tierType.getMaxSize();
-    } else {
-
-      UUID currentUserId = currentUserService.getLoggedUser().getUuid();
-      currentTotalSize = bucketRepository.sumSizeByUserId(currentUserId);
-
-      maxAllowedSize = 1024L * 1024L * 512L; //  512MiB
-    }
+    TierEntity tierEntity = company.getTier();
+    TierType tierType = TierType.valueOf(tierEntity.getName().toUpperCase());
+    maxAllowedSize = tierType.getMaxSize();
 
     if (currentTotalSize + fileMetadataEntity.getSize() > maxAllowedSize)
       throw new BucketsTooFullException();

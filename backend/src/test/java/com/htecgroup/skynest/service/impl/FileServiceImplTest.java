@@ -9,6 +9,7 @@ import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
+import com.htecgroup.skynest.service.FileContentService;
 import com.htecgroup.skynest.utils.FileEditRequestUtil;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
 
 import java.util.*;
 
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FileServiceImplTest {
 
-  @Mock private GridFsOperations operations;
+  @Mock private FileContentService fileContentService;
   @Mock private CurrentUserServiceImpl currentUserService;
   @Mock private BucketRepository bucketRepository;
   @Mock private UserRepository userRepository;
