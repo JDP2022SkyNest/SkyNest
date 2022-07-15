@@ -14,5 +14,5 @@ public class RegexUtil {
 
   public static final String USER_NAME_AND_SURNAME_REGEX = "[A-Za-z\\-\\s]+";
 
-  public static final String TAG_COLOUR_REGEX = "#[0-9a-fA-F]{6}";
+  public static final String TAG_COLOUR_REGEX = "[0-9a-fA-F]{6}";
 }

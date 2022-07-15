@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
@@ -26,6 +27,8 @@ public class TagServiceImpl implements TagService {
   public TagResponse createTag(TagCreateRequest createTagRequest) {
     TagEntity tagEntity = modelMapper.map(createTagRequest, TagEntity.class);
 
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+
     CompanyEntity currentUsersCompany =
         currentUserService
             .getCompanyEntityFromLoggedUser()
@@ -39,8 +42,8 @@ public class TagServiceImpl implements TagService {
 
     log.info(
         "User {} ({}) has created tag {} ({})",
-        currentUserService.getLoggedUser().getUsername(),
-        currentUserService.getLoggedUser().getUuid(),
+        loggedUserDto.getUsername(),
+        loggedUserDto.getUuid(),
         savedTagEntity.getName(),
         savedTagEntity.getId());
 
