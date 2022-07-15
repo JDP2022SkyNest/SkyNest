@@ -1,1 +1,0 @@
-bash -c "../unix/add-company-to-all-buckets-without-company.sh"

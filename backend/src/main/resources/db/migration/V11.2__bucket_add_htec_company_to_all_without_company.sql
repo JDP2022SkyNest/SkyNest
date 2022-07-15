@@ -1,0 +1,1 @@
+UPDATE bucket SET company_id = (SELECT id FROM company WHERE pib = '105793138') WHERE company_id IS NULL;
