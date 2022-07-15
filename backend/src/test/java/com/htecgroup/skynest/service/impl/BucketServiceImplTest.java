@@ -98,7 +98,8 @@ class BucketServiceImplTest {
 
     UUID bucketId = FolderEntityUtil.getFolderWithoutParent().getBucket().getId();
     StorageContentResponse expectedStorageContentResponse =
-        new StorageContentResponse(bucketId, expectedFolderResponseList, expectedFileResponseList);
+        new StorageContentResponse(
+            bucketId, expectedFolderResponseList, expectedFileResponseList, null);
 
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 
