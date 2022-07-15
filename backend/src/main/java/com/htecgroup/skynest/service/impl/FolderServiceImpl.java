@@ -158,7 +158,7 @@ public class FolderServiceImpl implements FolderService {
       parentFolder = parentFolder.getParentFolder();
     }
 
-    return new ArrayList<>(path);
+    return (List<FolderEntity>) path;
   }
 
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {
