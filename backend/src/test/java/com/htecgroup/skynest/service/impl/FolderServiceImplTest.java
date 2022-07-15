@@ -62,7 +62,7 @@ class FolderServiceImplTest {
     Mockito.verify(folderRepository).save(captorFolderEntity.capture());
 
     FolderEntity folderEntityVal = captorFolderEntity.getValue();
-    Assertions.assertNotNull(folderEntityVal.getDeletedOn());
+    Assertions.assertTrue(folderEntityVal.isDeleted());
   }
 
   @Test

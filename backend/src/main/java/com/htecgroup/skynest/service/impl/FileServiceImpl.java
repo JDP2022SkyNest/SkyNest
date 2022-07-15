@@ -146,7 +146,7 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-    if (fileMetadataEntity.getDeletedOn() != null) {
+    if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
     fileInfoEditRequest.setName(fileInfoEditRequest.getName().trim());
@@ -284,13 +284,11 @@ public class FileServiceImpl implements FileService {
   }
 
   private void checkBucketNotDeleted(FileMetadataEntity fileMetadataEntity) {
-    if (fileMetadataEntity.getBucket().getDeletedOn() != null)
-      throw new BucketAlreadyDeletedException();
+    if (fileMetadataEntity.getBucket().isDeleted()) throw new BucketAlreadyDeletedException();
   }
 
   private void checkFolderNotDeleted(FileMetadataEntity fileMetadataEntity) {
-    if (fileMetadataEntity.getParentFolder().getDeletedOn() != null)
-      throw new FolderAlreadyDeletedException();
+    if (fileMetadataEntity.getParentFolder().isDeleted()) throw new FolderAlreadyDeletedException();
   }
 
   private void checkBucketSizeExceedsMax(FileMetadataEntity fileMetadataEntity) {

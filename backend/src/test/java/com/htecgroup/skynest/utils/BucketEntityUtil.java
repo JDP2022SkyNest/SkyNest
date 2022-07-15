@@ -7,7 +7,6 @@ import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +38,7 @@ public final class BucketEntityUtil {
 
   public static BucketEntity getDeletedBucket() {
     BucketEntity bucketEntity = getPrivateBucket();
-    bucketEntity.setDeletedOn(LocalDateTime.now());
+    bucketEntity.delete();
     return bucketEntity;
   }
 }

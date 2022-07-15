@@ -147,7 +147,7 @@ public class BucketServiceImpl implements BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
-    if (bucketEntity.getDeletedOn() != null) {
+    if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());

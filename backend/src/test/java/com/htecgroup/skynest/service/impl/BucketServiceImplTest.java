@@ -184,7 +184,7 @@ class BucketServiceImplTest {
     Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNotNull(bucketEntity.getDeletedOn());
+    Assertions.assertTrue(bucketEntity.isDeleted());
     verify(bucketService, times(1)).findBucketById(any());
   }
 
@@ -223,6 +223,6 @@ class BucketServiceImplTest {
     Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNull(bucketEntity.getDeletedOn());
+    Assertions.assertFalse(bucketEntity.isDeleted());
   }
 }

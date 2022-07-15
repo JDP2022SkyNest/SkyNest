@@ -30,4 +30,10 @@ public class FileMetadataEntity extends ObjectEntity {
   private String type;
   private long size;
   private String contentId;
+
+  @Override
+  public boolean isDeleted() {
+    return super.isDeleted()
+        || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
+  }
 }
