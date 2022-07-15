@@ -29,7 +29,7 @@ public class InviteServiceImpl implements InviteService {
 
     String token =
         JwtUtils.generateRegistrationInviteToken(
-            loggedUserDto.getName(), loggedUserDto.getCompany().getName());
+            newUserEmail, loggedUserDto.getCompany().getName());
     Email email = EmailUtil.createRegistrationInviteEmail(loggedUserDto, newUserEmail, token);
 
     emailService.send(email);
