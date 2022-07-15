@@ -88,21 +88,6 @@ public class LambdaController {
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
-        @ApiResponse(
-            responseCode = "409",
-            description = "Lambda already activated",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"Lambda is already activated for that bucket.\"],"
-                                + " \"status\": \"409\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
-                  })
-            }),
       })
   @PutMapping("/bucket/{bucketId}/activate")
   @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -35,8 +35,6 @@ public class BucketEntity extends ObjectEntity {
   private Set<LambdaType> lambdaTypes;
 
   public void addLambda(LambdaType lambdaType) {
-    Set<LambdaType> activatedLambdas = this.getLambdaTypes();
-    activatedLambdas.add(lambdaType);
-    this.lambdaTypes = activatedLambdas;
+    this.getLambdaTypes().add(lambdaType);
   }
 }
