@@ -5,7 +5,7 @@ import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const UploadToBucket = ({ bucketId, refresh }) => {
+const UploadToFolder = ({ folderId, refresh }) => {
    const [file, setFile] = useState(null);
    const [show, setShow] = useState(false);
    const [errorMsg, setErrorMsg] = useState("");
@@ -21,7 +21,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
       formData.append("file", file);
 
       try {
-         await AxiosInstance.post(`/files/bucket/${bucketId}`, formData, {
+         await AxiosInstance.post(`/files/folder/${folderId}`, formData, {
             headers: { Authorization: accessToken },
          });
          setSuccessMsg("File Successfully Uploaded");
@@ -50,7 +50,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
    return (
       <div className="ml-auto ml-sm-2 latte-background custom-rounded">
          <span onClick={handleShow}>
-            <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload To Bucket
+            <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload To Folder
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
@@ -87,4 +87,4 @@ const UploadToBucket = ({ bucketId, refresh }) => {
    );
 };
 
-export default UploadToBucket;
+export default UploadToFolder;
