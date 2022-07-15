@@ -22,7 +22,7 @@ public class ActionEntity implements Serializable {
 
   @Id @GeneratedValue private UUID id;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private LocalDateTime performedOn;
 
   @ManyToOne
