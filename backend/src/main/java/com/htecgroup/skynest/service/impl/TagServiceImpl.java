@@ -36,7 +36,6 @@ public class TagServiceImpl implements TagService {
 
     tagEntity.setName(tagEntity.getName().trim());
     tagEntity.setCompany(currentUsersCompany);
-    tagEntity.setRgb(tagEntity.getRgb().substring(1));
 
     TagEntity savedTagEntity = tagRepository.save(tagEntity);
 
