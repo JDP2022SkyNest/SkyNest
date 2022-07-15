@@ -21,7 +21,6 @@ const Login = () => {
    const [searchParams, setSearchParams] = useSearchParams();
    const [infoMsg, setInfoMsg] = useState("");
    const [resendEmail, setResendEmail] = useState(false);
-
    const { setAccessToken } = useContext(GlobalContext);
 
    const emailRef = useRef();
@@ -62,48 +61,23 @@ const Login = () => {
       }
    };
 
-   AxiosInstance.interceptors.request.use(
-      (config) => {
-         // eslint-disable-next-line
-         const token = window.localStorage.getItem("accessToken", token);
+   {
+      /* useEffect(() => {
+      if (loading) {
+         getRefreshToken();
+      }
+
+      let minutes = 1000 * 60 * 29;
+
+      let interval = setInterval(() => {
          if (token) {
-            config.headers["Authorization"] = "Bearer " + token;
+            getRefreshToken();
          }
-         // config.headers['Content-Type'] = 'application/json';
-         return config;
-      },
-      (error) => {
-         Promise.reject(error);
-      }
-   );
+      }, minutes);
+      return () => clearInterval(interval);
+   }, [token, loading]);*/
+   }
 
-   //Add a response interceptor
-
-   AxiosInstance.interceptors.response.use(
-      (response) => {
-         return response;
-      },
-      function (error) {
-         const originalRequest = error.config;
-
-         if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            const refreshToken = getRefreshToken();
-            return AxiosInstance.get("/token/refresh", {
-               headers: {
-                  "refresh-token": refreshToken,
-               },
-            }).then((res) => {
-               if (res.status === 201) {
-                  window.localStorage.setAccessToken(res.data);
-                  AxiosInstance.defaults.headers.common["Authorization"] = "Bearer " + getRefreshToken();
-                  return AxiosInstance(originalRequest);
-               }
-            });
-         }
-         return Promise.reject(error);
-      }
-   );
    useEffect(() => {
       if (token) {
          emailVerification(token, setSuccessMsg, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
