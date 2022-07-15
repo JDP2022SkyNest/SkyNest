@@ -6,10 +6,6 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
-import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
-import com.htecgroup.skynest.exception.file.FileCannotChangeTypeException;
-import com.htecgroup.skynest.exception.file.FileIOException;
-import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.exception.file.*;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
@@ -172,9 +168,11 @@ public class FileServiceImpl implements FileService {
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
 
     return modelMapper.map(savedFileMetadata, FileResponse.class);
+  }
+
   @Override
   public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
-    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
@@ -184,7 +182,7 @@ public class FileServiceImpl implements FileService {
 
   @Override
   public void moveFileToRoot(UUID fileId) {
-    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
     saveMoveFile(fileMetadataEntity);
@@ -204,19 +202,9 @@ public class FileServiceImpl implements FileService {
     }
   }
 
-  private FileMetadataEntity findFileMetaDataEntity(UUID fileId) {
-    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-  }
-
   private void saveMoveFile(FileMetadataEntity fileMetadataEntity) {
     fileMetadataRepository.save(fileMetadataEntity);
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
-  }
-
-  private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
-    return allFiles.stream()
-        .map(folder -> modelMapper.map(folder, FileResponse.class))
-        .collect(Collectors.toList());
   }
 
   @Override
