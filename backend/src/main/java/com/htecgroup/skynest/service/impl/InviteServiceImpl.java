@@ -34,9 +34,8 @@ public class InviteServiceImpl implements InviteService {
 
     emailService.send(email);
     log.info(
-        "A registration invite was sent to {} by {} {}",
+        "A registration invite was sent to {} by user {}",
         newUserEmail,
-        loggedUserDto.getName(),
-        loggedUserDto.getSurname());
+        loggedUserDto.getUsername());
   }
 }
