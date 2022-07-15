@@ -8,7 +8,6 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
-import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
@@ -24,6 +23,7 @@ import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.util.EmailUtil;
+import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -52,22 +52,21 @@ public class UserServiceImpl implements UserService {
 
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
-    if (userRepository.existsByEmail(userDto.getEmail())) {
-      throw new EmailAlreadyInUseException();
-    }
     if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
       throw new PhoneNumberAlreadyInUseException();
     }
+
     String roleName = RoleEntity.ROLE_WORKER;
     RoleDto roleDto = roleService.findByName(roleName);
     userDto.setRole(roleDto);
 
     userDto.setEncryptedPassword(passwordEncoderService.encode(userDto.getPassword()));
-    userDto.setVerified(false);
     userDto.setEnabled(false);
     userDto.setName(userDto.getName().trim());
     userDto.setSurname(userDto.getSurname().trim());
     userDto.setAddress(userDto.getAddress().trim());
+
+    JwtUtils.validateEmailToken()
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 
