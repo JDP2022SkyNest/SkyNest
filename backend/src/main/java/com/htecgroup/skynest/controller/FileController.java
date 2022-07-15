@@ -662,7 +662,7 @@ public class FileController {
   public ResponseEntity<FileResponse> updateFileContent(
       @PathVariable UUID fileId, @RequestPart("file") MultipartFile file) {
 
-    FileResponse fileResponse = fileService.updateFileContent(file, fileId);
+    FileResponse fileResponse = fileService.editFileContent(file, fileId);
 
     ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);
 

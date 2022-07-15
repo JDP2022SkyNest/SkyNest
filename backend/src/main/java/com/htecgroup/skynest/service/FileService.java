@@ -24,7 +24,7 @@ public interface FileService {
 
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
 
-  FileResponse updateFileContent(MultipartFile multipartFile, UUID fileId);
+  FileResponse editFileContent(MultipartFile multipartFile, UUID fileId);
 
   void deleteFile(UUID fileId);
 }
