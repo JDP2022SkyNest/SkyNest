@@ -6,7 +6,7 @@ import FileInfo from "./FileInfo";
 import { fileDownload, deleteFile } from "../../ReusableComponents/ReusableFunctions";
 import EditFileInfo from "./EditFileInfo";
 
-const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
+const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
@@ -29,7 +29,6 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                   <Dropdown.Menu>
                      <Dropdown.Item
                         onClick={(e) => {
-                           e.stopPropagation();
                            handleShow();
                         }}
                         className="text-dark"
@@ -39,7 +38,14 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      <Dropdown.Item className="text-dark">
                         <EditFileInfo elem={elem} refresh={refresh} />
                      </Dropdown.Item>
-                     <Dropdown.Item onClick={() => fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg)} className="text-dark">
+                     <Dropdown.Item
+                        onClick={async () => {
+                           setInfoMsg("Preparing Download");
+                           await fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg);
+                           setInfoMsg("");
+                        }}
+                        className="text-dark"
+                     >
                         Download File
                      </Dropdown.Item>
                      <Dropdown.Item
