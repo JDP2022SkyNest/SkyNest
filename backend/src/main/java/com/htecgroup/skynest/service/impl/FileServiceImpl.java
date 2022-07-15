@@ -28,6 +28,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -209,7 +210,7 @@ public class FileServiceImpl implements FileService {
 
   private void deleteFileContent(String objectId) {
     try {
-      if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
+      if (StringUtils.isAllBlank(objectId)) throw new FileNotFoundException();
       operations.delete(new Query(Criteria.where("_id").is(objectId)));
     } catch (MongoException e) {
       log.error(e);
