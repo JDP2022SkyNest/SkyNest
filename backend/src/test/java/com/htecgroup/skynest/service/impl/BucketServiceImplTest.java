@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -224,5 +225,18 @@ class BucketServiceImplTest {
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
     Assertions.assertNull(bucketEntity.getDeletedOn());
+  }
+
+  @Test
+  void when_deactivateLambda_ShouldSaveEntityWithDeactivatedLambda() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucketWithLambdas();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.deactivateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertFalse(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
   }
 }
