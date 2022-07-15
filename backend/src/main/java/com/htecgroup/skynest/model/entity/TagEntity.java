@@ -22,6 +22,6 @@ public class TagEntity implements Serializable {
   @JoinColumn(name = "company_id", nullable = false)
   private CompanyEntity company;
 
-  String name;
-  String rgb;
+  private String name;
+  private String rgb;
 }

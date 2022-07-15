@@ -1,6 +1,6 @@
 CREATE TABLE `tag` (
   `id` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid())),
-  `company_id` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid())),
+  `company_id` binary(16) NOT NULL,
   `name` varchar(255) NOT NULL,
   `rgb` varchar(6),
   PRIMARY KEY (`id`),

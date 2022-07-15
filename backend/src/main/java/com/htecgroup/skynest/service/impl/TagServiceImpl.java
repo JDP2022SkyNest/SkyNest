@@ -39,7 +39,7 @@ public class TagServiceImpl implements TagService {
 
     log.info(
         "User {} ({}) has created tag {} ({})",
-        currentUserService.getLoggedUser().getName(),
+        currentUserService.getLoggedUser().getUsername(),
         currentUserService.getLoggedUser().getUuid(),
         savedTagEntity.getName(),
         savedTagEntity.getId());
