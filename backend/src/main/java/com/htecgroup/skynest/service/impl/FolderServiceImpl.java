@@ -153,6 +153,7 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
+    checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
     folderEntity.setParentFolder(parentFolderEntity);
     saveMoveFolder(folderEntity);
   }
@@ -174,6 +175,9 @@ public class FolderServiceImpl implements FolderService {
       throw new FolderAlreadyInsideFolderException();
     }
   }
+
+  private void checkIfDestinationFolderIsChildFolder(
+      FolderEntity folderEntity, FolderEntity parentFolderEntity) {}
 
   private void saveMoveFolder(FolderEntity folderEntity) {
     folderRepository.save(folderEntity);
