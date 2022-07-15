@@ -315,6 +315,18 @@ export const deleteFolder = async (accessToken, folderId, error, success) => {
    }
 };
 
+export const deleteFile = async (accessToken, fileId, error, success) => {
+   try {
+      await AxiosInstance.delete(`/files/${fileId}`, {
+         headers: { Authorization: accessToken },
+      });
+      success("File Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const bucketContent = async (accessToken, bucketId, stateToChange) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
@@ -354,7 +366,6 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
          headers: { Authorization: accessToken },
          responseType: "blob",
       });
-      console.log(response);
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;

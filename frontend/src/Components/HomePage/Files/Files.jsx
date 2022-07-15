@@ -3,7 +3,7 @@ import * as AiCions from "react-icons/ai";
 import * as BsCions from "react-icons/bs";
 import { Dropdown, Modal } from "react-bootstrap";
 import FileInfo from "./FileInfo";
-import { fileDownload } from "../../ReusableComponents/ReusableFunctions";
+import { fileDownload, deleteFile } from "../../ReusableComponents/ReusableFunctions";
 import EditFileInfo from "./EditFileInfo";
 
 const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
@@ -42,7 +42,15 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      <Dropdown.Item onClick={() => fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg)} className="text-dark">
                         Download File
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">Delete File</Dropdown.Item>
+                     <Dropdown.Item
+                        onClick={() => {
+                           deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                           refresh();
+                        }}
+                        className="text-dark"
+                     >
+                        Delete File
+                     </Dropdown.Item>
                   </Dropdown.Menu>
                </Dropdown>
             </div>
