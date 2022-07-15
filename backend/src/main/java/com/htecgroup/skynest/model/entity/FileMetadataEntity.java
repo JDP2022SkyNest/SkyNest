@@ -30,4 +30,8 @@ public class FileMetadataEntity extends ObjectEntity {
   private String type;
   private long size;
   private String contentId;
+
+  public void moveToRoot(FileMetadataEntity fileMetadataEntity) {
+    fileMetadataEntity.setParentFolder(null);
+  }
 }

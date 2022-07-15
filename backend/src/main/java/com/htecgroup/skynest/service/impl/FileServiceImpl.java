@@ -184,7 +184,7 @@ public class FileServiceImpl implements FileService {
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
-    fileMetadataEntity.setParentFolder(null);
+    fileMetadataEntity.moveToRoot(fileMetadataEntity);
     saveMoveFile(fileMetadataEntity);
   }
 
