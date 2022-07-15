@@ -168,7 +168,7 @@ public class BucketServiceImpl implements BucketService {
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
   }
 }
