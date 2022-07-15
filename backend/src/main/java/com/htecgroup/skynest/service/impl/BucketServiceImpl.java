@@ -103,6 +103,7 @@ public class BucketServiceImpl implements BucketService {
   public void activateLambda(UUID bucketId, LambdaType lambdaType) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
     bucketEntity.addLambda(lambdaType);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
     bucketRepository.save(bucketEntity);
   }
 
