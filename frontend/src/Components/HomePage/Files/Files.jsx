@@ -3,9 +3,10 @@ import * as AiCions from "react-icons/ai";
 import * as BsCions from "react-icons/bs";
 import { Dropdown, Modal } from "react-bootstrap";
 import FileInfo from "./FileInfo";
-import { fileDownload } from "../../ReusableComponents/ReusableFunctions";
+import { fileDownload, deleteFile } from "../../ReusableComponents/ReusableFunctions";
+import EditFileInfo from "./EditFileInfo";
 
-const Files = ({ elem, setErrorMsg, setSuccessMsg }) => {
+const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
@@ -35,11 +36,21 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg }) => {
                      >
                         File Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">Edit File</Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <EditFileInfo elem={elem} refresh={refresh} />
+                     </Dropdown.Item>
                      <Dropdown.Item onClick={() => fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg)} className="text-dark">
                         Download File
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">Delete File</Dropdown.Item>
+                     <Dropdown.Item
+                        onClick={() => {
+                           deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                           refresh();
+                        }}
+                        className="text-dark"
+                     >
+                        Delete File
+                     </Dropdown.Item>
                   </Dropdown.Menu>
                </Dropdown>
             </div>

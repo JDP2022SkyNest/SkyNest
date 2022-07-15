@@ -4,7 +4,7 @@ import * as FaIcons from "react-icons/fa";
 import * as IoIcons from "react-icons/io";
 import * as BiIcons from "react-icons/bi";
 import "./SideBar.css";
-import Logo from "./assets/logoblackandwhite.svg";
+// import Logo from "./assets/logoblackandwhite.svg";
 
 const SideBar = ({ sidebar }) => {
    return (
@@ -29,7 +29,7 @@ const SideBar = ({ sidebar }) => {
             <FaIcons.FaEnvelopeOpenText />
             Placeholder
          </li>
-         <img src={Logo} alt="logo" className="logo-sidebar-admin" />
+         {/* <img src={Logo} alt="logo" className="logo-sidebar-admin" /> */}
       </div>
    );
 };

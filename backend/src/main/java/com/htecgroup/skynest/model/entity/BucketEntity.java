@@ -1,11 +1,10 @@
 package com.htecgroup.skynest.model.entity;
 
+import com.htecgroup.skynest.lambda.LambdaType;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "bucket")
 @Getter
@@ -22,10 +21,15 @@ public class BucketEntity extends ObjectEntity {
 
   private String description;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private long size;
 
   @Column(name = "public")
   @With
   private Boolean isPublic;
+
+  @ElementCollection(targetClass = LambdaType.class)
+  @CollectionTable(name = "lambda_on_bucket", joinColumns = @JoinColumn(name = "bucket_id"))
+  @Column(name = "lambda_name")
+  private List<LambdaType> lambdaTypes;
 }

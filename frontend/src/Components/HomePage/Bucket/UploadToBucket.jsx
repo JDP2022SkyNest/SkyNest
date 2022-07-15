@@ -31,12 +31,8 @@ const UploadToBucket = ({ bucketId, refresh }) => {
             refresh();
          }, 2000);
       } catch (err) {
-         if (err.response.status) {
-            setErrorMsg("Bucket Deleted");
-         } else {
-            setErrorMsg(err.response.data.error);
-            console.log(err);
-         }
+         setErrorMsg(err.response.data.messages);
+         console.log(err);
       }
    };
 
@@ -52,7 +48,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
    };
 
    return (
-      <div className="ml-2 latte-background custom-rounded">
+      <div className="ml-auto ml-sm-2 latte-background custom-rounded">
          <span onClick={handleShow}>
             <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload To Bucket
          </span>
@@ -77,6 +73,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
                            handleClose();
                            setErrorMsg("");
                            setSuccessMsg("");
+                           setFile(null);
                         }}
                         className="ml-2 btn btn-outline-secondary button-width"
                      >
