@@ -18,10 +18,7 @@ import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.FolderService;
+import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -48,6 +45,7 @@ public class FolderServiceImpl implements FolderService {
   private BucketRepository bucketRepository;
 
   private ActionService actionService;
+  private PermissionService permissionService;
 
   @Override
   public FolderResponse createFolder(
@@ -61,6 +59,9 @@ public class FolderServiceImpl implements FolderService {
         folderCreateRequest.getBucketId(),
         folderCreateRequest.getParentFolderId());
     folderEntity = folderRepository.save(folderEntity);
+
+    permissionService.grantOwnerForObject(folderEntity);
+
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
 

@@ -1,11 +1,13 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.*;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
@@ -18,6 +20,7 @@ import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.PermissionService;
 import com.mongodb.MongoException;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
@@ -51,15 +54,15 @@ public class FileServiceImpl implements FileService {
   private final UserRepository userRepository;
   private final FileMetadataRepository fileMetadataRepository;
   private final ActionService actionService;
-
+  private final PermissionService permissionService;
   private final FolderRepository folderRepository;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public FileResponse uploadFile(MultipartFile multipartFile, UUID bucketId) {
+  public FileResponse uploadFileToBucket(MultipartFile multipartFile, UUID bucketId) {
 
     FileMetadataEntity emptyFileMetadata =
-        initFileMetadata(
+        initFileMetadataWithBucket(
             multipartFile.getOriginalFilename(),
             multipartFile.getSize(),
             multipartFile.getContentType(),
@@ -70,10 +73,36 @@ public class FileServiceImpl implements FileService {
     checkBucketNotDeleted(emptyFileMetadata);
     checkBucketSizeExceedsMax(emptyFileMetadata);
 
+    return uploadFile(emptyFileMetadata, multipartFile);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public FileResponse uploadFileToFolder(MultipartFile multipartFile, UUID folderId) {
+
+    FileMetadataEntity emptyFileMetadata =
+        initFileMetadataWithFolder(
+            multipartFile.getOriginalFilename(),
+            multipartFile.getSize(),
+            multipartFile.getContentType(),
+            folderId);
+
+    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
+    checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
+    checkBucketNotDeleted(emptyFileMetadata);
+    checkFolderNotDeleted(emptyFileMetadata);
+    checkBucketSizeExceedsMax(emptyFileMetadata);
+
+    return uploadFile(emptyFileMetadata, multipartFile);
+  }
+
+  private FileResponse uploadFile(
+      FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
     try {
       InputStream fileContents = multipartFile.getInputStream();
 
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
+      permissionService.grantOwnerForObject(savedFileMetadata);
       actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
@@ -188,27 +217,57 @@ public class FileServiceImpl implements FileService {
         .collect(Collectors.toList());
   }
 
-  private FileMetadataEntity initFileMetadata(String name, long size, String type, UUID bucketId) {
+  @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.DELETE)
+  public void deleteFile(UUID fileId) {
+    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
+    fileMetadataEntity.delete();
+    fileMetadataRepository.save(fileMetadataEntity);
+  }
+
+  private FileMetadataEntity initFileMetadata(
+      String name, long size, String type, BucketEntity bucket, FolderEntity parentFolder) {
 
     UserEntity currentUserEntity =
         userRepository
             .findById(currentUserService.getLoggedUser().getUuid())
             .orElseThrow(UserNotFoundException::new);
 
-    BucketEntity bucketEntity =
-        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
-
     FileMetadataEntity fileMetadataEntity = new FileMetadataEntity();
 
     fileMetadataEntity.setCreatedBy(currentUserEntity);
     fileMetadataEntity.setName(name);
 
-    fileMetadataEntity.setBucket(bucketEntity);
-    fileMetadataEntity.setParentFolder(null);
     fileMetadataEntity.setSize(size);
     fileMetadataEntity.setType(type);
 
+    fileMetadataEntity.setBucket(bucket);
+    fileMetadataEntity.setParentFolder(parentFolder);
+
     return fileMetadataEntity;
+  }
+
+  private FileMetadataEntity initFileMetadataWithBucket(
+      String name, long size, String type, UUID bucketId) {
+
+    FolderEntity parentFolder = null;
+    BucketEntity bucket =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+
+    return initFileMetadata(name, size, type, bucket, parentFolder);
+  }
+
+  private FileMetadataEntity initFileMetadataWithFolder(
+      String name, long size, String type, UUID folderId) {
+
+    FolderEntity parentFolder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    BucketEntity bucket = parentFolder.getBucket();
+
+    return initFileMetadata(name, size, type, bucket, parentFolder);
   }
 
   private FileMetadataEntity storeFileContents(
@@ -266,6 +325,11 @@ public class FileServiceImpl implements FileService {
   private void checkBucketNotDeleted(FileMetadataEntity fileMetadataEntity) {
     if (fileMetadataEntity.getBucket().getDeletedOn() != null)
       throw new BucketAlreadyDeletedException();
+  }
+
+  private void checkFolderNotDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.getParentFolder().getDeletedOn() != null)
+      throw new FolderAlreadyDeletedException();
   }
 
   private void checkBucketSizeExceedsMax(FileMetadataEntity fileMetadataEntity) {
