@@ -36,4 +36,12 @@ public class FileMetadataEntity extends ObjectEntity {
     return super.isDeleted()
         || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
   }
+
+  public void moveToRoot(FileMetadataEntity fileMetadataEntity) {
+    fileMetadataEntity.setParentFolder(null);
+  }
+
+  public void moveToFolder(FileMetadataEntity fileMetadataEntity, FolderEntity folderEntity) {
+    fileMetadataEntity.setParentFolder(folderEntity);
+  }
 }
