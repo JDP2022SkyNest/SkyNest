@@ -1,5 +1,7 @@
 package com.htecgroup.skynest.service;
 
+import com.htecgroup.skynest.annotation.EmailNotInUse;
+
 public interface InviteService {
-  void sendRegistrationInvite(String newUserEmail);
+  void sendRegistrationInvite(@EmailNotInUse String newUserEmail);
 }
