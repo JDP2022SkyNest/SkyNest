@@ -4,7 +4,7 @@ import com.htecgroup.skynest.lambda.LambdaType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity(name = "bucket")
 @Getter
@@ -31,5 +31,5 @@ public class BucketEntity extends ObjectEntity {
   @ElementCollection(targetClass = LambdaType.class)
   @CollectionTable(name = "lambda_on_bucket", joinColumns = @JoinColumn(name = "bucket_id"))
   @Column(name = "lambda_name")
-  private List<LambdaType> lambdaTypes;
+  private Set<LambdaType> lambdaTypes;
 }

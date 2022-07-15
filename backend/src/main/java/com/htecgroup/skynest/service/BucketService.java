@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
@@ -33,4 +34,6 @@ public interface BucketService {
   BucketDto findBucketByName(String name);
 
   List<BucketResponse> listAllDeletedBuckets();
+
+  List<LambdaType> getActiveLambdas(UUID bucketId);
 }

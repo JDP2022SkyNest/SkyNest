@@ -4,6 +4,7 @@ import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -25,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -170,5 +168,11 @@ public class BucketServiceImpl implements BucketService {
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
     return storageContentResponse;
+  }
+
+  @Override
+  public List<LambdaType> getActiveLambdas(UUID bucketId) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    return new ArrayList<>(bucketEntity.getLambdaTypes());
   }
 }
