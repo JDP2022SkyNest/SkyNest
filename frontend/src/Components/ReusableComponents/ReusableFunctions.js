@@ -374,8 +374,15 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
       link.click();
       success("File Downloaded");
    } catch (err) {
-      error(err.response.data.messages);
-      console.log(err);
+      if (err.response.status === 401) {
+         error("Invalid Session Token");
+      } else if (err.response.status === 403) {
+         error("User does not have access to bucket");
+      } else if (err.response.status === 404) {
+         error("File not found");
+      } else if (err.response.status === 500) {
+         error("Internal Server Error");
+      }
    }
 };
 

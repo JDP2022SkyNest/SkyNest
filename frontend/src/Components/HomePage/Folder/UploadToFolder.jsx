@@ -31,7 +31,7 @@ const UploadToFolder = ({ folderId, refresh }) => {
             refresh();
          }, 2000);
       } catch (err) {
-         setErrorMsg(err.response.data.error);
+         setErrorMsg(err.response.data.messages);
          console.log(err);
       }
    };
@@ -73,6 +73,7 @@ const UploadToFolder = ({ folderId, refresh }) => {
                            handleClose();
                            setErrorMsg("");
                            setSuccessMsg("");
+                           setFile(null);
                         }}
                         className="ml-2 btn btn-outline-secondary button-width"
                      >
