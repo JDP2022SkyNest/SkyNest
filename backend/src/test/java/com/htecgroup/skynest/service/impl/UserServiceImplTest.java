@@ -144,8 +144,7 @@ class UserServiceImplTest {
     List<UserEntity> userEntityList = new ArrayList<>();
     userEntityList.add(UserEntityUtil.getVerified());
     when(userRepository.findAll()).thenReturn(userEntityList);
-    when(currentUserService.getLoggedUser())
-        .thenReturn(LoggedUserDtoUtil.getLoggedAdminWithCompany());
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedAdminUser());
 
     List<UserEntity> expectedResponse = new ArrayList<>(userEntityList);
 

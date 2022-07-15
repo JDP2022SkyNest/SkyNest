@@ -24,5 +24,9 @@ public interface FileService {
 
   List<FileResponse> getAllFilesWithParent(UUID parentFolderId);
 
+  void moveFileToFolder(UUID fileId, UUID destinationFolderId);
+
+  void moveFileToRoot(UUID fileId);
+
   void deleteFile(UUID fileId);
 }
