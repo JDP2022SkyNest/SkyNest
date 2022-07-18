@@ -129,9 +129,9 @@ public class JwtUtils {
   public static String generateRegistrationInviteToken(String email, String companyName) {
     return JWT.create()
         .withSubject(email)
-        .withPayload(Map.of("companyName", companyName))
         .withExpiresAt(
             new Date(System.currentTimeMillis() + REGISTRATION_INVITE_TOKEN_EXPIRATION_MS))
+        .withClaim("companyName", companyName)
         .withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE)
         .sign(ALGORITHM);
   }
