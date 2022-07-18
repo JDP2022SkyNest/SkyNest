@@ -48,4 +48,10 @@ public final class FileMetadataEntityUtil {
 
     return fileMetadata;
   }
+
+  public static FileMetadataEntity getDeleted() {
+    FileMetadataEntity fileMetadataEntity = getRootFileMetadataEntity();
+    fileMetadataEntity.delete();
+    return fileMetadataEntity;
+  }
 }

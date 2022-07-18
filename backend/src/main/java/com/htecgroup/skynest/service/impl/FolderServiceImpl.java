@@ -14,23 +14,19 @@ import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.ShortFolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.FolderService;
+import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +44,7 @@ public class FolderServiceImpl implements FolderService {
   private BucketRepository bucketRepository;
 
   private ActionService actionService;
+  private PermissionService permissionService;
 
   @Override
   public FolderResponse createFolder(
@@ -61,6 +58,9 @@ public class FolderServiceImpl implements FolderService {
         folderCreateRequest.getBucketId(),
         folderCreateRequest.getParentFolderId());
     folderEntity = folderRepository.save(folderEntity);
+
+    permissionService.grantOwnerForObject(folderEntity);
+
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
 
@@ -143,14 +143,33 @@ public class FolderServiceImpl implements FolderService {
     UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
+    List<ShortFolderResponse> path = asShortFolderResponseList(getPathToFolder(parentFolder));
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, path);
     return storageContentResponse;
+  }
+
+  private List<FolderEntity> getPathToFolder(FolderEntity folderEntity) {
+
+    Deque<FolderEntity> path = new LinkedList<>();
+    FolderEntity parentFolder = folderEntity.getParentFolder();
+    while (parentFolder != null) {
+      path.addFirst(parentFolder);
+      parentFolder = parentFolder.getParentFolder();
+    }
+
+    return (List<FolderEntity>) path;
   }
 
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {
     return allFolders.stream()
         .map(folder -> modelMapper.map(folder, FolderResponse.class))
+        .collect(Collectors.toList());
+  }
+
+  private List<ShortFolderResponse> asShortFolderResponseList(List<FolderEntity> folders) {
+    return folders.stream()
+        .map(folder -> modelMapper.map(folder, ShortFolderResponse.class))
         .collect(Collectors.toList());
   }
 }

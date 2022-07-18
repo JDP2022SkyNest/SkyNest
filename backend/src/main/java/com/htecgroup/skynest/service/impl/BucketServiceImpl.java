@@ -45,6 +45,7 @@ public class BucketServiceImpl implements BucketService {
   private FileService fileService;
 
   private ActionService actionService;
+  private PermissionService permissionService;
 
   @Override
   public BucketResponse createBucket(BucketCreateRequest bucketCreateRequest) {
@@ -63,6 +64,8 @@ public class BucketServiceImpl implements BucketService {
     bucketEntity.setIsPublic(false);
 
     BucketEntity savedBucketEntity = bucketRepository.save(bucketEntity);
+
+    permissionService.grantOwnerForObject(savedBucketEntity);
 
     actionService.recordAction(Collections.singleton(savedBucketEntity), ActionType.CREATE);
 
@@ -97,9 +100,18 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
+  public void activateLambda(UUID bucketId, LambdaType lambdaType) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.addLambda(lambdaType);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
   public void deactivateLambda(UUID bucketId, LambdaType lambda) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
-    bucketEntity.deactivateLambda(lambda);
+    bucketEntity.removeLambda(lambda);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
     bucketRepository.save(bucketEntity);
   }
 
@@ -152,7 +164,7 @@ public class BucketServiceImpl implements BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
-    if (bucketEntity.getDeletedOn() != null) {
+    if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
@@ -173,7 +185,7 @@ public class BucketServiceImpl implements BucketService {
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
   }
 }

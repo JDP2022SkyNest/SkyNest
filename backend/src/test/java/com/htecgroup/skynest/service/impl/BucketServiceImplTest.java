@@ -14,10 +14,7 @@ import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.FolderService;
+import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,6 +35,7 @@ class BucketServiceImplTest {
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
   @Mock private ActionService actionService;
+  @Mock private PermissionService permissionService;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private BucketServiceImpl bucketService;
   @Mock private FolderService folderService;
@@ -99,7 +97,8 @@ class BucketServiceImplTest {
 
     UUID bucketId = FolderEntityUtil.getFolderWithoutParent().getBucket().getId();
     StorageContentResponse expectedStorageContentResponse =
-        new StorageContentResponse(bucketId, expectedFolderResponseList, expectedFileResponseList);
+        new StorageContentResponse(
+            bucketId, expectedFolderResponseList, expectedFileResponseList, null);
 
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 
@@ -165,7 +164,7 @@ class BucketServiceImplTest {
 
   @Test
   void when_AlreadyDeletedBucket_deletedBucket_ShouldThrowBucketAlreadyDeleted() {
-    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
     String expectedErrorMessage = BucketAlreadyDeletedException.MESSAGE;
     Exception thrownException =
@@ -178,14 +177,14 @@ class BucketServiceImplTest {
 
   @Test
   void when_deleteBucket_ShouldDeleteBucket() {
-    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersNotDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
 
     bucketService.deleteBucket(UUID.randomUUID());
     Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNotNull(bucketEntity.getDeletedOn());
+    Assertions.assertTrue(bucketEntity.isDeleted());
     verify(bucketService, times(1)).findBucketById(any());
   }
 
@@ -205,7 +204,7 @@ class BucketServiceImplTest {
 
   @Test
   void when_AlreadyRestoredBucket_restoreBucket_ShouldThrowBucketAlreadyRestored() {
-    BucketDto bucketDto = BucketDtoUtil.getNotDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersNotDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
     String expectedErrorMessage = BucketAlreadyRestoredException.MESSAGE;
     Exception thrownException =
@@ -217,14 +216,27 @@ class BucketServiceImplTest {
 
   @Test
   void when_restoreBucket_ShouldRestoreBucket() {
-    BucketDto bucketDto = BucketDtoUtil.getDeletedBucket();
+    BucketDto bucketDto = BucketDtoUtil.getCurrentUsersDeletedBucket();
     doReturn(bucketDto).when(bucketService).findBucketById(any());
 
     bucketService.restoreBucket(UUID.randomUUID());
     Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNull(bucketEntity.getDeletedOn());
+    Assertions.assertFalse(bucketEntity.isDeleted());
+  }
+
+  @Test
+  void when_activateLambda_ShouldSaveEntityWithActivatedLambdas() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.activateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertTrue(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
   }
 
   @Test

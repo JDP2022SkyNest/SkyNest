@@ -21,7 +21,7 @@ public class BucketEntity extends ObjectEntity {
 
   private String description;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private long size;
 
   @Column(name = "public")
@@ -31,10 +31,13 @@ public class BucketEntity extends ObjectEntity {
   @ElementCollection(targetClass = LambdaType.class)
   @CollectionTable(name = "lambda_on_bucket", joinColumns = @JoinColumn(name = "bucket_id"))
   @Column(name = "lambda_name")
-  @With
   private Set<LambdaType> lambdaTypes;
 
-  public void deactivateLambda(LambdaType lambdaType) {
+  public void removeLambda(LambdaType lambdaType) {
     this.lambdaTypes.remove(lambdaType);
+  }
+
+  public void addLambda(LambdaType lambdaType) {
+    this.getLambdaTypes().add(lambdaType);
   }
 }

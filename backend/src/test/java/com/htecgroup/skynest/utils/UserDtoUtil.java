@@ -12,6 +12,26 @@ public class UserDtoUtil extends BasicUtil {
 
   public static UserDto getNotVerified() {
     return new UserDto(
+        UUID.fromString("55ff7452-5513-47f3-be82-59c34cb80140"),
+        currentDateTime,
+        currentDateTime,
+        null,
+        email,
+        password,
+        encryptedPassoword,
+        name,
+        surname,
+        address,
+        phoneNumber,
+        positionInCompany,
+        false,
+        false,
+        roleWorkerDto,
+        null);
+  }
+
+  public static UserDto getOtherUser() {
+    return new UserDto(
         UUID.randomUUID(),
         currentDateTime,
         currentDateTime,

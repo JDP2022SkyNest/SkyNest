@@ -1,6 +1,8 @@
 import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
 import jwt_decode from "jwt-decode";
+import { useContext } from "react";
+import GlobalContext from "../context/GlobalContext";
 
 // eslint-disable-next-line
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
@@ -52,17 +54,6 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
          messageToShow("Access denied");
       } else {
          messageToShow(err.response.data.messages);
-      }
-   }
-};
-
-export const updateToken = async () => {
-   try {
-      let response = await AxiosInstance.get("/token/refresh", { params: localStorage.getItem("refreshToken") });
-      console.log(response);
-   } catch (err) {
-      if (err.response.status) {
-         console.log("error");
       }
    }
 };
@@ -315,24 +306,38 @@ export const deleteFolder = async (accessToken, folderId, error, success) => {
    }
 };
 
-export const bucketContent = async (accessToken, bucketId, stateToChange) => {
+export const deleteFile = async (accessToken, fileId, error, success) => {
+   try {
+      await AxiosInstance.delete(`/files/${fileId}`, {
+         headers: { Authorization: accessToken },
+      });
+      success("File Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const bucketContent = async (accessToken, bucketId, stateToChange, error) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
    } catch (err) {
+      error(err.response.data.messages);
       console.log(err);
    }
 };
 
-export const folderContent = async (accessToken, folderId, stateToChange) => {
+export const folderContent = async (accessToken, folderId, stateToChange, error) => {
    try {
       let response = await AxiosInstance.get(`/folders/${folderId}`, {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
    } catch (err) {
+      error(err.response.data.messages);
       console.log(err);
    }
 };
@@ -354,7 +359,6 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
          headers: { Authorization: accessToken },
          responseType: "blob",
       });
-      console.log(response);
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -363,8 +367,15 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
       link.click();
       success("File Downloaded");
    } catch (err) {
-      error(err.response.data.messages);
-      console.log(err);
+      if (err.response.status === 401) {
+         error("Invalid Session Token");
+      } else if (err.response.status === 403) {
+         error("User does not have access to bucket");
+      } else if (err.response.status === 404) {
+         error("File not found");
+      } else if (err.response.status === 500) {
+         error("Internal Server Error");
+      }
    }
 };
 
