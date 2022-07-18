@@ -8,6 +8,7 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
+import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
 import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -56,6 +57,10 @@ public class UserServiceImpl implements UserService {
         JwtUtils.getRegistrationInviteTokenData(token);
 
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
+
+    if (userRepository.existsByEmail(registrationInviteTokenData.getEmail())) {
+      throw new EmailAlreadyInUseException();
+    }
 
     if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
       throw new PhoneNumberAlreadyInUseException();
