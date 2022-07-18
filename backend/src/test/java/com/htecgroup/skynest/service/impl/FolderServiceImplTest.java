@@ -1,8 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
-import com.htecgroup.skynest.exception.folder.FolderAlreadyInsideFolderException;
-import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.exception.folder.*;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
@@ -16,6 +14,7 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.PermissionService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,6 +36,8 @@ class FolderServiceImplTest {
   @Mock private FolderRepository folderRepository;
   @Mock private BucketRepository bucketRepository;
   @Mock private CurrentUserService currentUserService;
+
+  @Mock private PermissionService permissionService;
 
   @Mock private ActionService actionService;
   @Mock private UserRepository userRepository;
@@ -185,6 +186,37 @@ class FolderServiceImplTest {
   }
 
   @Test
+  void when_folderAlreadyInsideRoot_shouldThrowFolderAlreadyInsideRootException() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+
+    String expectedErrorMessage = FolderAlreadyInsideBucketException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyInsideBucketException.class,
+            () -> folderService.moveFolderToRoot(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void
+      when_destinationFolderIsChildFolder_shouldThrowFolderCanNotBeMovedInsideChildFolderException() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    UUID uuid = FolderEntityUtil.getFolderWithParent().getId();
+    when(folderRepository.findById(uuid)).thenReturn(Optional.of(folderEntity));
+    FolderEntity parentFolder = FolderEntityUtil.getFolderWithoutParent();
+    UUID destinationUuid = FolderEntityUtil.getFolderWithoutParent().getId();
+    when(folderRepository.findById(destinationUuid)).thenReturn(Optional.of(parentFolder));
+
+    String expectedErrorMessage = FolderCanNotBeMovedInsideChildFolderException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderCanNotBeMovedInsideChildFolderException.class,
+            () -> folderService.moveFolderToFolder(destinationUuid, uuid));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
   void when_moveFolderToBucketRoot_shouldMoveFolderToRoot() {
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
@@ -202,7 +234,7 @@ class FolderServiceImplTest {
     UUID destUUID = UUID.randomUUID();
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(uuid)).thenReturn(Optional.of(expectedFolderEntity));
-    FolderEntity parentFolderEntity = FolderEntityUtil.getFolderWithoutParent();
+    FolderEntity parentFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(destUUID)).thenReturn(Optional.of(parentFolderEntity));
     when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
 

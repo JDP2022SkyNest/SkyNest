@@ -167,7 +167,7 @@ public class FolderServiceImpl implements FolderService {
   private void checkIfFolderAlreadyInsideFolder(
       FolderEntity folderEntity, FolderEntity parentFolderEntity) {
     if (folderEntity.getParentFolder() != null
-        && folderEntity.getParentFolder().getId() == parentFolderEntity.getId()) {
+        && folderEntity.getParentFolder().getId().equals(parentFolderEntity.getId())) {
       throw new FolderAlreadyInsideFolderException();
     }
   }
@@ -176,7 +176,7 @@ public class FolderServiceImpl implements FolderService {
       FolderEntity folderEntity, FolderEntity parentFolderEntity) {
     List<FolderEntity> path = getPathToFolder(parentFolderEntity);
     for (FolderEntity folder : path) {
-      if (folderEntity.getId() == folder.getId()) {
+      if (folderEntity.getId().equals(folder.getId())) {
         throw new FolderCanNotBeMovedInsideChildFolderException();
       }
     }

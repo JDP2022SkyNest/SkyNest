@@ -1,9 +1,8 @@
 package com.htecgroup.skynest.exception.folder;
 
-import com.htecgroup.skynest.exception.SkyNestBaseException;
 import org.springframework.http.HttpStatus;
 
-public class FolderCanNotBeMovedInsideChildFolderException extends SkyNestBaseException {
+public class FolderCanNotBeMovedInsideChildFolderException extends FolderException {
 
   public static final String MESSAGE = "Folder Cannot be moved inside child folder";
 
