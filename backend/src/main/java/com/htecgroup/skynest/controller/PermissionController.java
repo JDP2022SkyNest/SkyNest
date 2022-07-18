@@ -143,6 +143,53 @@ public class PermissionController {
     return response;
   }
 
+  @Operation(summary = "Get all bucket permissions")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "all permissions returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = PermissionResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[{\"grantedToId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"grantedToEmail\": \"Email@com\","
+                                + "\"objectId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"grantedOn\": \"2022-07-18-04-00-15\","
+                                + "\"accessName\": \"EDIT\","
+                                + "{\"grantedById\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"grantedByEmail\": \"email2@com\"]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
   @GetMapping("/{bucketId}")
   public List<PermissionResponse> getAllPermissions(@PathVariable UUID bucketId) {
     List<PermissionResponse> permissionList = permissionService.getAllBucketPermission(bucketId);

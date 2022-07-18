@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface UserObjectAccessRepository
     extends CrudRepository<UserObjectAccessEntity, UserObjectAccessKey> {
-  List<UserObjectAccessEntity> findAllByObjectId(UUID bucketId);
+  List<UserObjectAccessEntity> findAllByObjectId(UUID objectId);
 }
