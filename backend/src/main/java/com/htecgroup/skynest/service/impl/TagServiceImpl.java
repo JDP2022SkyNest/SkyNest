@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
+import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TagEntity;
@@ -25,6 +26,10 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public TagResponse createTag(TagCreateRequest createTagRequest) {
+
+    if (tagRepository.existsByName(createTagRequest.getName()))
+      throw new TagAlreadyExistsException();
+
     TagEntity tagEntity = modelMapper.map(createTagRequest, TagEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();

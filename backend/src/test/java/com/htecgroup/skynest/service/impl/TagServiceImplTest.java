@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
 import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.TagResponse;
@@ -34,6 +35,7 @@ class TagServiceImplTest {
   void createTag() {
 
     TagEntity expectedTagEntity = TagEntityUtil.get();
+    when(tagRepository.existsByName(any())).thenReturn(false);
     when(currentUserService.getCompanyEntityFromLoggedUser())
         .thenReturn(Optional.of(CompanyEntityUtil.get()));
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
@@ -43,8 +45,21 @@ class TagServiceImplTest {
     TagResponse actualTagResponse = tagService.createTag(tagCreateRequest);
 
     this.assertTagEntityAndTagResponse(expectedTagEntity, actualTagResponse);
+    verify(tagRepository, times(1)).existsByName(expectedTagEntity.getName());
     verify(currentUserService, times(1)).getCompanyEntityFromLoggedUser();
     verify(currentUserService, times(1)).getLoggedUser();
+  }
+
+  @Test
+  void when_createTag_shouldThrowTagAlreadyExists() {
+    TagCreateRequest tagCreateRequest = TagCreateRequestUtil.get();
+    when(tagRepository.existsByName(any())).thenReturn(true);
+    String expectedErrorMessage = TagAlreadyExistsException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            TagAlreadyExistsException.class, () -> tagService.createTag(tagCreateRequest));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).existsByName(tagCreateRequest.getName());
   }
 
   private void assertTagEntityAndTagResponse(
