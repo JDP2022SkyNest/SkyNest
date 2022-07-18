@@ -175,9 +175,8 @@ public class FolderServiceImpl implements FolderService {
   private void checkIfDestinationFolderIsChildFolder(
       FolderEntity folderEntity, FolderEntity parentFolderEntity) {
     List<FolderEntity> path = getPathToFolder(parentFolderEntity);
-    for (int i = 0; i < path.size(); i++) {
-      FolderEntity parent = path.get(i);
-      if (folderEntity.getId() == parent.getId()) {
+    for (FolderEntity folder : path) {
+      if (folderEntity.getId() == folder.getId()) {
         throw new FolderCanNotBeMovedInsideChildFolderException();
       }
     }
