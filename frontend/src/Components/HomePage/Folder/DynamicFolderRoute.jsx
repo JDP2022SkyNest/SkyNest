@@ -65,9 +65,12 @@ const DynamicFolderRoute = () => {
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
             <small>
                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1">
+                  <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1 ">
                      <li className="breadcrumb-item">
-                        <button onClick={() => navigate(`/bucket/${data?.data?.bucketId}`, { replace: true })} className="btn-link border-0 bg-white">
+                        <button
+                           onClick={() => navigate(`/bucket/${data?.data?.bucketId}`, { replace: true })}
+                           className="btn-link border-0 bg-white text-dark"
+                        >
                            Bucket
                         </button>
                      </li>

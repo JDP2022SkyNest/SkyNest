@@ -53,7 +53,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
+         <span onClick={handleShow} className="ml-1 latte-background custom-rounded shadow">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
          </span>
 
