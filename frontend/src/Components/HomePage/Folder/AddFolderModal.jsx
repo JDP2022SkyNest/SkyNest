@@ -34,6 +34,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
             refresh();
          }, 2000);
       } catch (err) {
+         console.log(err);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {

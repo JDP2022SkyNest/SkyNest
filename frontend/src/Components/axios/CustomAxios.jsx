@@ -1,34 +1,22 @@
-import axios from "axios";
+import AxiosInstance from "../axios/AxiosInstance";
 
-const CustomAxios = axios.create({});
-CustomAxios.interceptors.request.use(
-   (request) => {
-      request.headers["accessToken"] = localStorage.getItem("accessToken");
-      request.headers["refresh-token"] = localStorage.getItem("refresh-token");
-      return request;
-   },
-   (err) => {
-      return Promise.reject(err);
-   }
-);
-CustomAxios.interceptors.response.use(
-   (response) => {
-      return response;
-   },
-   (err) => {
-      const status = err.response ? err.response.status : "null";
-      if (status === 401) {
-         axios
-            .get("http://localhost:8080/token/refresh", { params: localStorage.getItem("refreshToken") })
-            .then((response) => {
-               localStorage.setItem("refresh-token", response.data[`refresh-token`]);
-               localStorage.setItem("token", response.data.accessToken);
-               console.log("new token resived");
-            })
-            .catch((err) => {});
+AxiosInstance.interceptors.response.use(
+   (response) =>
+      function (error) {
+         const originalRequest = error.config;
+
+         if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            const response = AxiosInstance.get("/token/refresh", {
+               headers: {
+                  "refresh-token": refreshToken,
+               },
+            });
+            let { headers } = response;
+            let token = headers.authorization;
+            setAccessToken(token);
+            localStorage.setItem("accessToken", token);
+         }
+         return Promise.reject(error);
       }
-      return Promise.resolve(err);
-   }
 );
-
-export default CustomAxios;
