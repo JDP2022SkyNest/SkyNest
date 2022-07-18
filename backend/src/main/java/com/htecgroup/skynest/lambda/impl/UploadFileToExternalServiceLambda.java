@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 // TODO: Instead of String, lambda accepts Event and uploads file to external service, yet to be
@@ -28,15 +29,15 @@ public class UploadFileToExternalServiceLambda
   public Boolean doLambdaFunction(UploadFileToExternalServiceEvent event) {
     try {
       MultipartFile file = event.getFileToUpload();
-      String filePath = event.getFilePath();
-      // ByteArrayInputStream inputStream = new ByteArrayInputStream(file.getBytes());
+      ByteArrayInputStream inputStream = new ByteArrayInputStream(file.getBytes());
+      String name = event.getFileToUpload().getOriginalFilename();
       Metadata uploadMetaData =
           dropboxClient
               .files()
-              .uploadBuilder("/bucket/" + event.getFilePath())
-              .uploadAndFinish(file.getInputStream());
+              .uploadBuilder("/" + event.getBucketId() + "/" + name)
+              .uploadAndFinish(inputStream);
       log.info("upload meta data =====> {}", uploadMetaData.toString());
-      // inputStream.close();
+      inputStream.close();
     } catch (IOException | DbxException e) {
       throw new RuntimeException(e);
     }

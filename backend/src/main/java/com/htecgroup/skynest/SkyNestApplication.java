@@ -47,7 +47,7 @@ public class SkyNestApplication {
   @Bean("dropboxClient")
   public DbxClientV2 dropboxClient() throws DbxException {
     String ACCESS_TOKEN =
-        "sl.BLczaCtspvHSQ_s9YO3cHs4g2yTsqONH-AxGSIbcIUB0X5UAdz-ysoZ5RgnaoBEAW4c5dM6xEm--SpFYiT5_tXLPbmCoumsfu16K91Dljhbfona2F-u9AzkVOPHmquAlrpx5SQE";
+        "sl.BLp2qV7oDuSt6-K6XQ9pBj7ZH8fLCX5As_Xxxb6hb2HY8Q5v-c6asb1nzkH1m462xN6gD2ZmNqq-uXXyOc5YfFuFbelbwFIr_WF2Vm2zZ4dFxfKTqxUfGdG5ROK4rTJ2VskLIjw";
     DbxRequestConfig config = new DbxRequestConfig("/skynest/test/dropbox");
     DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
     return client;

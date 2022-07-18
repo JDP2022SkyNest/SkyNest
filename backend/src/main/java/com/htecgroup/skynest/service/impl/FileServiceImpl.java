@@ -86,7 +86,7 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UploadFileToExternalServiceEvent event =
         new UploadFileToExternalServiceEvent(
-            this, multipartFile, loggedUserDto.getUuid().toString());
+            this, multipartFile, loggedUserDto.getUuid().toString(), bucketId.toString());
     publisher.publishEvent(event);
 
     return uploadFile(emptyFileMetadata, multipartFile);
