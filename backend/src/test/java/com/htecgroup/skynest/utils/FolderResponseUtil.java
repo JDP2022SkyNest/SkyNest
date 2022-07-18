@@ -13,7 +13,7 @@ public class FolderResponseUtil {
         rootFolder.getId(),
         rootFolder.getCreatedOn() == null ? null : getRootFolder().getCreatedOn().toString(),
         rootFolder.getModifiedOn() == null ? null : getRootFolder().getModifiedOn().toString(),
-        rootFolder.getDeletedOn() == null ? null : getRootFolder().getDeletedOn().toString(),
+        !rootFolder.isDeleted() ? null : getRootFolder().getDeletedOn().toString(),
         rootFolder.getName(),
         rootFolder.getCreatedBy().getId(),
         rootFolder.getParentFolder() == null ? null : rootFolder.getParentFolder().getId(),
@@ -27,7 +27,7 @@ public class FolderResponseUtil {
         folderWithParent.getModifiedOn() == null
             ? null
             : getRootFolder().getModifiedOn().toString(),
-        folderWithParent.getDeletedOn() == null ? null : getRootFolder().getDeletedOn().toString(),
+        !folderWithParent.isDeleted() ? null : getRootFolder().getDeletedOn().toString(),
         folderWithParent.getName(),
         folderWithParent.getCreatedBy().getId(),
         folderWithParent.getParentFolder().getId(),

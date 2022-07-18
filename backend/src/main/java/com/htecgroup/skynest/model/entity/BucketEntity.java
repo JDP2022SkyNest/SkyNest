@@ -32,4 +32,8 @@ public class BucketEntity extends ObjectEntity {
   @CollectionTable(name = "lambda_on_bucket", joinColumns = @JoinColumn(name = "bucket_id"))
   @Column(name = "lambda_name")
   private Set<LambdaType> lambdaTypes;
+
+  public void addLambda(LambdaType lambdaType) {
+    this.getLambdaTypes().add(lambdaType);
+  }
 }

@@ -4,17 +4,18 @@ import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.utils.company.CompanyEntityUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BucketEntityUtil {
-  protected static final CompanyEntity companyEntity = new CompanyEntity();
+  protected static final CompanyEntity companyEntity = CompanyEntityUtil.get();
   protected static String description = "Description";
   protected static Long size = 1000L;
   protected static boolean privateBucket = false;
@@ -39,7 +40,15 @@ public final class BucketEntityUtil {
 
   public static BucketEntity getDeletedBucket() {
     BucketEntity bucketEntity = getPrivateBucket();
-    bucketEntity.setDeletedOn(LocalDateTime.now());
+    bucketEntity.delete();
+    return bucketEntity;
+  }
+
+  public static BucketEntity getBucketWithActivatedLambdas() {
+    BucketEntity bucketEntity = getPrivateBucket();
+    Set<LambdaType> lambdaTypes = new HashSet<>();
+    lambdaTypes.add(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA);
+    bucketEntity.setLambdaTypes(lambdaTypes);
     return bucketEntity;
   }
 }

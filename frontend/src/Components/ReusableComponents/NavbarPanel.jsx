@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import "./NavBarPanel.css";
 
-const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchTerm }) => {
+const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchTerm, showName = false }) => {
    const navigate = useNavigate();
 
    const searchFilter = () => {
@@ -19,7 +19,7 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchT
    return (
       <Navbar bg="dark" variant="dark">
          <Container>
-            <Navbar.Brand className="text-white d-none d-md-block">{name}</Navbar.Brand>
+            <Navbar.Brand className={!showName && `text-white d-none d-md-block`}>{name}</Navbar.Brand>
             {searchBar && (
                <div className="input-group" style={{ width: "200px" }}>
                   <input

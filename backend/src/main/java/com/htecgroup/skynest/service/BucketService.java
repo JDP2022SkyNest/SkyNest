@@ -36,4 +36,6 @@ public interface BucketService {
   List<BucketResponse> listAllDeletedBuckets();
 
   List<LambdaType> getActiveLambdas(UUID bucketId);
+
+  void activateLambda(UUID bucketId, LambdaType lambdaType);
 }

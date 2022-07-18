@@ -12,10 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +29,39 @@ public class LambdaController {
 
   private BucketService bucketService;
 
+  @Operation(summary = "Get all lambdas")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "All lambdas returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = LambdaType.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[\"UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA\","
+                                + "\"SOME_OTHER_LAMBDA\"]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
   @GetMapping
   public List<LambdaType> getAllLambdas() {
     return Arrays.stream(LambdaType.values()).collect(Collectors.toList());
@@ -74,5 +105,50 @@ public class LambdaController {
     List<LambdaType> activeLambdas = bucketService.getActiveLambdas(bucketId);
     log.info("Successfully got {} active lambdas for bucket {}", activeLambdas, bucketId);
     return activeLambdas;
+  }
+
+  @Operation(summary = "Activate lambda for bucket")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Lambda successfully activated for given bucket"),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PutMapping("/bucket/{bucketId}/activate")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void activateLambdaForBucket(
+      @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
+    bucketService.activateLambda(bucketId, lambda);
+    log.info("Activated lambda {} for bucket {}", lambda.toString(), bucketId.toString());
   }
 }

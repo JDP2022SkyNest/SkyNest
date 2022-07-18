@@ -97,6 +97,14 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
+  public void activateLambda(UUID bucketId, LambdaType lambdaType) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.addLambda(lambdaType);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
 
@@ -145,7 +153,7 @@ public class BucketServiceImpl implements BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
-    if (bucketEntity.getDeletedOn() != null) {
+    if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
@@ -166,7 +174,7 @@ public class BucketServiceImpl implements BucketService {
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
   }
 
