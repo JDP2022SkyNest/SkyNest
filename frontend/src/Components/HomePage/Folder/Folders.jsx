@@ -16,8 +16,6 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
 
    const timeFrame = elem.createdOn.replace("T", " @ ");
 
-   console.log("Folder Elem", elem);
-
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
          <div className="card custom-rounded bucket-hover cursor-pointer border-0 shadow">
