@@ -15,6 +15,9 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -52,5 +55,17 @@ public class TagServiceImpl implements TagService {
         savedTagEntity.getId());
 
     return modelMapper.map(savedTagEntity, TagResponse.class);
+  }
+
+  @Override
+  public List<TagResponse> listAllTags() {
+    CompanyEntity companyEntity =
+        currentUserService
+            .getCompanyEntityFromLoggedUser()
+            .orElseThrow(CompanyNotFoundException::new);
+
+    return tagRepository.findByCompanyId(companyEntity.getId()).stream()
+        .map(e -> modelMapper.map(e, TagResponse.class))
+        .collect(Collectors.toList());
   }
 }
