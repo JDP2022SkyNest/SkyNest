@@ -35,6 +35,7 @@ public class JwtUtils {
   public static final String REFRESH_TOKEN_HEADER = "refresh-token";
   public static final String TOKEN_PREFIX = "Bearer ";
   private static final String EMAIL_TOKEN_CLAIM = "Email token";
+  private static final String COMPANY_NAME_CLAIM = "Company name";
   private static final String PASSWORD_RESET_PURPOSE = "password reset";
   private static final String EMAIL_VERIFICATION_PURPOSE = "verification";
   private static final String REGISTRATION_INVITE_PURPOSE = "registration invite";
@@ -131,7 +132,7 @@ public class JwtUtils {
         .withSubject(email)
         .withExpiresAt(
             new Date(System.currentTimeMillis() + REGISTRATION_INVITE_TOKEN_EXPIRATION_MS))
-        .withClaim("companyName", companyName)
+        .withClaim(COMPANY_NAME_CLAIM, companyName)
         .withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE)
         .sign(ALGORITHM);
   }
@@ -166,7 +167,8 @@ public class JwtUtils {
       JWTVerifier verifier =
           verification.withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE).build();
       DecodedJWT decodedJWT = verifier.verify(token);
-      return new RegistrationInviteTokenData(decodedJWT.getSubject(), decodedJWT.getPayload());
+      return new RegistrationInviteTokenData(
+          decodedJWT.getSubject(), decodedJWT.getClaim(COMPANY_NAME_CLAIM).asString());
     } catch (JWTVerificationException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
       throw new InvalidEmailTokenException();
