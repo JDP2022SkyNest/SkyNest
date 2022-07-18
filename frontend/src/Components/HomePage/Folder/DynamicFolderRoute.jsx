@@ -11,6 +11,7 @@ import AddFolderModal from "./AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToFolder from "./UploadToFolder";
 import Files from "../Files/Files";
+import Breadcrumbs from "./Breadcrumbs";
 
 const DynamicFolderRoute = () => {
    const { routeId } = useParams();
@@ -34,6 +35,10 @@ const DynamicFolderRoute = () => {
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
+   const breadCrumb = data?.data?.path.map((elem, index) => {
+      return <Breadcrumbs key={index} elem={elem} />;
+   });
+
    const alLFiles = data?.data?.files.map((elem, index) => (
       <Files
          elem={elem}
@@ -56,6 +61,11 @@ const DynamicFolderRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
+            {breadCrumb?.length > 0 && (
+               <nav aria-label="breadcrumb">
+                  <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1">{breadCrumb}</ol>
+               </nav>
+            )}
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToFolder folderId={routeId} refresh={refreshFoldersAndFiles} />
