@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FolderEntityUtil {
 
@@ -32,7 +30,7 @@ public final class FolderEntityUtil {
 
   public static FolderEntity getDeletedFolder() {
     FolderEntity folderEntity = new FolderEntity(null, bucketEntityUtil);
-    folderEntity.setDeletedOn(LocalDateTime.now());
+    folderEntity.delete();
     return folderEntity;
   }
 }

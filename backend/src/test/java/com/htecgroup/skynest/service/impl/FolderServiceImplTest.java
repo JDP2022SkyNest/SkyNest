@@ -7,6 +7,7 @@ import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.ShortFolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
@@ -23,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -62,7 +64,7 @@ class FolderServiceImplTest {
     Mockito.verify(folderRepository).save(captorFolderEntity.capture());
 
     FolderEntity folderEntityVal = captorFolderEntity.getValue();
-    Assertions.assertNotNull(folderEntityVal.getDeletedOn());
+    Assertions.assertTrue(folderEntityVal.isDeleted());
   }
 
   @Test
@@ -195,8 +197,13 @@ class FolderServiceImplTest {
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getFolderWithParent()));
     UUID bucketId = folderEntity.getBucket().getId();
+    List<ShortFolderResponse> expectedPath =
+        Collections.singleton(folderEntity.getParentFolder()).stream()
+            .map(folder -> modelMapper.map(folder, ShortFolderResponse.class))
+            .collect(Collectors.toList());
     StorageContentResponse expectedStorageContentResponse =
-        new StorageContentResponse(bucketId, expectedFolderResponseList, expectedFileResponseList);
+        new StorageContentResponse(
+            bucketId, expectedFolderResponseList, expectedFileResponseList, expectedPath);
 
     UUID parentId = FolderEntityUtil.getFolderWithParent().getParentFolder().getId();
     StorageContentResponse actualStorageContentResponse = folderService.getFolderContent(parentId);

@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.RegistrationInviteRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.InviteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +34,21 @@ public class InviteController {
       value = {
         @ApiResponse(responseCode = "204", description = "Registration invite successfully sent"),
         @ApiResponse(
+            responseCode = "400",
+            description = "Email invalid, or already in use",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"email already in use\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "401",
             description = "Invalid session token",
             content = {
@@ -63,21 +79,6 @@ public class InviteController {
                   })
             }),
         @ApiResponse(
-            responseCode = "409",
-            description = "Email already in use",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ErrorMessage.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "{\"messages\":[\"Email already in use\"],"
-                                + " \"status\": \"409\","
-                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
-                  })
-            }),
-        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
@@ -87,10 +88,11 @@ public class InviteController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PostMapping("/{email}")
+  @PostMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PreAuthorize("hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN)")
-  public void sendRegistrationInvite(@PathVariable @Valid String email) {
-    inviteService.sendRegistrationInvite(email);
+  public void sendRegistrationInvite(
+      @Valid @RequestBody RegistrationInviteRequest registrationInviteRequest) {
+    inviteService.sendRegistrationInvite(registrationInviteRequest.getEmail());
   }
 }

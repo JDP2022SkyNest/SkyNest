@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER})
+@Target({ElementType.FIELD})
 @Constraint(validatedBy = EmailNotInUseValidator.class)
 public @interface EmailNotInUse {
   String message() default "User is already in a company";
