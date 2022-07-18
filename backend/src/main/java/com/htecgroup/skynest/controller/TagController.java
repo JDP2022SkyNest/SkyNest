@@ -159,7 +159,7 @@ public class TagController {
       })
   @GetMapping
   public List<TagResponse> getAllTags() {
-    List<TagResponse> listOfTags = tagService.listAllTags();
-    return listOfTags;
+    List<TagResponse> tags = tagService.listAllTags();
+    return tags;
   }
 }
