@@ -49,8 +49,8 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                         Download File
                      </Dropdown.Item>
                      <Dropdown.Item
-                        onClick={() => {
-                           deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                        onClick={async () => {
+                           await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                            refresh();
                         }}
                         className="text-dark"
