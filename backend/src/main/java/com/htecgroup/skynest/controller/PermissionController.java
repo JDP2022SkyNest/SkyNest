@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.PermissionResponse;
@@ -16,12 +17,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/permissions")
@@ -142,5 +141,15 @@ public class PermissionController {
             permissionService.grantPermissionForBucket(permissionGrantRequest), HttpStatus.OK);
 
     return response;
+  }
+
+  @PutMapping("/{bucketId}/edit")
+  public ResponseEntity<PermissionResponse> editPermissions(
+      @Valid @RequestBody PermissionEditRequest permissionEditRequest,
+      @PathVariable UUID bucketId) {
+    ResponseEntity<PermissionResponse> permissionResponseEntity =
+        new ResponseEntity<>(
+            permissionService.editPermission(permissionEditRequest, bucketId), HttpStatus.OK);
+    return permissionResponseEntity;
   }
 }

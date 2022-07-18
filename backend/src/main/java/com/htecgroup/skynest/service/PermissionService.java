@@ -2,6 +2,7 @@ package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.entity.AccessType;
 import com.htecgroup.skynest.model.entity.ObjectEntity;
+import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
 
@@ -14,4 +15,6 @@ public interface PermissionService {
   void grantOwnerForObject(ObjectEntity object);
 
   void currentUserHasPermissionForBucket(UUID bucketId, AccessType minimumAccessType);
+
+  PermissionResponse editPermission(PermissionEditRequest permissionEditRequest, UUID bucketId);
 }
