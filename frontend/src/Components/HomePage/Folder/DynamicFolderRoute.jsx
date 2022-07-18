@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { folderContent } from "../../ReusableComponents/ReusableFunctions";
 import NavbarPanel from "../../ReusableComponents/NavbarPanel";
 import ROUTES from "../../Routes/ROUTES";
@@ -22,6 +22,8 @@ const DynamicFolderRoute = () => {
    const accessToken = localStorage.accessToken;
    const FolderLength = data?.data?.folders.length;
    const FilesLength = data?.data?.files.length;
+
+   const navigate = useNavigate();
 
    useEffect(() => {
       folderContent(accessToken, routeId, setData, setErrorMsg);
@@ -61,11 +63,18 @@ const DynamicFolderRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
-            {breadCrumb?.length > 0 && (
+            <small>
                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1">{breadCrumb}</ol>
+                  <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1">
+                     <li className="breadcrumb-item">
+                        <button onClick={() => navigate(`/bucket/${data?.data?.bucketId}`, { replace: true })} className="btn-link border-0 bg-white">
+                           Bucket
+                        </button>
+                     </li>
+                     {breadCrumb}
+                  </ol>
                </nav>
-            )}
+            </small>
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToFolder folderId={routeId} refresh={refreshFoldersAndFiles} />
