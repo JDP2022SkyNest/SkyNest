@@ -15,13 +15,15 @@ import Files from "../Files/Files";
 const DynamicRoute = () => {
    const { routeId } = useParams();
    const [data, setData] = useState([]);
+   const filteredFolders = data?.data?.folders.filter((fol) => fol.deletedOn === null);
+   const filteredFiles = data?.data?.files.filter((fil) => fil.deletedOn === null);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
    const [loading, setLoading] = useState(true);
    const accessToken = localStorage.accessToken;
-   const FolderLength = data?.data?.folders.length;
-   const FilesLength = data?.data?.files.length;
+   const FolderLength = filteredFolders?.length;
+   const FilesLength = filteredFiles?.length;
 
    useEffect(() => {
       const getData = async () => {
@@ -35,11 +37,11 @@ const DynamicRoute = () => {
       await bucketContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => (
+   const allData = filteredFolders?.map((elem, index) => (
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
-   const alLFiles = data?.data?.files.map((elem, index) => (
+   const alLFiles = filteredFiles?.map((elem, index) => (
       <Files
          elem={elem}
          key={index}
