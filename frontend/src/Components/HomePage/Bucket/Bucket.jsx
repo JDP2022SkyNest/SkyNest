@@ -37,7 +37,6 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   <Dropdown.Menu>
                      <Dropdown.Item
                         onClick={(e) => {
-                           e.stopPropagation();
                            handleShow();
                         }}
                         className="text-dark"

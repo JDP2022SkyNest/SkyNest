@@ -97,7 +97,8 @@ class BucketServiceImplTest {
 
     UUID bucketId = FolderEntityUtil.getFolderWithoutParent().getBucket().getId();
     StorageContentResponse expectedStorageContentResponse =
-        new StorageContentResponse(bucketId, expectedFolderResponseList, expectedFileResponseList);
+        new StorageContentResponse(
+            bucketId, expectedFolderResponseList, expectedFileResponseList, null);
 
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 
@@ -183,7 +184,7 @@ class BucketServiceImplTest {
     Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNotNull(bucketEntity.getDeletedOn());
+    Assertions.assertTrue(bucketEntity.isDeleted());
     verify(bucketService, times(1)).findBucketById(any());
   }
 
@@ -222,7 +223,7 @@ class BucketServiceImplTest {
     Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
-    Assertions.assertNull(bucketEntity.getDeletedOn());
+    Assertions.assertFalse(bucketEntity.isDeleted());
   }
 
   @Test

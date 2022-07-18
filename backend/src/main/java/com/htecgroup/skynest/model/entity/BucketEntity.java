@@ -21,7 +21,7 @@ public class BucketEntity extends ObjectEntity {
 
   private String description;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private long size;
 
   @Column(name = "public")

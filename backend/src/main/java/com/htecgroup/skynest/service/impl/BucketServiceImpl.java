@@ -156,7 +156,7 @@ public class BucketServiceImpl implements BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
-    if (bucketEntity.getDeletedOn() != null) {
+    if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
@@ -177,7 +177,7 @@ public class BucketServiceImpl implements BucketService {
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
   }
 }

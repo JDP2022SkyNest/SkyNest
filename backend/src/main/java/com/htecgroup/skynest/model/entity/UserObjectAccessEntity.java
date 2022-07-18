@@ -30,7 +30,7 @@ public class UserObjectAccessEntity implements Serializable {
   @JoinColumn(name = "object_id", nullable = false)
   private ObjectEntity object;
 
-  @Column(insertable = false)
+  @Column(insertable = false, updatable = false)
   private LocalDateTime grantedOn;
 
   @ManyToOne

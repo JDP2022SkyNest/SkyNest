@@ -1,16 +1,21 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
+import com.htecgroup.skynest.exception.file.FileAlreadyInsideFolderException;
+import com.htecgroup.skynest.exception.file.FileAlreadyInsideRootException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
+import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
+import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.utils.FileEditRequestUtil;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
+import com.htecgroup.skynest.utils.FolderEntityUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +38,7 @@ class FileServiceImplTest {
   @Mock private CurrentUserServiceImpl currentUserService;
   @Mock private BucketRepository bucketRepository;
   @Mock private UserRepository userRepository;
+  @Mock private FolderRepository folderRepository;
   @Mock private FileMetadataRepository fileMetadataRepository;
   @Mock private ActionService actionService;
 
@@ -111,6 +117,69 @@ class FileServiceImplTest {
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
         .findAllByParentFolderId(fileMetadataEntity.getParentFolder().getId());
+  }
+
+  @Test
+  void when_fileAlreadyInsideFolder_shouldThrowFileAlreadyInsideFolderException() {
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(fileMetadataEntity));
+    FolderEntity folderEntity = fileMetadataEntity.getParentFolder();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+
+    String expectedErrorMessage = FileAlreadyInsideFolderException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FileAlreadyInsideFolderException.class,
+            () -> fileService.moveFileToFolder(UUID.randomUUID(), UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_moveFileToFolder_shouldMoveToFolder() {
+    FileMetadataEntity expectedFileMetadataEntity =
+        FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    when(fileMetadataRepository.findById(any()))
+        .thenReturn(Optional.of(expectedFileMetadataEntity));
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    when(fileMetadataRepository.save(any())).thenReturn(expectedFileMetadataEntity);
+
+    UUID fileUuid = FileMetadataEntityUtil.getNotRootFileMetadataEntity().getId();
+    UUID folderUuid = FolderEntityUtil.getFolderWithoutParent().getId();
+    fileService.moveFileToFolder(fileUuid, folderUuid);
+
+    Assertions.assertNotNull(expectedFileMetadataEntity.getParentFolder());
+    verify(fileMetadataRepository, times(1)).findById(fileUuid);
+    verify(folderRepository, times(1)).findById(folderUuid);
+  }
+
+  @Test
+  void when_fileAlreadyInsideRoot_shouldThrowFileAlreadyInsideRootException() {
+    FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
+    when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(fileMetadataEntity));
+
+    String expectedErrorMessage = FileAlreadyInsideRootException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FileAlreadyInsideRootException.class,
+            () -> fileService.moveFileToRoot(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void moveFileToRoot() {
+    FileMetadataEntity expectedFileMetadataEntity =
+        FileMetadataEntityUtil.getNotRootFileMetadataEntity();
+    when(fileMetadataRepository.findById(any()))
+        .thenReturn(Optional.of(expectedFileMetadataEntity));
+    when(fileMetadataRepository.save(any())).thenReturn(expectedFileMetadataEntity);
+
+    UUID fileUuid = FileMetadataEntityUtil.getNotRootFileMetadataEntity().getId();
+    fileService.moveFileToRoot(fileUuid);
+
+    Assertions.assertNull(expectedFileMetadataEntity.getParentFolder());
+    verify(fileMetadataRepository, times(1)).findById(fileUuid);
+    verify(fileMetadataRepository, times(1)).save(expectedFileMetadataEntity);
   }
 
   private void assertFileMetadataEntityAndFileResponse(
