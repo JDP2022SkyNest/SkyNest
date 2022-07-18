@@ -14,12 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
@@ -111,5 +109,57 @@ public class TagController {
         new ResponseEntity<>(tagService.createTag(tagCreateRequest), HttpStatus.OK);
 
     return tagResponseEntity;
+  }
+
+  @Operation(summary = "Get all tags")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Tags returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = TagResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[{\"id\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"name\": \"TagName\","
+                                + "\"rgb\": \"1502DE\"},"
+                                + "{\"id\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"name\": \"TagName2\","
+                                + "\"rgb\": \"510FFF\"}]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping
+  public List<TagResponse> getAllTags() {
+    List<TagResponse> listOfTags = tagService.listAllTags();
+    return listOfTags;
   }
 }
