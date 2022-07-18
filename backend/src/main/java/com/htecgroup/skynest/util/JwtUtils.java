@@ -10,6 +10,7 @@ import com.htecgroup.skynest.exception.jwt.InvalidAlgorithmException;
 import com.htecgroup.skynest.exception.jwt.InvalidEmailTokenException;
 import com.htecgroup.skynest.exception.jwt.InvalidSessionTokenException;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
+import com.htecgroup.skynest.model.jwtObject.RegistrationInviteTokenData;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -76,7 +77,6 @@ public class JwtUtils {
 
   public static String getUsernameFromRefreshToken(String token) {
     DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
-
     String username = decodedJWT.getSubject();
     return username;
   }
@@ -158,6 +158,22 @@ public class JwtUtils {
 
   public static String generateRefreshToken(JwtObject jwtObject, List<String> claims) {
     return generate(jwtObject, REFRESH_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
+  }
+
+  public static RegistrationInviteTokenData getRegistrationInviteTokenData(String token) {
+    try {
+      Verification verification = JWT.require(ALGORITHM);
+      JWTVerifier verifier =
+          verification.withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE).build();
+      DecodedJWT decodedJWT = verifier.verify(token);
+      return new RegistrationInviteTokenData(decodedJWT.getSubject(), decodedJWT.getPayload());
+    } catch (JWTVerificationException e) {
+      log.error("Invalid JWT token: {}", e.getMessage());
+      throw new InvalidEmailTokenException();
+    } catch (IllegalArgumentException e) {
+      log.error("JWT claims string is empty: {}", e.getMessage());
+      throw new InvalidAlgorithmException();
+    }
   }
 
   @Value("${jwt.access-expiration-ms}")

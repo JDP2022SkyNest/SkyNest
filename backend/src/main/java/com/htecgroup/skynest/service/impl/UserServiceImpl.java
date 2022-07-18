@@ -9,6 +9,7 @@ import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
 import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -16,6 +17,7 @@ import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.jwtObject.RegistrationInviteTokenData;
 import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
@@ -48,7 +50,10 @@ public class UserServiceImpl implements UserService {
   private CompanyService companyService;
 
   @Override
-  public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
+  public UserResponse registerUser(UserRegisterRequest userRegisterRequest, String token) {
+
+    RegistrationInviteTokenData registrationInviteTokenData =
+        JwtUtils.getRegistrationInviteTokenData(token);
 
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
@@ -56,17 +61,19 @@ public class UserServiceImpl implements UserService {
       throw new PhoneNumberAlreadyInUseException();
     }
 
+    CompanyDto companyDto = companyService.findByName(registrationInviteTokenData.getCompanyName());
+    userDto.setCompany(companyDto);
+    userDto.setEmail(registrationInviteTokenData.getEmail());
     String roleName = RoleEntity.ROLE_WORKER;
     RoleDto roleDto = roleService.findByName(roleName);
     userDto.setRole(roleDto);
 
     userDto.setEncryptedPassword(passwordEncoderService.encode(userDto.getPassword()));
-    userDto.setEnabled(false);
+    userDto.setEnabled(true);
+    userDto.setVerified(true);
     userDto.setName(userDto.getName().trim());
     userDto.setSurname(userDto.getSurname().trim());
     userDto.setAddress(userDto.getAddress().trim());
-
-    JwtUtils.validateEmailToken()
 
     UserEntity userEntity = userRepository.save(modelMapper.map(userDto, UserEntity.class));
 

@@ -24,6 +24,7 @@ public class UserDto {
   private String address;
   private String phoneNumber;
   private String positionInCompany;
+  @With private Boolean verified;
   @With private Boolean enabled;
   @With private RoleDto role;
   @With private CompanyDto company;

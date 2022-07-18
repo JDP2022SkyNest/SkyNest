@@ -45,7 +45,7 @@ public class UrlUtil {
     PASSWORD_RESET_FRONTEND_URL = passwordResetUrl;
   }
 
-  @Value("${backend.app.passwordResetLink}")
+  @Value("${backend.app.registrationInviteLink}")
   private void setRegistrationInviteUrl(String registrationInviteUrl) {
     REGISTRATION_INVITE_URL = registrationInviteUrl;
   }

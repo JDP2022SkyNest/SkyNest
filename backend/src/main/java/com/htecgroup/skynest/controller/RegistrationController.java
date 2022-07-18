@@ -78,7 +78,7 @@ public class RegistrationController {
             }),
         @ApiResponse(
             responseCode = "409",
-            description = "Email or phone number already in use",
+            description = "Phone number already in use",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -118,10 +118,10 @@ public class RegistrationController {
               }))
   @PostMapping(REGISTER_URL)
   public ResponseEntity<UserResponse> registerUser(
-      @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
+      @Valid @RequestBody UserRegisterRequest userRegisterRequest, @RequestParam String token) {
 
     ResponseEntity<UserResponse> responseEntity =
-        new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
+        new ResponseEntity<>(userService.registerUser(userRegisterRequest, token), HttpStatus.OK);
     return responseEntity;
   }
 
