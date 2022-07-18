@@ -15,8 +15,8 @@ import Files from "../Files/Files";
 const DynamicRoute = () => {
    const { routeId } = useParams();
    const [data, setData] = useState([]);
-   const filteredFolders = data?.data?.folders.filter((el) => el.deletedOn !== null);
-   const filteredFiles = data?.data?.files.filter((el) => el.deletedOn !== null);
+   const filteredFolders = data?.data?.folders.filter((el) => el.deletedOn === null);
+   const filteredFiles = data?.data?.files.filter((el) => el.deletedOn === null);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
