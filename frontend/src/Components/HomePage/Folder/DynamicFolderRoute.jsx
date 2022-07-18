@@ -19,6 +19,7 @@ const DynamicFolderRoute = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
+   const [loading, setLoading] = useState(true);
    const accessToken = localStorage.accessToken;
    const FolderLength = data?.data?.folders.length;
    const FilesLength = data?.data?.files.length;
@@ -26,7 +27,11 @@ const DynamicFolderRoute = () => {
    const navigate = useNavigate();
 
    useEffect(() => {
-      folderContent(accessToken, routeId, setData, setErrorMsg);
+      const getData = async () => {
+         await folderContent(accessToken, routeId, setData, setErrorMsg);
+         setLoading(false);
+      };
+      getData();
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
@@ -54,7 +59,12 @@ const DynamicFolderRoute = () => {
 
    return (
       <div className="home-page-body">
-         <NavbarPanel name={`Folders: ${FolderLength} - Files: ${FilesLength}`} searchBar={false} path={ROUTES.HOME} />
+         <NavbarPanel
+            name={!loading ? `Folders: ${FolderLength} - Files: ${FilesLength}` : "Loading..."}
+            searchBar={false}
+            path={ROUTES.HOME}
+            showName
+         />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
             <SetSuccessMsg
