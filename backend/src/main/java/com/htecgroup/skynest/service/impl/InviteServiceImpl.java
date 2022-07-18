@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.EmailNotInUse;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.service.CurrentUserService;
@@ -11,11 +10,9 @@ import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 @Service
 @Log4j2
-@Validated
 @AllArgsConstructor
 public class InviteServiceImpl implements InviteService {
 
@@ -23,7 +20,7 @@ public class InviteServiceImpl implements InviteService {
   private final EmailService emailService;
 
   @Override
-  public void sendRegistrationInvite(@EmailNotInUse String newUserEmail) {
+  public void sendRegistrationInvite(String newUserEmail) {
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
 
