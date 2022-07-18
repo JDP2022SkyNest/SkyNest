@@ -57,25 +57,6 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
       }
    }
 };
-const refreshToken = window.localStorage[`refresh-token`];
-export const GetRefreshToken = async () => {
-   const { setAccessToken } = useContext(GlobalContext);
-   try {
-      const response = await AxiosInstance.get("/token/refresh", {
-         headers: {
-            "refresh-token": refreshToken,
-         },
-      });
-      let { headers } = response;
-      let token = headers.authorization;
-      setAccessToken(token);
-      localStorage.setItem("accessToken", token);
-   } catch (err) {
-      if (err.response.status) {
-         console.log("error");
-      }
-   }
-};
 
 export const editUserData = async (accessToken, id, payload, success, error, func) => {
    try {

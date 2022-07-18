@@ -52,7 +52,7 @@ const HomePage = () => {
       await getAllBuckets(accessToken, setAllBuckets, setErrorMsg);
       setLoader(false);
    };
-   GetRefreshToken();
+
    const allData = allBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
