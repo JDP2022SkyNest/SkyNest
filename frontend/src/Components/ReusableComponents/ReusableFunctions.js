@@ -1,8 +1,6 @@
 import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
 import jwt_decode from "jwt-decode";
-import { useContext } from "react";
-import GlobalContext from "../context/GlobalContext";
 
 // eslint-disable-next-line
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
