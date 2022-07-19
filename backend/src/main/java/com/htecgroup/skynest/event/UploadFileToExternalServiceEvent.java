@@ -7,16 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class UploadFileToExternalServiceEvent extends ApplicationEvent {
 
-  // TODO: Implement event, add parameters for event (LambdaType, File)
   private final MultipartFile fileToUpload;
-  private final String filePath;
-  private final String bucketId;
+  private final String bucketName;
 
   public UploadFileToExternalServiceEvent(
-      Object source, MultipartFile fileToUpload, String filePath, String bucketId) {
+      Object source, MultipartFile fileToUpload, String bucketId) {
     super(source);
-    this.filePath = filePath;
     this.fileToUpload = fileToUpload;
-    this.bucketId = bucketId;
+    this.bucketName = bucketId;
   }
 }

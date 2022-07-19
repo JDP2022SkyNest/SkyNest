@@ -14,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-// TODO: Instead of String, lambda accepts Event and uploads file to external service, yet to be
-// decided.
 
 @Component
 @Log4j2
@@ -30,13 +28,13 @@ public class UploadFileToExternalServiceLambda
     try {
       MultipartFile file = event.getFileToUpload();
       ByteArrayInputStream inputStream = new ByteArrayInputStream(file.getBytes());
-      String name = event.getFileToUpload().getOriginalFilename();
+      String fileName = event.getFileToUpload().getOriginalFilename();
       Metadata uploadMetaData =
           dropboxClient
               .files()
-              .uploadBuilder("/" + event.getBucketId() + "/" + name)
+              .uploadBuilder("/" + event.getBucketName() + "/" + fileName)
               .uploadAndFinish(inputStream);
-      log.info("upload meta data =====> {}", uploadMetaData.toString());
+      log.info("upload meta data to dropbox =====> {}", uploadMetaData.toString());
       inputStream.close();
     } catch (IOException | DbxException e) {
       throw new RuntimeException(e);

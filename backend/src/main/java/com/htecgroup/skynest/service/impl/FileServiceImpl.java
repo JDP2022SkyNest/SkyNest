@@ -10,6 +10,7 @@ import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.*;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
@@ -83,12 +84,6 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     checkBucketNotDeleted(emptyFileMetadata);
     checkBucketSizeExceedsMax(emptyFileMetadata);
 
-    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    UploadFileToExternalServiceEvent event =
-        new UploadFileToExternalServiceEvent(
-            this, multipartFile, loggedUserDto.getUuid().toString(), bucketId.toString());
-    publisher.publishEvent(event);
-
     return uploadFile(emptyFileMetadata, multipartFile);
   }
 
@@ -120,6 +115,14 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
       permissionService.grantOwnerForObject(savedFileMetadata);
       actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
+
+      BucketEntity bucket = emptyFileMetadata.getBucket();
+
+      if (bucket.getLambdaTypes().contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA)) {
+        UploadFileToExternalServiceEvent event =
+            new UploadFileToExternalServiceEvent(this, multipartFile, bucket.getName());
+        publisher.publishEvent(event);
+      }
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
     } catch (IOException e) {

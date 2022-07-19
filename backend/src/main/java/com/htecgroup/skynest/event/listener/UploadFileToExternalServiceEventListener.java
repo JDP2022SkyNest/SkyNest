@@ -13,10 +13,6 @@ import org.springframework.stereotype.Component;
 public class UploadFileToExternalServiceEventListener
     implements ApplicationListener<UploadFileToExternalServiceEvent> {
 
-  // TODO: Inject factory for creating lambdas. Create lambda for event and execute it.
-  // Publishing events is going to be done in the service on the action that we want our lambda to
-  // be executed on.
-
   private BaseLambdaFactory baseLambdaFactory;
 
   @Override
