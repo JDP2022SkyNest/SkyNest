@@ -9,5 +9,5 @@ public interface TagService {
 
   TagResponse createTag(TagCreateRequest createTagRequest);
 
-  public List<TagResponse> listAllTags();
+  List<TagResponse> listAllTags();
 }

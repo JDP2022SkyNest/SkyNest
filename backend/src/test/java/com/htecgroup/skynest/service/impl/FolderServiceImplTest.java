@@ -154,7 +154,7 @@ class FolderServiceImplTest {
   void getAllRootFolders() {
     List<FolderEntity> expectedFolders =
         new ArrayList<>(Collections.singleton(FolderEntityUtil.getFolderWithoutParent()));
-    when(folderRepository.findAllByBucketIdAndParentFolderIsNull(any()))
+    when(folderRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(any()))
         .thenReturn(expectedFolders);
 
     List<FolderResponse> actualFolders =
@@ -163,14 +163,16 @@ class FolderServiceImplTest {
 
     Assertions.assertEquals(expectedFolders.size(), actualFolders.size());
     this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
-    verify(folderRepository, times(1)).findAllByBucketIdAndParentFolderIsNull(any());
+    verify(folderRepository, times(1))
+        .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(any());
   }
 
   @Test
   void getAllFoldersWithParent() {
     FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
     List<FolderEntity> expectedFolders = new ArrayList<>(Collections.singleton(folderEntity));
-    when(folderRepository.findAllByParentFolderId(any())).thenReturn(expectedFolders);
+    when(folderRepository.findAllByParentFolderIdOrderByNameAscCreatedOn(any()))
+        .thenReturn(expectedFolders);
 
     List<FolderResponse> actualFolders =
         folderService.getAllFoldersWithParent(folderEntity.getParentFolder().getId());
@@ -178,7 +180,7 @@ class FolderServiceImplTest {
     Assertions.assertEquals(expectedFolders.size(), actualFolders.size());
     this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
     verify(folderRepository, times(1))
-        .findAllByParentFolderId(folderEntity.getParentFolder().getId());
+        .findAllByParentFolderIdOrderByNameAscCreatedOn(folderEntity.getParentFolder().getId());
   }
 
   @Test
@@ -188,7 +190,8 @@ class FolderServiceImplTest {
     when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
     List<FolderEntity> expectedFolderEntities =
         new ArrayList<>(Collections.singleton(folderEntity));
-    when(folderRepository.findAllByParentFolderId(any())).thenReturn(expectedFolderEntities);
+    when(folderRepository.findAllByParentFolderIdOrderByNameAscCreatedOn(any()))
+        .thenReturn(expectedFolderEntities);
 
     List<FileResponse> expectedFileResponseList =
         new ArrayList<>(Collections.singleton(FileResponseUtil.getFileWithParent()));
@@ -210,7 +213,7 @@ class FolderServiceImplTest {
 
     Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
     verify(folderRepository, times(1)).findById(parentId);
-    verify(folderRepository, times(1)).findAllByParentFolderId(parentId);
+    verify(folderRepository, times(1)).findAllByParentFolderIdOrderByNameAscCreatedOn(parentId);
     verify(fileService, times(1)).getAllFilesWithParent(parentId);
   }
 

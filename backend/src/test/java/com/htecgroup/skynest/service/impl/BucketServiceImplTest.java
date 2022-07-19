@@ -48,7 +48,8 @@ class BucketServiceImplTest {
   void listAllBuckets() {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getPrivateBucket());
-    when(bucketRepository.findAll()).thenReturn(bucketEntityList);
+    when(bucketRepository.findAllByDeletedOnIsNullOrderByNameAscCreatedOn())
+        .thenReturn(bucketEntityList);
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
 
@@ -56,14 +57,15 @@ class BucketServiceImplTest {
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
-    verify(bucketRepository, times(1)).findAll();
+    verify(bucketRepository, times(1)).findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
   }
 
   @Test
   void listAllDeletedBuckets() {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getDeletedBucket());
-    when(bucketRepository.findAllByDeletedOnIsNotNull()).thenReturn(bucketEntityList);
+    when(bucketRepository.findAllByDeletedOnIsNotNullOrderByNameAscCreatedOn())
+        .thenReturn(bucketEntityList);
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
     List<BucketResponse> actualResponse = bucketService.listAllDeletedBuckets();

@@ -4,7 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import "./NavBarPanel.css";
 
-const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchTerm }) => {
+const AdminPanelNav = ({
+   name,
+   searchBar,
+   setSearchTerm,
+   path,
+   children,
+   searchTerm,
+   homeSearch = false,
+   setDelState,
+   placeholder = "Search User",
+}) => {
    const navigate = useNavigate();
 
    const searchFilter = () => {
@@ -19,7 +29,7 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchT
    return (
       <Navbar bg="dark" variant="dark">
          <Container>
-            <Navbar.Brand className="text-white d-none d-md-block">{name}</Navbar.Brand>
+            <Navbar.Brand className="text-white d-none d-md-block m-0 fixed-navbar-width">{name}</Navbar.Brand>
             {searchBar && (
                <div className="input-group" style={{ width: "200px" }}>
                   <input
@@ -28,30 +38,46 @@ const AdminPanelNav = ({ name, searchBar, setSearchTerm, path, children, searchT
                      onChange={(e) => setSearchTerm(e.target.value)}
                      className="form-control"
                      aria-label="Text input with segmented dropdown button"
-                     placeholder="Search User"
+                     placeholder={placeholder}
                   />
-                  <div className="input-group-append">
-                     <DropdownButton id="dropdown-basic-button" align={"end"} title="">
-                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("admin")}>
-                           Admins
-                        </Dropdown.Item>
-                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("manager")}>
-                           Managers
-                        </Dropdown.Item>
-                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("worker")}>
-                           Workers
-                        </Dropdown.Item>
-                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(true)}>
-                           Active Users
-                        </Dropdown.Item>
-                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(false)}>
-                           Disabled & Unverified
-                        </Dropdown.Item>
-                        <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
-                           Clear Search
-                        </Dropdown.Item>
-                     </DropdownButton>
-                  </div>
+                  {!homeSearch ? (
+                     <div className="input-group-append">
+                        <DropdownButton id="dropdown-basic-button" align={"end"} title="">
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("admin")}>
+                              Admins
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("manager")}>
+                              Managers
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("worker")}>
+                              Workers
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(true)}>
+                              Active Users
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(false)}>
+                              Disabled & Unverified
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
+                              Clear Search
+                           </Dropdown.Item>
+                        </DropdownButton>
+                     </div>
+                  ) : (
+                     <div className="input-group-append">
+                        <DropdownButton id="dropdown-basic-button" align={"end"} title="">
+                           <Dropdown.Item className="text-dark" onClick={() => setDelState(true)}>
+                              Deleted
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setDelState(false)}>
+                              Not Deleted
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
+                              Clear Search
+                           </Dropdown.Item>
+                        </DropdownButton>
+                     </div>
+                  )}
                </div>
             )}
             <div className="d-flex">
