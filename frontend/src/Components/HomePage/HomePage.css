@@ -118,12 +118,3 @@ transform: translate(-50%,-50%) scale(0.8);
 .data-folder .cursor-pointer {
   cursor: pointer;
 }
-
-.breadcrumb-other {
-  color: rgb(156, 156, 156) !important;
-}
-
-.breadcrumb .breadcrumb-item:last-child button {
-  color: black !important;
-  font-weight: bold;
-}

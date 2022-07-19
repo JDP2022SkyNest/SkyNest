@@ -4,7 +4,6 @@ import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -100,17 +99,8 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public void activateLambda(UUID bucketId, LambdaType lambdaType) {
-    BucketEntity bucketEntity = findBucketEntityById(bucketId);
-    bucketEntity.addLambda(lambdaType);
-    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
-    bucketRepository.save(bucketEntity);
-  }
-
-  @Override
   public List<BucketResponse> listAllBuckets() {
-    List<BucketEntity> entityList =
-        (List<BucketEntity>) bucketRepository.findAllByDeletedOnIsNull();
+    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 

@@ -18,6 +18,4 @@ public interface BucketRepository extends CrudRepository<BucketEntity, UUID> {
   Long sumSizeByUserId(UUID userId);
 
   List<BucketEntity> findAllByDeletedOnIsNotNull();
-
-  List<BucketEntity> findAllByDeletedOnIsNull();
 }

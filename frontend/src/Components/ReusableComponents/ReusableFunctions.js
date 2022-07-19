@@ -1,8 +1,6 @@
 import password from "secure-random-password";
 import AxiosInstance from "../axios/AxiosInstance";
 import jwt_decode from "jwt-decode";
-import { useContext } from "react";
-import GlobalContext from "../context/GlobalContext";
 
 // eslint-disable-next-line
 export const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#&()\–\[{}\]:\-;',?|/*%~$_^+=<>\s]{8,50}/;
@@ -54,6 +52,17 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
          messageToShow("Access denied");
       } else {
          messageToShow(err.response.data.messages);
+      }
+   }
+};
+
+export const updateToken = async () => {
+   try {
+      let response = await AxiosInstance.get("/token/refresh", { params: localStorage.getItem("refreshToken") });
+      console.log(response);
+   } catch (err) {
+      if (err.response.status) {
+         console.log("error");
       }
    }
 };
@@ -318,26 +327,26 @@ export const deleteFile = async (accessToken, fileId, error, success) => {
    }
 };
 
-export const bucketContent = async (accessToken, bucketId, stateToChange, error) => {
+export const bucketContent = async (accessToken, bucketId, stateToChange,error) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
    } catch (err) {
-      error(err.response.data.messages);
+      error(err.response.data.messages)
       console.log(err);
    }
 };
 
-export const folderContent = async (accessToken, folderId, stateToChange, error) => {
+export const folderContent = async (accessToken, folderId, stateToChange,error) => {
    try {
       let response = await AxiosInstance.get(`/folders/${folderId}`, {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
    } catch (err) {
-      error(err.response.data.messages);
+      error(err.response.data.messages)
       console.log(err);
    }
 };

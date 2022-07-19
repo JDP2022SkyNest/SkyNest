@@ -34,7 +34,6 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
             refresh();
          }, 2000);
       } catch (err) {
-         console.log(err);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {
@@ -53,7 +52,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded shadow">
+         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
          </span>
 

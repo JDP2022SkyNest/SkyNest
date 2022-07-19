@@ -3,7 +3,6 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -14,7 +13,10 @@ import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.*;
+import com.htecgroup.skynest.service.ActionService;
+import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.FolderService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,6 @@ class BucketServiceImplTest {
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
   @Mock private ActionService actionService;
-  @Mock private PermissionService permissionService;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private BucketServiceImpl bucketService;
   @Mock private FolderService folderService;
@@ -224,18 +225,5 @@ class BucketServiceImplTest {
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
     Assertions.assertFalse(bucketEntity.isDeleted());
-  }
-
-  @Test
-  void when_activateLambda_ShouldSaveEntityWithActivatedLambdas() {
-    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
-    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
-    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
-
-    bucketService.activateLambda(UUID.randomUUID(), lambdaType);
-    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
-
-    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
-    Assertions.assertTrue(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
   }
 }

@@ -26,9 +26,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
                description,
             },
             { headers: { Authorization: accessToken } }
-         )
-            .then((e) => console.log(e))
-            .catch((e) => console.log(e));
+         );
          setSuccessMsg("Bucket Created");
          setTimeout(() => {
             setShow(false);
@@ -37,7 +35,6 @@ const AddBucketModal = ({ refreshBuckets }) => {
             refreshBuckets();
          }, 2000);
       } catch (err) {
-         console.log(err);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {
@@ -56,7 +53,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 latte-background custom-rounded shadow">
+         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
          </span>
 
