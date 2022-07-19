@@ -17,7 +17,7 @@ public interface BucketRepository extends CrudRepository<BucketEntity, UUID> {
   @Query("SELECT SUM(b.size) FROM bucket b WHERE b.company IS NULL AND b.createdBy.id = ?1")
   Long sumSizeByUserId(UUID userId);
 
-  List<BucketEntity> findAllByDeletedOnIsNotNull();
+  List<BucketEntity> findAllByDeletedOnIsNotNullOrderByNameAscCreatedOn();
 
-  List<BucketEntity> findAllByDeletedOnIsNull();
+  List<BucketEntity> findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
 }
