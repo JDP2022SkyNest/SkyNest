@@ -3,6 +3,7 @@ package com.htecgroup.skynest.controller;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.BucketService;
+import com.htecgroup.skynest.service.CurrentUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 public class LambdaController {
 
   private BucketService bucketService;
+
+  private CurrentUserService currentUserService;
 
   @Operation(summary = "Get all lambdas")
   @ApiResponses(
@@ -65,6 +68,55 @@ public class LambdaController {
   @GetMapping
   public List<LambdaType> getAllLambdas() {
     return Arrays.stream(LambdaType.values()).collect(Collectors.toList());
+  }
+
+  @Operation(summary = "Deactivate lambda for bucket")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Lambda successfully deactivated for given bucket"),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PutMapping("/bucket/{bucketId}/deactivate")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deactivateLambdaForBucket(
+      @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
+    bucketService.deactivateLambda(bucketId, lambda);
+    log.info(
+        "Deactivated lambda {} for bucket {} by owner with id {}",
+        lambda.toString(),
+        bucketId.toString(),
+        currentUserService.getLoggedUser().getUuid());
   }
 
   @Operation(summary = "Get all active lambdas for bucket")
@@ -149,6 +201,10 @@ public class LambdaController {
   public void activateLambdaForBucket(
       @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
     bucketService.activateLambda(bucketId, lambda);
-    log.info("Activated lambda {} for bucket {}", lambda.toString(), bucketId.toString());
+    log.info(
+        "Activated lambda {} for bucket {} by owner with id {}",
+        lambda.toString(),
+        bucketId.toString(),
+        currentUserService.getLoggedUser().getUuid());
   }
 }
