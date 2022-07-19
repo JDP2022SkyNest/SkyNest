@@ -15,4 +15,5 @@ public class StorageContentResponse {
   private UUID bucketId;
   private List<FolderResponse> folders;
   private List<FileResponse> files;
+  private List<ShortFolderResponse> path;
 }

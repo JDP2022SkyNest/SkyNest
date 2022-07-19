@@ -4,6 +4,7 @@ import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -91,7 +92,8 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public List<BucketResponse> listAllDeletedBuckets() {
-    List<BucketEntity> entityList = bucketRepository.findAllByDeletedOnIsNotNull();
+    List<BucketEntity> entityList =
+        bucketRepository.findAllByDeletedOnIsNotNullOrderByNameAscCreatedOn();
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
@@ -99,8 +101,25 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
+  public void activateLambda(UUID bucketId, LambdaType lambdaType) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.addLambda(lambdaType);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
+  public void deactivateLambda(UUID bucketId, LambdaType lambda) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.removeLambda(lambda);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
   public List<BucketResponse> listAllBuckets() {
-    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
+    List<BucketEntity> entityList =
+        (List<BucketEntity>) bucketRepository.findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
@@ -147,7 +166,7 @@ public class BucketServiceImpl implements BucketService {
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
-    if (bucketEntity.getDeletedOn() != null) {
+    if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
@@ -168,7 +187,7 @@ public class BucketServiceImpl implements BucketService {
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
-        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse);
+        new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
   }
 }

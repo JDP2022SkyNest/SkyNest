@@ -6,39 +6,76 @@ import ROUTES from "../../Routes/ROUTES";
 import Footer from "../../Footer/Footer";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetInfoMsg from "../../ReusableComponents/SetInfoMsg";
 import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
 import Files from "../Files/Files";
+import * as AiCions from "react-icons/ai";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
    const [data, setData] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [delState, setDelState] = useState(false);
+   const filteredFolders = data?.data?.folders.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
+   const filteredFiles = data?.data?.files.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
+   const [infoMsg, setInfoMsg] = useState("");
+   const [loading, setLoading] = useState(true);
    const accessToken = localStorage.accessToken;
-   const FolderLength = data?.data?.folders.length;
-   const FilesLength = data?.data?.files.length;
+   const FolderLength = filteredFolders?.length;
+   const FilesLength = filteredFiles?.length;
 
    useEffect(() => {
-      bucketContent(accessToken, routeId, setData,setErrorMsg);
+      const getData = async () => {
+         await bucketContent(accessToken, routeId, setData, setErrorMsg);
+         setLoading(false);
+      };
+      getData();
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
       await bucketContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => (
+   const allData = filteredFolders?.map((elem, index) => (
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
-   const alLFiles = data?.data?.files.map((elem, index) => (
-      <Files elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
+   const alLFiles = filteredFiles?.map((elem, index) => (
+      <Files
+         elem={elem}
+         key={index}
+         setErrorMsg={setErrorMsg}
+         setSuccessMsg={setSuccessMsg}
+         setInfoMsg={setInfoMsg}
+         refresh={refreshFoldersAndFiles}
+      />
    ));
 
    return (
       <div className="home-page-body">
-         <NavbarPanel name={`Folders: ${FolderLength} - Files: ${FilesLength}`} searchBar={false} path={ROUTES.HOME} />
+         <NavbarPanel
+            name={
+               !loading ? (
+                  <div>
+                     <AiCions.AiFillFolderOpen className="main-icon-align" /> {FolderLength} - <AiCions.AiOutlineFile className="main-icon-align" />{" "}
+                     {FilesLength}
+                  </div>
+               ) : (
+                  "Loading..."
+               )
+            }
+            searchBar={true}
+            path={ROUTES.HOME}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            homeSearch
+            setDelState={setDelState}
+            placeholder="Search..."
+         />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
             <SetSuccessMsg
@@ -46,6 +83,7 @@ const DynamicRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
+            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />

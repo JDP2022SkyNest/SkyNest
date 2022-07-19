@@ -715,7 +715,7 @@ public class FileController {
             }),
         @ApiResponse(
             responseCode = "409",
-            description = "File is already inside the folder",
+            description = "File is already inside the root of the bucket",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -723,7 +723,7 @@ public class FileController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"File is already inside the folder.\"],"
+                            "{\"messages\":[\"File is already inside the root of the bucket.\"],"
                                 + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })

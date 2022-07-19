@@ -163,7 +163,7 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
 
     FileMetadataEntity fileMetadataEntity =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-    if (fileMetadataEntity.getDeletedOn() != null) {
+    if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
     fileInfoEditRequest.setName(fileInfoEditRequest.getName().trim());
@@ -178,14 +178,15 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   @Override
   public List<FileResponse> getAllRootFiles(UUID bucketId) {
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
+        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(
+            bucketId);
     return asFileResponseList(allFiles);
   }
 
   @Override
   public List<FileResponse> getAllFilesWithParent(UUID parentFolderId) {
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByParentFolderId(parentFolderId);
+        fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOn(parentFolderId);
     return asFileResponseList(allFiles);
   }
 
@@ -342,13 +343,11 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   }
 
   private void checkBucketNotDeleted(FileMetadataEntity fileMetadataEntity) {
-    if (fileMetadataEntity.getBucket().getDeletedOn() != null)
-      throw new BucketAlreadyDeletedException();
+    if (fileMetadataEntity.getBucket().isDeleted()) throw new BucketAlreadyDeletedException();
   }
 
   private void checkFolderNotDeleted(FileMetadataEntity fileMetadataEntity) {
-    if (fileMetadataEntity.getParentFolder().getDeletedOn() != null)
-      throw new FolderAlreadyDeletedException();
+    if (fileMetadataEntity.getParentFolder().isDeleted()) throw new FolderAlreadyDeletedException();
   }
 
   private void checkBucketSizeExceedsMax(FileMetadataEntity fileMetadataEntity) {

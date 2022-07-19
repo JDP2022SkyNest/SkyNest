@@ -7,7 +7,6 @@ import com.htecgroup.skynest.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -52,7 +51,7 @@ public final class FileMetadataEntityUtil {
 
   public static FileMetadataEntity getDeleted() {
     FileMetadataEntity fileMetadataEntity = getRootFileMetadataEntity();
-    fileMetadataEntity.setDeletedOn(LocalDateTime.now());
+    fileMetadataEntity.delete();
     return fileMetadataEntity;
   }
 }

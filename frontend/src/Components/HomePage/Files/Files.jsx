@@ -6,7 +6,7 @@ import FileInfo from "./FileInfo";
 import { fileDownload, deleteFile } from "../../ReusableComponents/ReusableFunctions";
 import EditFileInfo from "./EditFileInfo";
 
-const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
+const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
@@ -14,7 +14,7 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
 
    return (
       <div className="col-6 col-sm-6 col-md-3 col-lg-2 p-1 mt-2">
-         <div className="cursor-pointer bg-white rounded">
+         <div className={`cursor-pointer bucket-hover rounded shadow ${elem.deletedOn !== null ? "deleted-clr" : "bg-white"}`}>
             <div className="p-2 px-3">
                <div className="text-overflow file-text-width">
                   <AiCions.AiOutlineFile className="main-icon-align mr-1" fill="var(--gold)" />
@@ -29,7 +29,6 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                   <Dropdown.Menu>
                      <Dropdown.Item
                         onClick={(e) => {
-                           e.stopPropagation();
                            handleShow();
                         }}
                         className="text-dark"
@@ -39,12 +38,19 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      <Dropdown.Item className="text-dark">
                         <EditFileInfo elem={elem} refresh={refresh} />
                      </Dropdown.Item>
-                     <Dropdown.Item onClick={() => fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg)} className="text-dark">
+                     <Dropdown.Item
+                        onClick={async () => {
+                           setInfoMsg("Preparing Download");
+                           await fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg);
+                           setInfoMsg("");
+                        }}
+                        className="text-dark"
+                     >
                         Download File
                      </Dropdown.Item>
                      <Dropdown.Item
-                        onClick={() => {
-                           deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                        onClick={async () => {
+                           await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                            refresh();
                         }}
                         className="text-dark"
