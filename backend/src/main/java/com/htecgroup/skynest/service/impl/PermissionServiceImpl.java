@@ -20,7 +20,9 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -130,6 +132,16 @@ public class PermissionServiceImpl implements PermissionService {
 
     if (actualAccessType.ordinal() < minimumAccessType.ordinal())
       throw new BucketAccessDeniedException();
+  }
+
+  @Override
+  public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
+    List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(bucketId);
+
+    log.info("Current user accessed the permissions of the bucket with the id {}", bucketId);
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, PermissionResponse.class))
+        .collect(Collectors.toList());
   }
 
   @Override

@@ -6,6 +6,7 @@ import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PermissionService {
@@ -15,6 +16,8 @@ public interface PermissionService {
   void grantOwnerForObject(ObjectEntity object);
 
   void currentUserHasPermissionForBucket(UUID bucketId, AccessType minimumAccessType);
+
+  List<PermissionResponse> getAllBucketPermission(UUID bucketId);
 
   PermissionResponse editPermission(PermissionEditRequest permissionEditRequest, UUID bucketId);
 }
