@@ -109,6 +109,14 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
+  public void deactivateLambda(UUID bucketId, LambdaType lambda) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.removeLambda(lambda);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
