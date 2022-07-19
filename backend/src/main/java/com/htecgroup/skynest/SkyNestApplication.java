@@ -1,7 +1,6 @@
 package com.htecgroup.skynest;
 
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
-import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +44,7 @@ public class SkyNestApplication {
   }
 
   @Bean("dropboxClient")
-  public DbxClientV2 dropboxClient() throws DbxException {
+  public DbxClientV2 dropboxClient() {
     String ACCESS_TOKEN =
         "sl.BLvQJNuOz5yfPt5TSENtKsPX53OUioAOpcZez0-cvC_zjDOv-wxnXhK6s6eQ__9J3FVUuAnkDzjVaZDQo6nz9Jrr991MWDmChdWLIn8gdZkPOhwgkjnlZAaGz9tKUpG0Ea7DrFY";
     DbxRequestConfig config = new DbxRequestConfig("/skynest/dropbox");

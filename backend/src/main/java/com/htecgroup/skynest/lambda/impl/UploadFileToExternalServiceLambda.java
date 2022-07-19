@@ -1,9 +1,12 @@
 package com.htecgroup.skynest.lambda.impl;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.InvalidAccessTokenException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.Metadata;
 import com.htecgroup.skynest.event.UploadFileToExternalServiceEvent;
+import com.htecgroup.skynest.exception.lambda.DropboxFailedException;
+import com.htecgroup.skynest.exception.lambda.DropboxInvalidAccessTokenException;
 import com.htecgroup.skynest.lambda.Lambda;
 import com.htecgroup.skynest.lambda.LambdaType;
 import lombok.AllArgsConstructor;
@@ -36,8 +39,10 @@ public class UploadFileToExternalServiceLambda
               .uploadAndFinish(inputStream);
       log.info("upload meta data to dropbox =====> {}", uploadMetaData.toString());
       inputStream.close();
+    } catch (InvalidAccessTokenException e) {
+      throw new DropboxInvalidAccessTokenException();
     } catch (IOException | DbxException e) {
-      throw new RuntimeException(e);
+      throw new DropboxFailedException();
     }
     return true;
   }
