@@ -5,3 +5,7 @@ div.dropdown button#dropdown-basic-button {
    border-top-left-radius: 0px;
    border-bottom-left-radius: 0px;
  }
+
+ .fixed-navbar-width {
+  width: 105px !important;
+ }
