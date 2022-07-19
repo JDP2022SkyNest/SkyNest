@@ -119,6 +119,46 @@ public class LambdaController {
         currentUserService.getLoggedUser().getUuid());
   }
 
+  @Operation(summary = "Get all active lambdas for bucket")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "All active lambdas returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = LambdaType.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[\"UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA\","
+                                + "\"SOME_OTHER_LAMBDA\"]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @GetMapping("/active/bucket/{bucketId}")
+  public List<LambdaType> getActiveLambdasForBucket(@PathVariable UUID bucketId) {
+    List<LambdaType> activeLambdas = bucketService.getActiveLambdas(bucketId);
+    log.info("Successfully got {} active lambdas for bucket {}", activeLambdas, bucketId);
+    return activeLambdas;
+  }
+
   @Operation(summary = "Activate lambda for bucket")
   @ApiResponses(
       value = {

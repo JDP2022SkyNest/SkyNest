@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as AiCions from "react-icons/ai";
-import { deleteFolder } from "../../ReusableComponents/ReusableFunctions";
+import { deleteFolder, restoreFolder } from "../../ReusableComponents/ReusableFunctions";
 import EditFolderModal from "./EditFolderModal";
 import FolderInfo from "./FolderInfo";
 import { useNavigate } from "react-router-dom";
@@ -48,15 +48,27 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      <Dropdown.Item className="text-dark">
                         <EditFolderModal elem={elem} refresh={refresh} />
                      </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={async () => {
-                           await deleteFolder(accessToken, elem.id, setErrorMsg, setSuccessMsg);
-                           refresh();
-                        }}
-                        className="text-dark"
-                     >
-                        Delete folder
-                     </Dropdown.Item>
+                     {elem.deletedOn === null ? (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await deleteFolder(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              refresh();
+                           }}
+                           className="text-dark"
+                        >
+                           Delete folder
+                        </Dropdown.Item>
+                     ) : (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await restoreFolder(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              refresh();
+                           }}
+                           className="text-dark"
+                        >
+                           Restore folder
+                        </Dropdown.Item>
+                     )}
                   </Dropdown.Menu>
                </Dropdown>
             </div>

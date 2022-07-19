@@ -253,4 +253,16 @@ class BucketServiceImplTest {
     BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
     Assertions.assertFalse(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
   }
+
+  @Test
+  void when_getActiveLambdas_ShouldReturnAllActiveLambdas() {
+    BucketEntity bucketWithLambda = BucketEntityUtil.getPrivateBucketWithLambdas();
+    doReturn(bucketWithLambda).when(bucketService).findBucketEntityById(any());
+    UUID bucketId = UUID.randomUUID();
+    List<LambdaType> returnedLambdas = bucketService.getActiveLambdas(bucketId);
+
+    Assertions.assertTrue(
+        returnedLambdas.contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA));
+    Assertions.assertEquals(1, returnedLambdas.size());
+  }
 }
