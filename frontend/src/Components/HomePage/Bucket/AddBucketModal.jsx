@@ -26,9 +26,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
                description,
             },
             { headers: { Authorization: accessToken } }
-         )
-            .then((e) => console.log(e))
-            .catch((e) => console.log(e));
+         );
          setSuccessMsg("Bucket Created");
          setTimeout(() => {
             setShow(false);
