@@ -16,6 +16,8 @@ import Breadcrumbs from "./Breadcrumbs";
 const DynamicFolderRoute = () => {
    const { routeId } = useParams();
    const [data, setData] = useState([]);
+   const filteredFolders = data?.data?.folders.filter((el) => el.deletedOn !== null);
+   const filteredFiles = data?.data?.files.filter((el) => el.deletedOn !== null);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
@@ -38,7 +40,7 @@ const DynamicFolderRoute = () => {
       await folderContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => (
+   const allData = filteredFolders.map((elem, index) => (
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
@@ -46,7 +48,7 @@ const DynamicFolderRoute = () => {
       return <Breadcrumbs key={index} elem={elem} />;
    });
 
-   const alLFiles = data?.data?.files.map((elem, index) => (
+   const alLFiles = filteredFiles.map((elem, index) => (
       <Files
          elem={elem}
          key={index}
