@@ -88,16 +88,6 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public List<BucketResponse> listAllDeletedBuckets() {
-    List<BucketEntity> entityList =
-        bucketRepository.findAllByDeletedOnIsNotNullOrderByNameAscCreatedOn();
-    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
-    return entityList.stream()
-        .map(e -> modelMapper.map(e, BucketResponse.class))
-        .collect(Collectors.toList());
-  }
-
-  @Override
   public void activateLambda(UUID bucketId, LambdaType lambdaType) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
     bucketEntity.addLambda(lambdaType);
@@ -115,8 +105,7 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public List<BucketResponse> listAllBuckets() {
-    List<BucketEntity> entityList =
-        (List<BucketEntity>) bucketRepository.findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
+    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAllByOrderByName();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
