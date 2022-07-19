@@ -6,6 +6,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
 import com.htecgroup.skynest.repository.AccessTypeRepository;
@@ -129,5 +130,46 @@ public class PermissionServiceImpl implements PermissionService {
 
     if (actualAccessType.ordinal() < minimumAccessType.ordinal())
       throw new BucketAccessDeniedException();
+  }
+
+  @Override
+  public PermissionResponse editPermission(
+      PermissionEditRequest permissionEditRequest, UUID bucketId) {
+    UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(bucketId);
+    UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
+    AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
+
+    return setAndSavePermission(
+        userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
+  }
+
+  private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
+    UserEntity targetUser =
+        userRepository
+            .findById(permissionEditRequest.getGrantedTo())
+            .orElseThrow(UserNotFoundException::new);
+    return targetUser;
+  }
+
+  private AccessTypeEntity findAccessTypeForEdit(PermissionEditRequest permissionEditRequest) {
+    AccessTypeEntity accessType =
+        accessTypeRepository
+            .findByName(permissionEditRequest.getAccess())
+            .orElseThrow(AccessTypeNotFoundException::new);
+    return accessType;
+  }
+
+  private PermissionResponse setAndSavePermission(
+      UserObjectAccessEntity userObjectAccessEntity,
+      UserEntity targetUser,
+      AccessTypeEntity accessType,
+      PermissionEditRequest permissionEditRequest) {
+    userObjectAccessEntity.setGrantedTo(targetUser);
+    userObjectAccessEntity.setAccess(accessType);
+
+    modelMapper.map(permissionEditRequest, userObjectAccessEntity);
+    UserObjectAccessEntity savedUserObjectAccessEntity =
+        permissionRepository.save(userObjectAccessEntity);
+    return modelMapper.map(savedUserObjectAccessEntity, PermissionResponse.class);
   }
 }
