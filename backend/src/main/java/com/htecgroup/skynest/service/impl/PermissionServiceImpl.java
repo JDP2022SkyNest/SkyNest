@@ -155,6 +155,9 @@ public class PermissionServiceImpl implements PermissionService {
         userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
   }
 
+  @Override
+  public void revokePermission(UUID bucketId) {}
+
   private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
     UserEntity targetUser =
         userRepository
