@@ -1,12 +1,15 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
+import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
+import com.htecgroup.skynest.exception.tag.TagNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.TagEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.TagResponse;
+import com.htecgroup.skynest.repository.ObjectRepository;
+import com.htecgroup.skynest.repository.ObjectToTagRepository;
 import com.htecgroup.skynest.repository.TagRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.TagService;
@@ -15,6 +18,8 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -22,6 +27,8 @@ public class TagServiceImpl implements TagService {
 
   private TagRepository tagRepository;
   private CurrentUserService currentUserService;
+  private ObjectRepository objectRepository;
+  private ObjectToTagRepository objectToTagRepository;
   private ModelMapper modelMapper;
 
   @Override
@@ -52,5 +59,17 @@ public class TagServiceImpl implements TagService {
         savedTagEntity.getId());
 
     return modelMapper.map(savedTagEntity, TagResponse.class);
+  }
+
+  @Override
+  public void tagObject(UUID tagId, UUID objectId) {
+    TagEntity tagEntity = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
+    ObjectEntity objectEntity =
+        objectRepository.findById(objectId).orElseThrow(ObjectNotFoundException::new);
+
+    ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
+    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
+
+    objectToTagRepository.save(objectToTagEntity);
   }
 }
