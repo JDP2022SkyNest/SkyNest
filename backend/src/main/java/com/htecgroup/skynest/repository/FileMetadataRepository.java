@@ -12,7 +12,8 @@ public interface FileMetadataRepository extends CrudRepository<FileMetadataEntit
   boolean existsByNameAndBucketAndParentFolder(
       String name, BucketEntity bucket, FolderEntity parentFolder);
 
-  List<FileMetadataEntity> findAllByBucketIdAndParentFolderIsNull(UUID bucketId);
+  List<FileMetadataEntity> findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(
+      UUID bucketId);
 
-  List<FileMetadataEntity> findAllByParentFolderId(UUID parentFolderId);
+  List<FileMetadataEntity> findAllByParentFolderIdOrderByNameAscCreatedOn(UUID parentFolderId);
 }
