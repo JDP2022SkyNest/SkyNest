@@ -4,9 +4,8 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.model.entity.AccessType;
-import com.htecgroup.skynest.model.entity.UserObjectAccessEntity;
-import com.htecgroup.skynest.model.entity.UserObjectAccessKey;
+import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
 import com.htecgroup.skynest.repository.AccessTypeRepository;
@@ -159,5 +158,31 @@ class PermissionServiceImplTest {
           permissionService.currentUserHasPermissionForBucket(
               UserEntityUtil.getAdmin().getId(), AccessType.OWNER);
         });
+  }
+
+  @Test
+  void editPermission() {
+    UserObjectAccessEntity expectedUserObjectAccessEntity =
+        UserObjectAccessEntityUtil.getUserObjectAccess();
+    UserEntity userEntity = UserEntityUtil.getVerified();
+    AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
+    when(permissionRepository.findByObjectId(any())).thenReturn(expectedUserObjectAccessEntity);
+    when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+    when(accessTypeRepository.findByName(any())).thenReturn(Optional.of(accessType));
+    when(permissionRepository.save(any())).thenReturn(expectedUserObjectAccessEntity);
+
+    PermissionEditRequest permissionEditRequest = PermissionEditRequestUtil.get();
+    PermissionResponse actualPermissionResponse =
+        permissionService.editPermission(
+            permissionEditRequest, expectedUserObjectAccessEntity.getObject().getId());
+
+    verify(permissionRepository, times(1))
+        .findByObjectId(expectedUserObjectAccessEntity.getObject().getId());
+    verify(permissionRepository, times(1)).save(expectedUserObjectAccessEntity);
+    Assertions.assertEquals(
+        expectedUserObjectAccessEntity.getObject().getId(), actualPermissionResponse.getObjectId());
+    Assertions.assertEquals(
+        expectedUserObjectAccessEntity.getAccess().getName(),
+        actualPermissionResponse.getAccessName());
   }
 }

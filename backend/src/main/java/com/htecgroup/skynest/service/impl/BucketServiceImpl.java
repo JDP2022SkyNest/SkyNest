@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,6 +106,14 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
+  public void deactivateLambda(UUID bucketId, LambdaType lambda) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.removeLambda(lambda);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
@@ -181,5 +186,11 @@ public class BucketServiceImpl implements BucketService {
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
+  }
+
+  @Override
+  public List<LambdaType> getActiveLambdas(UUID bucketId) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    return new ArrayList<>(bucketEntity.getLambdaTypes());
   }
 }
