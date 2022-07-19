@@ -91,7 +91,7 @@ class FileServiceImplTest {
     FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
-    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(
+    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
             any()))
         .thenReturn(expectedFiles);
 
@@ -101,7 +101,7 @@ class FileServiceImplTest {
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
-        .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(
+        .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
             fileMetadataEntity.getBucket().getId());
   }
 
@@ -110,7 +110,7 @@ class FileServiceImplTest {
     FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getNotRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
-    when(fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOn(any()))
+    when(fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(any()))
         .thenReturn(expectedFiles);
 
     List<FileResponse> actualFiles =
@@ -119,7 +119,7 @@ class FileServiceImplTest {
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
-        .findAllByParentFolderIdOrderByNameAscCreatedOn(
+        .findAllByParentFolderIdOrderByNameAscCreatedOnDesc(
             fileMetadataEntity.getParentFolder().getId());
   }
 

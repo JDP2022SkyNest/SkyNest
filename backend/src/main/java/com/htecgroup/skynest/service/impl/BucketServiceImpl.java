@@ -105,7 +105,8 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public List<BucketResponse> listAllBuckets() {
-    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAllByOrderByName();
+    List<BucketEntity> entityList =
+        (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 

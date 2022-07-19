@@ -10,9 +10,10 @@ import java.util.UUID;
 @Repository
 public interface FolderRepository extends JpaRepository<FolderEntity, UUID> {
 
-  List<FolderEntity> findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(UUID bucketId);
+  List<FolderEntity> findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+      UUID bucketId);
 
-  List<FolderEntity> findAllByParentFolderIdOrderByNameAscCreatedOn(UUID parentFolderId);
+  List<FolderEntity> findAllByParentFolderIdOrderByNameAscCreatedOnDesc(UUID parentFolderId);
 
   FolderEntity findFolderById(UUID uuid);
 }
