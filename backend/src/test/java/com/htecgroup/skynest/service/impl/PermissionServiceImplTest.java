@@ -8,6 +8,7 @@ import com.htecgroup.skynest.model.entity.AccessType;
 import com.htecgroup.skynest.model.entity.UserObjectAccessEntity;
 import com.htecgroup.skynest.model.entity.UserObjectAccessKey;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
+import com.htecgroup.skynest.model.response.PermissionResponse;
 import com.htecgroup.skynest.repository.AccessTypeRepository;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserObjectAccessRepository;
@@ -24,10 +25,10 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PermissionServiceImplTest {
@@ -43,6 +44,23 @@ class PermissionServiceImplTest {
 
   @BeforeEach
   void setUp() {}
+
+  @Test
+  void when_getAllPermissionsForBucket_shouldReturnAllPermissions() {
+    List<UserObjectAccessEntity> userObjectAccessEntityList =
+        Collections.singletonList(UserObjectAccessEntityUtil.getUserObjectAccess());
+    UUID objectId = BucketEntityUtil.getPrivateBucket().getId();
+    when(permissionRepository.findAllByObjectId(objectId)).thenReturn(userObjectAccessEntityList);
+
+    List<UserObjectAccessEntity> expectedResponse = new ArrayList<>(userObjectAccessEntityList);
+
+    List<PermissionResponse> actualResponse = permissionService.getAllBucketPermission(objectId);
+
+    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+    verify(permissionRepository, times(1)).findAllByObjectId(objectId);
+    Assertions.assertEquals(
+        expectedResponse.get(0).getObject().getId(), actualResponse.get(0).getObjectId());
+  }
 
   @Test
   void grantPermissionForBucket_ThrowsException_WhenRequestedUserDoesNotExist() {
