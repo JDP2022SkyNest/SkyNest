@@ -15,6 +15,7 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.PermissionService;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ class FolderServiceImplTest {
   @Mock private CurrentUserService currentUserService;
 
   @Mock private ActionService actionService;
+  @Mock private PermissionService permissionService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
   @Mock private FileService fileService;
