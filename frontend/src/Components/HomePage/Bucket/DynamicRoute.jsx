@@ -11,6 +11,7 @@ import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
 import Files from "../Files/Files";
+import * as AiCions from "react-icons/ai";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -57,7 +58,16 @@ const DynamicRoute = () => {
    return (
       <div className="home-page-body">
          <NavbarPanel
-            name={!loading ? `Folders: ${FolderLength} - Files: ${FilesLength}` : "Loading..."}
+            name={
+               !loading ? (
+                  <div>
+                     <AiCions.AiFillFolderOpen className="main-icon-align" /> {FolderLength} - <AiCions.AiOutlineFile className="main-icon-align" />{" "}
+                     {FilesLength}
+                  </div>
+               ) : (
+                  "Loading..."
+               )
+            }
             searchBar={true}
             path={ROUTES.HOME}
             searchTerm={searchTerm}

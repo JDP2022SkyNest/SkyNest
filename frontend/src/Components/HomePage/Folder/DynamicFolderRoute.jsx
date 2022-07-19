@@ -12,6 +12,7 @@ import Folders from "../Folder/Folders";
 import UploadToFolder from "./UploadToFolder";
 import Files from "../Files/Files";
 import Breadcrumbs from "./Breadcrumbs";
+import * as AiCions from "react-icons/ai";
 
 const DynamicFolderRoute = () => {
    const { routeId } = useParams();
@@ -25,8 +26,8 @@ const DynamicFolderRoute = () => {
    const [infoMsg, setInfoMsg] = useState("");
    const [loading, setLoading] = useState(true);
    const accessToken = localStorage.accessToken;
-   const FolderLength = data?.data?.folders.length;
-   const FilesLength = data?.data?.files.length;
+   const FolderLength = filteredFolders?.length;
+   const FilesLength = filteredFiles?.length;
 
    const navigate = useNavigate();
 
@@ -64,7 +65,16 @@ const DynamicFolderRoute = () => {
    return (
       <div className="home-page-body">
          <NavbarPanel
-            name={!loading ? `Folders: ${FolderLength} - Files: ${FilesLength}` : "Loading..."}
+            name={
+               !loading ? (
+                  <div>
+                     <AiCions.AiFillFolderOpen className="main-icon-align" /> {FolderLength} - <AiCions.AiOutlineFile className="main-icon-align" />{" "}
+                     {FilesLength}
+                  </div>
+               ) : (
+                  "Loading..."
+               )
+            }
             searchBar={true}
             path={ROUTES.HOME}
             searchTerm={searchTerm}

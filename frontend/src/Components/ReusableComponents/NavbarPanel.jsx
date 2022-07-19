@@ -29,7 +29,7 @@ const AdminPanelNav = ({
    return (
       <Navbar bg="dark" variant="dark">
          <Container>
-            <Navbar.Brand className="text-white d-none d-md-block">{name}</Navbar.Brand>
+            <Navbar.Brand className="text-white d-none d-md-block m-0">{name}</Navbar.Brand>
             {searchBar && (
                <div className="input-group" style={{ width: "200px" }}>
                   <input
