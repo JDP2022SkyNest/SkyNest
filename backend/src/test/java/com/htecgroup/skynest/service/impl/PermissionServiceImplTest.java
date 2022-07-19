@@ -4,10 +4,10 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.model.entity.AccessType;
-import com.htecgroup.skynest.model.entity.UserObjectAccessEntity;
-import com.htecgroup.skynest.model.entity.UserObjectAccessKey;
+import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
+import com.htecgroup.skynest.model.response.PermissionResponse;
 import com.htecgroup.skynest.repository.AccessTypeRepository;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserObjectAccessRepository;
@@ -24,10 +24,10 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PermissionServiceImplTest {
@@ -43,6 +43,23 @@ class PermissionServiceImplTest {
 
   @BeforeEach
   void setUp() {}
+
+  @Test
+  void when_getAllPermissionsForBucket_shouldReturnAllPermissions() {
+    List<UserObjectAccessEntity> userObjectAccessEntityList =
+        Collections.singletonList(UserObjectAccessEntityUtil.getUserObjectAccess());
+    UUID objectId = BucketEntityUtil.getPrivateBucket().getId();
+    when(permissionRepository.findAllByObjectId(objectId)).thenReturn(userObjectAccessEntityList);
+
+    List<UserObjectAccessEntity> expectedResponse = new ArrayList<>(userObjectAccessEntityList);
+
+    List<PermissionResponse> actualResponse = permissionService.getAllBucketPermission(objectId);
+
+    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
+    verify(permissionRepository, times(1)).findAllByObjectId(objectId);
+    Assertions.assertEquals(
+        expectedResponse.get(0).getObject().getId(), actualResponse.get(0).getObjectId());
+  }
 
   @Test
   void grantPermissionForBucket_ThrowsException_WhenRequestedUserDoesNotExist() {
@@ -141,5 +158,31 @@ class PermissionServiceImplTest {
           permissionService.currentUserHasPermissionForBucket(
               UserEntityUtil.getAdmin().getId(), AccessType.OWNER);
         });
+  }
+
+  @Test
+  void editPermission() {
+    UserObjectAccessEntity expectedUserObjectAccessEntity =
+        UserObjectAccessEntityUtil.getUserObjectAccess();
+    UserEntity userEntity = UserEntityUtil.getVerified();
+    AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
+    when(permissionRepository.findByObjectId(any())).thenReturn(expectedUserObjectAccessEntity);
+    when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+    when(accessTypeRepository.findByName(any())).thenReturn(Optional.of(accessType));
+    when(permissionRepository.save(any())).thenReturn(expectedUserObjectAccessEntity);
+
+    PermissionEditRequest permissionEditRequest = PermissionEditRequestUtil.get();
+    PermissionResponse actualPermissionResponse =
+        permissionService.editPermission(
+            permissionEditRequest, expectedUserObjectAccessEntity.getObject().getId());
+
+    verify(permissionRepository, times(1))
+        .findByObjectId(expectedUserObjectAccessEntity.getObject().getId());
+    verify(permissionRepository, times(1)).save(expectedUserObjectAccessEntity);
+    Assertions.assertEquals(
+        expectedUserObjectAccessEntity.getObject().getId(), actualPermissionResponse.getObjectId());
+    Assertions.assertEquals(
+        expectedUserObjectAccessEntity.getAccess().getName(),
+        actualPermissionResponse.getAccessName());
   }
 }

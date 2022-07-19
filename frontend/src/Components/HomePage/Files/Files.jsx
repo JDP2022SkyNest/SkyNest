@@ -14,7 +14,7 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
 
    return (
       <div className="col-6 col-sm-6 col-md-3 col-lg-2 p-1 mt-2">
-         <div className="cursor-pointer bucket-hover bg-white rounded">
+         <div className={`cursor-pointer bucket-hover rounded shadow ${elem.deletedOn !== null ? "deleted-clr" : "bg-white"}`}>
             <div className="p-2 px-3">
                <div className="text-overflow file-text-width">
                   <AiCions.AiOutlineFile className="main-icon-align mr-1" fill="var(--gold)" />
@@ -49,8 +49,8 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                         Download File
                      </Dropdown.Item>
                      <Dropdown.Item
-                        onClick={() => {
-                           deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                        onClick={async () => {
+                           await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                            refresh();
                         }}
                         className="text-dark"

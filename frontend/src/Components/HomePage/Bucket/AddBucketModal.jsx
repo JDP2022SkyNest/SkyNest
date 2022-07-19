@@ -35,6 +35,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
             refreshBuckets();
          }, 2000);
       } catch (err) {
+         console.log(err);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {
@@ -53,7 +54,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 latte-background custom-rounded">
+         <span onClick={handleShow} className="ml-1 latte-background custom-rounded shadow">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
          </span>
 
