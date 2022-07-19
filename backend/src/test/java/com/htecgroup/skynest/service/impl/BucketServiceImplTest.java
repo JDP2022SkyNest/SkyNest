@@ -240,4 +240,17 @@ class BucketServiceImplTest {
     BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
     Assertions.assertTrue(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
   }
+
+  @Test
+  void when_deactivateLambda_ShouldSaveEntityWithDeactivatedLambda() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucketWithLambdas();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.deactivateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertFalse(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
+  }
 }

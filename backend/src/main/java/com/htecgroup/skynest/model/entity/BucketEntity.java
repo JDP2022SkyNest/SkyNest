@@ -33,6 +33,10 @@ public class BucketEntity extends ObjectEntity {
   @Column(name = "lambda_name")
   private Set<LambdaType> lambdaTypes;
 
+  public void removeLambda(LambdaType lambdaType) {
+    this.lambdaTypes.remove(lambdaType);
+  }
+
   public void addLambda(LambdaType lambdaType) {
     this.getLambdaTypes().add(lambdaType);
   }

@@ -43,10 +43,13 @@ public final class BucketEntityUtil {
     return bucketEntity;
   }
 
-  public static BucketEntity getBucketWithActivatedLambdas() {
-    BucketEntity bucketEntity = getPrivateBucket();
+  public static BucketEntity getPrivateBucketWithLambdas() {
     Set<LambdaType> lambdaTypes = new HashSet<>();
     lambdaTypes.add(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA);
+    BucketEntity bucketEntity = getPrivateBucket();
+    UserEntity userEntity = UserEntityUtil.getVerified();
+    userEntity.setId(UUID.randomUUID());
+    bucketEntity.setCreatedBy(userEntity);
     bucketEntity.setLambdaTypes(lambdaTypes);
     return bucketEntity;
   }
