@@ -304,6 +304,22 @@ export const deleteFolder = async (accessToken, folderId, error, success) => {
    }
 };
 
+export const restoreFolder = async (accessToken, folderId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/${folderId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Restored");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const deleteFile = async (accessToken, fileId, error, success) => {
    try {
       await AxiosInstance.delete(`/files/${fileId}`, {
