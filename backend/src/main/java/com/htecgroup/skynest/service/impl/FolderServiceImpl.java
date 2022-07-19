@@ -2,7 +2,9 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.exception.folder.*;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderCanNotBeMovedInsideChildFolderException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -44,6 +46,8 @@ public class FolderServiceImpl implements FolderService {
 
   private ActionService actionService;
   private PermissionService permissionService;
+
+  private FolderValidatorService folderValidatorService;
 
   @Override
   public FolderResponse createFolder(
@@ -139,7 +143,7 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public void moveFolderToRoot(UUID folderId) {
     FolderEntity folderEntity = findFolderEntity(folderId);
-    checkIfFolderAlreadyInsideRoot(folderEntity);
+    folderValidatorService.checkIfFolderAlreadyInsideRoot(folderEntity);
     folderEntity.moveToRoot(folderEntity);
     saveMoveFolder(folderEntity);
   }
@@ -149,7 +153,7 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity folderEntity = findFolderEntity(folderId);
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
-    checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
+    folderValidatorService.checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
     checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
     folderEntity.setParentFolder(parentFolderEntity);
     saveMoveFolder(folderEntity);
@@ -157,20 +161,6 @@ public class FolderServiceImpl implements FolderService {
 
   private FolderEntity findFolderEntity(UUID folderID) {
     return folderRepository.findById(folderID).orElseThrow(FolderNotFoundException::new);
-  }
-
-  private void checkIfFolderAlreadyInsideRoot(FolderEntity folderEntity) {
-    if (folderEntity.getParentFolder() == null) {
-      throw new FolderAlreadyInsideBucketException();
-    }
-  }
-
-  private void checkIfFolderAlreadyInsideFolder(
-      FolderEntity folderEntity, FolderEntity parentFolderEntity) {
-    if (folderEntity.getParentFolder() != null
-        && folderEntity.getParentFolder().getId().equals(parentFolderEntity.getId())) {
-      throw new FolderAlreadyInsideFolderException();
-    }
   }
 
   private void checkIfDestinationFolderIsChildFolder(

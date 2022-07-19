@@ -11,10 +11,7 @@ import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.PermissionService;
+import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,10 +37,11 @@ class FolderServiceImplTest {
   @Mock private PermissionService permissionService;
 
   @Mock private ActionService actionService;
-  @Mock private PermissionService permissionService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
   @Mock private FileService fileService;
+
+  @Mock private FolderValidatorService folderValidatorService;
   @Captor private ArgumentCaptor<FolderEntity> captorFolderEntity;
 
   @Test
@@ -178,6 +176,9 @@ class FolderServiceImplTest {
     FolderEntity parentFolder = FolderEntityUtil.getFolderWithoutParent();
     UUID destinationUuid = FolderEntityUtil.getFolderWithoutParent().getId();
     when(folderRepository.findById(destinationUuid)).thenReturn(Optional.of(parentFolder));
+    doThrow(new FolderAlreadyInsideFolderException())
+        .when(folderValidatorService)
+        .checkIfFolderAlreadyInsideFolder(folderEntity, parentFolder);
 
     String expectedErrorMessage = FolderAlreadyInsideFolderException.MESSAGE;
     Exception thrownException =
@@ -191,6 +192,9 @@ class FolderServiceImplTest {
   void when_folderAlreadyInsideRoot_shouldThrowFolderAlreadyInsideRootException() {
     FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    doThrow(new FolderAlreadyInsideBucketException())
+        .when(folderValidatorService)
+        .checkIfFolderAlreadyInsideRoot(folderEntity);
 
     String expectedErrorMessage = FolderAlreadyInsideBucketException.MESSAGE;
     Exception thrownException =
