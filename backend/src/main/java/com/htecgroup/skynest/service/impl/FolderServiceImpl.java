@@ -1,9 +1,12 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
+import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyRestoredException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -21,6 +24,7 @@ import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Validated
+@Log4j2
 public class FolderServiceImpl implements FolderService {
 
   private ModelMapper modelMapper;
@@ -84,10 +89,21 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public void removeFolder(UUID uuid) {
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
     FolderDto folderDto =
         modelMapper.map(
             folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
             FolderDto.class);
+
+    log.info(
+        "User {} ({}) is attempting to delete folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderDto.getName(),
+        folderDto.getId());
+
     if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
@@ -95,6 +111,34 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity folderEntity =
         folderRepository.save(modelMapper.map(deletedFolderDto, FolderEntity.class));
     actionService.recordAction(Collections.singleton(folderEntity), ActionType.DELETE);
+  }
+
+  @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.RESTORE)
+  public FolderResponse restoreFolder(UUID folderId) {
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    FolderEntity folderEntity =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+
+    log.info(
+        "User {} ({}) is attempting to restore folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderEntity.getName(),
+        folderEntity.getId());
+
+    if (!folderEntity.isDeleted()) throw new FolderAlreadyRestoredException();
+
+    if (folderEntity.getParentFolder() == null
+        ? folderEntity.getBucket().isDeleted()
+        : folderEntity.getParentFolder().isDeleted()) throw new FolderParentIsDeletedException();
+
+    folderEntity.restore();
+    FolderEntity savedFolderEntity = folderRepository.save(folderEntity);
+
+    return modelMapper.map(savedFolderEntity, FolderResponse.class);
   }
 
   @Override
@@ -109,9 +153,8 @@ public class FolderServiceImpl implements FolderService {
   public FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID folderId) {
     FolderEntity folderEntity =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
-    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
 
-    if (folderDto.isDeleted()) {
+    if (folderEntity.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
     folderEntity.setName(folderEditRequest.getName().trim());

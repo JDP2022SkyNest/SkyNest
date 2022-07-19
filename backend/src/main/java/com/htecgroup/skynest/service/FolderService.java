@@ -13,6 +13,8 @@ import java.util.UUID;
 public interface FolderService {
   void removeFolder(UUID uuid);
 
+  FolderResponse restoreFolder(UUID folderId);
+
   FolderResponse createFolder(
       @Valid @ParentFolderIsInTheSameBucket FolderCreateRequest folderCreateRequest);
 

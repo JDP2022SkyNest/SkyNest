@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
+import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.TagResponse;
@@ -19,6 +20,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -60,6 +63,21 @@ class TagServiceImplTest {
             TagAlreadyExistsException.class, () -> tagService.createTag(tagCreateRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).existsByName(tagCreateRequest.getName());
+  }
+
+  @Test
+  void listAllTags() {
+    CompanyEntity company = CompanyEntityUtil.get();
+    List<TagEntity> expectedTagEntityList = Collections.singletonList(TagEntityUtil.get());
+
+    when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.of(company));
+    when(tagRepository.findByCompanyId(any())).thenReturn(expectedTagEntityList);
+
+    List<TagResponse> actualResponse = tagService.listAllTags();
+
+    Assertions.assertEquals(expectedTagEntityList.size(), actualResponse.size());
+    this.assertTagEntityAndTagResponse(expectedTagEntityList.get(0), actualResponse.get(0));
+    verify(tagRepository, times(1)).findByCompanyId(company.getId());
   }
 
   private void assertTagEntityAndTagResponse(
