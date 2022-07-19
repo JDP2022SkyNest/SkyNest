@@ -7,9 +7,9 @@ CREATE TABLE `object_to_tag` (
       REFERENCES `tag` (`id`)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_object_access_object_id`
+  CONSTRAINT `fk_object_to_tag_object_id`
       FOREIGN KEY (`object_id`)
       REFERENCES `object` (`id`)
       ON DELETE NO ACTION
-      ON UPDATE NO ACTION,
+      ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
