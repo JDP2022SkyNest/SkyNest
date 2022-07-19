@@ -137,6 +137,7 @@ public class PermissionServiceImpl implements PermissionService {
   public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(bucketId);
 
+    log.info("Current user accessed the permissions of the bucket with the id {}", bucketId);
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
