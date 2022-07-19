@@ -241,8 +241,6 @@ class BucketServiceImplTest {
 
   @Test
   void when_getActiveLambdas_ShouldReturnAllActiveLambdas() {
-    //    BucketEntity bucketEntity = findBucketEntityById(bucketId);
-    //    return new ArrayList<>(bucketEntity.getLambdaTypes());
     BucketEntity bucketWithLambda = BucketEntityUtil.getBucketWithActivatedLambdas();
     doReturn(bucketWithLambda).when(bucketService).findBucketEntityById(any());
     UUID bucketId = UUID.randomUUID();
