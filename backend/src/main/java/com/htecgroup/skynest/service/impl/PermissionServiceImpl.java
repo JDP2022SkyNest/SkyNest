@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
+import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.model.entity.*;
@@ -136,12 +137,26 @@ public class PermissionServiceImpl implements PermissionService {
 
   @Override
   public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
+    checkIfBucketExist(bucketId);
+    checkIfBucketIsDeleted(bucketId);
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(bucketId);
 
     log.info("Current user accessed the permissions of the bucket with the id {}", bucketId);
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
+  }
+
+  private void checkIfBucketExist(UUID bucketId) {
+    bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+  }
+
+  private void checkIfBucketIsDeleted(UUID bucketId) {
+    BucketEntity bucketEntity =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+    if (bucketEntity.isDeleted()) {
+      throw new BucketAlreadyDeletedException();
+    }
   }
 
   @Override
