@@ -139,6 +139,7 @@ public class PermissionServiceImpl implements PermissionService {
   public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
     checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
+    currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(bucketId);
 
     log.info("Current user accessed the permissions of the bucket with the id {}", bucketId);
@@ -164,6 +165,7 @@ public class PermissionServiceImpl implements PermissionService {
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
     checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
+    currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
     UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(bucketId);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
