@@ -73,7 +73,7 @@ const HomePage = () => {
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
                   setDelState={setDelState}
-                  placeholder="Search buckets"
+                  placeholder="Search..."
                />
                <div className="d-flex">
                   <button
