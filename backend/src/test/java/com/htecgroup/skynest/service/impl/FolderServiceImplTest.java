@@ -215,6 +215,9 @@ class FolderServiceImplTest {
     FolderEntity parentFolder = FolderEntityUtil.getFolderWithoutParent();
     UUID destinationUuid = FolderEntityUtil.getFolderWithoutParent().getId();
     when(folderRepository.findById(destinationUuid)).thenReturn(Optional.of(parentFolder));
+    doThrow(new FolderCanNotBeMovedInsideChildFolderException())
+        .when(folderValidatorService)
+        .checkIfDestinationFolderIsChildFolder(parentFolder, folderEntity);
 
     String expectedErrorMessage = FolderCanNotBeMovedInsideChildFolderException.MESSAGE;
     Exception thrownException =
