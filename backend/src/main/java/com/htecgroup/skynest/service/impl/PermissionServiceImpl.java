@@ -62,6 +62,7 @@ public class PermissionServiceImpl implements PermissionService {
         bucketRepository
             .findById(permissionGrantRequest.getObjectId())
             .orElseThrow(BucketNotFoundException::new);
+    checkIfBucketIsDeleted(bucket.getId());
 
     permission.setGrantedBy(currentUser);
     permission.setGrantedTo(targetUser);
