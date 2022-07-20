@@ -7,4 +7,7 @@ public interface FolderValidatorService {
   void checkIfFolderAlreadyInsideRoot(FolderEntity folderEntity);
 
   void checkIfFolderAlreadyInsideFolder(FolderEntity folderEntity, FolderEntity parentFolderEntity);
+
+  void checkIfDestinationFolderIsChildFolder(
+      FolderEntity folderEntity, FolderEntity parentFolderEntity);
 }

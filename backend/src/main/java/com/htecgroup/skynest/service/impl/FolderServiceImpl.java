@@ -3,7 +3,10 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
 import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
-import com.htecgroup.skynest.exception.folder.*;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyRestoredException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -20,6 +23,7 @@ import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
+import com.htecgroup.skynest.util.FolderUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -27,7 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -194,23 +200,13 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     folderValidatorService.checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
-    checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
+    folderValidatorService.checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
     folderEntity.setParentFolder(parentFolderEntity);
     saveMoveFolder(folderEntity);
   }
 
   private FolderEntity findFolderEntity(UUID folderID) {
     return folderRepository.findById(folderID).orElseThrow(FolderNotFoundException::new);
-  }
-
-  private void checkIfDestinationFolderIsChildFolder(
-      FolderEntity folderEntity, FolderEntity parentFolderEntity) {
-    List<FolderEntity> path = getPathToFolder(parentFolderEntity);
-    for (FolderEntity folder : path) {
-      if (folderEntity.getId().equals(folder.getId())) {
-        throw new FolderCanNotBeMovedInsideChildFolderException();
-      }
-    }
   }
 
   private void saveMoveFolder(FolderEntity folderEntity) {
@@ -225,22 +221,11 @@ public class FolderServiceImpl implements FolderService {
     UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
-    List<ShortFolderResponse> path = asShortFolderResponseList(getPathToFolder(parentFolder));
+    List<ShortFolderResponse> path =
+        asShortFolderResponseList(FolderUtil.getPathToFolder(parentFolder));
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, path);
     return storageContentResponse;
-  }
-
-  private List<FolderEntity> getPathToFolder(FolderEntity folderEntity) {
-
-    Deque<FolderEntity> path = new LinkedList<>();
-    FolderEntity parentFolder = folderEntity.getParentFolder();
-    while (parentFolder != null) {
-      path.addFirst(parentFolder);
-      parentFolder = parentFolder.getParentFolder();
-    }
-
-    return (List<FolderEntity>) path;
   }
 
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {

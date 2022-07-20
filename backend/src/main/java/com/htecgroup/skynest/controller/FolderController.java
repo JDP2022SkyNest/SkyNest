@@ -377,7 +377,6 @@ public class FolderController {
     folderService.moveFolderToFolder(folderId, destinationFolderId);
   }
 
-  @Operation(summary = "Get folder contents")
   @Operation(summary = "Restore Folder")
   @ApiResponses(
       value = {
