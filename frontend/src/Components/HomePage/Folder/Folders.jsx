@@ -54,7 +54,7 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                               await deleteFolder(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               refresh();
                            }}
-                           className="text-dark"
+                           className="text-danger"
                         >
                            Delete folder
                         </Dropdown.Item>
@@ -64,7 +64,7 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                               await restoreFolder(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                               refresh();
                            }}
-                           className="text-dark"
+                           className="text-danger"
                         >
                            Restore folder
                         </Dropdown.Item>

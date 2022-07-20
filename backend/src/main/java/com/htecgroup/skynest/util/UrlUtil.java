@@ -21,6 +21,7 @@ public class UrlUtil {
 
   public static String EMAIL_VERIFICATION_URL;
   public static String PASSWORD_RESET_FRONTEND_URL;
+  public static String REGISTRATION_INVITE_URL;
 
   public static String getEmailVerificationLink(String token) {
     return EMAIL_VERIFICATION_URL + token;
@@ -28,6 +29,10 @@ public class UrlUtil {
 
   public static String getPasswordResetLink(String token) {
     return PASSWORD_RESET_FRONTEND_URL + token;
+  }
+
+  public static String getRegistrationInviteLink(String token) {
+    return REGISTRATION_INVITE_URL + token;
   }
 
   @Value("${backend.app.emailConfirmationLink}")
@@ -38,5 +43,10 @@ public class UrlUtil {
   @Value("${backend.app.passwordResetLink}")
   private void setPasswordResetUrl(String passwordResetUrl) {
     PASSWORD_RESET_FRONTEND_URL = passwordResetUrl;
+  }
+
+  @Value("${backend.app.passwordResetLink}")
+  private void setRegistrationInviteUrl(String registrationInviteUrl) {
+    REGISTRATION_INVITE_URL = registrationInviteUrl;
   }
 }

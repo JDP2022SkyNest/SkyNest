@@ -159,7 +159,7 @@ public class FileServiceImpl implements FileService {
   @Override
   public List<FileResponse> getAllRootFiles(UUID bucketId) {
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOn(
+        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
             bucketId);
     return asFileResponseList(allFiles);
   }
@@ -167,7 +167,7 @@ public class FileServiceImpl implements FileService {
   @Override
   public List<FileResponse> getAllFilesWithParent(UUID parentFolderId) {
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOn(parentFolderId);
+        fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(parentFolderId);
     return asFileResponseList(allFiles);
   }
 
