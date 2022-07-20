@@ -17,7 +17,12 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
 
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
-         <div key={index} className="card custom-rounded bucket-hover cursor-pointer border-0 shadow position-relative">
+         <div
+            key={index}
+            className={`card custom-rounded bucket-hover cursor-pointer border-0 shadow ${
+               elem.deletedOn !== null ? "deleted-clr" : "bg-white"
+            } position-relative`}
+         >
             <div
                onClick={() => {
                   redirectTo(navigate, `bucket/${elem.bucketId}`, 1);
