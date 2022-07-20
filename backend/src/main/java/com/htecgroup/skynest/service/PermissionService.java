@@ -21,5 +21,5 @@ public interface PermissionService {
 
   PermissionResponse editPermission(PermissionEditRequest permissionEditRequest, UUID bucketId);
 
-  void revokePermission(UUID bucketId);
+  void revokePermission(UUID bucketId, UUID userId);
 }

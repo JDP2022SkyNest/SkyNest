@@ -175,7 +175,16 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public void revokePermission(UUID bucketId) {}
+  public void revokePermission(UUID bucketId, UUID userId) {
+    checkIfBucketExist(bucketId);
+    checkIfBucketIsDeleted(bucketId);
+    currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
+
+    UserEntity user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    UserObjectAccessEntity permission =
+        permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
+    permissionRepository.delete(permission);
+  }
 
   private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
     UserEntity targetUser =

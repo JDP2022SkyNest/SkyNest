@@ -334,9 +334,9 @@ public class PermissionController {
                   })
             }),
       })
-  @PutMapping("/{bucketId}/revoke")
+  @DeleteMapping("/{bucketId}/revoke/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForBucket(@PathVariable UUID bucketId) {
-    permissionService.revokePermission(bucketId);
+  public void deletePermissionForBucket(@PathVariable UUID bucketId, @PathVariable UUID userId) {
+    permissionService.revokePermission(bucketId, userId);
   }
 }
