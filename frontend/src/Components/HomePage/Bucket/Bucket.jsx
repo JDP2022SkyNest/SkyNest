@@ -55,7 +55,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                               await deleteBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
                               refreshBuckets();
                            }}
-                           className="text-dark"
+                           className="text-danger"
                         >
                            Delete bucket
                         </Dropdown.Item>
@@ -65,7 +65,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                               await restoreBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
                               refreshBuckets();
                            }}
-                           className="text-dark"
+                           className="text-danger"
                         >
                            Restore bucket
                         </Dropdown.Item>
