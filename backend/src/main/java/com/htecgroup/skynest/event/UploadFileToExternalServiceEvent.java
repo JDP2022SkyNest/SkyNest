@@ -10,10 +10,13 @@ public class UploadFileToExternalServiceEvent extends ApplicationEvent {
   private final MultipartFile fileToUpload;
   private final String bucketName;
 
+  private final String userDropboxAccessToken;
+
   public UploadFileToExternalServiceEvent(
-      Object source, MultipartFile fileToUpload, String bucketId) {
+      Object source, MultipartFile fileToUpload, String bucketId, String userDropboxAccessToken) {
     super(source);
     this.fileToUpload = fileToUpload;
     this.bucketName = bucketId;
+    this.userDropboxAccessToken = userDropboxAccessToken;
   }
 }

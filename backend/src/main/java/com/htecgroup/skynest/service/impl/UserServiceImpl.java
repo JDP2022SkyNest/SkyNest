@@ -25,6 +25,7 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.util.EmailUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Validated
+@Log4j2
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -224,5 +226,17 @@ public class UserServiceImpl implements UserService {
     UserDto userDto = findUserById(uuid);
     UserDto userWithCompany = userDto.withCompany(null);
     userRepository.save(modelMapper.map(userWithCompany, UserEntity.class));
+  }
+
+  @Override
+  public void saveDropboxAccessToken(String accessToken) {
+    // LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UserEntity userEntity =
+        userRepository
+            .findUserByEmail("metodi_mladenovski@yahoo.com")
+            .orElseThrow(UserNotFoundException::new);
+    userEntity.setDropboxAccessToken(accessToken);
+    // log.info("Set dropbox access token for user {}", loggedUserDto.getUuid());
+    userRepository.save(userEntity);
   }
 }

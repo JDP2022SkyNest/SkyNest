@@ -53,4 +53,6 @@ public interface UserService {
   void addCompanyForUser(@Valid @UserNotInACompany @UserNotAdmin UUID uuid);
 
   void removeCompany(@Valid @AdminUserAndUserHaveSameCompany @UserNotAdmin UUID uuid);
+
+  void saveDropboxAccessToken(String accessToken);
 }

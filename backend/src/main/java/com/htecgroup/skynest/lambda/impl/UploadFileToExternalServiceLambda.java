@@ -9,6 +9,7 @@ import com.htecgroup.skynest.exception.lambda.DropboxFailedException;
 import com.htecgroup.skynest.exception.lambda.DropboxInvalidAccessTokenException;
 import com.htecgroup.skynest.lambda.Lambda;
 import com.htecgroup.skynest.lambda.LambdaType;
+import com.htecgroup.skynest.util.DropboxUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -24,11 +25,11 @@ import java.io.IOException;
 public class UploadFileToExternalServiceLambda
     implements Lambda<UploadFileToExternalServiceEvent, Boolean> {
 
-  DbxClientV2 dropboxClient;
-
   @Override
   public Boolean doLambdaFunction(UploadFileToExternalServiceEvent event) {
     try {
+      DbxClientV2 dropboxClient =
+          new DbxClientV2(DropboxUtil.getRequestConfig(), event.getUserDropboxAccessToken());
       MultipartFile file = event.getFileToUpload();
       ByteArrayInputStream inputStream = new ByteArrayInputStream(file.getBytes());
       String fileName = event.getFileToUpload().getOriginalFilename();

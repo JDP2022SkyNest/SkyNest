@@ -119,8 +119,14 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
       BucketEntity bucket = emptyFileMetadata.getBucket();
 
       if (bucket.getLambdaTypes().contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA)) {
+        LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+        UserEntity userEntity =
+            userRepository
+                .findById(loggedUserDto.getUuid())
+                .orElseThrow(UserNotFoundException::new);
         UploadFileToExternalServiceEvent event =
-            new UploadFileToExternalServiceEvent(this, multipartFile, bucket.getName());
+            new UploadFileToExternalServiceEvent(
+                this, multipartFile, bucket.getName(), userEntity.getDropboxAccessToken());
         publisher.publishEvent(event);
       }
 

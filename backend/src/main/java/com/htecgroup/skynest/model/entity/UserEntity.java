@@ -35,6 +35,8 @@ public class UserEntity implements Serializable {
   @With private Boolean verified;
   @With private Boolean enabled;
 
+  private String dropboxAccessToken;
+
   @ManyToOne
   @JoinColumn(name = "role_id", nullable = false)
   private RoleEntity role;
