@@ -17,12 +17,16 @@ import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import "./HomePage.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
+import HomeSearchBar from "./HomeSearchBar";
 
 const HomePage = () => {
    const navigate = useNavigate();
    const [sidebar, setSidebar] = useState(true);
    const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
+   const [searchTerm, setSearchTerm] = useState("");
+   const [delState, setDelState] = useState(false);
+   const filteredBuckets = allBuckets.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
@@ -53,7 +57,7 @@ const HomePage = () => {
       setLoader(false);
    };
 
-   const allData = allBuckets.map((elem, index) => (
+   const allData = filteredBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
@@ -63,6 +67,15 @@ const HomePage = () => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
+               <HomeSearchBar
+                  searchBar={true}
+                  path={ROUTES.HOME}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  homeSearch
+                  setDelState={setDelState}
+                  placeholder="Search..."
+               />
                <div className="d-flex">
                   <button
                      onClick={() => {
