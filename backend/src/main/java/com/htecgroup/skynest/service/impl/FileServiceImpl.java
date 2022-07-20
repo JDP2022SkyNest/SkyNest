@@ -174,9 +174,7 @@ public class FileServiceImpl implements FileService {
   @Override
   public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
     FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
-    if (fileMetadataEntity.isDeleted()) {
-      throw new FileAlreadyDeletedException();
-    }
+    checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
@@ -187,12 +185,16 @@ public class FileServiceImpl implements FileService {
   @Override
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
-    if (fileMetadataEntity.isDeleted()) {
-      throw new FileAlreadyDeletedException();
-    }
+    checkIfDeleted(fileMetadataEntity);
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
     saveMoveFile(fileMetadataEntity);
+  }
+
+  private void checkIfDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
   }
 
   private void checkIfFileAlreadyInsideFolder(
