@@ -24,4 +24,6 @@ public class BucketResponse {
   private Long size;
 
   private Boolean isPublic;
+
+  private String deletedOn;
 }

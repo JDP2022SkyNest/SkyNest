@@ -57,7 +57,7 @@ public class CustomExceptionHandler {
             .collect(Collectors.toList());
     ErrorMessage errorMessage =
         new ErrorMessage(errors, HttpStatus.FORBIDDEN.value(), DateTimeUtil.currentTimeFormatted());
-    log.error("Handle MethodArgumentNotValidException. Error: {}", ex.getMessage());
+    log.error("Handle ConstraintViolationException. Error: {}", ex.getMessage());
     return new ResponseEntity<>(errorMessage, HttpStatus.FORBIDDEN);
   }
 }

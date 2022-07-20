@@ -53,7 +53,7 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                            await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
                            refresh();
                         }}
-                        className="text-dark"
+                        className="text-danger"
                      >
                         Delete File
                      </Dropdown.Item>

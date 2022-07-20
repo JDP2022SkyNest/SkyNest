@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,16 +88,6 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public List<BucketResponse> listAllDeletedBuckets() {
-    List<BucketEntity> entityList =
-        bucketRepository.findAllByDeletedOnIsNotNullOrderByNameAscCreatedOn();
-    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
-    return entityList.stream()
-        .map(e -> modelMapper.map(e, BucketResponse.class))
-        .collect(Collectors.toList());
-  }
-
-  @Override
   public void activateLambda(UUID bucketId, LambdaType lambdaType) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
     bucketEntity.addLambda(lambdaType);
@@ -119,7 +106,7 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public List<BucketResponse> listAllBuckets() {
     List<BucketEntity> entityList =
-        (List<BucketEntity>) bucketRepository.findAllByDeletedOnIsNullOrderByNameAscCreatedOn();
+        (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
@@ -189,5 +176,11 @@ public class BucketServiceImpl implements BucketService {
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
+  }
+
+  @Override
+  public List<LambdaType> getActiveLambdas(UUID bucketId) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    return new ArrayList<>(bucketEntity.getLambdaTypes());
   }
 }

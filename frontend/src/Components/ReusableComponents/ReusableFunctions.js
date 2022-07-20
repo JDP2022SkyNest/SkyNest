@@ -288,6 +288,22 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
    }
 };
 
+export const restoreBucket = async (accessToken, bucketId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/buckets/${bucketId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Bucket Successfully Restored");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const deleteFolder = async (accessToken, folderId, error, success) => {
    try {
       await AxiosInstance.put(
@@ -298,6 +314,22 @@ export const deleteFolder = async (accessToken, folderId, error, success) => {
          }
       );
       success("Folder Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const restoreFolder = async (accessToken, folderId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/${folderId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Restored");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
