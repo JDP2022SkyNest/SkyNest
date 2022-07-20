@@ -1,7 +1,6 @@
 import React from "react";
-import { Navbar, Container, DropdownButton, Dropdown } from "react-bootstrap";
+import { DropdownButton, Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import "../ReusableComponents/NavBarPanel.css";
 
 const HomeSearchBar = ({ searchBar, setSearchTerm, searchTerm, homeSearch = false, setDelState, placeholder = "Search User" }) => {

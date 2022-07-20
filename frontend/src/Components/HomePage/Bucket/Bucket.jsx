@@ -3,7 +3,7 @@ import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as TiCions from "react-icons/ti";
 import * as AiCions from "react-icons/ai";
-import { deleteBucket, redirectTo } from "../../ReusableComponents/ReusableFunctions";
+import { deleteBucket, restoreBucket, redirectTo } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
@@ -49,15 +49,27 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      <Dropdown.Item className="text-dark">
                         <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
                      </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={async () => {
-                           await deleteBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
-                           refreshBuckets();
-                        }}
-                        className="text-dark"
-                     >
-                        Delete bucket
-                     </Dropdown.Item>
+                     {elem.deletedOn === null ? (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await deleteBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
+                              refreshBuckets();
+                           }}
+                           className="text-dark"
+                        >
+                           Delete bucket
+                        </Dropdown.Item>
+                     ) : (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await restoreBucket(accessToken, elem.bucketId, setErrorMsg, setSuccessMsg);
+                              refreshBuckets();
+                           }}
+                           className="text-dark"
+                        >
+                           Restore bucket
+                        </Dropdown.Item>
+                     )}
                   </Dropdown.Menu>
                </Dropdown>
             </div>
