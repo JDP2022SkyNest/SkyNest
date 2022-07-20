@@ -28,5 +28,7 @@ public interface FileService {
 
   void moveFileToRoot(UUID fileId);
 
+  FileResponse editFileContent(MultipartFile multipartFile, UUID fileId);
+
   void deleteFile(UUID fileId);
 }

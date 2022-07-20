@@ -518,6 +518,157 @@ public class FileController {
     return responseEntity;
   }
 
+  @Operation(summary = "Update file content")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully uploaded new file content",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = FileResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\n"
+                                + "    \"id\": \"948d0e41-0629-40c4-a589-b8d02de1e7c0\",\n"
+                                + "    \"createdOn\": \"2022-07-08T12:38:55\",\n"
+                                + "    \"modifiedOn\": \"2022-07-13T14:24:49\",\n"
+                                + "    \"deletedOn\": null,\n"
+                                + "    \"name\": \"list-users.sql\",\n"
+                                + "    \"createdById\": \"67898b3b-4d5f-4a51-95e2-3808b4dfc903\",\n"
+                                + "    \"parentFolderId\": null,\n"
+                                + "    \"bucketId\": \"e0d31981-0526-48c6-bc89-5a1abeb30096\",\n"
+                                + "    \"type\": \"application/x-sql\",\n"
+                                + "    \"size\": \"268\"\n"
+                                + "}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "400",
+            description = "File IO error/Failed to write file content",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Failed to write file contents\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}"),
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Cannot change file type, please upload content as a new file.\"],"
+                                + " \"status\": \"400\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}",
+                        name = "different file type")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User does not have access to bucket\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket/User not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "bucket",
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "user",
+                        value =
+                            "{\"messages\":[\"User not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Bucket already deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket already deleted\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "419",
+            description = "Company/User buckets are full",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Company/User buckets don't have enough space\"],"
+                                + " \"status\": \"419\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PutMapping(path = "/{fileId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<FileResponse> updateFileContent(
+      @PathVariable UUID fileId, @RequestPart("file") MultipartFile file) {
+
+    FileResponse fileResponse = fileService.editFileContent(file, fileId);
+
+    ResponseEntity<FileResponse> responseEntity = new ResponseEntity<>(fileResponse, HttpStatus.OK);
+
+    return responseEntity;
+  }
+
   @Operation(summary = "Edit file info")
   @ApiResponses(
       value = {
