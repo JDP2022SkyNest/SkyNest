@@ -91,7 +91,8 @@ class FileServiceImplTest {
     FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
-    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
+    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+            any()))
         .thenReturn(expectedFiles);
 
     List<FileResponse> actualFiles =
@@ -100,7 +101,8 @@ class FileServiceImplTest {
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
-        .findAllByBucketIdAndParentFolderIsNull(fileMetadataEntity.getBucket().getId());
+        .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+            fileMetadataEntity.getBucket().getId());
   }
 
   @Test
@@ -108,7 +110,8 @@ class FileServiceImplTest {
     FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getNotRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
-    when(fileMetadataRepository.findAllByParentFolderId(any())).thenReturn(expectedFiles);
+    when(fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(any()))
+        .thenReturn(expectedFiles);
 
     List<FileResponse> actualFiles =
         fileService.getAllFilesWithParent(fileMetadataEntity.getParentFolder().getId());
@@ -116,7 +119,8 @@ class FileServiceImplTest {
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
-        .findAllByParentFolderId(fileMetadataEntity.getParentFolder().getId());
+        .findAllByParentFolderIdOrderByNameAscCreatedOnDesc(
+            fileMetadataEntity.getParentFolder().getId());
   }
 
   @Test

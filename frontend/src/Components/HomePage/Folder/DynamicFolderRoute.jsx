@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { folderContent } from "../../ReusableComponents/ReusableFunctions";
 import NavbarPanel from "../../ReusableComponents/NavbarPanel";
 import ROUTES from "../../Routes/ROUTES";
@@ -11,30 +11,47 @@ import AddFolderModal from "./AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToFolder from "./UploadToFolder";
 import Files from "../Files/Files";
+import Breadcrumbs from "./Breadcrumbs";
+import * as AiCions from "react-icons/ai";
 
 const DynamicFolderRoute = () => {
    const { routeId } = useParams();
    const [data, setData] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [delState, setDelState] = useState(false);
+   const filteredFolders = data?.data?.folders.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
+   const filteredFiles = data?.data?.files.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
+   const [loading, setLoading] = useState(true);
    const accessToken = localStorage.accessToken;
-   const FolderLength = data?.data?.folders.length;
-   const FilesLength = data?.data?.files.length;
+   const FolderLength = filteredFolders?.length;
+   const FilesLength = filteredFiles?.length;
+
+   const navigate = useNavigate();
 
    useEffect(() => {
-      folderContent(accessToken, routeId, setData, setErrorMsg);
+      const getData = async () => {
+         await folderContent(accessToken, routeId, setData, setErrorMsg);
+         setLoading(false);
+      };
+      getData();
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
       await folderContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => (
+   const allData = filteredFolders?.map((elem, index) => (
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
-   const alLFiles = data?.data?.files.map((elem, index) => (
+   const breadCrumb = data?.data?.path.map((elem, index) => {
+      return <Breadcrumbs key={index} elem={elem} />;
+   });
+
+   const alLFiles = filteredFiles?.map((elem, index) => (
       <Files
          elem={elem}
          key={index}
@@ -47,7 +64,25 @@ const DynamicFolderRoute = () => {
 
    return (
       <div className="home-page-body">
-         <NavbarPanel name={`Folders: ${FolderLength} - Files: ${FilesLength}`} searchBar={false} path={ROUTES.HOME} />
+         <NavbarPanel
+            name={
+               !loading ? (
+                  <div>
+                     <AiCions.AiFillFolderOpen className="main-icon-align" /> {FolderLength} - <AiCions.AiOutlineFile className="main-icon-align" />{" "}
+                     {FilesLength}
+                  </div>
+               ) : (
+                  "Loading..."
+               )
+            }
+            searchBar={true}
+            path={ROUTES.HOME}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            homeSearch
+            setDelState={setDelState}
+            placeholder="Search..."
+         />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
             <SetSuccessMsg
@@ -56,6 +91,21 @@ const DynamicFolderRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
+            <small>
+               <nav aria-label="breadcrumb">
+                  <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1 ">
+                     <li className="breadcrumb-item">
+                        <button
+                           onClick={() => navigate(`/bucket/${data?.data?.bucketId}`, { replace: true })}
+                           className="btn-link border-0 bg-white text-dark"
+                        >
+                           Bucket
+                        </button>
+                     </li>
+                     {breadCrumb}
+                  </ol>
+               </nav>
+            </small>
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal parentFolderId={routeId} bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToFolder folderId={routeId} refresh={refreshFoldersAndFiles} />

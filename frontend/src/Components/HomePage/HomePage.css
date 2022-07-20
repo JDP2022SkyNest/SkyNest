@@ -1,62 +1,62 @@
 .header {
-   width: 100%;
-   position: fixed;
-   top: 0;
-   left: 0;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   padding: 0 1rem;
-   background-color: var(--latte);
-   transition: 0.5s;
- }
- 
- .main-icon-align {
-  position: relative;
-  bottom: 2px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background-color: var(--latte);
+  transition: 0.5s;
+}
+
+.main-icon-align {
+ position: relative;
+ bottom: 2px;
 }
 
 .cloud-icon-align {
-  position: relative;
-  bottom: 1px;
+ position: relative;
+ bottom: 1px;
 }
 
 .home-page-body {
-  background-color: var(--latte);
-  min-height: 100vh;
-  padding-bottom: 60px;
+ background-color: var(--latte);
+ min-height: 100vh;
+ padding-bottom: 60px;
 }
 
 .latte-background {
-  padding: 10px 15px;
-  background-color: white;
-  border-radius: 5px;
-  cursor: pointer;
+ padding: 10px 15px;
+ background-color: white;
+ border-radius: 5px;
+ cursor: pointer;
 }
 
 .data-folder {
-  margin: 10px;
-  cursor: pointer;
-  padding: 0;
+ margin: 10px;
+ cursor: pointer;
+ padding: 0;
 }
 
 .data-folder .btn-primary {
-  position: absolute !important;
-  top: -50px !important;
-  right: 13px !important;
-  transform: translate(0,-50%) scale(1.2) !important;
-  background-color: var(--latte) !important;
-  border-radius: 50% !important;
-  height: 25px !important;
-  width: 20px !important;
-  cursor: pointer !important;
-  border-color: transparent !important;
-  color: black !important;
-  transition: 500ms !important;
+ position: absolute !important;
+ top: -50px !important;
+ right: 13px !important;
+ transform: translate(0,-50%) scale(1.2) !important;
+ background-color: var(--latte) !important;
+ border-radius: 50% !important;
+ height: 25px !important;
+ width: 20px !important;
+ cursor: pointer !important;
+ border-color: transparent !important;
+ color: black !important;
+ transition: 500ms !important;
 }
 
 .data-folder .files .btn-primary {
-  top: -20px !important;
+ top: -20px !important;
 }
 
 .data-folder .dots-icon {
@@ -67,54 +67,87 @@ transform: translate(-50%,-50%) scale(0.8);
 }
 
 .data-folder .dropdown-toggle::after {
-  display: none !important;
+ display: none !important;
 }
 
 .data-folder .custom-rounded {
-  border-radius: 10px !important;
+ border-radius: 10px !important;
 }
 
 .data-folder .custom-file-rounded {
-  border-radius: 30px !important;
+ border-radius: 30px !important;
 }
 
 .data-folder .is-private {
-  display: flex;
-  align-items: center;
+ display: flex;
+ align-items: center;
 }
 
 .data-folder .hr-devider {
-  position: relative;
-  border-radius: 10px;
-  background-color: white;
-  opacity: 1;
-  height: 4px;
-  width: 100%;
+ position: relative;
+ border-radius: 10px;
+ background-color: white;
+ opacity: 1;
+ height: 4px;
+ width: 100%;
 }
 
 .data-folder .bucket-hover {
-  transition: 200ms;
+ transition: 200ms;
 }
 
 .file-text-width {
-  width: 80%;
+ width: 80%;
 }
 
 .data-folder .bucket-hover:hover {
-  background-color: whitesmoke !important;
+ background-color: whitesmoke !important;
 }
 
 .data-folder .bucket-hover:hover .btn-primary {
-  border-radius: 30% !important;
-  background-color: #c9c9c9 !important;
+ border-radius: 30% !important;
+ background-color: #c9c9c9 !important;
 }
 
 .data-folder .text-overflow {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
 }
 
 .data-folder .cursor-pointer {
-  cursor: pointer;
+ cursor: pointer;
+}
+
+.breadcrumb-other {
+ color: rgb(156, 156, 156) !important;
+}
+
+.breadcrumb .breadcrumb-item:last-child button {
+ color: black !important;
+ font-weight: bold;
+}
+
+.deleted-clr {
+ background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.private-bucket-indicator {
+ position: absolute;
+ bottom: 10px;
+ right: 18px
+}
+
+.description-width {
+ width: 85%;
+}
+
+.margin-left-home-search {
+ margin-left: 64px !important;
+}
+
+@media only screen and (max-width: 574px) {
+ .margin-left-home-search {
+   margin-left: 0px !important;
+ }
 }
