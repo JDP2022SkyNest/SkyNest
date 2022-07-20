@@ -74,7 +74,7 @@ const DynamicRoute = () => {
             setSearchTerm={setSearchTerm}
             homeSearch
             setDelState={setDelState}
-            placeholder="Search..."
+            placeholder="Search"
          />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />

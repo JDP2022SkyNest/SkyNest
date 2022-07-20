@@ -72,9 +72,8 @@ const HomePage = () => {
                   path={ROUTES.HOME}
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
-                  homeSearch
                   setDelState={setDelState}
-                  placeholder="Search..."
+                  placeholder="Search buckets"
                />
                <div className="d-flex">
                   <button
