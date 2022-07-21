@@ -26,11 +26,11 @@ const CreateNewTag = () => {
                headers: { Authorization: accessToken },
             }
          );
-         setSuccessMsg("File Successfully Uploaded");
+         setSuccessMsg("Tag Successfully Added");
          setTimeout(() => {
             setShow(false);
             setName("");
-            setRgb("");
+            setRgb("#000000");
          }, 2000);
       } catch (err) {
          if (err.response.status === 400) {
