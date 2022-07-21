@@ -20,7 +20,6 @@ const Login = () => {
    const [forgotPassword, setForgotPassword] = useState(false);
    const [searchParams, setSearchParams] = useSearchParams();
    const [infoMsg, setInfoMsg] = useState("");
-   const [resendEmail, setResendEmail] = useState(false);
 
    const { setAccessToken } = useContext(GlobalContext);
 
@@ -64,7 +63,7 @@ const Login = () => {
 
    useEffect(() => {
       if (token) {
-         emailVerification(token, setSuccessMsg, setErrorMsg, setInfoMsg, setSearchParams, setResendEmail);
+         emailVerification(token, setSuccessMsg, setErrorMsg, setInfoMsg, setSearchParams);
       }
       // eslint-disable-next-line
    }, [token]);
@@ -113,9 +112,6 @@ const Login = () => {
                      required
                      autoComplete="off"
                   />
-                  <small className={resendEmail ? "p-0" : "d-none"}>
-                     <Link to={ROUTES.RESEND}>Resend Email?</Link>
-                  </small>
                </div>
                <div className="form-outline mb-4">
                   <label className="form-label" htmlFor="passwordInput">
@@ -148,12 +144,6 @@ const Login = () => {
                   <button className="btn btn-dark btn-lg btn-block">Login</button>
                </div>
             )}
-            <div className="mt-5 text-center">
-               <p className="m-0">Don't have an account? </p>
-               <Link to={ROUTES.SIGNUP} className="m-0 btn btn-link">
-                  Register here
-               </Link>
-            </div>
          </form>
       </CenteredContainer>
    );

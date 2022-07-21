@@ -225,12 +225,6 @@ const SignUp = () => {
                   <LoadingButton />
                )}
             </div>
-            <div className="mt-4 text-center">
-               <p className="m-0">Already have an account? </p>
-               <Link to={ROUTES.LOGIN} className="m-0 btn btn-link">
-                  Login
-               </Link>
-            </div>
          </form>
       </CenteredContainer>
    );
