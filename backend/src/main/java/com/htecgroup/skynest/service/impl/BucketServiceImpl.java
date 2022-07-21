@@ -10,10 +10,7 @@ import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
-import com.htecgroup.skynest.model.response.BucketResponse;
-import com.htecgroup.skynest.model.response.FileResponse;
-import com.htecgroup.skynest.model.response.FolderResponse;
-import com.htecgroup.skynest.model.response.StorageContentResponse;
+import com.htecgroup.skynest.model.response.*;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
@@ -37,6 +34,7 @@ public class BucketServiceImpl implements BucketService {
   private UserRepository userRepository;
   private FolderService folderService;
   private FileService fileService;
+  private TagService tagService;
 
   private ActionService actionService;
   private PermissionService permissionService;
@@ -73,6 +71,9 @@ public class BucketServiceImpl implements BucketService {
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
 
+    List<TagResponse> tags = tagService.getTagsForObject(uuid);
+    bucketResponse.setTags(tags);
+
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
     return bucketResponse;
@@ -108,9 +109,16 @@ public class BucketServiceImpl implements BucketService {
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
-    return entityList.stream()
-        .map(e -> modelMapper.map(e, BucketResponse.class))
-        .collect(Collectors.toList());
+    List<BucketResponse> responseList =
+        entityList.stream()
+            .map(e -> modelMapper.map(e, BucketResponse.class))
+            .collect(Collectors.toList());
+    
+    for (BucketResponse bucket : responseList) {
+        bucket.setTags(tagService.getTagsForObject(bucket.getBucketId()));
+    }
+
+    return responseList;
   }
 
   @Override

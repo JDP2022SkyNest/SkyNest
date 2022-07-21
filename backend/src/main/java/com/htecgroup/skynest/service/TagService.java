@@ -13,4 +13,6 @@ public interface TagService {
   public List<TagResponse> listAllTags();
 
   void tagObject(UUID tagId, UUID objectId);
+
+  List<TagResponse> getTagsForObject(UUID objectId);
 }
