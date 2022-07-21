@@ -25,6 +25,10 @@ public class FolderEntity extends ObjectEntity {
   @JoinColumn(name = "bucket_id", nullable = false)
   private BucketEntity bucket;
 
+  public void moveToRoot(FolderEntity folderEntity) {
+    folderEntity.setParentFolder(null);
+  }
+
   @Override
   public boolean isDeleted() {
     return super.isDeleted()

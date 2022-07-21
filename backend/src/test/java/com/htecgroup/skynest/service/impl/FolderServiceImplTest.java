@@ -1,7 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
-import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.exception.folder.*;
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
@@ -12,10 +11,7 @@ import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.PermissionService;
+import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,11 +34,14 @@ class FolderServiceImplTest {
   @Mock private BucketRepository bucketRepository;
   @Mock private CurrentUserService currentUserService;
 
-  @Mock private ActionService actionService;
   @Mock private PermissionService permissionService;
+
+  @Mock private ActionService actionService;
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
   @Mock private FileService fileService;
+
+  @Mock private FolderValidatorService folderValidatorService;
   @Captor private ArgumentCaptor<FolderEntity> captorFolderEntity;
 
   @Test
@@ -169,6 +168,93 @@ class FolderServiceImplTest {
     this.assertFolderEntityAndFolderResponse(expectedFolders.get(0), actualFolders.get(0));
     verify(folderRepository, times(1))
         .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(any());
+  }
+
+  @Test
+  void when_folderAlreadyInsideFolder_shouldThrowFolderInsideFolderException() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    UUID uuid = FolderEntityUtil.getFolderWithParent().getId();
+    when(folderRepository.findById(uuid)).thenReturn(Optional.of(folderEntity));
+    FolderEntity parentFolder = FolderEntityUtil.getFolderWithoutParent();
+    UUID destinationUuid = FolderEntityUtil.getFolderWithoutParent().getId();
+    when(folderRepository.findById(destinationUuid)).thenReturn(Optional.of(parentFolder));
+    doThrow(new FolderAlreadyInsideFolderException())
+        .when(folderValidatorService)
+        .checkIfFolderAlreadyInsideFolder(folderEntity, parentFolder);
+
+    String expectedErrorMessage = FolderAlreadyInsideFolderException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyInsideFolderException.class,
+            () -> folderService.moveFolderToFolder(uuid, destinationUuid));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_folderAlreadyInsideRoot_shouldThrowFolderAlreadyInsideRootException() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithoutParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(folderEntity));
+    doThrow(new FolderAlreadyInsideBucketException())
+        .when(folderValidatorService)
+        .checkIfFolderAlreadyInsideRoot(folderEntity);
+
+    String expectedErrorMessage = FolderAlreadyInsideBucketException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderAlreadyInsideBucketException.class,
+            () -> folderService.moveFolderToRoot(UUID.randomUUID()));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void
+      when_destinationFolderIsChildFolder_shouldThrowFolderCanNotBeMovedInsideChildFolderException() {
+    FolderEntity folderEntity = FolderEntityUtil.getFolderWithParent();
+    UUID uuid = FolderEntityUtil.getFolderWithParent().getId();
+    when(folderRepository.findById(uuid)).thenReturn(Optional.of(folderEntity));
+    FolderEntity parentFolder = FolderEntityUtil.getFolderWithoutParent();
+    UUID destinationUuid = FolderEntityUtil.getFolderWithoutParent().getId();
+    when(folderRepository.findById(destinationUuid)).thenReturn(Optional.of(parentFolder));
+    doThrow(new FolderCanNotBeMovedInsideChildFolderException())
+        .when(folderValidatorService)
+        .checkIfDestinationFolderIsChildFolder(parentFolder, folderEntity);
+
+    String expectedErrorMessage = FolderCanNotBeMovedInsideChildFolderException.MESSAGE;
+    Exception thrownException =
+        Assertions.assertThrows(
+            FolderCanNotBeMovedInsideChildFolderException.class,
+            () -> folderService.moveFolderToFolder(destinationUuid, uuid));
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+  }
+
+  @Test
+  void when_moveFolderToBucketRoot_shouldMoveFolderToRoot() {
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
+    UUID folderUuid = FolderEntityUtil.getFolderWithParent().getId();
+    folderService.moveFolderToRoot(folderUuid);
+    Assertions.assertNull(expectedFolderEntity.getParentFolder());
+    verify(folderRepository, times(1)).findById(folderUuid);
+    verify(folderRepository, times(1)).save(expectedFolderEntity);
+  }
+
+  @Test
+  void when_moveFolderToFolder_shouldMoveFolderToFolder() {
+    UUID uuid = UUID.randomUUID();
+    UUID destUUID = UUID.randomUUID();
+    FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(uuid)).thenReturn(Optional.of(expectedFolderEntity));
+    FolderEntity parentFolderEntity = FolderEntityUtil.getFolderWithParent();
+    when(folderRepository.findById(destUUID)).thenReturn(Optional.of(parentFolderEntity));
+    when(folderRepository.save(any())).thenReturn(expectedFolderEntity);
+
+    folderService.moveFolderToFolder(uuid, destUUID);
+
+    Assertions.assertNotNull(expectedFolderEntity.getParentFolder());
+    verify(folderRepository, times(1)).findById(uuid);
+    verify(folderRepository, times(1)).findById(destUUID);
+    verify(folderRepository, times(1)).save(expectedFolderEntity);
   }
 
   @Test

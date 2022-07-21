@@ -31,8 +31,9 @@ public class UrlUtil {
     return PASSWORD_RESET_FRONTEND_URL + token;
   }
 
-  public static String getRegistrationInviteLink(String token) {
-    return REGISTRATION_INVITE_URL + token;
+  public static String getRegistrationInviteLink(String token, String email, String companyName) {
+    return String.format(
+        "%s%s&email=%s&companyName=%s", REGISTRATION_INVITE_URL, token, email, companyName);
   }
 
   @Value("${backend.app.emailConfirmationLink}")
@@ -45,7 +46,7 @@ public class UrlUtil {
     PASSWORD_RESET_FRONTEND_URL = passwordResetUrl;
   }
 
-  @Value("${backend.app.passwordResetLink}")
+  @Value("${backend.app.registrationInviteLink}")
   private void setRegistrationInviteUrl(String registrationInviteUrl) {
     REGISTRATION_INVITE_URL = registrationInviteUrl;
   }
