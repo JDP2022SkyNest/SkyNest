@@ -412,3 +412,15 @@ export const alertTimeout = (delay, stateToChange) => {
       stateToChange("");
    }, delay);
 };
+
+export const metodi = async (accessToken, error) => {
+   try {
+      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+         headers: { Authorization: accessToken },
+      });
+      console.log(response);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};

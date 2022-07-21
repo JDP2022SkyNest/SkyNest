@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets, metodi } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -99,6 +99,17 @@ const HomePage = () => {
                </div>
             )}
          </div>
+         <div className="d-flex justify-content-center">
+            <button
+               onClick={() => {
+                  metodi(accessToken, setErrorMsg);
+               }}
+               className="btn btn-danger"
+            >
+               METODI
+            </button>
+         </div>
+
          <Footer />
       </div>
    );
