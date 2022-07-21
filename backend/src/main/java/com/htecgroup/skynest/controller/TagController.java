@@ -164,6 +164,9 @@ public class TagController {
     return tags;
   }
 
-  @PutMapping("/{tagId}/object/{objectId}")
-  public void tagObject(@PathVariable UUID tagId, @PathVariable UUID objectId) {}
+  @PostMapping("/{tagId}/object/{objectId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void tagObject(@PathVariable UUID tagId, @PathVariable UUID objectId) {
+      tagService.tagObject(tagId,objectId);
+  }
 }
