@@ -1,6 +1,8 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
+import com.htecgroup.skynest.exception.tag.TagNotFoundException;
 import com.htecgroup.skynest.exception.tag.TagNotFromTheSameCompany;
 import com.htecgroup.skynest.exception.tag.TagOnObjectAlreadyExists;
 import com.htecgroup.skynest.model.entity.*;
@@ -87,6 +89,39 @@ class TagServiceImplTest {
     Assertions.assertEquals(expectedTagEntityList.size(), actualResponse.size());
     this.assertTagEntityAndTagResponse(expectedTagEntityList.get(0), actualResponse.get(0));
     verify(tagRepository, times(1)).findByCompanyId(company.getId());
+  }
+
+  @Test
+  void when_tagObject_shouldThrowTagNotFound() {
+    TagEntity tag = TagEntityUtil.get();
+    ObjectEntity object = ObjectEntityUtil.get();
+
+    when(tagRepository.findById(any())).thenReturn(Optional.empty());
+
+    String expectedErrorMessage = TagNotFoundException.MESSAGE;
+    Exception thrownException =
+            Assertions.assertThrows(
+                    TagNotFoundException.class, () -> tagService.tagObject(tag.getId(),object.getId()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).findById(tag.getId());
+  }
+  @Test
+  void when_tagObject_shouldThrowObjectNotFound() {
+    TagEntity tag = TagEntityUtil.get();
+    ObjectEntity object = ObjectEntityUtil.get();
+
+    when(tagRepository.findById(any())).thenReturn(Optional.of(tag));
+    when(objectRepository.findById(any())).thenReturn(Optional.empty());
+
+    String expectedErrorMessage = ObjectNotFoundException.MESSAGE;
+    Exception thrownException =
+            Assertions.assertThrows(
+                    ObjectNotFoundException.class, () -> tagService.tagObject(tag.getId(),object.getId()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).findById(tag.getId());
+    verify(objectRepository, times(1)).findById(object.getId());
   }
 
   @Test
