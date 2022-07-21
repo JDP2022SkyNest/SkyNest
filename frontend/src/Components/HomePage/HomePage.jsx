@@ -18,7 +18,7 @@ import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import "./HomePage.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
 import HomeSearchBar from "./HomeSearchBar";
-import CreateNewTag from "./CreateNewTag";
+import CreateNewTag from "./Tags/CreateNewTag";
 
 const HomePage = () => {
    const navigate = useNavigate();

@@ -42,7 +42,7 @@
 
 .data-folder .btn-primary {
  position: absolute !important;
- top: -50px !important;
+ top: -75px !important;
  right: 13px !important;
  transform: translate(0,-50%) scale(1.2) !important;
  background-color: var(--latte) !important;
@@ -134,7 +134,7 @@ transform: translate(-50%,-50%) scale(0.8);
 
 .private-bucket-indicator {
  position: absolute;
- bottom: 10px;
+ bottom: 36px;
  right: 18px
 }
 

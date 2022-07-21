@@ -34,9 +34,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   {elem.name}
                </div>
                <div className="text-muted text-overflow description-width">{elem.description}</div>
+               <small>
+                  <AiCions.AiOutlinePlusCircle />
+               </small>
             </div>
             {!elem.isPublic && <AiCions.AiFillLock className="private-bucket-indicator" />}
-
             <div>
                <Dropdown>
                   <Dropdown.Toggle>
