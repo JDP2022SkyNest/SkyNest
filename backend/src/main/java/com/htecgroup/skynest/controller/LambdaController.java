@@ -277,11 +277,12 @@ public class LambdaController {
       return;
     }
     String accessToken = authFinish.getAccessToken();
-    log.info(
-        "Successfully got dropbox access token for user {}",
-        currentUserService.getLoggedUser().getUuid());
+    // log.info("Successfully got dropbox access token for user {}",
+    // currentUserService.getLoggedUser().getUuid());
     // Save the access token somewhere (probably in your database) so you
     // don't need to send the user through the authorization process again.
     userService.saveDropboxAccessToken(accessToken);
+
+    response.sendRedirect("http://13.94.241.83:3000/");
   }
 }
