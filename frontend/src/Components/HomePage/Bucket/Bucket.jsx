@@ -7,6 +7,7 @@ import { deleteBucket, restoreBucket, redirectTo } from "../../ReusableComponent
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
+import AllTags from "../Tags/AllTags";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -34,9 +35,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   {elem.name}
                </div>
                <div className="text-muted text-overflow description-width">{elem.description}</div>
-               <small>
-                  <AiCions.AiOutlinePlusCircle />
-               </small>
+               <div className="w-100">
+                  <small>
+                     <AiCions.AiOutlinePlusCircle />
+                  </small>
+               </div>
             </div>
             {!elem.isPublic && <AiCions.AiFillLock className="private-bucket-indicator" />}
             <div>

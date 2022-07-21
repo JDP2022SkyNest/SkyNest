@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
-import SetSuccessMsg from "../../ReusableComponents/SetErrorMsg";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
 const CreateNewTag = () => {

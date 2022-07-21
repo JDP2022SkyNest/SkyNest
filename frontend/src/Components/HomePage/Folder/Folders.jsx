@@ -30,6 +30,11 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                   {elem.name}
                </div>
                <div className="text-muted text-overflow">{timeFrame}</div>
+               <div className="w-100">
+                  <small>
+                     <AiCions.AiOutlinePlusCircle />
+                  </small>
+               </div>
             </div>
             <div>
                <Dropdown>
