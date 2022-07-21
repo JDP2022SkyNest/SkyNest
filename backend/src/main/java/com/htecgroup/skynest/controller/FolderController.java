@@ -233,7 +233,79 @@ public class FolderController {
     folderService.removeFolder(folderId);
   }
 
-  @Operation(summary = "Get folder contents")
+  @Operation(summary = "Restore Folder")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Folder successfully removed",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Folder not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Folder already restored/Folder's parent is deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder is already restored.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}",
+                        name = "folder already restored"),
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder's parent is deleted.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}",
+                        name = "folder's parent deleted")
+                  })
+            })
+      })
+  @PutMapping("{folderId}/restore")
+  public ResponseEntity<FolderResponse> restoreFolder(@PathVariable UUID folderId) {
+    FolderResponse folderResponse = folderService.restoreFolder(folderId);
+    ResponseEntity<FolderResponse> response = new ResponseEntity<>(folderResponse, HttpStatus.OK);
+    return response;
+  }
+
+  @Operation(summary = "Get folder content")
   @ApiResponses(
       value = {
         @ApiResponse(

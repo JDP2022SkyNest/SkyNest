@@ -56,17 +56,6 @@ export const getAllUsers = async (accessToken, stateToChange, messageToShow) => 
    }
 };
 
-export const updateToken = async () => {
-   try {
-      let response = await AxiosInstance.get("/token/refresh", { params: localStorage.getItem("refreshToken") });
-      console.log(response);
-   } catch (err) {
-      if (err.response.status) {
-         console.log("error");
-      }
-   }
-};
-
 export const editUserData = async (accessToken, id, payload, success, error, func) => {
    try {
       await AxiosInstance.put(
@@ -299,6 +288,22 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
    }
 };
 
+export const restoreBucket = async (accessToken, bucketId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/buckets/${bucketId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Bucket Successfully Restored");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const deleteFolder = async (accessToken, folderId, error, success) => {
    try {
       await AxiosInstance.put(
@@ -309,6 +314,22 @@ export const deleteFolder = async (accessToken, folderId, error, success) => {
          }
       );
       success("Folder Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const restoreFolder = async (accessToken, folderId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/${folderId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Restored");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
@@ -327,26 +348,26 @@ export const deleteFile = async (accessToken, fileId, error, success) => {
    }
 };
 
-export const bucketContent = async (accessToken, bucketId, stateToChange,error) => {
+export const bucketContent = async (accessToken, bucketId, stateToChange, error) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
    } catch (err) {
-      error(err.response.data.messages)
+      error(err.response.data.messages);
       console.log(err);
    }
 };
 
-export const folderContent = async (accessToken, folderId, stateToChange,error) => {
+export const folderContent = async (accessToken, folderId, stateToChange, error) => {
    try {
       let response = await AxiosInstance.get(`/folders/${folderId}`, {
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
    } catch (err) {
-      error(err.response.data.messages)
+      error(err.response.data.messages);
       console.log(err);
    }
 };
