@@ -6,6 +6,7 @@ import { deleteFolder, restoreFolder } from "../../ReusableComponents/ReusableFu
 import EditFolderModal from "./EditFolderModal";
 import FolderInfo from "./FolderInfo";
 import { useNavigate } from "react-router-dom";
+import AllTags from "../Tags/AllTags";
 
 const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -53,6 +54,9 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
                         <EditFolderModal elem={elem} refresh={refresh} />
+                     </Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <AllTags />
                      </Dropdown.Item>
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
