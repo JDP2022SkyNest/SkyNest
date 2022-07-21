@@ -131,11 +131,16 @@ transform: translate(-50%,-50%) scale(0.8);
 }
 
 .margin-left-home-search {
- margin-left: 64px !important;
+ margin-left: 6px !important;
 }
 
 .clr-input-width {
   width: 50px !important;
+}
+
+.search-align{
+  position: relative;
+  margin-left: 10px;
 }
 
 @media only screen and (max-width: 574px) {

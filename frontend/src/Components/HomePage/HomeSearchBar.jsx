@@ -4,7 +4,7 @@ import "../ReusableComponents/NavBarPanel.css";
 
 const HomeSearchBar = ({ searchBar, setSearchTerm, searchTerm, setDelState, placeholder = "Search User" }) => {
    return (
-      <div>
+      <div className="margin-left-home-search">
          {searchBar && (
             <div className="input-group" style={{ width: "200px" }}>
                <input
