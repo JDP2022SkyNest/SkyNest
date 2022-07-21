@@ -15,10 +15,6 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class UserRegisterRequest {
 
-  @NotNull(message = "cannot be null")
-  @Pattern(message = "format is not valid", regexp = RegexUtil.EMAIL_FORMAT_REGEX)
-  @Size(max = 254, message = "length cannot be over 254 characters")
-  private String email;
 
   @NotNull(message = "cannot be null")
   @Pattern(regexp = RegexUtil.PASSWORD_FORMAT_REGEX, message = "format not valid")

@@ -112,17 +112,16 @@ export const enableUser = async (accessToken, id, error) => {
    }
 };
 
-export const emailVerification = async (accessToken, success, error, info, setparams, resendEmail) => {
+export const emailVerification = async (accessToken, success, error, info, setparams) => {
    info("Verifying in proggress");
    try {
       await AxiosInstance.post(`/public/confirm?token=${accessToken}`);
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 409) {
-         success("Email already verified");
+         success("Email is verified");
       } else if (err.response.status === 401) {
          error("Token expired");
-         resendEmail(true);
       } else {
          error(err.response.data.messages);
          console.log(err.response.status);
@@ -288,6 +287,22 @@ export const deleteBucket = async (accessToken, bucketId, error, success) => {
    }
 };
 
+export const restoreBucket = async (accessToken, bucketId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/buckets/${bucketId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Bucket Successfully Restored");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const deleteFolder = async (accessToken, folderId, error, success) => {
    try {
       await AxiosInstance.put(
@@ -298,6 +313,22 @@ export const deleteFolder = async (accessToken, folderId, error, success) => {
          }
       );
       success("Folder Successfully Deleted");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const restoreFolder = async (accessToken, folderId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/${folderId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Restored");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
@@ -340,17 +371,6 @@ export const folderContent = async (accessToken, folderId, stateToChange, error)
    }
 };
 
-export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
-   window.addEventListener(
-      "resize",
-      () => {
-         const stateToChange = window.innerWidth;
-         if (stateToChange < 1200) setStateToChange(false);
-      },
-      false
-   );
-};
-
 export const fileDownload = async (accessToken, fileId, fileName, error, success) => {
    try {
       const response = await AxiosInstance.get(`/files/${fileId}`, {
@@ -391,4 +411,16 @@ export const alertTimeout = (delay, stateToChange) => {
    setTimeout(() => {
       stateToChange("");
    }, delay);
+};
+
+export const metodi = async (accessToken, error) => {
+   try {
+      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+         headers: { Authorization: accessToken },
+      });
+      console.log(response);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
 };

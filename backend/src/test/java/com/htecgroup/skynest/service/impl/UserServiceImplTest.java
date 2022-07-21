@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyDisabledException;
 import com.htecgroup.skynest.exception.auth.UserAlreadyEnabledException;
@@ -19,6 +20,7 @@ import com.htecgroup.skynest.service.CompanyService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PasswordEncoderService;
 import com.htecgroup.skynest.service.RoleService;
+import com.htecgroup.skynest.util.JwtUtils;
 import com.htecgroup.skynest.utils.*;
 import com.htecgroup.skynest.utils.company.CompanyEntityUtil;
 import org.junit.jupiter.api.Assertions;
@@ -52,38 +54,49 @@ class UserServiceImplTest {
 
   @Test
   void registerUser() {
+    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
+    String token =
+        JwtUtils.generateRegistrationInviteToken(
+            "test@gmail.com", CompanyEntityUtil.get().getName());
 
     UserEntity expectedUserEntity = UserEntityUtil.getNotVerified();
 
-    when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(roleService.findByName(anyString())).thenReturn(mock(RoleDto.class));
     when(userRepository.save(any())).thenReturn(expectedUserEntity);
     when(passwordEncoderService.encode(anyString())).thenReturn("encryptedPassword");
 
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
-    UserResponse actualUserResponse = userService.registerUser(userRegisterRequest);
+    UserResponse actualUserResponse = userService.registerUser(userRegisterRequest, token);
 
     this.assertUserEntityAndUserResponse(expectedUserEntity, actualUserResponse);
   }
 
   @Test
   void registerUser_AlreadyExistsByEmail() {
+    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
+    String token =
+        JwtUtils.generateRegistrationInviteToken(
+            "test@gmail.com", CompanyEntityUtil.get().getName());
 
-    when(userRepository.existsByEmail(anyString())).thenReturn(true);
+    when(userRepository.existsByEmail("test@gmail.com")).thenReturn(true);
+
     String expectedErrorMessage = new EmailAlreadyInUseException().getMessage();
-
     UserRegisterRequest userRegisterRequest = UserRegisterRequestUtil.get();
 
     Exception thrownException =
         Assertions.assertThrows(
-            EmailAlreadyInUseException.class, () -> userService.registerUser(userRegisterRequest));
+            EmailAlreadyInUseException.class,
+            () -> userService.registerUser(userRegisterRequest, token));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 
   @Test
   void registerUser_AlreadyExistsByPhone() {
+    JwtUtils.ALGORITHM = Algorithm.HMAC512("test secret");
+    String token =
+        JwtUtils.generateRegistrationInviteToken(
+            "test@gmail.com", CompanyEntityUtil.get().getName());
 
-    when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
     String expectedErrorMessage = new PhoneNumberAlreadyInUseException().getMessage();
 
@@ -92,7 +105,7 @@ class UserServiceImplTest {
     Exception thrownException =
         Assertions.assertThrows(
             PhoneNumberAlreadyInUseException.class,
-            () -> userService.registerUser(userRegisterRequest));
+            () -> userService.registerUser(userRegisterRequest, token));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
 

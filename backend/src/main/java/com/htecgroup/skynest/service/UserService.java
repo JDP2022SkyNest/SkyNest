@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-  UserResponse registerUser(UserRegisterRequest userRegisterRequest);
+  UserResponse registerUser(UserRegisterRequest userRegisterRequest, String token);
 
   UserDto findUserByEmail(String email);
 

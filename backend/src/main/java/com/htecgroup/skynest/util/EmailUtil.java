@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.util;
 
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.UserDto;
 import com.htecgroup.skynest.model.email.Email;
 
@@ -24,5 +25,20 @@ public class EmailUtil {
   public static Email createPasswordChangeNotificationEmail(UserDto userDto) {
     Map<String, String> arguments = Map.of("name", userDto.getName());
     return new Email(userDto.getEmail(), EmailType.PASSWORD_CHANGE_NOTIFICATION, arguments, true);
+  }
+
+  public static Email createRegistrationInviteEmail(
+      LoggedUserDto userDto, String newUserEmail, String token) {
+    Map<String, String> arguments =
+        Map.of(
+            "name",
+            userDto.getName(),
+            "surname",
+            userDto.getSurname(),
+            "companyName",
+            userDto.getCompany().getName(),
+            "link",
+            UrlUtil.getRegistrationInviteLink(token, newUserEmail, userDto.getCompany().getName()));
+    return new Email(newUserEmail, EmailType.REGISTRATION_INVITE, arguments, true);
   }
 }
