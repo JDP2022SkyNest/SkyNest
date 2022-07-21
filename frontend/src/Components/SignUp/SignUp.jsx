@@ -39,7 +39,7 @@ const SignUp = () => {
          setErrorMsg("");
          setSuccesMsg("Please confirm your email");
          setButtonText("SUCCESSFUL");
-         redirectTo(navigate, ROUTES.LOGIN, 2000);
+         redirectTo(navigate, ROUTES.LOGIN, 3000);
       } catch (err) {
          if (err.response.status === 409) {
             setErrorMsg(err.response.data.messages);
