@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import ChangePassword from "./ChangePassword";
 import ROUTES from "../../Routes/ROUTES";
 import "./Profile.css";
+import InviteUser from "./InviteUser";
 
 const Profile = ({ setAccessToken, userID }) => {
    const accessToken = localStorage.accessToken;
@@ -32,6 +33,11 @@ const Profile = ({ setAccessToken, userID }) => {
             >
                <CgIcons.CgProfile className="icons-align mr-2" />
                Your Profile
+            </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item className="mr-2" eventKey="1">
+               <CgIcons.CgProfile className="icons-align mr-2" />
+               <InviteUser />
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item
