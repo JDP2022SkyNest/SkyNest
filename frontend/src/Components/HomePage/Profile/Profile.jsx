@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import * as AiIcons from "react-icons/ai";
 import * as CgIcons from "react-icons/cg";
 import * as BiIcons from "react-icons/bi";
@@ -7,11 +7,14 @@ import { openFullscreen, redirectTo, onUserLogout } from "../../ReusableComponen
 import { useNavigate } from "react-router-dom";
 import ChangePassword from "./ChangePassword";
 import ROUTES from "../../Routes/ROUTES";
+import ROLE from "../../Roles/Roles";
 import "./Profile.css";
 import InviteUser from "./InviteUser";
+import GlobalContext from "../../context/GlobalContext";
 
 const Profile = ({ setAccessToken, userID }) => {
    const accessToken = localStorage.accessToken;
+   const { userRole } = useContext(GlobalContext);
 
    const navigate = useNavigate();
 
@@ -35,11 +38,16 @@ const Profile = ({ setAccessToken, userID }) => {
                Your Profile
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item className="mr-2" eventKey="1">
-               <CgIcons.CgProfile className="icons-align mr-2" />
-               <InviteUser />
-            </Dropdown.Item>
-            <Dropdown.Divider />
+            {userRole === ROLE.ADMIN && (
+               <>
+                  <Dropdown.Item className="mr-2" eventKey="1">
+                     <CgIcons.CgProfile className="icons-align mr-2" />
+                     <InviteUser />
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+               </>
+            )}
+
             <Dropdown.Item
                onClick={() => {
                   redirectTo(navigate, ROUTES.COMPANYINFO, 1);

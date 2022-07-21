@@ -30,8 +30,12 @@ const InviteUser = () => {
             setEmail("");
          }, 2000);
       } catch (err) {
-         setErrorMsg(err.response.data.messages);
-         console.error(err.response.status);
+         if (err.response.status === 403) {
+            setErrorMsg("Not Authorized");
+         } else {
+            setErrorMsg(err.response.data.messages);
+            console.error(err.response.status);
+         }
       }
    };
 
