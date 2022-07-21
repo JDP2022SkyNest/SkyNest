@@ -149,6 +149,7 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
+    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
     if (bucketEntity.isDeleted()) {
