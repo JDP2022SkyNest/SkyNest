@@ -78,7 +78,7 @@ public class RegistrationController {
             }),
         @ApiResponse(
             responseCode = "409",
-            description = "Email or phone number already in use",
+            description = "Phone number already in use",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -118,103 +118,11 @@ public class RegistrationController {
               }))
   @PostMapping(REGISTER_URL)
   public ResponseEntity<UserResponse> registerUser(
-      @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
+      @Valid @RequestBody UserRegisterRequest userRegisterRequest, @RequestParam String token) {
 
     ResponseEntity<UserResponse> responseEntity =
-        new ResponseEntity<>(userService.registerUser(userRegisterRequest), HttpStatus.OK);
-    authService.sendVerificationEmail(userRegisterRequest.getEmail());
+        new ResponseEntity<>(userService.registerUser(userRegisterRequest, token), HttpStatus.OK);
     return responseEntity;
-  }
-
-  @Operation(summary = "Confirm email")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Email confirmed",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "User verified successfully")})
-            }),
-        @ApiResponse(
-            responseCode = "401",
-            description = "Invalid email verification token",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Invalid email verification token")})
-            }),
-        @ApiResponse(
-            responseCode = "409",
-            description = "User is already verified",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "User is already verified")})
-            }),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Email confirmation failed",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {
-                    @ExampleObject(
-                        value =
-                            "Jwt token failed the validation. For more information check the logger")
-                  })
-            })
-      })
-  @PostMapping(CONFIRM_EMAIL_URL)
-  public ResponseEntity<String> confirmEmail(@RequestParam String token) {
-    String response = authService.confirmEmail(token);
-    log.info(response);
-    return ResponseEntity.ok(response);
-  }
-
-  @Operation(summary = "Resend verification email")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Email resent",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Email resent successfully")})
-            }),
-        @ApiResponse(
-            responseCode = "409",
-            description = "User is already verified",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "User is already verified")})
-            }),
-        @ApiResponse(
-            responseCode = "500",
-            description =
-                "User already registered, not a valid email address or failed to resend email",
-            content = {
-              @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = String.class),
-                  examples = {@ExampleObject(value = "Failed to send email")})
-            })
-      })
-  @PostMapping(RESEND_EMAIL_URL)
-  public ResponseEntity<String> resendUserEmail(@RequestParam String email) {
-    authService.sendVerificationEmail(email);
-    String response = "Email resent successfully";
-    log.info(response);
-    return ResponseEntity.ok(response);
   }
 
   @Operation(summary = "Request password reset")

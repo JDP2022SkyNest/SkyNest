@@ -38,7 +38,7 @@ public class EmailUtil {
             "companyName",
             userDto.getCompany().getName(),
             "link",
-            UrlUtil.getRegistrationInviteLink(token));
+            UrlUtil.getRegistrationInviteLink(token, newUserEmail, userDto.getCompany().getName()));
     return new Email(newUserEmail, EmailType.REGISTRATION_INVITE, arguments, true);
   }
 }
