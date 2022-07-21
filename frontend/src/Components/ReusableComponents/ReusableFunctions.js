@@ -112,17 +112,16 @@ export const enableUser = async (accessToken, id, error) => {
    }
 };
 
-export const emailVerification = async (accessToken, success, error, info, setparams, resendEmail) => {
+export const emailVerification = async (accessToken, success, error, info, setparams) => {
    info("Verifying in proggress");
    try {
       await AxiosInstance.post(`/public/confirm?token=${accessToken}`);
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 409) {
-         success("Email already verified");
+         success("Email is verified");
       } else if (err.response.status === 401) {
          error("Token expired");
-         resendEmail(true);
       } else {
          error(err.response.data.messages);
          console.log(err.response.status);

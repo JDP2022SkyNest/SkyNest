@@ -8,7 +8,6 @@ import RedirectRoute from "./Components/Routes/RedirectRoute";
 import ForgotPassword from "./Components/ForgotPassword/ForgotPassword";
 import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
-import ResendEmail from "./Components/ResendEmail/ResendEmail";
 import NoToken from "./Components/Routes/NoToken";
 import AdminRoute from "./Components/Routes/AdminRoute";
 import { getCompanyName, getUserData } from "./Components/ReusableComponents/ReusableFunctions";
@@ -92,15 +91,6 @@ const App = () => {
             element={
                <NoToken>
                   <ConfirmPassword />
-               </NoToken>
-            }
-         />
-         <Route
-            path="resend-email"
-            exact
-            element={
-               <NoToken>
-                  <ResendEmail />
                </NoToken>
             }
          />
