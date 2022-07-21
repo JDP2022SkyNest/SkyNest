@@ -119,7 +119,7 @@ export const emailVerification = async (accessToken, success, error, info, setpa
       success("Email Verified");
    } catch (err) {
       if (err.response.status === 409) {
-         success("Email already verified");
+         success("Email is verified");
       } else if (err.response.status === 401) {
          error("Token expired");
          resendEmail(true);

@@ -95,7 +95,7 @@ const Login = () => {
             </div>
             <h1 className="mt-2 text-center">SKY-NEST</h1>
             <p className="mb-5 p-0 text-center text-secondary">Sign into your account</p>
-            <p className={infoMsg ? "alert alert-info text-info text-center" : "d-none"}>{infoMsg}</p>
+            <p className={infoMsg ? "alert alert-success text-success text-center" : "d-none"}>{infoMsg}</p>
             <p className={errorMsg ? "alert alert-danger text-danger text-center" : "d-none"}>{errorMsg}</p>
             <p className={successMsg ? "alert alert-success text-success text-center" : "d-none"}>{successMsg}</p>
             <fieldset disabled={loading}>
