@@ -7,10 +7,7 @@ import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
@@ -151,6 +148,7 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public BucketResponse editBucket(
       BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
+    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
     if (bucketEntity.isDeleted()) {
