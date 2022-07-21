@@ -2,10 +2,14 @@ import React from "react";
 
 const Tag = ({ data }) => {
    const allData = data?.map((el, index) => {
-      return <div key={index}>{el.name}</div>;
+      return (
+         <option value={el.id} key={index}>
+            {el.name}
+         </option>
+      );
    });
 
-   return <div>{allData}</div>;
+   return allData;
 };
 
 export default Tag;

@@ -37,7 +37,8 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                <div className="text-muted text-overflow description-width">{elem.description}</div>
                <div className="w-100">
                   <small>
-                     <AiCions.AiOutlinePlusCircle />
+                     <AiCions.AiOutlineTag className="main-icon-align" />
+                     {elem.tags ? <span className="ml-1">123</span> : <span className="ml-1 text-muted">No tags</span>}
                   </small>
                </div>
             </div>
@@ -58,6 +59,9 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
                         <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
+                     </Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <AllTags />
                      </Dropdown.Item>
                      {elem.deletedOn === null ? (
                         <Dropdown.Item

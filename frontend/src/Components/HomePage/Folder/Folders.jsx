@@ -32,7 +32,8 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                <div className="text-muted text-overflow">{timeFrame}</div>
                <div className="w-100">
                   <small>
-                     <AiCions.AiOutlinePlusCircle />
+                     <AiCions.AiOutlineTag className="main-icon-align" />
+                     {elem.tags ? <span className="ml-1">123</span> : <span className="ml-1 text-muted">No tags</span>}
                   </small>
                </div>
             </div>
