@@ -10,6 +10,7 @@ import com.htecgroup.skynest.exception.jwt.InvalidAlgorithmException;
 import com.htecgroup.skynest.exception.jwt.InvalidEmailTokenException;
 import com.htecgroup.skynest.exception.jwt.InvalidSessionTokenException;
 import com.htecgroup.skynest.model.jwtObject.JwtObject;
+import com.htecgroup.skynest.model.jwtObject.RegistrationInviteTokenData;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,7 @@ public class JwtUtils {
   public static final String REFRESH_TOKEN_HEADER = "refresh-token";
   public static final String TOKEN_PREFIX = "Bearer ";
   private static final String EMAIL_TOKEN_CLAIM = "Email token";
+  private static final String COMPANY_NAME_CLAIM = "Company name";
   private static final String PASSWORD_RESET_PURPOSE = "password reset";
   private static final String EMAIL_VERIFICATION_PURPOSE = "verification";
   private static final String REGISTRATION_INVITE_PURPOSE = "registration invite";
@@ -76,7 +78,6 @@ public class JwtUtils {
 
   public static String getUsernameFromRefreshToken(String token) {
     DecodedJWT decodedJWT = JWT.require(ALGORITHM).build().verify(token);
-
     String username = decodedJWT.getSubject();
     return username;
   }
@@ -131,7 +132,7 @@ public class JwtUtils {
         .withSubject(email)
         .withExpiresAt(
             new Date(System.currentTimeMillis() + REGISTRATION_INVITE_TOKEN_EXPIRATION_MS))
-        .withClaim("companyName", companyName)
+        .withClaim(COMPANY_NAME_CLAIM, companyName)
         .withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE)
         .sign(ALGORITHM);
   }
@@ -158,6 +159,23 @@ public class JwtUtils {
 
   public static String generateRefreshToken(JwtObject jwtObject, List<String> claims) {
     return generate(jwtObject, REFRESH_TOKEN_EXPIRATION_MS, CLAIM_NAME, claims);
+  }
+
+  public static RegistrationInviteTokenData getRegistrationInviteTokenData(String token) {
+    try {
+      Verification verification = JWT.require(ALGORITHM);
+      JWTVerifier verifier =
+          verification.withClaim(EMAIL_TOKEN_CLAIM, REGISTRATION_INVITE_PURPOSE).build();
+      DecodedJWT decodedJWT = verifier.verify(token);
+      return new RegistrationInviteTokenData(
+          decodedJWT.getSubject(), decodedJWT.getClaim(COMPANY_NAME_CLAIM).asString());
+    } catch (JWTVerificationException e) {
+      log.error("Invalid JWT token: {}", e.getMessage());
+      throw new InvalidEmailTokenException();
+    } catch (IllegalArgumentException e) {
+      log.error("JWT claims string is empty: {}", e.getMessage());
+      throw new InvalidAlgorithmException();
+    }
   }
 
   @Value("${jwt.access-expiration-ms}")

@@ -71,6 +71,13 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   @Override
+  public CompanyDto findByName(String name) {
+    CompanyEntity companyEntity =
+        companyRepository.findByName(name).orElseThrow(CompanyNotFoundException::new);
+    return modelMapper.map(companyEntity, CompanyDto.class);
+  }
+
+  @Override
   public CompanyResponse getMyCompany() {
     CompanyEntity companyEntity =
         currentUserService
