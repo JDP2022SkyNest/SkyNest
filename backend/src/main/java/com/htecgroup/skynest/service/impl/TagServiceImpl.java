@@ -4,6 +4,7 @@ import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
 import com.htecgroup.skynest.exception.tag.TagNotFoundException;
+import com.htecgroup.skynest.exception.tag.TagNotFromTheSameCompany;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
@@ -69,6 +70,9 @@ public class TagServiceImpl implements TagService {
 
     ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
     ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
+
+    if(!objectToTagRepository.existsById(key)) throw new TagAlreadyExistsException();
+    if(!tagEntity.getCompany().equals(objectEntity.getCreatedBy().getCompany())) throw new TagNotFromTheSameCompany();
 
     objectToTagRepository.save(objectToTagEntity);
   }
