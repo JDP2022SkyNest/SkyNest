@@ -6,6 +6,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
+import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -62,6 +63,7 @@ public class PermissionServiceImpl implements PermissionService {
         bucketRepository
             .findById(permissionGrantRequest.getObjectId())
             .orElseThrow(BucketNotFoundException::new);
+    checkIfBucketIsDeleted(bucket.getId());
 
     permission.setGrantedBy(currentUser);
     permission.setGrantedTo(targetUser);
@@ -172,6 +174,25 @@ public class PermissionServiceImpl implements PermissionService {
 
     return setAndSavePermission(
         userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
+  }
+
+  @Override
+  public void revokePermission(UUID bucketId, UUID userId) {
+    checkIfBucketExist(bucketId);
+    checkIfBucketIsDeleted(bucketId);
+    currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
+
+    UserEntity user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    UserObjectAccessEntity permission =
+        permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
+    checkIfPermissionExist(permission);
+    permissionRepository.delete(permission);
+  }
+
+  private void checkIfPermissionExist(UserObjectAccessEntity permission) {
+    if (permission == null) {
+      throw new PermissionDoesNotExistException();
+    }
   }
 
   private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {

@@ -5,10 +5,10 @@ import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const AddBucketModal = ({ refreshBuckets }) => {
+const CreateNewTag = () => {
    const [show, setShow] = useState(false);
    const [name, setName] = useState("");
-   const [description, setDescription] = useState("");
+   const [rgb, setRgb] = useState("#000000");
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -17,45 +17,46 @@ const AddBucketModal = ({ refreshBuckets }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const createNewBucket = async () => {
-      try {
-         await AxiosInstance.post(
-            "/buckets",
-            {
-               name,
-               description,
-            },
-            { headers: { Authorization: accessToken } }
-         );
-         setSuccessMsg("Bucket Created");
-         setTimeout(() => {
-            setShow(false);
-            setName("");
-            setDescription("");
-            refreshBuckets();
-         }, 2000);
-      } catch (err) {
-         console.log(err);
-         if (err.response.status === 400) {
-            setErrorMsg("Inputs can't be empty");
-         } else {
-            setErrorMsg(err.response.data.messages);
-            console.log(err);
+   const createNewTag = async () => {
+      if (name.length < 8) {
+         try {
+            await AxiosInstance.post(
+               "/tags",
+               { name, rgb: rgb.slice(1) },
+               {
+                  headers: { Authorization: accessToken },
+               }
+            );
+            setSuccessMsg("Tag Successfully Added");
+            setTimeout(() => {
+               setShow(false);
+               setName("");
+               setRgb("#000000");
+            }, 2000);
+         } catch (err) {
+            if (err.response.status === 400) {
+               setErrorMsg("Invalid Name");
+            } else {
+               setErrorMsg(err.response.data.messages);
+               console.log(err);
+            }
          }
+      } else {
+         setErrorMsg("Name can't be longer than 6 characters");
       }
    };
 
    const onFormSubmit = async (e) => {
       e.preventDefault();
       setLoading(true);
-      await createNewBucket();
+      await createNewTag();
       setLoading(false);
    };
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded shadow">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
+         <span onClick={handleShow} className="ml-auto ml-sm-2 latte-background custom-rounded shadow">
+            <AiCions.AiOutlineTags className="main-icon-align" /> Create Tag
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
@@ -77,16 +78,16 @@ const AddBucketModal = ({ refreshBuckets }) => {
                         </div>
                      </div>
                      <div className="form-group row">
-                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
-                           Description:
+                        <label htmlFor="colorInp" className="col-3 col-form-label">
+                           Color:
                         </label>
-                        <div className="col-sm-9">
+                        <div className="col-9">
                            <input
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              className="form-control"
-                              id="descrInp"
-                              placeholder="Description"
+                              type="color"
+                              value={rgb}
+                              onChange={(e) => setRgb(e.target.value)}
+                              className="form-control clr-input-width"
+                              id="colorInp"
                            />
                         </div>
                      </div>
@@ -97,6 +98,8 @@ const AddBucketModal = ({ refreshBuckets }) => {
                               e.preventDefault();
                               handleClose();
                               setErrorMsg("");
+                              setRgb("#000000");
+                              setName("");
                            }}
                            className="ml-2 btn btn-outline-secondary button-width"
                         >
@@ -111,4 +114,4 @@ const AddBucketModal = ({ refreshBuckets }) => {
    );
 };
 
-export default AddBucketModal;
+export default CreateNewTag;

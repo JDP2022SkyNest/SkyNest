@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
-import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
-const AddBucketModal = ({ refreshBuckets }) => {
+const InviteUser = () => {
    const [show, setShow] = useState(false);
-   const [name, setName] = useState("");
-   const [description, setDescription] = useState("");
+   const [email, setEmail] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [loading, setLoading] = useState(false);
@@ -17,46 +15,43 @@ const AddBucketModal = ({ refreshBuckets }) => {
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
 
-   const createNewBucket = async () => {
+   const userInvite = async () => {
       try {
          await AxiosInstance.post(
-            "/buckets",
+            "/invite",
+            { email },
             {
-               name,
-               description,
-            },
-            { headers: { Authorization: accessToken } }
+               headers: { Authorization: accessToken },
+            }
          );
-         setSuccessMsg("Bucket Created");
+         setSuccessMsg("User Invited");
          setTimeout(() => {
             setShow(false);
-            setName("");
-            setDescription("");
-            refreshBuckets();
+            setEmail("");
          }, 2000);
       } catch (err) {
-         console.log(err);
-         if (err.response.status === 400) {
-            setErrorMsg("Inputs can't be empty");
+         if (err.response.status === 403) {
+            setErrorMsg("Not Authorized");
          } else {
             setErrorMsg(err.response.data.messages);
-            console.log(err);
+            console.error(err.response.status);
          }
       }
    };
 
-   const onFormSubmit = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-      await createNewBucket();
-      setLoading(false);
+   const onFormSubmit = async () => {
+      if (email.length < 3 || email.indexOf("@") === -1) {
+         setErrorMsg("Please enter a valid email");
+      } else {
+         setLoading(true);
+         await userInvite();
+         setLoading(false);
+      }
    };
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded shadow">
-            <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
-         </span>
+         <span onClick={handleShow}>Invite User</span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
             <Modal.Body>
@@ -66,37 +61,34 @@ const AddBucketModal = ({ refreshBuckets }) => {
                   setSuccessMsg={setSuccessMsg}
                   customStyle="m-0 w-100 alert alert-success text-success text-center mb-3"
                />
-               <form onSubmit={onFormSubmit}>
+               <form onSubmit={() => console.log("WWo")}>
                   <fieldset disabled={loading}>
                      <div className="form-group row">
-                        <label htmlFor="nameInp" className="col-sm-3 col-form-label">
-                           Name:
-                        </label>
-                        <div className="col-sm-9">
-                           <input value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="nameInp" placeholder="Name" />
-                        </div>
-                     </div>
-                     <div className="form-group row">
-                        <label htmlFor="descrInp" className="col-sm-3 col-form-label">
-                           Description:
+                        <label htmlFor="emailInp" className="col-sm-3 col-form-label">
+                           Email:
                         </label>
                         <div className="col-sm-9">
                            <input
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
+                              type="email"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
                               className="form-control"
-                              id="descrInp"
-                              placeholder="Description"
+                              id="emailInp"
+                              placeholder="Email"
+                              required
                            />
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-secondary button-width">Create</button>
+                        <button onClick={() => onFormSubmit()} className="btn btn-secondary button-width">
+                           Invite
+                        </button>
                         <button
                            onClick={(e) => {
                               e.preventDefault();
                               handleClose();
                               setErrorMsg("");
+                              setEmail("");
                            }}
                            className="ml-2 btn btn-outline-secondary button-width"
                         >
@@ -111,4 +103,4 @@ const AddBucketModal = ({ refreshBuckets }) => {
    );
 };
 
-export default AddBucketModal;
+export default InviteUser;

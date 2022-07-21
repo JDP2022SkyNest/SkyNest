@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.repository;
 
+import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.entity.UserObjectAccessEntity;
 import com.htecgroup.skynest.model.entity.UserObjectAccessKey;
 import org.springframework.data.repository.CrudRepository;
@@ -12,4 +13,6 @@ public interface UserObjectAccessRepository
   List<UserObjectAccessEntity> findAllByObjectId(UUID objectId);
 
   UserObjectAccessEntity findByObjectId(UUID objectId);
+
+  UserObjectAccessEntity findByObjectIdAndGrantedTo(UUID bucketId, UserEntity user);
 }
