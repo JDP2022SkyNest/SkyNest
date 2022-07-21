@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { pwSuggestion, passwordRegEx, redirectTo } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import AxiosInstance from "../axios/AxiosInstance";
@@ -13,6 +13,7 @@ const SignUp = () => {
    const [name, setName] = useState("");
    const [surname, setSurname] = useState("");
    const [email, setEmail] = useState("");
+   const [company, setCompany] = useState("");
    const [phoneNumber, setPhoneNumber] = useState("");
    const [address, setAddress] = useState("");
    const [uPassword, setPassword] = useState("");
@@ -23,13 +24,17 @@ const SignUp = () => {
    const [showPassword, setShowPassword] = useState(false);
    const [loading, setLoading] = useState(false);
    const [multiError, setMultiError] = useState("");
+   // eslint-disable-next-line
+   const [searchParams, setSearchParams] = useSearchParams();
 
    const navigate = useNavigate();
+   const token = searchParams.get("token");
+   const emailParam = searchParams.get("email");
+   const companyName = searchParams.get("companyName");
 
    const userRegistration = async () => {
       try {
-         await AxiosInstance.post("/public/register", {
-            email,
+         await AxiosInstance.post(`/public/register?token=${token}`, {
             password: uPassword,
             name,
             surname,
@@ -37,7 +42,7 @@ const SignUp = () => {
             address,
          });
          setErrorMsg("");
-         setSuccesMsg("Please confirm your email");
+         setSuccesMsg("Successfully Registred");
          setButtonText("SUCCESSFUL");
          redirectTo(navigate, ROUTES.LOGIN, 3000);
       } catch (err) {
@@ -78,6 +83,11 @@ const SignUp = () => {
    const passwordShowHide = () => {
       setShowPassword(!showPassword);
    };
+
+   useEffect(() => {
+      setEmail(emailParam);
+      setCompany(companyName);
+   }, [emailParam, companyName]);
 
    useEffect(() => {
       setErrorMsg("");
@@ -133,12 +143,25 @@ const SignUp = () => {
                   <input
                      type="email"
                      name="email"
-                     value={email}
-                     onChange={(e) => setEmail(e.target.value)}
+                     defaultValue={email}
                      id="emailInput"
                      className="form-control"
                      required
                      autoComplete="off"
+                     disabled
+                  />
+               </div>
+               <div className="form-outline mb-1">
+                  <Label id="companyInput">Company</Label>
+                  <input
+                     type="test"
+                     name="email"
+                     defaultValue={company}
+                     id="companyInput"
+                     className="form-control"
+                     required
+                     autoComplete="off"
+                     disabled
                   />
                </div>
                <div className="form-outline mb-1">
