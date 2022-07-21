@@ -371,17 +371,6 @@ export const folderContent = async (accessToken, folderId, stateToChange, error)
    }
 };
 
-export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
-   window.addEventListener(
-      "resize",
-      () => {
-         const stateToChange = window.innerWidth;
-         if (stateToChange < 1200) setStateToChange(false);
-      },
-      false
-   );
-};
-
 export const fileDownload = async (accessToken, fileId, fileName, error, success) => {
    try {
       const response = await AxiosInstance.get(`/files/${fileId}`, {
@@ -422,4 +411,16 @@ export const alertTimeout = (delay, stateToChange) => {
    setTimeout(() => {
       stateToChange("");
    }, delay);
+};
+
+export const metodi = async (accessToken, error) => {
+   try {
+      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+         headers: { Authorization: accessToken },
+      });
+      console.log(response);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
 };
