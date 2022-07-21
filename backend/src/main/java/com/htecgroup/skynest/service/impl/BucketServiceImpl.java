@@ -1,16 +1,14 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
+import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
@@ -105,8 +103,17 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public List<BucketResponse> listAllBuckets() {
+
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
+
+    for (BucketEntity bucket : entityList) {
+      try {
+        permissionService.currentUserHasPermissionForBucket(bucket.getId(), AccessType.VIEW);
+      } catch (BucketAccessDeniedException b) {
+
+      }
+    }
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
