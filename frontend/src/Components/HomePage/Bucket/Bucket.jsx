@@ -7,6 +7,7 @@ import { deleteBucket, restoreBucket, redirectTo } from "../../ReusableComponent
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
+import AllTags from "../Tags/AllTags";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -34,9 +35,14 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   {elem.name}
                </div>
                <div className="text-muted text-overflow description-width">{elem.description}</div>
+               <div className="w-100">
+                  <small>
+                     <AiCions.AiOutlineTag className="main-icon-align" />
+                     {elem.tags ? <span className="ml-1">123</span> : <span className="ml-1 text-muted">No tags</span>}
+                  </small>
+               </div>
             </div>
             {!elem.isPublic && <AiCions.AiFillLock className="private-bucket-indicator" />}
-
             <div>
                <Dropdown>
                   <Dropdown.Toggle>
@@ -53,6 +59,9 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
                         <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
+                     </Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <AllTags />
                      </Dropdown.Item>
                      {elem.deletedOn === null ? (
                         <Dropdown.Item

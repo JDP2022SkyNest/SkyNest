@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import * as AiCions from "react-icons/ai";
-import AxiosInstance from "../axios/AxiosInstance";
-import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
-import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
+import AxiosInstance from "../../axios/AxiosInstance";
+import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
+import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
 
 const CreateNewTag = () => {
    const [show, setShow] = useState(false);
@@ -18,27 +18,31 @@ const CreateNewTag = () => {
    const accessToken = localStorage.accessToken;
 
    const createNewTag = async () => {
-      try {
-         await AxiosInstance.post(
-            "/tags",
-            { name, rgb: rgb.slice(1) },
-            {
-               headers: { Authorization: accessToken },
+      if (name.length < 8) {
+         try {
+            await AxiosInstance.post(
+               "/tags",
+               { name, rgb: rgb.slice(1) },
+               {
+                  headers: { Authorization: accessToken },
+               }
+            );
+            setSuccessMsg("Tag Successfully Added");
+            setTimeout(() => {
+               setShow(false);
+               setName("");
+               setRgb("#000000");
+            }, 2000);
+         } catch (err) {
+            if (err.response.status === 400) {
+               setErrorMsg("Invalid Name");
+            } else {
+               setErrorMsg(err.response.data.messages);
+               console.log(err);
             }
-         );
-         setSuccessMsg("Tag Successfully Added");
-         setTimeout(() => {
-            setShow(false);
-            setName("");
-            setRgb("#000000");
-         }, 2000);
-      } catch (err) {
-         if (err.response.status === 400) {
-            setErrorMsg("Invalid Inputs");
-         } else {
-            setErrorMsg(err.response.data.messages);
-            console.log(err);
          }
+      } else {
+         setErrorMsg("Name can't be longer than 6 characters");
       }
    };
 

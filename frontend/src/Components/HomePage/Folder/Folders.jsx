@@ -6,6 +6,7 @@ import { deleteFolder, restoreFolder } from "../../ReusableComponents/ReusableFu
 import EditFolderModal from "./EditFolderModal";
 import FolderInfo from "./FolderInfo";
 import { useNavigate } from "react-router-dom";
+import AllTags from "../Tags/AllTags";
 
 const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -30,6 +31,12 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                   {elem.name}
                </div>
                <div className="text-muted text-overflow">{timeFrame}</div>
+               <div className="w-100">
+                  <small>
+                     <AiCions.AiOutlineTag className="main-icon-align" />
+                     {elem.tags ? <span className="ml-1">123</span> : <span className="ml-1 text-muted">No tags</span>}
+                  </small>
+               </div>
             </div>
             <div>
                <Dropdown>
@@ -47,6 +54,9 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
                         <EditFolderModal elem={elem} refresh={refresh} />
+                     </Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <AllTags />
                      </Dropdown.Item>
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
