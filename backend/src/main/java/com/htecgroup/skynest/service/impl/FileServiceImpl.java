@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.actions.RecordAction;
+import com.htecgroup.skynest.event.UploadFileToExternalServiceEvent;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
@@ -9,6 +10,7 @@ import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.*;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
@@ -26,6 +28,8 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -45,7 +49,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl implements FileService, ApplicationEventPublisherAware {
 
   private final GridFsOperations operations;
   private final ModelMapper modelMapper;
@@ -56,6 +60,13 @@ public class FileServiceImpl implements FileService {
   private final ActionService actionService;
   private final PermissionService permissionService;
   private final FolderRepository folderRepository;
+
+  private ApplicationEventPublisher publisher;
+
+  @Override
+  public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    publisher = applicationEventPublisher;
+  }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -104,6 +115,14 @@ public class FileServiceImpl implements FileService {
       FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
       permissionService.grantOwnerForObject(savedFileMetadata);
       actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
+
+      BucketEntity bucket = emptyFileMetadata.getBucket();
+
+      if (bucket.getLambdaTypes().contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA)) {
+        UploadFileToExternalServiceEvent event =
+            new UploadFileToExternalServiceEvent(this, multipartFile, bucket.getName());
+        publisher.publishEvent(event);
+      }
 
       return modelMapper.map(savedFileMetadata, FileResponse.class);
     } catch (IOException e) {
