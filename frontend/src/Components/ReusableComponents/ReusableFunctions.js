@@ -371,17 +371,6 @@ export const folderContent = async (accessToken, folderId, stateToChange, error)
    }
 };
 
-export const sideBarCloseOnPhone = (stateToChange, setStateToChange) => {
-   window.addEventListener(
-      "resize",
-      () => {
-         const stateToChange = window.innerWidth;
-         if (stateToChange < 1200) setStateToChange(false);
-      },
-      false
-   );
-};
-
 export const fileDownload = async (accessToken, fileId, fileName, error, success) => {
    try {
       const response = await AxiosInstance.get(`/files/${fileId}`, {

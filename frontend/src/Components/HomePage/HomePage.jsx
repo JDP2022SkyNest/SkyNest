@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets, sideBarCloseOnPhone } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
 import Profile from "../HomePage/Profile/Profile";
-import ToolBar from "../HomePage/ToolBar/ToolBar";
-import SideBar from "../HomePage/SideBar/SideBar";
-import BackDrop from "../HomePage/BackDrop/BackDrop";
 import * as RiCions from "react-icons/ri";
 import GlobalContext from "../context/GlobalContext";
 import AddBucketModal from "./Bucket/AddBucketModal";
@@ -22,26 +19,17 @@ import CreateNewTag from "./CreateNewTag";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(false);
    const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
    const [delState, setDelState] = useState(false);
    const filteredBuckets = allBuckets.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
    // eslint-disable-next-line
-   const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
    const [loader, setLoader] = useState(false);
-   const toggleSidebar = () => {
-      setSidebar((prevState) => !prevState);
-   };
 
    const { setAccessToken, userRole, userID } = useContext(GlobalContext);
    const accessToken = localStorage.accessToken;
-
-   useEffect(() => {
-      sideBarCloseOnPhone(isMobile, setSidebar);
-   }, [isMobile]);
 
    useEffect(() => {
       let getBuckets = async () => {
@@ -64,10 +52,9 @@ const HomePage = () => {
 
    return (
       <div className="home-page-body">
-         <BackDrop sidebar={!isMobile && sidebar} closeSidebar={toggleSidebar} />
-         <Navbar className="header py-0 bg-dark text-white">
+         <Navbar bg="dark" variant="dark">
             <Container>
-               <ToolBar openSidebar={toggleSidebar} />
+               <Navbar.Brand className="text-white d-none d-md-block m-0 fixed-navbar-width">SkyNest</Navbar.Brand>
                <HomeSearchBar
                   searchBar={true}
                   path={ROUTES.HOME}
@@ -89,7 +76,6 @@ const HomePage = () => {
                </div>
             </Container>
          </Navbar>
-         <SideBar sidebar={!isMobile && sidebar} userRole={userRole} />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
             <SetSuccessMsg
