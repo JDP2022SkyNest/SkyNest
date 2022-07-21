@@ -47,7 +47,7 @@ class BucketServiceImplTest {
   void listAllBuckets() {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getPrivateBucket());
-    when(bucketRepository.findAll()).thenReturn(bucketEntityList);
+    when(bucketRepository.findAllByOrderByNameAscCreatedOnDesc()).thenReturn(bucketEntityList);
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
 
@@ -55,20 +55,7 @@ class BucketServiceImplTest {
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
-    verify(bucketRepository, times(1)).findAll();
-  }
-
-  @Test
-  void listAllDeletedBuckets() {
-    List<BucketEntity> bucketEntityList =
-        Collections.singletonList(BucketEntityUtil.getDeletedBucket());
-    when(bucketRepository.findAllByDeletedOnIsNotNull()).thenReturn(bucketEntityList);
-
-    List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
-    List<BucketResponse> actualResponse = bucketService.listAllDeletedBuckets();
-
-    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
-    this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
+    verify(bucketRepository, times(1)).findAllByOrderByNameAscCreatedOnDesc();
   }
 
   @Test
@@ -237,5 +224,30 @@ class BucketServiceImplTest {
 
     BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
     Assertions.assertTrue(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
+  }
+
+  @Test
+  void when_deactivateLambda_ShouldSaveEntityWithDeactivatedLambda() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucketWithLambdas();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.deactivateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertFalse(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
+  }
+
+  @Test
+  void when_getActiveLambdas_ShouldReturnAllActiveLambdas() {
+    BucketEntity bucketWithLambda = BucketEntityUtil.getPrivateBucketWithLambdas();
+    doReturn(bucketWithLambda).when(bucketService).findBucketEntityById(any());
+    UUID bucketId = UUID.randomUUID();
+    List<LambdaType> returnedLambdas = bucketService.getActiveLambdas(bucketId);
+
+    Assertions.assertTrue(
+        returnedLambdas.contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA));
+    Assertions.assertEquals(1, returnedLambdas.size());
   }
 }

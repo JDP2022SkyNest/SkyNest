@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets, sideBarCloseOnPhone, GetRefreshToken } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets, sideBarCloseOnPhone } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -17,12 +17,17 @@ import SetErrorMsg from "../ReusableComponents/SetErrorMsg";
 import SetSuccessMsg from "../ReusableComponents/SetSuccessMsg";
 import "./HomePage.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
+import HomeSearchBar from "./HomeSearchBar";
+import CreateNewTag from "./CreateNewTag";
 
 const HomePage = () => {
    const navigate = useNavigate();
-   const [sidebar, setSidebar] = useState(true);
+   const [sidebar, setSidebar] = useState(false);
    const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
+   const [searchTerm, setSearchTerm] = useState("");
+   const [delState, setDelState] = useState(false);
+   const filteredBuckets = allBuckets.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
    // eslint-disable-next-line
    const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
    const [successMsg, setSuccessMsg] = useState("");
@@ -53,7 +58,7 @@ const HomePage = () => {
       setLoader(false);
    };
 
-   const allData = allBuckets.map((elem, index) => (
+   const allData = filteredBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
 
@@ -63,6 +68,14 @@ const HomePage = () => {
          <Navbar className="header py-0 bg-dark text-white">
             <Container>
                <ToolBar openSidebar={toggleSidebar} />
+               <HomeSearchBar
+                  searchBar={true}
+                  path={ROUTES.HOME}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  setDelState={setDelState}
+                  placeholder="Search..."
+               />
                <div className="d-flex">
                   <button
                      onClick={() => {
@@ -86,10 +99,11 @@ const HomePage = () => {
             />
             {!loader ? (
                <div>
-                  <div className="py-2 mt-2 mb-1 rounded d-flex">
+                  <div className="py-2 mt-2 rounded d-flex">
                      <AddBucketModal refreshBuckets={refreshBuckets} />
+                     <CreateNewTag />
                   </div>
-                  <div className="container">
+                  <div className="container mt-2">
                      <div className="row data-folder">{allData}</div>
                   </div>
                </div>

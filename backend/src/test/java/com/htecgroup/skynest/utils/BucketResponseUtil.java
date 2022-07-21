@@ -13,7 +13,8 @@ public class BucketResponseUtil {
         BucketDtoUtil.companyDto.getId(),
         "Description",
         1000L,
-        false);
+        false,
+        BucketEntityUtil.getPrivateBucket().getCreatedOn().toString());
   }
 
   public static BucketResponse getOtherPrivate() {

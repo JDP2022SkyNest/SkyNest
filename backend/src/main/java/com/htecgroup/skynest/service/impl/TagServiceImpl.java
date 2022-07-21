@@ -11,6 +11,8 @@ import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.TagResponse;
 import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.ObjectToTagRepository;
+import com.htecgroup.skynest.model.entity.CompanyEntity;
+import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.repository.TagRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.TagService;
@@ -19,6 +21,8 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.UUID;
 
 @Service
@@ -60,6 +64,18 @@ public class TagServiceImpl implements TagService {
         savedTagEntity.getId());
 
     return modelMapper.map(savedTagEntity, TagResponse.class);
+  }
+
+  @Override
+  public List<TagResponse> listAllTags() {
+    CompanyEntity companyEntity =
+        currentUserService
+            .getCompanyEntityFromLoggedUser()
+            .orElseThrow(CompanyNotFoundException::new);
+
+    return tagRepository.findByCompanyId(companyEntity.getId()).stream()
+        .map(e -> modelMapper.map(e, TagResponse.class))
+        .collect(Collectors.toList());
   }
 
   @Override

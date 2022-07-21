@@ -10,6 +10,7 @@ import com.htecgroup.skynest.exception.auth.UserNotVerifiedException;
 import com.htecgroup.skynest.exception.company.UserNotInAnyCompanyException;
 import com.htecgroup.skynest.exception.register.EmailAlreadyInUseException;
 import com.htecgroup.skynest.exception.register.PhoneNumberAlreadyInUseException;
+import com.htecgroup.skynest.model.dto.CompanyDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.dto.RoleDto;
 import com.htecgroup.skynest.model.dto.UserDto;
@@ -17,6 +18,7 @@ import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.CompanyEntity;
 import com.htecgroup.skynest.model.entity.RoleEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.jwtObject.RegistrationInviteTokenData;
 import com.htecgroup.skynest.model.request.UserChangePasswordRequest;
 import com.htecgroup.skynest.model.request.UserEditRequest;
 import com.htecgroup.skynest.model.request.UserRegisterRequest;
@@ -24,6 +26,7 @@ import com.htecgroup.skynest.model.response.UserResponse;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.util.EmailUtil;
+import com.htecgroup.skynest.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -48,23 +51,31 @@ public class UserServiceImpl implements UserService {
   private CompanyService companyService;
 
   @Override
-  public UserResponse registerUser(UserRegisterRequest userRegisterRequest) {
+  public UserResponse registerUser(UserRegisterRequest userRegisterRequest, String token) {
+
+    RegistrationInviteTokenData registrationInviteTokenData =
+        JwtUtils.getRegistrationInviteTokenData(token);
 
     UserDto userDto = modelMapper.map(userRegisterRequest, UserDto.class);
 
-    if (userRepository.existsByEmail(userDto.getEmail())) {
+    if (userRepository.existsByEmail(registrationInviteTokenData.getEmail())) {
       throw new EmailAlreadyInUseException();
     }
+
     if (userRepository.existsByPhoneNumber(userDto.getPhoneNumber())) {
       throw new PhoneNumberAlreadyInUseException();
     }
+
+    CompanyDto companyDto = companyService.findByName(registrationInviteTokenData.getCompanyName());
+    userDto.setCompany(companyDto);
+    userDto.setEmail(registrationInviteTokenData.getEmail());
     String roleName = RoleEntity.ROLE_WORKER;
     RoleDto roleDto = roleService.findByName(roleName);
     userDto.setRole(roleDto);
 
     userDto.setEncryptedPassword(passwordEncoderService.encode(userDto.getPassword()));
-    userDto.setVerified(false);
-    userDto.setEnabled(false);
+    userDto.setEnabled(true);
+    userDto.setVerified(true);
     userDto.setName(userDto.getName().trim());
     userDto.setSurname(userDto.getSurname().trim());
     userDto.setAddress(userDto.getAddress().trim());

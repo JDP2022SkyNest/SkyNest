@@ -33,7 +33,9 @@ public interface BucketService {
 
   BucketDto findBucketByName(String name);
 
-  List<BucketResponse> listAllDeletedBuckets();
+  List<LambdaType> getActiveLambdas(UUID bucketId);
+
+  void deactivateLambda(UUID bucketId, LambdaType lambda);
 
   void activateLambda(UUID bucketId, LambdaType lambdaType);
 }

@@ -11,17 +11,22 @@ import AddFolderModal from "../Folder/AddFolderModal";
 import Folders from "../Folder/Folders";
 import UploadToBucket from "./UploadToBucket";
 import Files from "../Files/Files";
+import * as AiCions from "react-icons/ai";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
    const [data, setData] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [delState, setDelState] = useState(false);
+   const filteredFolders = data?.data?.folders.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
+   const filteredFiles = data?.data?.files.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
    const [loading, setLoading] = useState(true);
    const accessToken = localStorage.accessToken;
-   const FolderLength = data?.data?.folders.length;
-   const FilesLength = data?.data?.files.length;
+   const FolderLength = filteredFolders?.length;
+   const FilesLength = filteredFiles?.length;
 
    useEffect(() => {
       const getData = async () => {
@@ -35,11 +40,11 @@ const DynamicRoute = () => {
       await bucketContent(accessToken, routeId, setData);
    };
 
-   const allData = data?.data?.folders.map((elem, index) => (
+   const allData = filteredFolders?.map((elem, index) => (
       <Folders elem={elem} key={index} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} refresh={refreshFoldersAndFiles} />
    ));
 
-   const alLFiles = data?.data?.files.map((elem, index) => (
+   const alLFiles = filteredFiles?.map((elem, index) => (
       <Files
          elem={elem}
          key={index}
@@ -53,10 +58,23 @@ const DynamicRoute = () => {
    return (
       <div className="home-page-body">
          <NavbarPanel
-            name={!loading ? `Folders: ${FolderLength} - Files: ${FilesLength}` : "Loading..."}
-            searchBar={false}
+            name={
+               !loading ? (
+                  <div>
+                     <AiCions.AiFillFolderOpen className="main-icon-align" /> {FolderLength} - <AiCions.AiOutlineFile className="main-icon-align" />{" "}
+                     {FilesLength}
+                  </div>
+               ) : (
+                  "Loading..."
+               )
+            }
+            searchBar={true}
             path={ROUTES.HOME}
-            showName
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            homeSearch
+            setDelState={setDelState}
+            placeholder="Search..."
          />
          <div className="container">
             <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="alert alert-danger text-danger text-center col-12 mt-3" />
