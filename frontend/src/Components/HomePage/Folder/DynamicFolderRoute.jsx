@@ -90,7 +90,7 @@ const DynamicFolderRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
+            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" close={false} />
             <small>
                <nav aria-label="breadcrumb">
                   <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1 ">
