@@ -4,6 +4,7 @@ import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import ModalLoader from "../../Loader/ModalLoader";
 
 const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
    const [show, setShow] = useState(false);
@@ -76,7 +77,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-secondary button-width">Create</button>
+                        {!loading ? <button className="btn btn-secondary button-width">Create</button> : <ModalLoader />}
                         <button
                            onClick={(e) => {
                               e.preventDefault();

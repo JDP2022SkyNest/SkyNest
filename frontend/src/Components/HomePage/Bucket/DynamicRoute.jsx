@@ -83,7 +83,7 @@ const DynamicRoute = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" />
+            <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" close={false} />
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />

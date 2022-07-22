@@ -7,9 +7,10 @@ const SetInfoMsg = ({
    infoMsg,
    setInfoMsg,
    customStyle = "alert alert-danger text-danger text-center col-sm-6 offset-0 offset-sm-3 mt-3 mb-0",
+   close = true,
 }) => {
    useEffect(() => {
-      if (infoMsg !== "") {
+      if (infoMsg !== "" && close) {
          alertTimeout(3000, setInfoMsg);
       }
       //eslint-disable-next-line
