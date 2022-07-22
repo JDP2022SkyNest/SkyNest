@@ -4,6 +4,7 @@ import * as TiCions from "react-icons/ti";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import ModalLoader from "../../Loader/ModalLoader";
 
 const UploadToFolder = ({ folderId, refresh }) => {
    const [file, setFile] = useState(null);
@@ -66,7 +67,7 @@ const UploadToFolder = ({ folderId, refresh }) => {
                      <input onChange={(e) => setFile(e.target.files[0])} className="form-control" type="file" id="formFile" />
                   </fieldset>
                   <div className="mt-4 d-flex justify-content-end">
-                     <button className="btn btn-secondary button-width">Upload</button>
+                     {!loading ? <button className="btn btn-secondary button-width">Upload</button> : <ModalLoader />}
                      <button
                         onClick={(e) => {
                            e.preventDefault();
