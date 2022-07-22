@@ -5,6 +5,7 @@ import { setTheTag } from "../../ReusableComponents/ReusableFunctions";
 
 const AllTags = ({ setErrorMsg, objectId, refresh }) => {
    const [data, setData] = useState();
+   const [menuOpen, setMenuOpen] = useState(false);
    const accessToken = localStorage.accessToken;
 
    const getAllTags = async () => {
@@ -20,24 +21,25 @@ const AllTags = ({ setErrorMsg, objectId, refresh }) => {
    };
 
    return (
-      <div
+      <select
          onClick={(e) => {
-            e.stopPropagation();
+            if (!menuOpen) {
+               e.stopPropagation();
+               setMenuOpen(true);
+            }
             getAllTags();
          }}
+         onChange={async (e) => {
+            await setTheTag(accessToken, e.target.value, objectId);
+            setMenuOpen(false);
+            refresh();
+         }}
+         defaultValue={"Default"}
+         className="form-select select-width "
       >
-         <select
-            onChange={async (e) => {
-               await setTheTag(accessToken, e.target.value, objectId);
-               refresh();
-            }}
-            defaultValue={"Default"}
-            className="form-select select-width "
-         >
-            <option value="Tag">Tag:</option>
-            <Tag data={data} />
-         </select>
-      </div>
+         <option value="Tag">Tag:</option>
+         <Tag data={data} />
+      </select>
    );
 };
 
