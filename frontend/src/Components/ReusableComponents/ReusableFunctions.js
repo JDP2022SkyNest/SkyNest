@@ -397,6 +397,20 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
    }
 };
 
+export const setTheTag = async (accessToken, tagId, objectId) => {
+   try {
+      await AxiosInstance.post(
+         `/tags/${tagId}/object/${objectId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+   } catch (err) {
+      console.log(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();

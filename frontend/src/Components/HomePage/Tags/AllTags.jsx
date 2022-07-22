@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import AxiosInstance from "../../axios/AxiosInstance";
 import Tag from "./Tag";
+import { setTheTag } from "../../ReusableComponents/ReusableFunctions";
 
-const AllTags = ({ setErrorMsg }) => {
+const AllTags = ({ setErrorMsg, objectId, refresh }) => {
    const [data, setData] = useState();
+   const [menuOpen, setMenuOpen] = useState(false);
    const accessToken = localStorage.accessToken;
 
    const getAllTags = async () => {
@@ -19,23 +21,25 @@ const AllTags = ({ setErrorMsg }) => {
    };
 
    return (
-      <div
+      <select
          onClick={(e) => {
-            e.stopPropagation();
+            if (!menuOpen) {
+               e.stopPropagation();
+               setMenuOpen(true);
+            }
             getAllTags();
          }}
+         onChange={async (e) => {
+            await setTheTag(accessToken, e.target.value, objectId);
+            setMenuOpen(false);
+            refresh();
+         }}
+         defaultValue={"Default"}
+         className="form-select select-width "
       >
-         <select
-            onChange={(e) => {
-               console.log(e.target.value);
-            }}
-            defaultValue={"Default"}
-            className="form-select select-width "
-         >
-            <option value="Tag">Tag:</option>
-            <Tag data={data} />
-         </select>
-      </div>
+         <option value="Tag">Tag:</option>
+         <Tag data={data} />
+      </select>
    );
 };
 
