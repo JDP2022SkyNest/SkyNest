@@ -38,7 +38,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                <div className="w-100">
                   <small>
                      <AiCions.AiOutlineTag className="main-icon-align" />
-                     {elem.tags ? <span className="ml-1">123</span> : <span className="ml-1 text-muted">No tags</span>}
+                     {elem.tags ? <span className="ml-1 text-overflow"></span> : <span className="ml-1 text-muted">No tags</span>}
                   </small>
                </div>
             </div>
