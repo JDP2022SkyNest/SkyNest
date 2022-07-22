@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import AxiosInstance from "../../axios/AxiosInstance";
 import Tag from "./Tag";
+import { setTheTag } from "../../ReusableComponents/ReusableFunctions";
 
-const AllTags = ({ setErrorMsg }) => {
+const AllTags = ({ setErrorMsg, objectId, refresh }) => {
    const [data, setData] = useState();
    const accessToken = localStorage.accessToken;
 
@@ -26,8 +27,9 @@ const AllTags = ({ setErrorMsg }) => {
          }}
       >
          <select
-            onChange={(e) => {
-               console.log(e.target.value);
+            onChange={async (e) => {
+               await setTheTag(accessToken, e.target.value, objectId);
+               refresh();
             }}
             defaultValue={"Default"}
             className="form-select select-width "

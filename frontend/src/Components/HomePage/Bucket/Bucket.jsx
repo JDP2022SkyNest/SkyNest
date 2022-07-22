@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
 import AllTags from "../Tags/AllTags";
+import TagDisplay from "../Tags/TagDisplay";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -15,6 +16,10 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    const handleShow = () => setShow(true);
    const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
+
+   const writeTags = elem?.tags?.map((el, index) => {
+      return <TagDisplay key={index} el={el} />;
+   });
 
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
@@ -35,10 +40,10 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   {elem.name}
                </div>
                <div className="text-muted text-overflow description-width">{elem.description}</div>
-               <div className="w-100">
+               <div className="w-100  text-overflow">
                   <small>
                      <AiCions.AiOutlineTag className="main-icon-align" />
-                     {elem.tags ? <span className="ml-1 text-overflow"></span> : <span className="ml-1 text-muted">No tags</span>}
+                     {elem?.tags?.length > 0 ? <span className="ml-1">{writeTags}</span> : <span className="ml-1 text-muted">No tags</span>}
                   </small>
                </div>
             </div>
@@ -61,7 +66,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                         <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
-                        <AllTags />
+                        <AllTags objectId={elem.bucketId} refresh={refreshBuckets} />
                      </Dropdown.Item>
                      {elem.deletedOn === null ? (
                         <Dropdown.Item

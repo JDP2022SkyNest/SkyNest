@@ -142,6 +142,11 @@ transform: translate(-50%,-50%) scale(0.8);
   width: 130px !important;
 }
 
+.tag-align {
+  position: relative;
+  top: -2px;
+}
+
 @media only screen and (max-width: 574px) {
  .margin-left-home-search {
    margin-left: 0px !important;
