@@ -4,6 +4,7 @@ import com.htecgroup.skynest.model.entity.TagEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.With;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,5 +30,5 @@ public class BucketResponse {
 
   private String deletedOn;
 
-  private List<TagResponse> tags;
+  @With private List<TagResponse> tags;
 }

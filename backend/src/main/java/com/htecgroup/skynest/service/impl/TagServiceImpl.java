@@ -114,16 +114,8 @@ public class TagServiceImpl implements TagService {
 
     List<ObjectToTagEntity> pairs = objectToTagRepository.findAllByIdObjectId(objectId);
 
-    List<TagEntity> tags =
-        pairs.stream()
-            .map(
-                e ->
-                    tagRepository
-                        .findById(e.getTag().getId())
-                        .orElseThrow(TagNotFoundException::new))
-            .collect(Collectors.toList());
-
-    return tags.stream()
+    return pairs.stream()
+        .map(e -> tagRepository.findById(e.getTag().getId()).orElseThrow(TagNotFoundException::new))
         .map(e -> modelMapper.map(e, TagResponse.class))
         .collect(Collectors.toList());
   }

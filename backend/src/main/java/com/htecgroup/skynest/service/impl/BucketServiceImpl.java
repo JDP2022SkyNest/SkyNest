@@ -69,14 +69,14 @@ public class BucketServiceImpl implements BucketService {
     permissionService.currentUserHasPermissionForBucket(uuid, AccessType.VIEW);
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
+
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
 
     List<TagResponse> tags = tagService.getTagsForObject(uuid);
-    bucketResponse.setTags(tags);
 
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
-    return bucketResponse;
+    return bucketResponse.withTags(tags);
   }
 
   @Override
@@ -109,16 +109,10 @@ public class BucketServiceImpl implements BucketService {
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
-    List<BucketResponse> responseList =
-        entityList.stream()
-            .map(e -> modelMapper.map(e, BucketResponse.class))
-            .collect(Collectors.toList());
-    
-    for (BucketResponse bucket : responseList) {
-        bucket.setTags(tagService.getTagsForObject(bucket.getBucketId()));
-    }
-
-    return responseList;
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, BucketResponse.class))
+        .map(bucket -> bucket.withTags(tagService.getTagsForObject(bucket.getBucketId())))
+        .collect(Collectors.toList());
   }
 
   @Override
