@@ -108,4 +108,15 @@ public class TagServiceImpl implements TagService {
         objectEntity.getName(),
         objectEntity.getId());
   }
+
+  @Override
+  public List<TagResponse> getTagsForObject(UUID objectId) {
+
+    List<ObjectToTagEntity> pairs = objectToTagRepository.findAllByIdObjectId(objectId);
+
+    return pairs.stream()
+        .map(e -> tagRepository.findById(e.getTag().getId()).orElseThrow(TagNotFoundException::new))
+        .map(e -> modelMapper.map(e, TagResponse.class))
+        .collect(Collectors.toList());
+  }
 }

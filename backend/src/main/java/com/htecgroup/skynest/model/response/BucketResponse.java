@@ -1,9 +1,12 @@
 package com.htecgroup.skynest.model.response;
 
+import com.htecgroup.skynest.model.entity.TagEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.With;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -26,4 +29,6 @@ public class BucketResponse {
   private Boolean isPublic;
 
   private String deletedOn;
+
+  @With private List<TagResponse> tags;
 }
