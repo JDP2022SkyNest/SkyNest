@@ -138,11 +138,11 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public void deleteBucket(UUID uuid) {
     BucketDto bucketDto = findBucketById(uuid);
-    if (!bucketDto.getIsPublic()) {
-      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
-    }
     if (bucketDto.getDeletedOn() != null) {
       throw new BucketAlreadyDeletedException();
+    }
+    if (!bucketDto.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     }
     BucketDto deletedBucketDto = bucketDto.deleteBucket();
     BucketEntity bucketEntity =
@@ -153,12 +153,13 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public void restoreBucket(UUID uuid) {
     BucketDto bucketDto = findBucketById(uuid);
-    if (!bucketDto.getIsPublic()) {
-      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
-    }
     if (bucketDto.getDeletedOn() == null) {
       throw new BucketAlreadyRestoredException();
     }
+    if (!bucketDto.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
+    }
+
     BucketDto restoreBucketDto = bucketDto.restoreBucket();
     BucketEntity bucketEntity =
         bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
@@ -169,12 +170,11 @@ public class BucketServiceImpl implements BucketService {
   public BucketResponse editBucket(BucketEditRequest bucketEditRequest, UUID uuid) {
 
     BucketEntity bucketEntity = findBucketEntityById(uuid);
-    if (!bucketEntity.getIsPublic()) {
-      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
-    }
-
     if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
+    }
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
     bucketEditRequest.setDescription(bucketEditRequest.getDescription().trim());
