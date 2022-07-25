@@ -2,6 +2,9 @@ package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.utils.tag.TagResponseUtil;
+
+import java.util.Collections;
 
 public class FolderResponseUtil {
 
@@ -17,7 +20,8 @@ public class FolderResponseUtil {
         rootFolder.getName(),
         rootFolder.getCreatedBy().getId(),
         rootFolder.getParentFolder() == null ? null : rootFolder.getParentFolder().getId(),
-        rootFolder.getBucket().getId());
+        rootFolder.getBucket().getId(),
+        Collections.singletonList(TagResponseUtil.get()));
   }
 
   public static FolderResponse getFolderWithParent() {
@@ -31,6 +35,7 @@ public class FolderResponseUtil {
         folderWithParent.getName(),
         folderWithParent.getCreatedBy().getId(),
         folderWithParent.getParentFolder().getId(),
-        folderWithParent.getBucket().getId());
+        folderWithParent.getBucket().getId(),
+        Collections.singletonList(TagResponseUtil.get()));
   }
 }

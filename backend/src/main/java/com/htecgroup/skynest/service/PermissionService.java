@@ -1,6 +1,8 @@
 package com.htecgroup.skynest.service;
 
 import com.htecgroup.skynest.model.entity.AccessType;
+import com.htecgroup.skynest.model.entity.FileMetadataEntity;
+import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.ObjectEntity;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -17,7 +19,13 @@ public interface PermissionService {
 
   void currentUserHasPermissionForBucket(UUID bucketId, AccessType minimumAccessType);
 
+  void currentUserHasPermissionForFolder(FolderEntity folder, AccessType minimumAccessType);
+
+  void currentUserHasPermissionForFile(FileMetadataEntity file, AccessType minimumAccessType);
+
   List<PermissionResponse> getAllBucketPermission(UUID bucketId);
 
   PermissionResponse editPermission(PermissionEditRequest permissionEditRequest, UUID bucketId);
+
+  void revokePermission(UUID bucketId, UUID userId);
 }
