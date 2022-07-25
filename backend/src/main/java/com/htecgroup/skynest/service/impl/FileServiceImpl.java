@@ -120,8 +120,10 @@ public class FileServiceImpl implements FileService {
   public FileResponse getFileMetadata(UUID fileId) {
 
     FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
+
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.VIEW);
 
     List<TagResponse> tags = tagService.getTagsForObject(fileId);
 
