@@ -3,6 +3,7 @@ import { Modal } from "react-bootstrap";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import ModalLoader from "../../Loader/ModalLoader";
 
 const EditBucketModal = ({ refreshBuckets, elem }) => {
    const [show, setShow] = useState(false);
@@ -112,9 +113,13 @@ const EditBucketModal = ({ refreshBuckets, elem }) => {
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button onClick={() => onFormSubmit()} className="btn btn-secondary button-width">
-                           Edit
-                        </button>
+                        {!loading ? (
+                           <button onClick={() => onFormSubmit()} className="btn btn-secondary button-width">
+                              Edit
+                           </button>
+                        ) : (
+                           <ModalLoader />
+                        )}
                         <button
                            onClick={(e) => {
                               e.preventDefault();

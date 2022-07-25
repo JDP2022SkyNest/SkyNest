@@ -32,11 +32,6 @@ const FolderInfo = ({ elem }) => {
             <small className="col-sm-8 p-2 text-mutted">{deleted !== null ? deleted.replace("T", " @ ") : "Not Deleted"}</small>
          </div>
          <hr className="m-1" />
-         <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">BucketID:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.bucketId}</small>
-         </div>
-         <hr className="m-1" />
          <div className="row mb-4">
             <div className="col-sm-3 p-2 font-weight-bold">Parent:</div>
             <small className="col-sm-8 p-2 text-mutted">{elem.parentFolderId !== null ? elem.parentFolderId : "No Parent Folder"}</small>
