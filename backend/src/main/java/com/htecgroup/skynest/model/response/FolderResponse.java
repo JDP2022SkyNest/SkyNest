@@ -1,10 +1,8 @@
 package com.htecgroup.skynest.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -20,4 +18,6 @@ public class FolderResponse {
   private UUID createdById;
   private UUID parentFolderId;
   private UUID bucketId;
+  @With
+  private List<TagResponse> tags;
 }

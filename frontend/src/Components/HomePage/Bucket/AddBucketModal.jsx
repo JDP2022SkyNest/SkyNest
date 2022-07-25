@@ -4,6 +4,7 @@ import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import ModalLoader from "../../Loader/ModalLoader";
 
 const AddBucketModal = ({ refreshBuckets }) => {
    const [show, setShow] = useState(false);
@@ -54,7 +55,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 latte-background custom-rounded shadow">
+         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded shadow">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Bucket
          </span>
 
@@ -91,7 +92,7 @@ const AddBucketModal = ({ refreshBuckets }) => {
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-secondary button-width">Create</button>
+                        {!loading ? <button className="btn btn-secondary button-width">Create</button> : <ModalLoader />}
                         <button
                            onClick={(e) => {
                               e.preventDefault();

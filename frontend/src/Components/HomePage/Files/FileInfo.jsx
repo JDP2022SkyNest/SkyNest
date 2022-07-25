@@ -12,8 +12,8 @@ const FileInfo = ({ elem }) => {
          </div>
          <hr className="m-1" />
          <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">ID:</div>
-            <small className="col-sm-9 p-2 text-mutted">{elem.id}</small>
+            <div className="col-sm-3 p-2 font-weight-bold">Created by:</div>
+            <small className="col-sm-8 p-2 text-mutted">{elem.createdById}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
@@ -24,11 +24,6 @@ const FileInfo = ({ elem }) => {
          <div className="row">
             <div className="col-sm-3 p-2 font-weight-bold">Created:</div>
             <small className="col-sm-8 p-2 text-mutted">{timeFrame}</small>
-         </div>
-         <hr className="m-1" />
-         <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">Created by:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.createdById}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
