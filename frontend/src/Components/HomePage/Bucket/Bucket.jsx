@@ -62,12 +62,16 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      >
                         Bucket Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
-                     </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <AllTags objectId={elem.bucketId} refresh={refreshBuckets} />
-                     </Dropdown.Item>
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <AllTags objectId={elem.bucketId} refresh={refreshBuckets} />
+                        </Dropdown.Item>
+                     )}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {
