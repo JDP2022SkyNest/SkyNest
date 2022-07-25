@@ -14,6 +14,7 @@ import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.repository.TagRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.TagService;
+import com.htecgroup.skynest.service.TagValidationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -32,15 +33,14 @@ public class TagServiceImpl implements TagService {
   private CurrentUserService currentUserService;
   private ObjectRepository objectRepository;
   private ObjectToTagRepository objectToTagRepository;
+  private TagValidationService tagValidationService;
   private ModelMapper modelMapper;
 
   @Override
-  public TagResponse createTag(TagCreateRequest createTagRequest) {
+  public TagResponse createTag(TagCreateRequest tagCreateRequest) {
 
-    if (tagRepository.existsByName(createTagRequest.getName()))
-      throw new TagAlreadyExistsException();
-
-    TagEntity tagEntity = modelMapper.map(createTagRequest, TagEntity.class);
+    tagValidationService.checkIfTagAlreadyExists(tagCreateRequest);
+    TagEntity tagEntity = modelMapper.map(tagCreateRequest, TagEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
 
@@ -85,17 +85,13 @@ public class TagServiceImpl implements TagService {
     ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
     ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
 
-    if (objectToTagRepository.existsById(key)) {
-      throw new TagOnObjectAlreadyExists();
-    }
-    if (!tagEntity.getCompany().equals(objectEntity.getCreatedBy().getCompany())) {
-      throw new TagNotFromTheSameCompany();
-    }
+    tagValidationService.checkIfTagOnObjectAlreadyExists(objectToTagEntity);
+    tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity);
+    tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity);
 
     objectToTagRepository.save(objectToTagEntity);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-
     log.info(
         "User {} ({}) added tag {} ({}) for object {} ({})",
         loggedUserDto.getUsername(),
@@ -127,12 +123,9 @@ public class TagServiceImpl implements TagService {
       ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
       ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
 
-      if (!objectToTagRepository.existsById(key)) {
-        throw new TagOnObjectNotFound();
-      }
-      if (!tagEntity.getCompany().equals(objectEntity.getCreatedBy().getCompany())) {
-        throw new TagNotFromTheSameCompany();
-      }
+      tagValidationService.checkIfObjectIsTagged(objectToTagEntity);
+      tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity);
+      tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity);
 
       objectToTagRepository.delete(objectToTagEntity);
 
