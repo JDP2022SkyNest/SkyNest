@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.service;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -8,7 +7,6 @@ import com.htecgroup.skynest.model.request.BucketEditRequest;
 import com.htecgroup.skynest.model.response.BucketResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,8 +24,7 @@ public interface BucketService {
 
   void restoreBucket(UUID uuid);
 
-  BucketResponse editBucket(
-      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid);
+  BucketResponse editBucket(BucketEditRequest bucketEditRequest, UUID uuid);
 
   StorageContentResponse getBucketContent(UUID bucketId);
 
