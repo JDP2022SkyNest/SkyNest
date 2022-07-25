@@ -4,18 +4,13 @@ import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
-import com.htecgroup.skynest.model.response.BucketResponse;
-import com.htecgroup.skynest.model.response.FileResponse;
-import com.htecgroup.skynest.model.response.FolderResponse;
-import com.htecgroup.skynest.model.response.StorageContentResponse;
+import com.htecgroup.skynest.model.response.*;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
@@ -25,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +34,7 @@ public class BucketServiceImpl implements BucketService {
   private UserRepository userRepository;
   private FolderService folderService;
   private FileService fileService;
+  private TagService tagService;
 
   private ActionService actionService;
   private PermissionService permissionService;
@@ -73,13 +66,17 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public BucketResponse getBucketDetails(UUID uuid) {
+    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.VIEW);
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
+
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
+
+    List<TagResponse> tags = tagService.getTagsForObject(uuid);
 
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
-    return bucketResponse;
+    return bucketResponse.withTags(tags);
   }
 
   @Override
@@ -90,22 +87,31 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public List<BucketResponse> listAllDeletedBuckets() {
-    List<BucketEntity> entityList = bucketRepository.findAllByDeletedOnIsNotNull();
-    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
-    return entityList.stream()
-        .map(e -> modelMapper.map(e, BucketResponse.class))
-        .collect(Collectors.toList());
+  public void activateLambda(UUID bucketId, LambdaType lambdaType) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.addLambda(lambdaType);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
+  }
+
+  @Override
+  public void deactivateLambda(UUID bucketId, LambdaType lambda) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    bucketEntity.removeLambda(lambda);
+    actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
+    bucketRepository.save(bucketEntity);
   }
 
   @Override
   public List<BucketResponse> listAllBuckets() {
-    List<BucketEntity> entityList = (List<BucketEntity>) bucketRepository.findAll();
+    List<BucketEntity> entityList =
+        (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
+        .map(bucket -> bucket.withTags(tagService.getTagsForObject(bucket.getBucketId())))
         .collect(Collectors.toList());
   }
 
@@ -170,5 +176,11 @@ public class BucketServiceImpl implements BucketService {
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
     return storageContentResponse;
+  }
+
+  @Override
+  public List<LambdaType> getActiveLambdas(UUID bucketId) {
+    BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    return new ArrayList<>(bucketEntity.getLambdaTypes());
   }
 }

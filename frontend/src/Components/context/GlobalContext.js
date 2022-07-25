@@ -7,6 +7,7 @@ export const GlobalProvider = ({ children }) => {
    const [accessToken, setAccessToken] = useState(localStorage.accessToken);
    const [userRole, setUserRole] = useState("");
    const [userID, setUserID] = useState("");
+   const [moveFolderID, setMoveFilderID] = useState("");
 
    return (
       <GlobalContext.Provider
@@ -19,6 +20,8 @@ export const GlobalProvider = ({ children }) => {
             setUserRole,
             userID,
             setUserID,
+            moveFolderID,
+            setMoveFilderID,
          }}
       >
          {children}

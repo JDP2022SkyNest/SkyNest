@@ -1,7 +1,9 @@
 package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.response.BucketResponse;
+import com.htecgroup.skynest.utils.tag.TagResponseUtil;
 
+import java.util.Collections;
 import java.util.UUID;
 
 public class BucketResponseUtil {
@@ -13,7 +15,9 @@ public class BucketResponseUtil {
         BucketDtoUtil.companyDto.getId(),
         "Description",
         1000L,
-        false);
+        false,
+        BucketEntityUtil.getPrivateBucket().getCreatedOn().toString(),
+        Collections.singletonList(TagResponseUtil.get()));
   }
 
   public static BucketResponse getOtherPrivate() {

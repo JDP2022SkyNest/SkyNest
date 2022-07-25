@@ -4,6 +4,7 @@ import * as AiCions from "react-icons/ai";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import ModalLoader from "../../Loader/ModalLoader";
 
 const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
    const [show, setShow] = useState(false);
@@ -34,6 +35,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
             refresh();
          }, 2000);
       } catch (err) {
+         console.log(err);
          if (err.response.status === 400) {
             setErrorMsg("Inputs can't be empty");
          } else {
@@ -52,7 +54,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded">
+         <span onClick={handleShow} className="ml-1 mr-2 mr-sm-0 latte-background custom-rounded shadow">
             <AiCions.AiOutlinePlusCircle className="main-icon-align" /> Create Folder
          </span>
 
@@ -75,7 +77,7 @@ const AddFolderModal = ({ refresh, parentFolderId, bucketId }) => {
                         </div>
                      </div>
                      <div className="mt-4 d-flex justify-content-end">
-                        <button className="btn btn-secondary button-width">Create</button>
+                        {!loading ? <button className="btn btn-secondary button-width">Create</button> : <ModalLoader />}
                         <button
                            onClick={(e) => {
                               e.preventDefault();

@@ -17,5 +17,7 @@ public interface CompanyService {
 
   CompanyDto findById(UUID companyId);
 
+  CompanyDto findByName(String name);
+
   CompanyResponse getMyCompany();
 }

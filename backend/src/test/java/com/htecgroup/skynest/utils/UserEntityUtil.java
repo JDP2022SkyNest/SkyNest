@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.utils.company.CompanyEntityUtil;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class UserEntityUtil extends BasicUtil {
         false,
         false,
         roleWorkerEntity,
-        null);
+        CompanyEntityUtil.get());
   }
 
   public static UserEntity getVerified() {

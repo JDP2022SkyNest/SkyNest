@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.controller;
 
+import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.PermissionResponse;
@@ -16,12 +17,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/permissions")
@@ -124,6 +124,21 @@ public class PermissionController {
                   })
             }),
         @ApiResponse(
+            responseCode = "409",
+            description = "Bucket already deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket is already disabled.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
@@ -142,5 +157,186 @@ public class PermissionController {
             permissionService.grantPermissionForBucket(permissionGrantRequest), HttpStatus.OK);
 
     return response;
+  }
+
+  @Operation(summary = "Edit permission")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Permission successfully edited",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = PermissionResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"grantedToId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"grantedToEmail\": \"Email@com\","
+                                + "\"objectId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"grantedOn\": \"2022-07-18-04-00-15\","
+                                + "\"accessName\": \"EDIT\","
+                                + "{\"grantedById\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"grantedByEmail\": \"email2@com\"}")
+                  }),
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PutMapping("/{bucketId}/edit")
+  public ResponseEntity<PermissionResponse> editPermissions(
+      @Valid @RequestBody PermissionEditRequest permissionEditRequest,
+      @PathVariable UUID bucketId) {
+    ResponseEntity<PermissionResponse> permissionResponseEntity =
+        new ResponseEntity<>(
+            permissionService.editPermission(permissionEditRequest, bucketId), HttpStatus.OK);
+    return permissionResponseEntity;
+  }
+
+  @Operation(summary = "Get all bucket permissions")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "all permissions returned",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = PermissionResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "[{\"grantedToId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"grantedToEmail\": \"Email@com\","
+                                + "\"objectId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"grantedOn\": \"2022-07-18-04-00-15\","
+                                + "\"accessName\": \"EDIT\","
+                                + "{\"grantedById\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"grantedByEmail\": \"email2@com\"]")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @GetMapping("/{bucketId}")
+  public List<PermissionResponse> getAllPermissions(@PathVariable UUID bucketId) {
+    List<PermissionResponse> permissionList = permissionService.getAllBucketPermission(bucketId);
+    return permissionList;
+  }
+  // TODO: check if current user is owner
+
+  @Operation(summary = "Revoke permission")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Permission successfully revoked ",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @DeleteMapping("/{bucketId}/revoke/{userId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deletePermissionForBucket(@PathVariable UUID bucketId, @PathVariable UUID userId) {
+    permissionService.revokePermission(bucketId, userId);
   }
 }

@@ -1,6 +1,9 @@
 import React from "react";
 
 const BucketInfo = ({ elem }) => {
+   const deleted = elem.deletedOn;
+   const fileSize = elem.size / 1024 / 1024;
+
    return (
       <div className="container-fluid">
          <div className="row">
@@ -14,23 +17,18 @@ const BucketInfo = ({ elem }) => {
          </div>
          <hr className="m-1" />
          <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">BucketID:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.bucketId}</small>
-         </div>
-         <hr className="m-1" />
-         <div className="row">
-            <div className="col-sm-3 p-2 font-weight-bold">CompanyID:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.companyId}</small>
-         </div>
-         <hr className="m-1" />
-         <div className="row">
             <div className="col-sm-3 p-2 font-weight-bold">Created by:</div>
             <small className="col-sm-8 p-2 text-mutted">{elem.createdById}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
+            <div className="col-sm-3 p-2 font-weight-bold">Deleted on:</div>
+            <small className="col-sm-8 p-2 text-mutted">{deleted !== null ? deleted.replace("T", " @ ") : "Not Deleted"}</small>
+         </div>
+         <hr className="m-1" />
+         <div className="row">
             <div className="col-sm-3 p-2 font-weight-bold">Size:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.size}</small>
+            <small className="col-sm-8 p-2 text-mutted">{fileSize < 0.5 ? `${fileSize.toFixed(4)} mb` : `${fileSize.toFixed(2)} mb`}</small>
          </div>
          <hr className="m-1" />
          <div className="row mb-4">

@@ -30,6 +30,7 @@ public class FolderDto {
   }
 
   public boolean isDeleted() {
-    return deletedOn != null;
+    return this.deletedOn != null
+        || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
   }
 }

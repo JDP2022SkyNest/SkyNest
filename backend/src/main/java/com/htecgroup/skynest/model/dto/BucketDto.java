@@ -32,6 +32,10 @@ public class BucketDto {
 
   private Boolean isPublic;
 
+  public boolean isDeleted() {
+    return deletedOn != null;
+  }
+
   public BucketDto deleteBucket() {
     return this.withDeletedOn(LocalDateTime.now());
   }

@@ -4,6 +4,7 @@ import * as TiCions from "react-icons/ti";
 import AxiosInstance from "../../axios/AxiosInstance";
 import SetSuccessMsg from "../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../ReusableComponents/SetErrorMsg";
+import ModalLoader from "../../Loader/ModalLoader";
 
 const UploadToBucket = ({ bucketId, refresh }) => {
    const [file, setFile] = useState(null);
@@ -48,7 +49,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
    };
 
    return (
-      <div className="ml-auto ml-sm-2 latte-background custom-rounded">
+      <div className="ml-auto ml-sm-2 latte-background custom-rounded shadow">
          <span onClick={handleShow}>
             <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload To Bucket
          </span>
@@ -66,7 +67,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
                      <input onChange={(e) => setFile(e.target.files[0])} className="form-control" type="file" id="formFile" />
                   </fieldset>
                   <div className="mt-4 d-flex justify-content-end">
-                     <button className="btn btn-secondary button-width">Upload</button>
+                     {!loading ? <button className="btn btn-secondary button-width">Upload</button> : <ModalLoader />}
                      <button
                         onClick={(e) => {
                            e.preventDefault();

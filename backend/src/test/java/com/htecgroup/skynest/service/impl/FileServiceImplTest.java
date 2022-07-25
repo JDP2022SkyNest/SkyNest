@@ -14,9 +14,12 @@ import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileContentService;
+import com.htecgroup.skynest.service.TagService;
 import com.htecgroup.skynest.utils.FileEditRequestUtil;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
 import com.htecgroup.skynest.utils.FolderEntityUtil;
+import com.htecgroup.skynest.utils.tag.TagEntityUtil;
+import com.htecgroup.skynest.utils.tag.TagResponseUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +44,7 @@ class FileServiceImplTest {
   @Mock private FolderRepository folderRepository;
   @Mock private FileMetadataRepository fileMetadataRepository;
   @Mock private ActionService actionService;
+  @Mock private TagService tagService;
 
   @Spy private ModelMapper modelMapper;
 
@@ -91,8 +95,10 @@ class FileServiceImplTest {
     FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
-    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(any()))
+    when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+            any()))
         .thenReturn(expectedFiles);
+    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<FileResponse> actualFiles =
         fileService.getAllRootFiles(fileMetadataEntity.getBucket().getId());
@@ -100,7 +106,9 @@ class FileServiceImplTest {
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
-        .findAllByBucketIdAndParentFolderIsNull(fileMetadataEntity.getBucket().getId());
+        .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+            fileMetadataEntity.getBucket().getId());
+    verify(tagService,times(1)).getTagsForObject(expectedFiles.get(0).getId());
   }
 
   @Test
@@ -108,7 +116,9 @@ class FileServiceImplTest {
     FileMetadataEntity fileMetadataEntity = FileMetadataEntityUtil.getNotRootFileMetadataEntity();
     List<FileMetadataEntity> expectedFiles =
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
-    when(fileMetadataRepository.findAllByParentFolderId(any())).thenReturn(expectedFiles);
+    when(fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(any()))
+        .thenReturn(expectedFiles);
+    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<FileResponse> actualFiles =
         fileService.getAllFilesWithParent(fileMetadataEntity.getParentFolder().getId());
@@ -116,7 +126,9 @@ class FileServiceImplTest {
     Assertions.assertEquals(expectedFiles.size(), actualFiles.size());
     this.assertFileMetadataEntityAndFileResponse(expectedFiles.get(0), actualFiles.get(0));
     verify(fileMetadataRepository, times(1))
-        .findAllByParentFolderId(fileMetadataEntity.getParentFolder().getId());
+        .findAllByParentFolderIdOrderByNameAscCreatedOnDesc(
+            fileMetadataEntity.getParentFolder().getId());
+    verify(tagService,times(1)).getTagsForObject(expectedFiles.get(0).getId());
   }
 
   @Test

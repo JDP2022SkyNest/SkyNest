@@ -14,6 +14,7 @@ import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.model.response.TagResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
@@ -22,6 +23,9 @@ import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileContentService;
 import com.htecgroup.skynest.service.FileService;
 import com.htecgroup.skynest.service.PermissionService;
+import com.htecgroup.skynest.service.TagService;
+import com.mongodb.MongoException;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -50,6 +54,7 @@ public class FileServiceImpl implements FileService {
   private final FileMetadataRepository fileMetadataRepository;
   private final ActionService actionService;
   private final PermissionService permissionService;
+  private final TagService tagService;
   private final FolderRepository folderRepository;
 
   @Override
@@ -98,9 +103,11 @@ public class FileServiceImpl implements FileService {
     checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
+    List<TagResponse> tags = tagService.getTagsForObject(fileId);
+
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.VIEW);
 
-    return modelMapper.map(fileMetadataEntity, FileResponse.class);
+    return modelMapper.map(fileMetadataEntity, FileResponse.class).withTags(tags);
   }
 
   @Override
@@ -137,14 +144,15 @@ public class FileServiceImpl implements FileService {
   @Override
   public List<FileResponse> getAllRootFiles(UUID bucketId) {
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
+        fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+            bucketId);
     return asFileResponseList(allFiles);
   }
 
   @Override
   public List<FileResponse> getAllFilesWithParent(UUID parentFolderId) {
     List<FileMetadataEntity> allFiles =
-        fileMetadataRepository.findAllByParentFolderId(parentFolderId);
+        fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(parentFolderId);
     return asFileResponseList(allFiles);
   }
 
@@ -173,6 +181,8 @@ public class FileServiceImpl implements FileService {
   @Override
   public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
@@ -183,9 +193,17 @@ public class FileServiceImpl implements FileService {
   @Override
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    checkIfDeleted(fileMetadataEntity);
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
     saveMoveFile(fileMetadataEntity);
+  }
+
+  private void checkIfDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
   }
 
   private void checkIfFileAlreadyInsideFolder(
@@ -205,6 +223,13 @@ public class FileServiceImpl implements FileService {
   private void saveMoveFile(FileMetadataEntity fileMetadataEntity) {
     fileMetadataRepository.save(fileMetadataEntity);
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
+  }
+
+  private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
+    return allFiles.stream()
+        .map(folder -> modelMapper.map(folder, FileResponse.class))
+        .map(file -> file.withTags(tagService.getTagsForObject(file.getId())))
+        .collect(Collectors.toList());
   }
 
   @Override

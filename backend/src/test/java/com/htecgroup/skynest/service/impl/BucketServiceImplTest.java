@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service.impl;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
@@ -13,11 +14,9 @@ import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.FolderService;
+import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
+import com.htecgroup.skynest.utils.tag.TagResponseUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,10 +36,12 @@ class BucketServiceImplTest {
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
   @Mock private ActionService actionService;
+  @Mock private PermissionService permissionService;
   @Spy private ModelMapper modelMapper;
   @Spy @InjectMocks private BucketServiceImpl bucketService;
   @Mock private FolderService folderService;
   @Mock private FileService fileService;
+  @Mock private TagService tagService;
 
   @Captor private ArgumentCaptor<BucketEntity> captorBucketEntity;
 
@@ -48,7 +49,8 @@ class BucketServiceImplTest {
   void listAllBuckets() {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getPrivateBucket());
-    when(bucketRepository.findAll()).thenReturn(bucketEntityList);
+    when(bucketRepository.findAllByOrderByNameAscCreatedOnDesc()).thenReturn(bucketEntityList);
+    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
 
@@ -56,32 +58,22 @@ class BucketServiceImplTest {
 
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
-    verify(bucketRepository, times(1)).findAll();
-  }
-
-  @Test
-  void listAllDeletedBuckets() {
-    List<BucketEntity> bucketEntityList =
-        Collections.singletonList(BucketEntityUtil.getDeletedBucket());
-    when(bucketRepository.findAllByDeletedOnIsNotNull()).thenReturn(bucketEntityList);
-
-    List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
-    List<BucketResponse> actualResponse = bucketService.listAllDeletedBuckets();
-
-    Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
-    this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
+    verify(bucketRepository, times(1)).findAllByOrderByNameAscCreatedOnDesc();
+    verify(tagService,times(1)).getTagsForObject(bucketEntityList.get(0).getId());
   }
 
   @Test
   void getBucket() {
     BucketEntity expectedBucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(expectedBucketEntity));
+    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     BucketResponse actualBucketResponse =
         bucketService.getBucketDetails(expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
     verify(bucketRepository, times(1)).findById(any());
+    verify(tagService,times(1)).getTagsForObject(expectedBucketEntity.getId());
   }
 
   @Test
@@ -225,5 +217,43 @@ class BucketServiceImplTest {
 
     BucketEntity bucketEntity = captorBucketEntity.getValue();
     Assertions.assertFalse(bucketEntity.isDeleted());
+  }
+
+  @Test
+  void when_activateLambda_ShouldSaveEntityWithActivatedLambdas() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.activateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertTrue(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
+  }
+
+  @Test
+  void when_deactivateLambda_ShouldSaveEntityWithDeactivatedLambda() {
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucketWithLambdas();
+    LambdaType lambdaType = LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA;
+    doReturn(bucketEntity).when(bucketService).findBucketEntityById(any());
+
+    bucketService.deactivateLambda(UUID.randomUUID(), lambdaType);
+    Mockito.verify(bucketRepository).save(captorBucketEntity.capture());
+
+    BucketEntity bucketWithActivatedLambda = captorBucketEntity.getValue();
+    Assertions.assertFalse(bucketWithActivatedLambda.getLambdaTypes().contains(lambdaType));
+  }
+
+  @Test
+  void when_getActiveLambdas_ShouldReturnAllActiveLambdas() {
+    BucketEntity bucketWithLambda = BucketEntityUtil.getPrivateBucketWithLambdas();
+    doReturn(bucketWithLambda).when(bucketService).findBucketEntityById(any());
+    UUID bucketId = UUID.randomUUID();
+    List<LambdaType> returnedLambdas = bucketService.getActiveLambdas(bucketId);
+
+    Assertions.assertTrue(
+        returnedLambdas.contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA));
+    Assertions.assertEquals(1, returnedLambdas.size());
   }
 }

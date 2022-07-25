@@ -1,9 +1,12 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.ParentFolderIsInTheSameBucket;
+import com.htecgroup.skynest.annotation.actions.RecordAction;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyRestoredException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.ActionType;
@@ -12,26 +15,28 @@ import com.htecgroup.skynest.model.entity.FolderEntity;
 import com.htecgroup.skynest.model.entity.UserEntity;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
-import com.htecgroup.skynest.model.response.FileResponse;
-import com.htecgroup.skynest.model.response.FolderResponse;
-import com.htecgroup.skynest.model.response.ShortFolderResponse;
-import com.htecgroup.skynest.model.response.StorageContentResponse;
+import com.htecgroup.skynest.model.response.*;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
+import com.htecgroup.skynest.util.FolderUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Validated
+@Log4j2
 public class FolderServiceImpl implements FolderService {
 
   private ModelMapper modelMapper;
@@ -45,6 +50,9 @@ public class FolderServiceImpl implements FolderService {
 
   private ActionService actionService;
   private PermissionService permissionService;
+  private TagService tagService;
+
+  private FolderValidatorService folderValidatorService;
 
   @Override
   public FolderResponse createFolder(
@@ -84,10 +92,21 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public void removeFolder(UUID uuid) {
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
     FolderDto folderDto =
         modelMapper.map(
             folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
             FolderDto.class);
+
+    log.info(
+        "User {} ({}) is attempting to delete folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderDto.getName(),
+        folderDto.getId());
+
     if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
@@ -98,20 +117,49 @@ public class FolderServiceImpl implements FolderService {
   }
 
   @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.RESTORE)
+  public FolderResponse restoreFolder(UUID folderId) {
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    FolderEntity folderEntity =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+
+    log.info(
+        "User {} ({}) is attempting to restore folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderEntity.getName(),
+        folderEntity.getId());
+
+    if (!folderEntity.isDeleted()) throw new FolderAlreadyRestoredException();
+
+    if (folderEntity.getParentFolder() == null
+        ? folderEntity.getBucket().isDeleted()
+        : folderEntity.getParentFolder().isDeleted()) throw new FolderParentIsDeletedException();
+
+    folderEntity.restore();
+    FolderEntity savedFolderEntity = folderRepository.save(folderEntity);
+
+    return modelMapper.map(savedFolderEntity, FolderResponse.class);
+  }
+
+  @Override
   public FolderResponse getFolderDetails(UUID uuid) {
     FolderEntity folderEntity =
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
-    FolderResponse folderResponse = modelMapper.map(folderEntity, FolderResponse.class);
-    return folderResponse;
+
+    List<TagResponse> tags = tagService.getTagsForObject(uuid);
+
+    return modelMapper.map(folderEntity, FolderResponse.class).withTags(tags);
   }
 
   @Override
   public FolderResponse editFolder(FolderEditRequest folderEditRequest, UUID folderId) {
     FolderEntity folderEntity =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
-    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
 
-    if (folderDto.isDeleted()) {
+    if (folderEntity.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
     folderEntity.setName(folderEditRequest.getName().trim());
@@ -126,14 +174,44 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public List<FolderResponse> getAllRootFolders(UUID bucketId) {
     List<FolderEntity> allFolders =
-        folderRepository.findAllByBucketIdAndParentFolderIsNull(bucketId);
+        folderRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
+            bucketId);
     return asFolderResponseList(allFolders);
   }
 
   @Override
   public List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId) {
-    List<FolderEntity> allFolders = folderRepository.findAllByParentFolderId(parentFolderId);
+    List<FolderEntity> allFolders =
+        folderRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(parentFolderId);
     return asFolderResponseList(allFolders);
+  }
+
+  @Override
+  public void moveFolderToRoot(UUID folderId) {
+    FolderEntity folderEntity = findFolderEntity(folderId);
+    folderValidatorService.checkIfFolderAlreadyInsideRoot(folderEntity);
+    folderEntity.moveToRoot(folderEntity);
+    saveMoveFolder(folderEntity);
+  }
+
+  @Override
+  public void moveFolderToFolder(UUID folderId, UUID destinationFolderId) {
+    FolderEntity folderEntity = findFolderEntity(folderId);
+    FolderEntity parentFolderEntity =
+        folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    folderValidatorService.checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
+    folderValidatorService.checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
+    folderEntity.setParentFolder(parentFolderEntity);
+    saveMoveFolder(folderEntity);
+  }
+
+  private FolderEntity findFolderEntity(UUID folderID) {
+    return folderRepository.findById(folderID).orElseThrow(FolderNotFoundException::new);
+  }
+
+  private void saveMoveFolder(FolderEntity folderEntity) {
+    folderRepository.save(folderEntity);
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.MOVE);
   }
 
   @Override
@@ -143,27 +221,17 @@ public class FolderServiceImpl implements FolderService {
     UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
-    List<ShortFolderResponse> path = asShortFolderResponseList(getPathToFolder(parentFolder));
+    List<ShortFolderResponse> path =
+        asShortFolderResponseList(FolderUtil.getPathToFolder(parentFolder));
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, path);
     return storageContentResponse;
   }
 
-  private List<FolderEntity> getPathToFolder(FolderEntity folderEntity) {
-
-    Deque<FolderEntity> path = new LinkedList<>();
-    FolderEntity parentFolder = folderEntity.getParentFolder();
-    while (parentFolder != null) {
-      path.addFirst(parentFolder);
-      parentFolder = parentFolder.getParentFolder();
-    }
-
-    return (List<FolderEntity>) path;
-  }
-
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {
     return allFolders.stream()
         .map(folder -> modelMapper.map(folder, FolderResponse.class))
+        .map(folder -> folder.withTags(tagService.getTagsForObject(folder.getId())))
         .collect(Collectors.toList());
   }
 

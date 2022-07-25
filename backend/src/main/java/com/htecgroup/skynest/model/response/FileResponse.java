@@ -1,10 +1,8 @@
 package com.htecgroup.skynest.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -22,4 +20,6 @@ public class FileResponse {
   private UUID bucketId;
   private String type;
   private String size;
+  @With
+  private List<TagResponse> tags;
 }
