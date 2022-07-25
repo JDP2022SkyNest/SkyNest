@@ -6,3 +6,7 @@
 .loader-text-size {
 	font-size: 20px !important;
 }
+
+.loader-color {
+	color: var(--gold);
+}

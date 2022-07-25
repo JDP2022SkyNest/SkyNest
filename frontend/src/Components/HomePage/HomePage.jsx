@@ -85,7 +85,7 @@ const HomePage = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            {!loader ? (
+            {loader ? (
                <div>
                   <div className="py-2 mt-2 rounded d-flex">
                      <AddBucketModal refreshBuckets={refreshBuckets} />
@@ -101,7 +101,7 @@ const HomePage = () => {
                </div>
             )}
          </div>
-         <div className="d-flex justify-content-center">
+         <div className="d-flex justify-content-center mt-5">
             <button
                onClick={() => {
                   metodi(accessToken, setErrorMsg);
