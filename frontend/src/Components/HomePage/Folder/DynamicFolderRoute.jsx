@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { folderContent, moveFolder } from "../../ReusableComponents/ReusableFunctions";
+import { folderContent, moveFolder, moveFile } from "../../ReusableComponents/ReusableFunctions";
 import NavbarPanel from "../../ReusableComponents/NavbarPanel";
 import ROUTES from "../../Routes/ROUTES";
 import Footer from "../../Footer/Footer";
@@ -32,7 +32,7 @@ const DynamicFolderRoute = () => {
    const FilesLength = filteredFiles?.length;
 
    const navigate = useNavigate();
-   const { moveFolderID, setMoveFilderID } = useContext(GlobalContext);
+   const { moveFolderID, setMoveFilderID, moveFileID, setMoveFileID } = useContext(GlobalContext);
 
    useEffect(() => {
       const getData = async () => {
@@ -116,6 +116,17 @@ const DynamicFolderRoute = () => {
                   <div
                      onClick={async () => {
                         await moveFolder(accessToken, moveFolderID, routeId, setMoveFilderID, setErrorMsg, setSuccessMsg);
+                        refreshFoldersAndFiles();
+                     }}
+                     className="ml-2 latte-background custom-rounded shadow"
+                  >
+                     <ImCions.ImPaste />
+                  </div>
+               )}
+               {moveFileID && (
+                  <div
+                     onClick={async () => {
+                        await moveFile(accessToken, moveFileID, routeId, setMoveFileID, setErrorMsg, setSuccessMsg);
                         refreshFoldersAndFiles();
                      }}
                      className="ml-2 latte-background custom-rounded shadow"
