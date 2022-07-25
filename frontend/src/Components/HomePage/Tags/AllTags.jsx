@@ -25,8 +25,8 @@ const AllTags = ({ setErrorMsg, objectId, refresh }) => {
          onClick={(e) => {
             if (!menuOpen) {
                e.stopPropagation();
-               setMenuOpen(true);
             }
+            setMenuOpen(!menuOpen);
             getAllTags();
          }}
          onChange={async (e) => {
