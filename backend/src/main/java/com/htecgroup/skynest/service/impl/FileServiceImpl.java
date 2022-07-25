@@ -19,13 +19,7 @@ import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.FileContentService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.PermissionService;
-import com.htecgroup.skynest.service.TagService;
-import com.mongodb.MongoException;
-import com.mongodb.client.gridfs.model.GridFSFile;
+import com.htecgroup.skynest.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -181,7 +175,6 @@ public class FileServiceImpl implements FileService {
   @Override
   public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
-    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
     checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
@@ -193,7 +186,6 @@ public class FileServiceImpl implements FileService {
   @Override
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
-    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
     checkIfDeleted(fileMetadataEntity);
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
@@ -267,12 +259,6 @@ public class FileServiceImpl implements FileService {
 
   private FileMetadataEntity findFileMetadataById(UUID fileId) {
     return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-  }
-
-  private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
-    return allFiles.stream()
-        .map(folder -> modelMapper.map(folder, FileResponse.class))
-        .collect(Collectors.toList());
   }
 
   private FileMetadataEntity initFileMetadata(
