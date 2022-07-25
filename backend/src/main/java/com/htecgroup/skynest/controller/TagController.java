@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/tags")
@@ -161,5 +162,40 @@ public class TagController {
   public List<TagResponse> getAllTags() {
     List<TagResponse> tags = tagService.listAllTags();
     return tags;
+  }
+
+  @Operation(summary = "Tag an object")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "204", description = "Object tagged"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PostMapping("/{tagId}/object/{objectId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void tagObject(@PathVariable UUID tagId, @PathVariable UUID objectId) {
+    tagService.tagObject(tagId, objectId);
   }
 }

@@ -2,6 +2,9 @@ package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.entity.FileMetadataEntity;
 import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.utils.tag.TagResponseUtil;
+
+import java.util.Collections;
 
 public class FileResponseUtil {
 
@@ -21,7 +24,8 @@ public class FileResponseUtil {
         rootFile.getParentFolder().getId() == null ? null : rootFile.getParentFolder().getId(),
         rootFile.getBucket().getId(),
         rootFile.getType(),
-        Long.toString(rootFile.getSize()));
+        Long.toString(rootFile.getSize()),
+        Collections.singletonList(TagResponseUtil.get()));
   }
 
   public static FileResponse getFileWithParent() {
@@ -35,6 +39,7 @@ public class FileResponseUtil {
         fileWithParent.getParentFolder().getId(),
         fileWithParent.getBucket().getId(),
         fileWithParent.getType(),
-        Long.toString(fileWithParent.getSize()));
+        Long.toString(fileWithParent.getSize()),
+        Collections.singletonList(TagResponseUtil.get()));
   }
 }

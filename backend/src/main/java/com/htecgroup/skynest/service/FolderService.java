@@ -26,5 +26,9 @@ public interface FolderService {
 
   List<FolderResponse> getAllFoldersWithParent(UUID parentFolderId);
 
+  void moveFolderToRoot(UUID folderId);
+
+  void moveFolderToFolder(UUID folderId, UUID destinationFolderId);
+
   StorageContentResponse getFolderContent(UUID folderId);
 }
