@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
@@ -19,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,10 +64,11 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public BucketResponse getBucketDetails(UUID uuid) {
-    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.VIEW);
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
-
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.VIEW);
+    }
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
 
     List<TagResponse> tags = tagService.getTagsForObject(uuid);
@@ -126,8 +125,10 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public void deleteBucket(UUID uuid) {
-    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketDto bucketDto = findBucketById(uuid);
+    if (!bucketDto.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
+    }
     if (bucketDto.getDeletedOn() != null) {
       throw new BucketAlreadyDeletedException();
     }
@@ -139,8 +140,10 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public void restoreBucket(UUID uuid) {
-    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketDto bucketDto = findBucketById(uuid);
+    if (!bucketDto.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
+    }
     if (bucketDto.getDeletedOn() == null) {
       throw new BucketAlreadyRestoredException();
     }
@@ -151,9 +154,12 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public BucketResponse editBucket(
-      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
+  public BucketResponse editBucket(BucketEditRequest bucketEditRequest, UUID uuid) {
+
     BucketEntity bucketEntity = findBucketEntityById(uuid);
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
+    }
 
     if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
@@ -171,10 +177,11 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public StorageContentResponse getBucketContent(UUID bucketId) {
 
-    permissionService.currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
-
-    if (!bucketRepository.existsById(bucketId)) throw new BucketNotFoundException();
-
+    BucketEntity bucketEntity =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
+    }
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
