@@ -350,7 +350,7 @@ export const deleteFile = async (accessToken, fileId, error, success) => {
 export const restoreFile = async (accessToken, fileId, error, success) => {
    try {
       await AxiosInstance.put(
-         `/folders/${fileId}/restore`,
+         `/files/${fileId}/restore`,
          {},
          {
             headers: { Authorization: accessToken },
