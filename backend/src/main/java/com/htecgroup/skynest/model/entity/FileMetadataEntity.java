@@ -37,6 +37,10 @@ public class FileMetadataEntity extends ObjectEntity {
         || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
   }
 
+  public boolean someParentIsDeleted() {
+    return parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted();
+  }
+
   public void moveToRoot(FileMetadataEntity fileMetadataEntity) {
     fileMetadataEntity.setParentFolder(null);
   }

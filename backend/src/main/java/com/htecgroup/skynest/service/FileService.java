@@ -29,4 +29,6 @@ public interface FileService {
   void moveFileToRoot(UUID fileId);
 
   void deleteFile(UUID fileId);
+
+  FileResponse restoreFile(UUID fileId);
 }

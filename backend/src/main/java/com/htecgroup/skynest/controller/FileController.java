@@ -822,4 +822,76 @@ public class FileController {
   public void deleteFile(@PathVariable UUID fileId) {
     fileService.deleteFile(fileId);
   }
+
+  @Operation(summary = "Restore File")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "File successfully restored",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "File already restored/File's parent is deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File already restored.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}",
+                        name = "file already restored"),
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File's parent is deleted.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}",
+                        name = "file's parent deleted")
+                  })
+            })
+      })
+  @PutMapping("/{fileId}/restore")
+  public ResponseEntity<FileResponse> restoreFile(@PathVariable UUID fileId) {
+    FileResponse fileResponse = fileService.restoreFile(fileId);
+    ResponseEntity<FileResponse> response = new ResponseEntity<>(fileResponse, HttpStatus.OK);
+    return response;
+  }
 }
