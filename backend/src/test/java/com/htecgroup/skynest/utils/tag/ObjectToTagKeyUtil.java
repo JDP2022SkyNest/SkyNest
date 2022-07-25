@@ -1,6 +1,7 @@
-package com.htecgroup.skynest.utils;
+package com.htecgroup.skynest.utils.tag;
 
 import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.utils.ObjectEntityUtil;
 import com.htecgroup.skynest.utils.tag.TagEntityUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

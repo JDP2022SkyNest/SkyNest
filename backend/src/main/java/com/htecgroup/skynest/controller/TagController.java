@@ -198,4 +198,39 @@ public class TagController {
   public void tagObject(@PathVariable UUID tagId, @PathVariable UUID objectId) {
     tagService.tagObject(tagId, objectId);
   }
+
+  @Operation(summary = "Untag an object")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "204", description = "Object untagged"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PutMapping("/{tagId}/object/{objectId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void untagObject(@PathVariable UUID tagId, @PathVariable UUID objectId) {
+    tagService.untagObject(tagId, objectId);
+  }
 }

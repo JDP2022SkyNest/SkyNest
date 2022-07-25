@@ -1,10 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
-import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
-import com.htecgroup.skynest.exception.tag.TagNotFoundException;
-import com.htecgroup.skynest.exception.tag.TagNotFromTheSameCompany;
-import com.htecgroup.skynest.exception.tag.TagOnObjectAlreadyExists;
+import com.htecgroup.skynest.exception.tag.*;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.TagResponse;
@@ -14,7 +11,7 @@ import com.htecgroup.skynest.repository.TagRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
 import com.htecgroup.skynest.utils.ObjectEntityUtil;
-import com.htecgroup.skynest.utils.ObjectToTagKeyUtil;
+import com.htecgroup.skynest.utils.tag.ObjectToTagKeyUtil;
 import com.htecgroup.skynest.utils.company.CompanyEntityUtil;
 import com.htecgroup.skynest.utils.tag.TagCreateRequestUtil;
 import com.htecgroup.skynest.utils.tag.TagEntityUtil;
@@ -158,6 +155,82 @@ class TagServiceImplTest {
     Exception thrownException =
             Assertions.assertThrows(
                     TagNotFromTheSameCompany.class, () -> tagService.tagObject(tag.getId(),object.getId()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).findById(tag.getId());
+    verify(objectRepository, times(1)).findById(object.getId());
+    verify(objectToTagRepository,times(1)).existsById(key);
+  }
+
+  @Test
+  void when_untagObject_shouldThrowTagNotFound() {
+    TagEntity tag = TagEntityUtil.get();
+    ObjectEntity object = ObjectEntityUtil.get();
+
+    when(tagRepository.findById(any())).thenReturn(Optional.empty());
+
+    String expectedErrorMessage = TagNotFoundException.MESSAGE;
+    Exception thrownException =
+            Assertions.assertThrows(
+                    TagNotFoundException.class, () -> tagService.untagObject(tag.getId(),object.getId()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).findById(tag.getId());
+  }
+
+  @Test
+  void when_untagObject_shouldThrowObjectNotFound() {
+    TagEntity tag = TagEntityUtil.get();
+    ObjectEntity object = ObjectEntityUtil.get();
+
+    when(tagRepository.findById(any())).thenReturn(Optional.of(tag));
+    when(objectRepository.findById(any())).thenReturn(Optional.empty());
+
+    String expectedErrorMessage = ObjectNotFoundException.MESSAGE;
+    Exception thrownException =
+            Assertions.assertThrows(
+                    ObjectNotFoundException.class, () -> tagService.untagObject(tag.getId(),object.getId()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).findById(tag.getId());
+    verify(objectRepository, times(1)).findById(object.getId());
+  }
+
+  @Test
+  void when_untagObject_shouldThrowTagOnObjectAlreadyExists() {
+    TagEntity tag = TagEntityUtil.get();
+    ObjectEntity object = ObjectEntityUtil.get();
+    ObjectToTagKey key = ObjectToTagKeyUtil.get();
+
+    when(tagRepository.findById(any())).thenReturn(Optional.of(tag));
+    when(objectRepository.findById(any())).thenReturn(Optional.of(object));
+    when(objectToTagRepository.existsById(any())).thenReturn(false);
+
+    String expectedErrorMessage = TagOnObjectNotFound.MESSAGE;
+    Exception thrownException =
+            Assertions.assertThrows(
+                    TagOnObjectNotFound.class, () -> tagService.untagObject(tag.getId(),object.getId()));
+
+    Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
+    verify(tagRepository, times(1)).findById(tag.getId());
+    verify(objectRepository, times(1)).findById(object.getId());
+    verify(objectToTagRepository,times(1)).existsById(key);
+  }
+
+  @Test
+  void when_untagObject_shouldThrowTagNotFromTheSameCompany() {
+    TagEntity tag = TagEntityUtil.getOtherCompanyTag();
+    ObjectEntity object = ObjectEntityUtil.get();
+    ObjectToTagKey key = ObjectToTagKeyUtil.get();
+
+    when(tagRepository.findById(any())).thenReturn(Optional.of(tag));
+    when(objectRepository.findById(any())).thenReturn(Optional.of(object));
+    when(objectToTagRepository.existsById(any())).thenReturn(true);
+
+    String expectedErrorMessage = TagNotFromTheSameCompany.MESSAGE;
+    Exception thrownException =
+            Assertions.assertThrows(
+                    TagNotFromTheSameCompany.class, () -> tagService.untagObject(tag.getId(),object.getId()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).findById(tag.getId());

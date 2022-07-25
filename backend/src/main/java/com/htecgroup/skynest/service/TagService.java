@@ -15,4 +15,6 @@ public interface TagService {
   void tagObject(UUID tagId, UUID objectId);
 
   List<TagResponse> getTagsForObject(UUID objectId);
+
+  void untagObject(UUID tagId, UUID objectId);
 }
