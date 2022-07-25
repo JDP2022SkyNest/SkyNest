@@ -139,6 +139,7 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public void restoreBucket(UUID uuid) {
+    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketDto bucketDto = findBucketById(uuid);
     if (bucketDto.getDeletedOn() == null) {
       throw new BucketAlreadyRestoredException();
