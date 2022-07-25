@@ -20,8 +20,12 @@ const DynamicRoute = () => {
    const [data, setData] = useState([]);
    const [searchTerm, setSearchTerm] = useState("");
    const [delState, setDelState] = useState(false);
-   const filteredFolders = data?.data?.folders.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
-   const filteredFiles = data?.data?.files.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
+   const filteredFolders = data?.data?.folders.filter(
+      (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
+   );
+   const filteredFiles = data?.data?.files.filter(
+      (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
+   );
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
