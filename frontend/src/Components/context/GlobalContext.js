@@ -8,6 +8,7 @@ export const GlobalProvider = ({ children }) => {
    const [userRole, setUserRole] = useState("");
    const [userID, setUserID] = useState("");
    const [moveFolderID, setMoveFilderID] = useState("");
+   const [moveFileID, setMoveFileID] = useState("");
 
    return (
       <GlobalContext.Provider
@@ -22,6 +23,8 @@ export const GlobalProvider = ({ children }) => {
             setUserID,
             moveFolderID,
             setMoveFilderID,
+            moveFileID,
+            setMoveFileID,
          }}
       >
          {children}

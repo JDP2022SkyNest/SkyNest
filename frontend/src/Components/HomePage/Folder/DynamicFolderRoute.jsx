@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { folderContent, moveFolder } from "../../ReusableComponents/ReusableFunctions";
+import { folderContent, moveFolder, moveFile } from "../../ReusableComponents/ReusableFunctions";
 import NavbarPanel from "../../ReusableComponents/NavbarPanel";
 import ROUTES from "../../Routes/ROUTES";
 import Footer from "../../Footer/Footer";
@@ -21,8 +21,12 @@ const DynamicFolderRoute = () => {
    const [data, setData] = useState([]);
    const [searchTerm, setSearchTerm] = useState("");
    const [delState, setDelState] = useState(false);
-   const filteredFolders = data?.data?.folders.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
-   const filteredFiles = data?.data?.files.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
+   const filteredFolders = data?.data?.folders.filter(
+      (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
+   );
+   const filteredFiles = data?.data?.files.filter(
+      (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
+   );
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
    const [infoMsg, setInfoMsg] = useState("");
@@ -32,7 +36,7 @@ const DynamicFolderRoute = () => {
    const FilesLength = filteredFiles?.length;
 
    const navigate = useNavigate();
-   const { moveFolderID, setMoveFilderID } = useContext(GlobalContext);
+   const { moveFolderID, setMoveFilderID, moveFileID, setMoveFileID } = useContext(GlobalContext);
 
    useEffect(() => {
       const getData = async () => {
@@ -116,6 +120,17 @@ const DynamicFolderRoute = () => {
                   <div
                      onClick={async () => {
                         await moveFolder(accessToken, moveFolderID, routeId, setMoveFilderID, setErrorMsg, setSuccessMsg);
+                        refreshFoldersAndFiles();
+                     }}
+                     className="ml-2 latte-background custom-rounded shadow"
+                  >
+                     <ImCions.ImPaste />
+                  </div>
+               )}
+               {moveFileID && (
+                  <div
+                     onClick={async () => {
+                        await moveFile(accessToken, moveFileID, routeId, setMoveFileID, setErrorMsg, setSuccessMsg);
                         refreshFoldersAndFiles();
                      }}
                      className="ml-2 latte-background custom-rounded shadow"

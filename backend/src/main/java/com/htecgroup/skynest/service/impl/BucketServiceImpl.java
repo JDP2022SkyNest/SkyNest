@@ -126,6 +126,7 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public void deleteBucket(UUID uuid) {
+    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketDto bucketDto = findBucketById(uuid);
     if (bucketDto.getDeletedOn() != null) {
       throw new BucketAlreadyDeletedException();
@@ -138,6 +139,7 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public void restoreBucket(UUID uuid) {
+    permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketDto bucketDto = findBucketById(uuid);
     if (bucketDto.getDeletedOn() == null) {
       throw new BucketAlreadyRestoredException();
@@ -168,6 +170,8 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public StorageContentResponse getBucketContent(UUID bucketId) {
+
+    permissionService.currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
 
     if (!bucketRepository.existsById(bucketId)) throw new BucketNotFoundException();
 
