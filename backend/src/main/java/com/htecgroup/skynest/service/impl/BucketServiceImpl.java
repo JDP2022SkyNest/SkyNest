@@ -107,17 +107,18 @@ public class BucketServiceImpl implements BucketService {
 
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
-    List
+    List<BucketEntity> newEntityList = new ArrayList<BucketEntity>();
 
     for (BucketEntity bucket : entityList) {
       try {
         permissionService.currentUserHasPermissionForBucket(bucket.getId(), AccessType.VIEW);
+        newEntityList.add(bucket);
       } catch (BucketAccessDeniedException b) {
 
       }
     }
 
-    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
+    actionService.recordAction(new HashSet<>(newEntityList), ActionType.VIEW);
 
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
