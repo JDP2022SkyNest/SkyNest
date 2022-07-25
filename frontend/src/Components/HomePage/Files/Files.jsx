@@ -50,35 +50,43 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                      >
                         File Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <EditFileInfo elem={elem} refresh={refresh} />
-                     </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={() => {
-                           if (elem.id === moveFileID) {
-                              setMoveFileID("");
-                           } else {
-                              setMoveFileID(elem.id);
-                              setMoveFilderID("");
-                           }
-                        }}
-                        className="text-dark"
-                     >
-                        {elem.id === moveFileID ? "Cancel Move" : "Move File"}
-                     </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <AllTags refresh={refresh} objectId={elem.id} />
-                     </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={async () => {
-                           setInfoMsg("Preparing Download");
-                           await fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg);
-                           setInfoMsg("");
-                        }}
-                        className="text-dark"
-                     >
-                        Download File
-                     </Dropdown.Item>
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <EditFileInfo elem={elem} refresh={refresh} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item
+                           onClick={() => {
+                              if (elem.id === moveFileID) {
+                                 setMoveFileID("");
+                              } else {
+                                 setMoveFileID(elem.id);
+                                 setMoveFilderID("");
+                              }
+                           }}
+                           className="text-dark"
+                        >
+                           {elem.id === moveFileID ? "Cancel Move" : "Move File"}
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <AllTags refresh={refresh} objectId={elem.id} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              setInfoMsg("Preparing Download");
+                              await fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg);
+                              setInfoMsg("");
+                           }}
+                           className="text-dark"
+                        >
+                           Download File
+                        </Dropdown.Item>
+                     )}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {

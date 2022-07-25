@@ -60,25 +60,31 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      >
                         Folder Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <EditFolderModal elem={elem} refresh={refresh} />
-                     </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={() => {
-                           if (elem.id === moveFolderID) {
-                              setMoveFilderID("");
-                           } else {
-                              setMoveFilderID(elem.id);
-                              setMoveFileID("");
-                           }
-                        }}
-                        className="text-dark"
-                     >
-                        {elem.id === moveFolderID ? "Cancel Move" : "Move Folder"}
-                     </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <AllTags refresh={refresh} objectId={elem.id} />
-                     </Dropdown.Item>
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <EditFolderModal elem={elem} refresh={refresh} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item
+                           onClick={() => {
+                              if (elem.id === moveFolderID) {
+                                 setMoveFilderID("");
+                              } else {
+                                 setMoveFilderID(elem.id);
+                                 setMoveFileID("");
+                              }
+                           }}
+                           className="text-dark"
+                        >
+                           {elem.id === moveFolderID ? "Cancel Move" : "Move Folder"}
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <AllTags refresh={refresh} objectId={elem.id} />
+                        </Dropdown.Item>
+                     )}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {
