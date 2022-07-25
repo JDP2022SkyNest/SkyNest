@@ -2,8 +2,8 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
-import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -135,7 +135,7 @@ class PermissionServiceImplTest {
     PermissionGrantRequest grantViewPermissionRequest =
         PermissionGrantRequestUtil.get(AccessType.VIEW);
     Assertions.assertThrows(
-        BucketAccessDeniedException.class,
+        ObjectAccessDeniedException.class,
         () -> {
           permissionService.grantPermissionForBucket(grantViewPermissionRequest);
         });
@@ -160,7 +160,7 @@ class PermissionServiceImplTest {
     when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccess));
 
     Assertions.assertThrows(
-        BucketAccessDeniedException.class,
+        ObjectAccessDeniedException.class,
         () -> {
           permissionService.currentUserHasPermissionForBucket(
               UserEntityUtil.getAdmin().getId(), AccessType.OWNER);

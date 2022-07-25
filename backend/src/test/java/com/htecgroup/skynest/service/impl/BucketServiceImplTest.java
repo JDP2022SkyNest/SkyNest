@@ -50,7 +50,8 @@ class BucketServiceImplTest {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getPrivateBucket());
     when(bucketRepository.findAllByOrderByNameAscCreatedOnDesc()).thenReturn(bucketEntityList);
-    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
 
@@ -59,27 +60,29 @@ class BucketServiceImplTest {
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
     verify(bucketRepository, times(1)).findAllByOrderByNameAscCreatedOnDesc();
-    verify(tagService,times(1)).getTagsForObject(bucketEntityList.get(0).getId());
+    verify(tagService, times(1)).getTagsForObject(bucketEntityList.get(0).getId());
   }
 
   @Test
   void getBucket() {
     BucketEntity expectedBucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(expectedBucketEntity));
-    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     BucketResponse actualBucketResponse =
         bucketService.getBucketDetails(expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
     verify(bucketRepository, times(1)).findById(any());
-    verify(tagService,times(1)).getTagsForObject(expectedBucketEntity.getId());
+    verify(tagService, times(1)).getTagsForObject(expectedBucketEntity.getId());
   }
 
   @Test
   void getBucketContent() {
 
-    when(bucketRepository.existsById(any())).thenReturn(true);
+    when(bucketRepository.findById(any()))
+        .thenReturn(Optional.of(BucketEntityUtil.getPrivateBucket()));
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getRootFolder()));
     when(folderService.getAllRootFolders(any())).thenReturn(expectedFolderResponseList);
@@ -96,7 +99,7 @@ class BucketServiceImplTest {
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 
     Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
-    verify(bucketRepository, times(1)).existsById(bucketId);
+    verify(bucketRepository, times(1)).findById(bucketId);
     verify(folderService, times(1)).getAllRootFolders(bucketId);
     verify(fileService, times(1)).getAllRootFiles(bucketId);
   }
