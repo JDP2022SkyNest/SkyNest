@@ -81,7 +81,8 @@ class BucketServiceImplTest {
   @Test
   void getBucketContent() {
 
-    when(bucketRepository.existsById(any())).thenReturn(true);
+    when(bucketRepository.findById(any()))
+        .thenReturn(Optional.of(BucketEntityUtil.getPrivateBucket()));
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getRootFolder()));
     when(folderService.getAllRootFolders(any())).thenReturn(expectedFolderResponseList);
@@ -98,7 +99,7 @@ class BucketServiceImplTest {
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 
     Assertions.assertEquals(expectedStorageContentResponse, actualStorageContentResponse);
-    verify(bucketRepository, times(1)).existsById(bucketId);
+    verify(bucketRepository, times(1)).findById(bucketId);
     verify(folderService, times(1)).getAllRootFolders(bucketId);
     verify(fileService, times(1)).getAllRootFiles(bucketId);
   }
