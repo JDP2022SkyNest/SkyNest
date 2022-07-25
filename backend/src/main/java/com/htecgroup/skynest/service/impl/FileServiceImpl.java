@@ -151,6 +151,10 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
