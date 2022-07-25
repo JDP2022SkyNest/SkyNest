@@ -251,7 +251,7 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadataEntity =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
-    if (!((ObjectEntity) fileMetadataEntity).isDeleted()) {
+    if (!fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyRestoredException();
     }
 

@@ -134,9 +134,7 @@ public class FolderServiceImpl implements FolderService {
 
     if (!folderEntity.isDeleted()) throw new FolderAlreadyRestoredException();
 
-    if (folderEntity.getParentFolder() == null
-        ? folderEntity.getBucket().isDeleted()
-        : folderEntity.getParentFolder().isDeleted()) throw new FolderParentIsDeletedException();
+    if (folderEntity.someParentIsDeleted()) throw new FolderParentIsDeletedException();
 
     folderEntity.restore();
     FolderEntity savedFolderEntity = folderRepository.save(folderEntity);
