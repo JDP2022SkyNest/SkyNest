@@ -2,9 +2,9 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
-import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
 import com.htecgroup.skynest.model.entity.*;
@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -128,13 +129,60 @@ public class PermissionServiceImpl implements PermissionService {
     UserObjectAccessEntity permission =
         permissionRepository
             .findById(new UserObjectAccessKey(currentUserId, bucketId))
-            .orElseThrow(BucketAccessDeniedException::new);
+            .orElseThrow(ObjectAccessDeniedException::new);
 
     AccessType actualAccessType =
         AccessType.valueOf(permission.getAccess().getName().toUpperCase());
 
     if (actualAccessType.ordinal() < minimumAccessType.ordinal())
-      throw new BucketAccessDeniedException();
+      throw new ObjectAccessDeniedException();
+  }
+
+  @Override
+  public void currentUserHasPermissionForFolder(FolderEntity folder, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    Optional<UserObjectAccessEntity> permission =
+        permissionRepository.findById(new UserObjectAccessKey(currentUserId, folder.getId()));
+
+    if (permission.isPresent()) {
+
+      AccessType actualAccessType =
+          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
+
+      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
+    }
+
+    if (folder.getParentFolder() != null) {
+      currentUserHasPermissionForFolder(folder.getParentFolder(), minimumAccessType);
+    } else {
+      currentUserHasPermissionForBucket(folder.getBucket().getId(), minimumAccessType);
+    }
+  }
+
+  @Override
+  public void currentUserHasPermissionForFile(
+      FileMetadataEntity file, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    Optional<UserObjectAccessEntity> permission =
+        permissionRepository.findById(new UserObjectAccessKey(currentUserId, file.getId()));
+
+    if (permission.isPresent()) {
+
+      AccessType actualAccessType =
+          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
+
+      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
+    }
+
+    if (file.getParentFolder() != null) {
+      currentUserHasPermissionForFolder(file.getParentFolder(), minimumAccessType);
+    } else {
+      currentUserHasPermissionForBucket(file.getBucket().getId(), minimumAccessType);
+    }
   }
 
   @Override
