@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
@@ -19,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,8 +149,7 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public BucketResponse editBucket(
-      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
+  public BucketResponse editBucket(BucketEditRequest bucketEditRequest, UUID uuid) {
     permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     BucketEntity bucketEntity = findBucketEntityById(uuid);
 
