@@ -118,7 +118,7 @@ const DynamicFolderRoute = () => {
                         await moveFolder(accessToken, moveFolderID, routeId, setMoveFilderID, setErrorMsg, setSuccessMsg);
                         refreshFoldersAndFiles();
                      }}
-                     className="ml-auto ml-sm-2 latte-background custom-rounded shadow"
+                     className="ml-2 latte-background custom-rounded shadow"
                   >
                      <ImCions.ImPaste />
                   </div>
