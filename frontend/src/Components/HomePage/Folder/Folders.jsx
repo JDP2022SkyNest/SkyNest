@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as AiCions from "react-icons/ai";
@@ -8,6 +8,7 @@ import FolderInfo from "./FolderInfo";
 import { useNavigate } from "react-router-dom";
 import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
+import GlobalContext from "../../context/GlobalContext";
 
 const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -17,6 +18,8 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const accessToken = localStorage.accessToken;
 
    const timeFrame = elem.createdOn.replace("T", " @ ");
+
+   const { moveFolderID, setMoveFilderID } = useContext(GlobalContext);
 
    const writeTags = elem?.tags?.map((el, index) => {
       return <TagDisplay key={index} el={el} />;
@@ -59,6 +62,18 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
                         <EditFolderModal elem={elem} refresh={refresh} />
+                     </Dropdown.Item>
+                     <Dropdown.Item
+                        onClick={() => {
+                           if (elem.id === moveFolderID) {
+                              setMoveFilderID("");
+                           } else {
+                              setMoveFilderID(elem.id);
+                           }
+                        }}
+                        className="text-dark"
+                     >
+                        {elem.id === moveFolderID ? "Cancel Move" : "Move Folder"}
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark">
                         <AllTags refresh={refresh} objectId={elem.id} />
