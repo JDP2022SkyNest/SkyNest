@@ -106,6 +106,7 @@ public class BucketServiceImpl implements BucketService {
 
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
+    List
 
     for (BucketEntity bucket : entityList) {
       try {
