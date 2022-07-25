@@ -171,6 +171,8 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public StorageContentResponse getBucketContent(UUID bucketId) {
 
+    permissionService.currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
+
     if (!bucketRepository.existsById(bucketId)) throw new BucketNotFoundException();
 
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
