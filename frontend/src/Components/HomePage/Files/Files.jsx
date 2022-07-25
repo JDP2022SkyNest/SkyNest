@@ -3,7 +3,7 @@ import * as AiCions from "react-icons/ai";
 import * as BsCions from "react-icons/bs";
 import { Dropdown, Modal } from "react-bootstrap";
 import FileInfo from "./FileInfo";
-import { fileDownload, deleteFile } from "../../ReusableComponents/ReusableFunctions";
+import { fileDownload, deleteFile, restoreFile } from "../../ReusableComponents/ReusableFunctions";
 import EditFileInfo from "./EditFileInfo";
 import GlobalContext from "../../context/GlobalContext";
 import AllTags from "../Tags/AllTags";
@@ -79,15 +79,27 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                      >
                         Download File
                      </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={async () => {
-                           await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
-                           refresh();
-                        }}
-                        className="text-danger"
-                     >
-                        Delete File
-                     </Dropdown.Item>
+                     {elem.deletedOn === null ? (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              refresh();
+                           }}
+                           className="text-danger"
+                        >
+                           Delete File
+                        </Dropdown.Item>
+                     ) : (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await restoreFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              refresh();
+                           }}
+                           className="text-danger"
+                        >
+                           Restore file
+                        </Dropdown.Item>
+                     )}
                   </Dropdown.Menu>
                </Dropdown>
             </div>
