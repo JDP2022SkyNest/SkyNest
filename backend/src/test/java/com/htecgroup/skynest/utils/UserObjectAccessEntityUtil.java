@@ -12,7 +12,7 @@ public final class UserObjectAccessEntityUtil {
   protected static BucketEntity bucketEntityUtil = BucketEntityUtil.getPrivateBucket();
   protected static LocalDateTime localDateTime = LocalDateTime.now();
 
-  protected static AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
+  protected static AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.OWNER);
 
   protected static UserObjectAccessKey userObjectAccessKey = UserObjectAccessKeyUtil.get();
 

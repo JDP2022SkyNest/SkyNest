@@ -70,15 +70,29 @@ public class RegistrationController {
                             "{\"messages\":[\"password format not valid\","
                                 + " \"name cannot be null or empty\","
                                 + " \"surname cannot be null or empty\","
-                                + " \"email format is not valid\","
                                 + " \"phoneNumber format not valid\"],"
                                 + " \"status\": \"400\","
                                 + " \"timestamp\": \"2022-06-03 16:18:12\"}")
                   })
             }),
         @ApiResponse(
+            responseCode = "401",
+            description = "Invalid token",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"This email is already in use\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "409",
-            description = "Phone number already in use",
+            description = "Email or phone number already in use",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -109,8 +123,7 @@ public class RegistrationController {
               examples = {
                 @ExampleObject(
                     value =
-                        "{\"email\": \"username@gmail.com\","
-                            + " \"password\": \"paSword1\","
+                        "{\"password\": \"paSword1\","
                             + "  \"name\": \"Name\","
                             + "  \"surname\": \"Surname\","
                             + "  \"phoneNumber\": \"38166575757\","

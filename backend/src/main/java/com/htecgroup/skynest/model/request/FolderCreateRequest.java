@@ -20,6 +20,6 @@ public class FolderCreateRequest {
 
   private UUID parentFolderId;
 
-  @NotNull(message = "bucket id cannot be null or empty")
+  @NotNull(message = "cannot be null or empty")
   private UUID bucketId;
 }
