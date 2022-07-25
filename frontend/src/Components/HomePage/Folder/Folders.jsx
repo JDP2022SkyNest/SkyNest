@@ -19,7 +19,7 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
 
    const timeFrame = elem.createdOn.replace("T", " @ ");
 
-   const { moveFolderID, setMoveFilderID } = useContext(GlobalContext);
+   const { moveFolderID, setMoveFilderID, setMoveFileID } = useContext(GlobalContext);
 
    const writeTags = elem?.tags?.map((el, index) => {
       return <TagDisplay key={index} el={el} />;
@@ -69,6 +69,7 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                               setMoveFilderID("");
                            } else {
                               setMoveFilderID(elem.id);
+                              setMoveFileID("");
                            }
                         }}
                         className="text-dark"
