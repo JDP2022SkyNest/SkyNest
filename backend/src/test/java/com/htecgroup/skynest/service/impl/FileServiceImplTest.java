@@ -14,11 +14,11 @@ import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.ActionService;
 import com.htecgroup.skynest.service.FileContentService;
+import com.htecgroup.skynest.service.PermissionService;
 import com.htecgroup.skynest.service.TagService;
 import com.htecgroup.skynest.utils.FileEditRequestUtil;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
 import com.htecgroup.skynest.utils.FolderEntityUtil;
-import com.htecgroup.skynest.utils.tag.TagEntityUtil;
 import com.htecgroup.skynest.utils.tag.TagResponseUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,6 +41,7 @@ class FileServiceImplTest {
   @Mock private CurrentUserServiceImpl currentUserService;
   @Mock private BucketRepository bucketRepository;
   @Mock private UserRepository userRepository;
+  @Mock private PermissionService permissionService;
   @Mock private FolderRepository folderRepository;
   @Mock private FileMetadataRepository fileMetadataRepository;
   @Mock private ActionService actionService;
@@ -98,7 +99,8 @@ class FileServiceImplTest {
     when(fileMetadataRepository.findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
             any()))
         .thenReturn(expectedFiles);
-    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<FileResponse> actualFiles =
         fileService.getAllRootFiles(fileMetadataEntity.getBucket().getId());
@@ -108,7 +110,7 @@ class FileServiceImplTest {
     verify(fileMetadataRepository, times(1))
         .findAllByBucketIdAndParentFolderIsNullOrderByNameAscCreatedOnDesc(
             fileMetadataEntity.getBucket().getId());
-    verify(tagService,times(1)).getTagsForObject(expectedFiles.get(0).getId());
+    verify(tagService, times(1)).getTagsForObject(expectedFiles.get(0).getId());
   }
 
   @Test
@@ -118,7 +120,8 @@ class FileServiceImplTest {
         new ArrayList<>(Collections.singleton(fileMetadataEntity));
     when(fileMetadataRepository.findAllByParentFolderIdOrderByNameAscCreatedOnDesc(any()))
         .thenReturn(expectedFiles);
-    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<FileResponse> actualFiles =
         fileService.getAllFilesWithParent(fileMetadataEntity.getParentFolder().getId());
@@ -128,7 +131,7 @@ class FileServiceImplTest {
     verify(fileMetadataRepository, times(1))
         .findAllByParentFolderIdOrderByNameAscCreatedOnDesc(
             fileMetadataEntity.getParentFolder().getId());
-    verify(tagService,times(1)).getTagsForObject(expectedFiles.get(0).getId());
+    verify(tagService, times(1)).getTagsForObject(expectedFiles.get(0).getId());
   }
 
   @Test
