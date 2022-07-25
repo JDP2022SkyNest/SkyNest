@@ -110,10 +110,13 @@ public class FileServiceImpl implements FileService {
   public FileDownloadResponse downloadFile(UUID fileId) {
 
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
     Resource fileContents = fileContentService.findById(fileMetadataEntity.getContentId());
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.DOWNLOAD);
+
+    Resource fileContents = getFileContents(fileMetadataEntity.getContentId());
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.DOWNLOAD);
 
     return new FileDownloadResponse(
