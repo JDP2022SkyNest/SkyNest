@@ -23,7 +23,9 @@ const HomePage = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
    const [delState, setDelState] = useState(false);
-   const filteredBuckets = allBuckets.filter((el) => !!el.deletedOn === delState && el.name.includes(searchTerm));
+   const filteredBuckets = allBuckets.filter(
+      (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
+   );
    // eslint-disable-next-line
    const [successMsg, setSuccessMsg] = useState("");
    const [loader, setLoader] = useState(false);
