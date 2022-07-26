@@ -1,8 +1,10 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
-import com.htecgroup.skynest.exception.tag.*;
-import com.htecgroup.skynest.model.entity.*;
+import com.htecgroup.skynest.exception.tag.TagNotFoundException;
+import com.htecgroup.skynest.model.entity.CompanyEntity;
+import com.htecgroup.skynest.model.entity.ObjectEntity;
+import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.TagResponse;
 import com.htecgroup.skynest.repository.ObjectRepository;
@@ -12,7 +14,6 @@ import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.TagValidationService;
 import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
 import com.htecgroup.skynest.utils.ObjectEntityUtil;
-import com.htecgroup.skynest.utils.tag.ObjectToTagKeyUtil;
 import com.htecgroup.skynest.utils.company.CompanyEntityUtil;
 import com.htecgroup.skynest.utils.tag.TagCreateRequestUtil;
 import com.htecgroup.skynest.utils.tag.TagEntityUtil;
@@ -35,10 +36,8 @@ import static org.mockito.Mockito.*;
 class TagServiceImplTest {
 
   @Mock TagRepository tagRepository;
-  @Mock
-  ObjectRepository objectRepository;
-  @Mock
-  ObjectToTagRepository objectToTagRepository;
+  @Mock ObjectRepository objectRepository;
+  @Mock ObjectToTagRepository objectToTagRepository;
   @Mock CurrentUserService currentUserService;
   @Mock TagValidationService tagValidationService;
   @Spy ModelMapper modelMapper;
@@ -85,8 +84,8 @@ class TagServiceImplTest {
 
     String expectedErrorMessage = TagNotFoundException.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    TagNotFoundException.class, () -> tagService.tagObject(tag.getId(),object.getId()));
+        Assertions.assertThrows(
+            TagNotFoundException.class, () -> tagService.tagObject(tag.getId(), object.getId()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).findById(tag.getId());
@@ -102,8 +101,8 @@ class TagServiceImplTest {
 
     String expectedErrorMessage = ObjectNotFoundException.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    ObjectNotFoundException.class, () -> tagService.tagObject(tag.getId(),object.getId()));
+        Assertions.assertThrows(
+            ObjectNotFoundException.class, () -> tagService.tagObject(tag.getId(), object.getId()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).findById(tag.getId());
@@ -119,8 +118,8 @@ class TagServiceImplTest {
 
     String expectedErrorMessage = TagNotFoundException.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    TagNotFoundException.class, () -> tagService.untagObject(tag.getId(),object.getId()));
+        Assertions.assertThrows(
+            TagNotFoundException.class, () -> tagService.untagObject(tag.getId(), object.getId()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).findById(tag.getId());
@@ -136,8 +135,9 @@ class TagServiceImplTest {
 
     String expectedErrorMessage = ObjectNotFoundException.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    ObjectNotFoundException.class, () -> tagService.untagObject(tag.getId(),object.getId()));
+        Assertions.assertThrows(
+            ObjectNotFoundException.class,
+            () -> tagService.untagObject(tag.getId(), object.getId()));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).findById(tag.getId());

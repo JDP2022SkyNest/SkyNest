@@ -9,10 +9,7 @@ import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.FolderEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.FileResponse;
@@ -84,6 +81,9 @@ public class FolderServiceImpl implements FolderService {
         bucketRepository.findById(bucketEntityId).orElseThrow(BucketNotFoundException::new);
     bucketEntity = modelMapper.map(bucketEntity, BucketEntity.class);
     FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolderEntity, AccessType.EDIT);
+    }
 
     folderEntity.setParentFolder(parentFolderEntity);
     folderEntity.setBucket(bucketEntity);
@@ -97,10 +97,9 @@ public class FolderServiceImpl implements FolderService {
 
     LoggedUserDto currentUser = currentUserService.getLoggedUser();
 
-    FolderDto folderDto =
-        modelMapper.map(
-            folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
-            FolderDto.class);
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
 
     log.info(
         "User {} ({}) is attempting to delete folder {} ({})",
@@ -112,10 +111,15 @@ public class FolderServiceImpl implements FolderService {
     if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
+
+    if (!folderDto.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
+
     FolderDto deletedFolderDto = folderDto.deleteFolder();
-    FolderEntity folderEntity =
+    FolderEntity savedFolderEntity =
         folderRepository.save(modelMapper.map(deletedFolderDto, FolderEntity.class));
-    actionService.recordAction(Collections.singleton(folderEntity), ActionType.DELETE);
+    actionService.recordAction(Collections.singleton(savedFolderEntity), ActionType.DELETE);
   }
 
   @Override
@@ -136,6 +140,10 @@ public class FolderServiceImpl implements FolderService {
 
     if (!folderEntity.isDeleted()) throw new FolderAlreadyRestoredException();
 
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
+
     if (folderEntity.someParentIsDeleted()) throw new FolderParentIsDeletedException();
 
     folderEntity.restore();
@@ -148,6 +156,9 @@ public class FolderServiceImpl implements FolderService {
   public FolderResponse getFolderDetails(UUID uuid) {
     FolderEntity folderEntity =
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
+    }
 
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
@@ -159,6 +170,9 @@ public class FolderServiceImpl implements FolderService {
 
     if (folderEntity.isDeleted()) {
       throw new FolderAlreadyDeletedException();
+    }
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
     }
     folderEntity.setName(folderEditRequest.getName().trim());
 
@@ -188,6 +202,11 @@ public class FolderServiceImpl implements FolderService {
   public void moveFolderToRoot(UUID folderId) {
     FolderEntity folderEntity = findFolderEntity(folderId);
     checkIfDeleted(folderEntity);
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(
+          folderEntity.getBucket().getId(), AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     folderValidatorService.checkIfFolderAlreadyInsideRoot(folderEntity);
     folderEntity.moveToRoot(folderEntity);
     saveMoveFolder(folderEntity);
@@ -200,6 +219,10 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfDeleted(parentFolderEntity);
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolderEntity, AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     folderValidatorService.checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
     folderValidatorService.checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
     folderEntity.setParentFolder(parentFolderEntity);
@@ -225,6 +248,9 @@ public class FolderServiceImpl implements FolderService {
   public StorageContentResponse getFolderContent(UUID folderId) {
     FolderEntity parentFolder =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    if (!parentFolder.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolder, AccessType.VIEW);
+    }
     UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);

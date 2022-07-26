@@ -4,6 +4,7 @@ import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
+import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class LambdaController {
 
   private BucketService bucketService;
+  private UserService userService;
 
   private CurrentUserService currentUserService;
 

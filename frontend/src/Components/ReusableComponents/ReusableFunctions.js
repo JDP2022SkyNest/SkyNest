@@ -132,19 +132,20 @@ export const emailVerification = async (accessToken, success, error, info, setpa
 };
 
 export const onUserLogout = async (accessToken, stateToChange) => {
+   const token = accessToken;
+   localStorage.clear();
+   stateToChange("");
    try {
       await AxiosInstance.post(
          `/auth/logout`,
          {},
          {
-            headers: { Authorization: accessToken },
+            headers: { Authorization: token },
          }
       );
    } catch (err) {
       console.error("Token already expired", err);
    }
-   localStorage.clear();
-   stateToChange("");
 };
 
 export const promoteUser = async (accessToken, id, error, success) => {
@@ -193,17 +194,6 @@ export const getCompany = async (accessToken, stateToChange, error, info = true)
    }
 };
 
-export const getCompanyName = async (accessToken, stateToChange) => {
-   try {
-      let response = await AxiosInstance.get("/companies", {
-         headers: { Authorization: accessToken },
-      });
-      stateToChange(response.data.name);
-   } catch (err) {
-      console.error(err);
-   }
-};
-
 export const editCompany = async (accessToken, payload, error, success, func) => {
    try {
       await AxiosInstance.put(
@@ -237,22 +227,6 @@ export const addToCompany = async (accessToken, id, error, success) => {
          }
       );
       success("User added to your company");
-   } catch (err) {
-      error(err.response.data.messages);
-      console.error(err);
-   }
-};
-
-export const removeFromCompany = async (accessToken, id, error, success) => {
-   try {
-      await AxiosInstance.put(
-         `/users/${id}/company/remove`,
-         {},
-         {
-            headers: { Authorization: accessToken },
-         }
-      );
-      success("User removed from your company");
    } catch (err) {
       error(err.response.data.messages);
       console.error(err);
@@ -478,6 +452,18 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
       } else if (err.response.status === 500) {
          error("Internal Server Error");
       }
+   }
+};
+
+export const getAllTags = async (accessToken, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get("/tags", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
    }
 };
 

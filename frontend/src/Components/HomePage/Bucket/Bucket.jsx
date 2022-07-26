@@ -9,6 +9,7 @@ import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
 import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
+import RemoveTag from "../Tags/RemoveTag";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -73,6 +74,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                            <AllTags objectId={elem.bucketId} refresh={refreshBuckets} TGZ={TGZ} setErrorMsg={setErrorMsg} />
                         </Dropdown.Item>
                      )}
+                     {elem.deletedOn === null && TGZ.length > 0 ? (
+                        <Dropdown.Item className="text-dark">
+                           <RemoveTag TGZ={TGZ} objectId={elem.bucketId} refresh={refreshBuckets} />
+                        </Dropdown.Item>
+                     ) : null}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {
