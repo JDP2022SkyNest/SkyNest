@@ -2,10 +2,7 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
-import com.htecgroup.skynest.exception.tag.TagAlreadyExistsException;
-import com.htecgroup.skynest.exception.tag.TagNotFoundException;
-import com.htecgroup.skynest.exception.tag.TagNotFromTheSameCompany;
-import com.htecgroup.skynest.exception.tag.TagOnObjectAlreadyExists;
+import com.htecgroup.skynest.exception.tag.*;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
@@ -15,6 +12,7 @@ import com.htecgroup.skynest.repository.ObjectToTagRepository;
 import com.htecgroup.skynest.repository.TagRepository;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.TagService;
+import com.htecgroup.skynest.service.TagValidationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -33,15 +31,14 @@ public class TagServiceImpl implements TagService {
   private CurrentUserService currentUserService;
   private ObjectRepository objectRepository;
   private ObjectToTagRepository objectToTagRepository;
+  private TagValidationService tagValidationService;
   private ModelMapper modelMapper;
 
   @Override
-  public TagResponse createTag(TagCreateRequest createTagRequest) {
+  public TagResponse createTag(TagCreateRequest tagCreateRequest) {
 
-    if (tagRepository.existsByName(createTagRequest.getName()))
-      throw new TagAlreadyExistsException();
-
-    TagEntity tagEntity = modelMapper.map(createTagRequest, TagEntity.class);
+    tagValidationService.checkIfTagAlreadyExists(tagCreateRequest);
+    TagEntity tagEntity = modelMapper.map(tagCreateRequest, TagEntity.class);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
 
@@ -86,17 +83,13 @@ public class TagServiceImpl implements TagService {
     ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
     ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
 
-    if (objectToTagRepository.existsById(key)) {
-      throw new TagOnObjectAlreadyExists();
-    }
-    if (!tagEntity.getCompany().equals(objectEntity.getCreatedBy().getCompany())) {
-      throw new TagNotFromTheSameCompany();
-    }
+    tagValidationService.checkIfTagOnObjectAlreadyExists(objectToTagEntity);
+    tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity);
+    tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity);
 
     objectToTagRepository.save(objectToTagEntity);
 
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-
     log.info(
         "User {} ({}) added tag {} ({}) for object {} ({})",
         loggedUserDto.getUsername(),
@@ -117,4 +110,31 @@ public class TagServiceImpl implements TagService {
         .map(e -> modelMapper.map(e, TagResponse.class))
         .collect(Collectors.toList());
   }
+
+    @Override
+    public void untagObject(UUID tagId, UUID objectId) {
+
+      TagEntity tagEntity = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
+      ObjectEntity objectEntity =
+              objectRepository.findById(objectId).orElseThrow(ObjectNotFoundException::new);
+
+      ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
+      ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
+
+      tagValidationService.checkIfObjectIsTagged(objectToTagEntity);
+      tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity);
+      tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity);
+
+      objectToTagRepository.delete(objectToTagEntity);
+
+      LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+      log.info(
+              "User {} ({}) removed tag {} ({}) from object {} ({})",
+              loggedUserDto.getUsername(),
+              loggedUserDto.getUuid(),
+              tagEntity.getName(),
+              tagEntity.getId(),
+              objectEntity.getName(),
+              objectEntity.getId());
+    }
 }
