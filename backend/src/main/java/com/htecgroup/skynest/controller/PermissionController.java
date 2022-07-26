@@ -455,7 +455,7 @@ public class PermissionController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PostMapping("/grant/file")
+  @PostMapping("/file")
   public ResponseEntity<PermissionResponse> grantPermissionToFile(
       @Valid @RequestBody PermissionGrantRequest permissionGrantRequest) {
 
