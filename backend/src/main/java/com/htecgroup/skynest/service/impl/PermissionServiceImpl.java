@@ -237,6 +237,9 @@ public class PermissionServiceImpl implements PermissionService {
     permissionRepository.delete(permission);
   }
 
+  @Override
+  public void revokeFilePermission(UUID fileId, UUID userId) {}
+
   private void checkIfPermissionExist(UserObjectAccessEntity permission) {
     if (permission == null) {
       throw new PermissionDoesNotExistException();
