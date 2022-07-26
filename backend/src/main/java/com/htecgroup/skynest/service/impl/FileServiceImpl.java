@@ -85,7 +85,10 @@ public class FileServiceImpl implements FileService {
             folderId);
 
     checkFolderNotDeleted(emptyFileMetadata);
-    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
+    if (!emptyFileMetadata.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(
+          emptyFileMetadata.getParentFolder(), AccessType.EDIT);
+    }
 
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
     permissionService.grantOwnerForObject(savedFileMetadata);
@@ -198,6 +201,10 @@ public class FileServiceImpl implements FileService {
     checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
     fileMetadataEntity.moveToFolder(fileMetadataEntity, folderEntity);
     saveMoveFile(fileMetadataEntity);
@@ -207,6 +214,11 @@ public class FileServiceImpl implements FileService {
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkIfDeleted(fileMetadataEntity);
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(
+          fileMetadataEntity.getBucket().getId(), AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+    }
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
     saveMoveFile(fileMetadataEntity);
