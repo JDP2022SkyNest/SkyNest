@@ -138,6 +138,10 @@ public class FolderServiceImpl implements FolderService {
 
     if (!folderEntity.isDeleted()) throw new FolderAlreadyRestoredException();
 
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
+
     if (folderEntity.someParentIsDeleted()) throw new FolderParentIsDeletedException();
 
     folderEntity.restore();
