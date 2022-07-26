@@ -193,6 +193,10 @@ public class FileServiceImpl implements FileService {
     checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
     fileMetadataEntity.moveToFolder(fileMetadataEntity, folderEntity);
     saveMoveFile(fileMetadataEntity);
