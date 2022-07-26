@@ -2,7 +2,7 @@ import React from "react";
 import * as FaCions from "react-icons/fa";
 import AxiosInstance from "../../axios/AxiosInstance";
 
-const RemoveTagPanel = ({ TGZ, objectId, refresh, setErrorMsg, handleClose }) => {
+const RemoveTagPanel = ({ TGZ, objectId, refresh, setErrorMsg, handleClose, setLoading }) => {
    const accessToken = localStorage.accessToken;
 
    const untagAnObject = async (tagId) => {
@@ -28,8 +28,10 @@ const RemoveTagPanel = ({ TGZ, objectId, refresh, setErrorMsg, handleClose }) =>
                {el.name}
             </div>
             <FaCions.FaWindowClose
-               onClick={() => {
-                  untagAnObject(el.id);
+               onClick={async () => {
+                  setLoading(true);
+                  await untagAnObject(el.id);
+                  setLoading(false);
                   if (TGZ.length === 1) {
                      handleClose();
                   }
