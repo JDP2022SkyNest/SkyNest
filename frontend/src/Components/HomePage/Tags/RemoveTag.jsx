@@ -19,7 +19,7 @@ const RemoveTag = ({ TGZ, objectId, refresh }) => {
          <Modal show={show} onHide={handleClose} className="mt-3" size="sm">
             <Modal.Body>
                <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} customStyle="m-0 w-100 alert alert-danger text-danger text-center mb-3" />
-               <RemoveTagPanel TGZ={TGZ} objectId={objectId} refresh={refresh} setErrorMsg={setErrorMsg} />
+               <RemoveTagPanel TGZ={TGZ} objectId={objectId} refresh={refresh} setErrorMsg={setErrorMsg} handleClose={handleClose} />
                <div className="mt-5 d-flex justify-content-end">
                   <button
                      onClick={(e) => {
