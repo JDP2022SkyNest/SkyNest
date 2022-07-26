@@ -9,10 +9,7 @@ import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.FolderEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
 import com.htecgroup.skynest.model.response.*;
@@ -146,6 +143,9 @@ public class FolderServiceImpl implements FolderService {
   public FolderResponse getFolderDetails(UUID uuid) {
     FolderEntity folderEntity =
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
+    }
 
     List<TagResponse> tags = tagService.getTagsForObject(uuid);
 
