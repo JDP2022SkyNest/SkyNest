@@ -502,6 +502,7 @@ export const metodi = async (accessToken, error) => {
       });
       console.log(response);
       let newUrl = response.data;
+      console.log(newUrl);
       window.location.href = newUrl;
    } catch (err) {
       error(err.response.data.messages);
