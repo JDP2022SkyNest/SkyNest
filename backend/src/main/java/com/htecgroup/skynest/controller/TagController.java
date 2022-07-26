@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -184,6 +185,56 @@ public class TagController {
                   })
             }),
         @ApiResponse(
+            responseCode = "404",
+            description = "Tag/Object not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "tag",
+                        value =
+                            "{\"messages\":[\"Tag doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "object",
+                        value =
+                            "{\"messages\":[\"Object not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Tag already exists/Not the same company/Object is deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "tag",
+                        value =
+                            "{\"messages\":[\"Tag already exists on selected object\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "company",
+                        value =
+                            "{\"messages\":[\"Tag is not in the same company as selected object\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "deleted",
+                        value =
+                            "{\"messages\":[\"Object is deleted\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal Server Error",
             content = {
@@ -216,6 +267,56 @@ public class TagController {
                             "{\"messages\":[\"Invalid session token\"],"
                                 + " \"status\": \"401\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Tag/Object not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "tag",
+                        value =
+                            "{\"messages\":[\"Tag doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "object",
+                        value =
+                            "{\"messages\":[\"Object not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Tag doesn't exist/Not the same company/Object is deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "tag",
+                        value =
+                            "{\"messages\":[\"Tag not found for selected object\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "company",
+                        value =
+                            "{\"messages\":[\"Tag is not in the same company as selected object\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "deleted",
+                        value =
+                            "{\"messages\":[\"Object is deleted\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
                   })
             }),
         @ApiResponse(

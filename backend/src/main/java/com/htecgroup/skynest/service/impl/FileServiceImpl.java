@@ -75,6 +75,10 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
 
     executeLambdaForBucket(emptyFileMetadata.getBucket(), multipartFile);
 
+    if (!emptyFileMetadata.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForBucket(
+          emptyFileMetadata.getBucket().getId(), AccessType.EDIT);
+
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
     permissionService.grantOwnerForObject(savedFileMetadata);
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
@@ -94,6 +98,10 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
             folderId);
 
     checkFolderNotDeleted(emptyFileMetadata);
+    if (!emptyFileMetadata.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(
+          emptyFileMetadata.getParentFolder(), AccessType.EDIT);
+    }
 
     executeLambdaForBucket(emptyFileMetadata.getBucket(), multipartFile);
 
@@ -180,6 +188,11 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     FileMetadataEntity fileMetadata =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
+    checkIfDeleted(fileMetadata);
+    if (!fileMetadata.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFile(fileMetadata, AccessType.EDIT);
+    }
+
     String oldFileType = fileMetadata.getType();
     String newFileType = multipartFile.getContentType();
     if (!oldFileType.equals(newFileType)) throw new FileCannotChangeTypeException();
@@ -201,6 +214,10 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     checkIfFileAlreadyInsideFolder(fileMetadataEntity, folderEntity);
     fileMetadataEntity.moveToFolder(fileMetadataEntity, folderEntity);
     saveMoveFile(fileMetadataEntity);
@@ -210,6 +227,11 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkIfDeleted(fileMetadataEntity);
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(
+          fileMetadataEntity.getBucket().getId(), AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+    }
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
     saveMoveFile(fileMetadataEntity);
@@ -264,7 +286,6 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   private FileMetadataEntity saveContentAndMetadata(
       FileMetadataEntity fileMetadata, MultipartFile multipartFile) {
 
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadata);
     checkBucketNotDeleted(fileMetadata);
     checkBucketSizeExceedsMax(fileMetadata);
@@ -297,6 +318,10 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
 
     if (!fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyRestoredException();
+    }
+
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
     }
 
     if (fileMetadataEntity.someParentIsDeleted()) {

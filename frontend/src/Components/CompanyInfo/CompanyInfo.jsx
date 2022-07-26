@@ -20,7 +20,7 @@ const CompanyInfo = () => {
    const [successMsg, setSuccessMsg] = useState("");
    const accessToken = localStorage.accessToken;
 
-   const { userRole, setUserCompany } = useContext(GlobalContext);
+   const { userRole } = useContext(GlobalContext);
 
    const getCompanyData = async () => {
       setLoading(true);
@@ -33,8 +33,10 @@ const CompanyInfo = () => {
    };
 
    const onCompanyInfoChanged = async () => {
+      setLoading(true);
       await getCompany(accessToken, setCompanyData, setErrorMsg);
       setEdit(false);
+      setLoading(false);
    };
 
    useEffect(() => {
@@ -54,53 +56,47 @@ const CompanyInfo = () => {
    return (
       <section className="company-page-body">
          <NavbarPanel name="Company Info" searchBar={false} path={ROUTES.HOME} />
-         {loading ? (
-            <div className="mt-5">
-               <LoaderAnimation />
-            </div>
-         ) : (
-            <div className="container">
-               <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
-               <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
-               {!!companyData && (
-                  <div className="col-12 col-sm-10 col-md-10 col-lg-6 offset-sm-1 offset-md-1 offset-lg-3 p-0 pb-2 pt-3">
-                     <div className="card mb-3 shadow mb-3">
-                        <div className="card-body">
-                           <CompanyDetails companyData={companyData} edit={edit} clonedData={clonedData} setClonedData={setClonedData} />
-                        </div>
-                     </div>
-                     <div className={`${userRole !== ROLE.ADMIN && "d-none"}`}>
-                        {edit ? (
-                           <div className="d-flex flex-row-reverse">
-                              <div className="mb-2 mr-1">
-                                 <button
-                                    onClick={() => {
-                                       onCompanyEdit();
-                                       setUserCompany(clonedData.name);
-                                    }}
-                                    className="btn btn-secondary ml-2"
-                                 >
-                                    Update
-                                 </button>
-                              </div>
-                              <div className="mb-2 mr-1">
-                                 <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary button-width">
-                                    Cancel
-                                 </button>
-                              </div>
-                           </div>
-                        ) : (
-                           <div className="d-flex flex-row-reverse mb-2 mr-1">
-                              <button onClick={() => setEdit(!edit)} className="btn btn-secondary button-width">
-                                 Edit
-                              </button>
-                           </div>
-                        )}
+         {loading && <LoaderAnimation />}
+         <div className="container">
+            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+            {!!companyData && (
+               <div className="col-12 col-sm-10 col-md-10 col-lg-6 offset-sm-1 offset-md-1 offset-lg-3 p-0 pb-2 pt-3">
+                  <div className="card mb-3 shadow mb-3">
+                     <div className="card-body">
+                        <CompanyDetails companyData={companyData} edit={edit} clonedData={clonedData} setClonedData={setClonedData} />
                      </div>
                   </div>
-               )}
-            </div>
-         )}
+                  <div className={`${userRole !== ROLE.ADMIN && "d-none"}`}>
+                     {edit ? (
+                        <div className="d-flex flex-row-reverse">
+                           <div className="mb-2 mr-1">
+                              <button
+                                 onClick={() => {
+                                    onCompanyEdit();
+                                 }}
+                                 className="btn btn-secondary ml-2"
+                              >
+                                 Update
+                              </button>
+                           </div>
+                           <div className="mb-2 mr-1">
+                              <button onClick={() => setEdit(!edit)} className="btn btn-outline-secondary button-width">
+                                 Cancel
+                              </button>
+                           </div>
+                        </div>
+                     ) : (
+                        <div className="d-flex flex-row-reverse mb-2 mr-1">
+                           <button onClick={() => setEdit(!edit)} className="btn btn-secondary button-width">
+                              Edit
+                           </button>
+                        </div>
+                     )}
+                  </div>
+               </div>
+            )}
+         </div>
          <Footer />
       </section>
    );

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
 import GlobalContext from "../../context/GlobalContext";
+import RemoveTag from "../Tags/RemoveTag";
 
 const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -86,6 +87,11 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                            <AllTags refresh={refresh} objectId={elem.id} TGZ={TGZ} setErrorMsg={setErrorMsg} />
                         </Dropdown.Item>
                      )}
+                     {elem.deletedOn === null && TGZ.length > 0 ? (
+                        <Dropdown.Item className="text-dark">
+                           <RemoveTag TGZ={TGZ} objectId={elem.id} refresh={refresh} />
+                        </Dropdown.Item>
+                     ) : null}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {
