@@ -132,19 +132,20 @@ export const emailVerification = async (accessToken, success, error, info, setpa
 };
 
 export const onUserLogout = async (accessToken, stateToChange) => {
+   const token = accessToken;
+   localStorage.clear();
+   stateToChange("");
    try {
       await AxiosInstance.post(
          `/auth/logout`,
          {},
          {
-            headers: { Authorization: accessToken },
+            headers: { Authorization: token },
          }
       );
    } catch (err) {
       console.error("Token already expired", err);
    }
-   localStorage.clear();
-   stateToChange("");
 };
 
 export const promoteUser = async (accessToken, id, error, success) => {
@@ -454,7 +455,7 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
    }
 };
 
-export const getAllTags = async (accessToken,stateToChange, error) => {
+export const getAllTags = async (accessToken, stateToChange, error) => {
    try {
       const response = await AxiosInstance.get("/tags", {
          headers: { Authorization: accessToken },
