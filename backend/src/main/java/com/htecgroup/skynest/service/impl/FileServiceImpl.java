@@ -196,6 +196,8 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkIfDeleted(fileMetadataEntity);
     if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(
+          fileMetadataEntity.getBucket().getId(), AccessType.EDIT);
       permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
     }
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
