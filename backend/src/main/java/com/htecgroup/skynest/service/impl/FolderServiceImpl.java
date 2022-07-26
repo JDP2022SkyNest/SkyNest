@@ -95,10 +95,9 @@ public class FolderServiceImpl implements FolderService {
 
     LoggedUserDto currentUser = currentUserService.getLoggedUser();
 
-    FolderDto folderDto =
-        modelMapper.map(
-            folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
-            FolderDto.class);
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
 
     log.info(
         "User {} ({}) is attempting to delete folder {} ({})",
@@ -110,10 +109,15 @@ public class FolderServiceImpl implements FolderService {
     if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
+
+    if (!folderDto.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
+
     FolderDto deletedFolderDto = folderDto.deleteFolder();
-    FolderEntity folderEntity =
+    FolderEntity savedFolderEntity =
         folderRepository.save(modelMapper.map(deletedFolderDto, FolderEntity.class));
-    actionService.recordAction(Collections.singleton(folderEntity), ActionType.DELETE);
+    actionService.recordAction(Collections.singleton(savedFolderEntity), ActionType.DELETE);
   }
 
   @Override
