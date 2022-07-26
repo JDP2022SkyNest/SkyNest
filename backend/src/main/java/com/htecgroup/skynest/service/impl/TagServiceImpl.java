@@ -2,17 +2,15 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.company.CompanyNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
-import com.htecgroup.skynest.exception.tag.*;
+import com.htecgroup.skynest.exception.tag.TagNotFoundException;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
-import com.htecgroup.skynest.model.response.TagResponse;
+import com.htecgroup.skynest.model.response.*;
 import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.ObjectToTagRepository;
 import com.htecgroup.skynest.repository.TagRepository;
-import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.TagService;
-import com.htecgroup.skynest.service.TagValidationService;
+import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -32,6 +30,9 @@ public class TagServiceImpl implements TagService {
   private ObjectRepository objectRepository;
   private ObjectToTagRepository objectToTagRepository;
   private TagValidationService tagValidationService;
+  private BucketService bucketService;
+  private FolderService folderService;
+  private FileService fileService;
   private ModelMapper modelMapper;
 
   @Override
@@ -111,30 +112,46 @@ public class TagServiceImpl implements TagService {
         .collect(Collectors.toList());
   }
 
-    @Override
-    public void untagObject(UUID tagId, UUID objectId) {
+  @Override
+  public void untagObject(UUID tagId, UUID objectId) {
 
-      TagEntity tagEntity = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
-      ObjectEntity objectEntity =
-              objectRepository.findById(objectId).orElseThrow(ObjectNotFoundException::new);
+    TagEntity tagEntity = tagRepository.findById(tagId).orElseThrow(TagNotFoundException::new);
+    ObjectEntity objectEntity =
+        objectRepository.findById(objectId).orElseThrow(ObjectNotFoundException::new);
 
-      ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
-      ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
+    ObjectToTagKey key = new ObjectToTagKey(tagId, objectId);
+    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tagEntity, objectEntity);
 
-      tagValidationService.checkIfObjectIsTagged(objectToTagEntity);
-      tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity);
-      tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity);
+    tagValidationService.checkIfObjectIsTagged(objectToTagEntity);
+    tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity);
+    tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity);
 
-      objectToTagRepository.delete(objectToTagEntity);
+    objectToTagRepository.delete(objectToTagEntity);
 
-      LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-      log.info(
-              "User {} ({}) removed tag {} ({}) from object {} ({})",
-              loggedUserDto.getUsername(),
-              loggedUserDto.getUuid(),
-              tagEntity.getName(),
-              tagEntity.getId(),
-              objectEntity.getName(),
-              objectEntity.getId());
-    }
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    log.info(
+        "User {} ({}) removed tag {} ({}) from object {} ({})",
+        loggedUserDto.getUsername(),
+        loggedUserDto.getUuid(),
+        tagEntity.getName(),
+        tagEntity.getId(),
+        objectEntity.getName(),
+        objectEntity.getId());
+  }
+
+  @Override
+  public TagFilteredStorageResponse getAllObjectsWithTag(UUID tagId) {
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UUID loggedUserId = loggedUserDto.getUuid();
+
+    List<BucketResponse> allBucketsWithTag =
+        bucketService.getAllBucketsWithTag(tagId, loggedUserId);
+    List<FolderResponse> allFoldersWithTag =
+        folderService.getAllFoldersWithTag(tagId, loggedUserId);
+    List<FileResponse> allFilesWithTag = fileService.getAllFilesWithTag(tagId, loggedUserId);
+
+    TagFilteredStorageResponse tagFilteredStorageResponse =
+        new TagFilteredStorageResponse(allBucketsWithTag, allFoldersWithTag, allFilesWithTag);
+    return tagFilteredStorageResponse;
+  }
 }

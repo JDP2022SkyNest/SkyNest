@@ -14,12 +14,14 @@ import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
 import com.htecgroup.skynest.model.response.FileDownloadResponse;
 import com.htecgroup.skynest.model.response.FileResponse;
-import com.htecgroup.skynest.model.response.TagResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.*;
+import com.htecgroup.skynest.service.ActionService;
+import com.htecgroup.skynest.service.FileContentService;
+import com.htecgroup.skynest.service.FileService;
+import com.htecgroup.skynest.service.PermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -48,7 +50,6 @@ public class FileServiceImpl implements FileService {
   private final FileMetadataRepository fileMetadataRepository;
   private final ActionService actionService;
   private final PermissionService permissionService;
-  private final TagService tagService;
   private final FolderRepository folderRepository;
 
   @Override
@@ -104,11 +105,9 @@ public class FileServiceImpl implements FileService {
     if (!fileMetadataEntity.getBucket().getIsPublic())
       permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.VIEW);
 
-    List<TagResponse> tags = tagService.getTagsForObject(fileId);
-
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.VIEW);
 
-    return modelMapper.map(fileMetadataEntity, FileResponse.class).withTags(tags);
+    return modelMapper.map(fileMetadataEntity, FileResponse.class);
   }
 
   @Override
@@ -235,7 +234,6 @@ public class FileServiceImpl implements FileService {
   private List<FileResponse> asFileResponseList(List<FileMetadataEntity> allFiles) {
     return allFiles.stream()
         .map(folder -> modelMapper.map(folder, FileResponse.class))
-        .map(file -> file.withTags(tagService.getTagsForObject(file.getId())))
         .collect(Collectors.toList());
   }
 
@@ -308,6 +306,13 @@ public class FileServiceImpl implements FileService {
     fileMetadataEntity.restore();
     FileMetadataEntity savedFileMetadataEntity = fileMetadataRepository.save(fileMetadataEntity);
     return modelMapper.map(savedFileMetadataEntity, FileResponse.class);
+  }
+
+  @Override
+  public List<FileResponse> getAllFilesWithTag(UUID tagId, UUID loggedUserId) {
+    List<FileMetadataEntity> allFiles =
+        fileMetadataRepository.findAllByTagIdWhereUserCanView(tagId, loggedUserId);
+    return asFileResponseList(allFiles);
   }
 
   private FileMetadataEntity initFileMetadata(

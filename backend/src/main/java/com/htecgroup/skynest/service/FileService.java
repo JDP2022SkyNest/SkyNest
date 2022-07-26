@@ -33,4 +33,6 @@ public interface FileService {
   void deleteFile(UUID fileId);
 
   FileResponse restoreFile(UUID fileId);
+
+  List<FileResponse> getAllFilesWithTag(UUID tagId, UUID loggedUserId);
 }
