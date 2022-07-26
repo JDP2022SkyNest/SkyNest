@@ -89,6 +89,9 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public void activateLambda(UUID bucketId, LambdaType lambdaType) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    if (bucketEntity.isDeleted()) {
+      throw new BucketAlreadyDeletedException();
+    }
     bucketEntity.addLambda(lambdaType);
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
     bucketRepository.save(bucketEntity);
@@ -97,6 +100,9 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public void deactivateLambda(UUID bucketId, LambdaType lambda) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
+    if (bucketEntity.isDeleted()) {
+      throw new BucketAlreadyDeletedException();
+    }
     bucketEntity.removeLambda(lambda);
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
     bucketRepository.save(bucketEntity);

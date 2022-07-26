@@ -3,6 +3,7 @@ package com.htecgroup.skynest.service.impl;
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxWebAuth;
+import com.htecgroup.skynest.exception.lambda.DropboxAuthorizationFailed;
 import com.htecgroup.skynest.service.DropboxService;
 import com.htecgroup.skynest.service.UserService;
 import com.htecgroup.skynest.util.DropboxUtil;
@@ -29,8 +30,7 @@ public class DropboxServiceImpl implements DropboxService {
     try {
       authFinish = DropboxUtil.getAuth().finishFromCode(code);
     } catch (DbxException ex) {
-      log.info("On /dropbox-auth-finish: Error getting token: " + ex.getMessage());
-      return;
+      throw new DropboxAuthorizationFailed();
     }
     String accessToken = authFinish.getAccessToken();
     userService.saveDropboxAccessToken(accessToken);
