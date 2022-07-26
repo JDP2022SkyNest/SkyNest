@@ -1,22 +1,16 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.annotation.CurrentUserCanEditBucket;
+import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
-import com.htecgroup.skynest.model.entity.ActionType;
-import com.htecgroup.skynest.model.entity.BucketEntity;
-import com.htecgroup.skynest.model.entity.CompanyEntity;
-import com.htecgroup.skynest.model.entity.UserEntity;
+import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
-import com.htecgroup.skynest.model.response.BucketResponse;
-import com.htecgroup.skynest.model.response.FileResponse;
-import com.htecgroup.skynest.model.response.FolderResponse;
-import com.htecgroup.skynest.model.response.StorageContentResponse;
+import com.htecgroup.skynest.model.response.*;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
@@ -25,7 +19,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +33,7 @@ public class BucketServiceImpl implements BucketService {
   private UserRepository userRepository;
   private FolderService folderService;
   private FileService fileService;
+  private TagService tagService;
 
   private ActionService actionService;
   private PermissionService permissionService;
@@ -73,11 +67,16 @@ public class BucketServiceImpl implements BucketService {
   public BucketResponse getBucketDetails(UUID uuid) {
     BucketEntity bucketEntity =
         bucketRepository.findById(uuid).orElseThrow(BucketNotFoundException::new);
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.VIEW);
+    }
     BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
+
+    List<TagResponse> tags = tagService.getTagsForObject(uuid);
 
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
-    return bucketResponse;
+    return bucketResponse.withTags(tags);
   }
 
   @Override
@@ -105,14 +104,26 @@ public class BucketServiceImpl implements BucketService {
 
   @Override
   public List<BucketResponse> listAllBuckets() {
+
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
+    entityList.stream().filter(this::doesCurrentUserHaveViewPermissionOnBucket);
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
+        .map(bucket -> bucket.withTags(tagService.getTagsForObject(bucket.getBucketId())))
         .collect(Collectors.toList());
+  }
+
+  private boolean doesCurrentUserHaveViewPermissionOnBucket(BucketEntity bucket) {
+    try {
+      permissionService.currentUserHasPermissionForBucket(bucket.getId(), AccessType.VIEW);
+    } catch (BucketAccessDeniedException b) {
+      return false;
+    }
+    return true;
   }
 
   @Override
@@ -130,6 +141,9 @@ public class BucketServiceImpl implements BucketService {
     if (bucketDto.getDeletedOn() != null) {
       throw new BucketAlreadyDeletedException();
     }
+    if (!bucketDto.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
+    }
     BucketDto deletedBucketDto = bucketDto.deleteBucket();
     BucketEntity bucketEntity =
         bucketRepository.save(modelMapper.map(deletedBucketDto, BucketEntity.class));
@@ -142,6 +156,10 @@ public class BucketServiceImpl implements BucketService {
     if (bucketDto.getDeletedOn() == null) {
       throw new BucketAlreadyRestoredException();
     }
+    if (!bucketDto.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
+    }
+
     BucketDto restoreBucketDto = bucketDto.restoreBucket();
     BucketEntity bucketEntity =
         bucketRepository.save(modelMapper.map(restoreBucketDto, BucketEntity.class));
@@ -149,12 +167,14 @@ public class BucketServiceImpl implements BucketService {
   }
 
   @Override
-  public BucketResponse editBucket(
-      BucketEditRequest bucketEditRequest, @Valid @CurrentUserCanEditBucket UUID uuid) {
-    BucketEntity bucketEntity = findBucketEntityById(uuid);
+  public BucketResponse editBucket(BucketEditRequest bucketEditRequest, UUID uuid) {
 
+    BucketEntity bucketEntity = findBucketEntityById(uuid);
     if (bucketEntity.isDeleted()) {
       throw new BucketAlreadyDeletedException();
+    }
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(uuid, AccessType.EDIT);
     }
     bucketEditRequest.setName(bucketEditRequest.getName().trim());
     bucketEditRequest.setDescription(bucketEditRequest.getDescription().trim());
@@ -169,8 +189,11 @@ public class BucketServiceImpl implements BucketService {
   @Override
   public StorageContentResponse getBucketContent(UUID bucketId) {
 
-    if (!bucketRepository.existsById(bucketId)) throw new BucketNotFoundException();
-
+    BucketEntity bucketEntity =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
+    }
     List<FolderResponse> allFoldersResponse = folderService.getAllRootFolders(bucketId);
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =

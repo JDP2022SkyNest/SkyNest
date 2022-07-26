@@ -26,7 +26,7 @@ const UserCardDetails = ({ info, result, horLine = true, edit, func, type = "tex
                </div>
             )}
          </div>
-         {horLine && <hr />}
+         {horLine && <hr className="my-1 my-sm-3" />}
       </>
    );
 };

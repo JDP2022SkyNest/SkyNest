@@ -13,6 +13,7 @@ import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
+import com.htecgroup.skynest.utils.tag.TagResponseUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,7 @@ class FolderServiceImplTest {
   @Mock private UserRepository userRepository;
   @Spy private ModelMapper modelMapper;
   @Mock private FileService fileService;
+  @Mock private TagService tagService;
 
   @Mock private FolderValidatorService folderValidatorService;
   @Captor private ArgumentCaptor<FolderEntity> captorFolderEntity;
@@ -115,12 +117,15 @@ class FolderServiceImplTest {
   void getFolderDetails() {
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     FolderResponse actualFolderResponse =
         folderService.getFolderDetails(expectedFolderEntity.getId());
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
     verify(folderRepository, times(1)).findById(any());
+    verify(tagService, times(1)).getTagsForObject(expectedFolderEntity.getId());
   }
 
   @Test
@@ -287,6 +292,9 @@ class FolderServiceImplTest {
         new ArrayList<>(Collections.singleton(FileResponseUtil.getFileWithParent()));
     when(fileService.getAllFilesWithParent(any())).thenReturn(expectedFileResponseList);
 
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
+
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getFolderWithParent()));
     UUID bucketId = folderEntity.getBucket().getId();
@@ -305,6 +313,7 @@ class FolderServiceImplTest {
     verify(folderRepository, times(1)).findById(parentId);
     verify(folderRepository, times(1)).findAllByParentFolderIdOrderByNameAscCreatedOnDesc(parentId);
     verify(fileService, times(1)).getAllFilesWithParent(parentId);
+    verify(tagService, times(1)).getTagsForObject(expectedFolderEntities.get(0).getId());
   }
 
   @Test

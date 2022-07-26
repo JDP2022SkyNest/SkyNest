@@ -2,8 +2,8 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
-import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -36,6 +36,7 @@ class PermissionServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private AccessTypeRepository accessTypeRepository;
   @Mock private BucketRepository bucketRepository;
+
   @Mock private UserObjectAccessRepository permissionRepository;
   @Spy private ModelMapper modelMapper;
 
@@ -48,8 +49,14 @@ class PermissionServiceImplTest {
   void when_getAllPermissionsForBucket_shouldReturnAllPermissions() {
     List<UserObjectAccessEntity> userObjectAccessEntityList =
         Collections.singletonList(UserObjectAccessEntityUtil.getUserObjectAccess());
-    UUID objectId = BucketEntityUtil.getPrivateBucket().getId();
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    UserObjectAccessEntity userObjectAccessEntity =
+        UserObjectAccessEntityUtil.getUserObjectAccess();
+    UUID objectId = bucketEntity.getId();
+    when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
+    when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccessEntity));
     when(permissionRepository.findAllByObjectId(objectId)).thenReturn(userObjectAccessEntityList);
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
 
     List<UserObjectAccessEntity> expectedResponse = new ArrayList<>(userObjectAccessEntityList);
 
@@ -128,7 +135,7 @@ class PermissionServiceImplTest {
     PermissionGrantRequest grantViewPermissionRequest =
         PermissionGrantRequestUtil.get(AccessType.VIEW);
     Assertions.assertThrows(
-        BucketAccessDeniedException.class,
+        ObjectAccessDeniedException.class,
         () -> {
           permissionService.grantPermissionForBucket(grantViewPermissionRequest);
         });
@@ -153,7 +160,7 @@ class PermissionServiceImplTest {
     when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccess));
 
     Assertions.assertThrows(
-        BucketAccessDeniedException.class,
+        ObjectAccessDeniedException.class,
         () -> {
           permissionService.currentUserHasPermissionForBucket(
               UserEntityUtil.getAdmin().getId(), AccessType.OWNER);
@@ -166,10 +173,16 @@ class PermissionServiceImplTest {
         UserObjectAccessEntityUtil.getUserObjectAccess();
     UserEntity userEntity = UserEntityUtil.getVerified();
     AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    UserObjectAccessEntity userObjectAccessEntity =
+        UserObjectAccessEntityUtil.getUserObjectAccess();
+    when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
+    when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccessEntity));
     when(permissionRepository.findByObjectId(any())).thenReturn(expectedUserObjectAccessEntity);
     when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
     when(accessTypeRepository.findByName(any())).thenReturn(Optional.of(accessType));
     when(permissionRepository.save(any())).thenReturn(expectedUserObjectAccessEntity);
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
 
     PermissionEditRequest permissionEditRequest = PermissionEditRequestUtil.get();
     PermissionResponse actualPermissionResponse =
@@ -184,5 +197,26 @@ class PermissionServiceImplTest {
     Assertions.assertEquals(
         expectedUserObjectAccessEntity.getAccess().getName(),
         actualPermissionResponse.getAccessName());
+  }
+
+  @Test
+  void when_revokePermission_DeleteFromDatabase() {
+    UserObjectAccessEntity expectedUserObjectAccessEntity =
+        UserObjectAccessEntityUtil.getUserObjectAccess();
+    UserEntity userEntity = UserEntityUtil.getVerified();
+    BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
+    UUID bucketId = bucketEntity.getId();
+    UserObjectAccessEntity userObjectAccessEntity =
+        UserObjectAccessEntityUtil.getUserObjectAccess();
+    when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
+    when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccessEntity));
+    when(userRepository.findById(any())).thenReturn(Optional.of(userEntity));
+    when(permissionRepository.findByObjectIdAndGrantedTo(bucketId, userEntity))
+        .thenReturn(expectedUserObjectAccessEntity);
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
+
+    permissionService.revokePermission(bucketId, userEntity.getId());
+    verify(permissionRepository, times(1)).findByObjectIdAndGrantedTo(bucketId, userEntity);
+    verify(userRepository, times(1)).findById(userEntity.getId());
   }
 }

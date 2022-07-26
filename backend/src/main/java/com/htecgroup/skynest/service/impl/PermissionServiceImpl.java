@@ -2,10 +2,11 @@ package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
-import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
+import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -22,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,7 @@ public class PermissionServiceImpl implements PermissionService {
         bucketRepository
             .findById(permissionGrantRequest.getObjectId())
             .orElseThrow(BucketNotFoundException::new);
+    checkIfBucketIsDeleted(bucket.getId());
 
     permission.setGrantedBy(currentUser);
     permission.setGrantedTo(targetUser);
@@ -126,13 +129,60 @@ public class PermissionServiceImpl implements PermissionService {
     UserObjectAccessEntity permission =
         permissionRepository
             .findById(new UserObjectAccessKey(currentUserId, bucketId))
-            .orElseThrow(BucketAccessDeniedException::new);
+            .orElseThrow(ObjectAccessDeniedException::new);
 
     AccessType actualAccessType =
         AccessType.valueOf(permission.getAccess().getName().toUpperCase());
 
     if (actualAccessType.ordinal() < minimumAccessType.ordinal())
-      throw new BucketAccessDeniedException();
+      throw new ObjectAccessDeniedException();
+  }
+
+  @Override
+  public void currentUserHasPermissionForFolder(FolderEntity folder, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    Optional<UserObjectAccessEntity> permission =
+        permissionRepository.findById(new UserObjectAccessKey(currentUserId, folder.getId()));
+
+    if (permission.isPresent()) {
+
+      AccessType actualAccessType =
+          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
+
+      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
+    }
+
+    if (folder.getParentFolder() != null) {
+      currentUserHasPermissionForFolder(folder.getParentFolder(), minimumAccessType);
+    } else {
+      currentUserHasPermissionForBucket(folder.getBucket().getId(), minimumAccessType);
+    }
+  }
+
+  @Override
+  public void currentUserHasPermissionForFile(
+      FileMetadataEntity file, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    Optional<UserObjectAccessEntity> permission =
+        permissionRepository.findById(new UserObjectAccessKey(currentUserId, file.getId()));
+
+    if (permission.isPresent()) {
+
+      AccessType actualAccessType =
+          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
+
+      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
+    }
+
+    if (file.getParentFolder() != null) {
+      currentUserHasPermissionForFolder(file.getParentFolder(), minimumAccessType);
+    } else {
+      currentUserHasPermissionForBucket(file.getBucket().getId(), minimumAccessType);
+    }
   }
 
   @Override
@@ -172,6 +222,25 @@ public class PermissionServiceImpl implements PermissionService {
 
     return setAndSavePermission(
         userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
+  }
+
+  @Override
+  public void revokePermission(UUID bucketId, UUID userId) {
+    checkIfBucketExist(bucketId);
+    checkIfBucketIsDeleted(bucketId);
+    currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
+
+    UserEntity user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    UserObjectAccessEntity permission =
+        permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
+    checkIfPermissionExist(permission);
+    permissionRepository.delete(permission);
+  }
+
+  private void checkIfPermissionExist(UserObjectAccessEntity permission) {
+    if (permission == null) {
+      throw new PermissionDoesNotExistException();
+    }
   }
 
   private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {

@@ -347,6 +347,22 @@ export const deleteFile = async (accessToken, fileId, error, success) => {
    }
 };
 
+export const restoreFile = async (accessToken, fileId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/files/${fileId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("File Successfully Restored");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const bucketContent = async (accessToken, bucketId, stateToChange, error) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
@@ -365,6 +381,74 @@ export const folderContent = async (accessToken, folderId, stateToChange, error)
          headers: { Authorization: accessToken },
       });
       stateToChange(response);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const moveFolder = async (accessToken, fileId, folderId, stateToChange, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/${fileId}/move/${folderId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Moved");
+      stateToChange("");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const moveFolderRoot = async (accessToken, fileId, stateToChange, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/folders/${fileId}/move`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Moved");
+      stateToChange("");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const moveFile = async (accessToken, fileId, folderId, stateToChange, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/files/${fileId}/move/${folderId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("File Successfully Moved");
+      stateToChange("");
+   } catch (err) {
+      error(err.response.data.error);
+      console.log(err);
+   }
+};
+
+export const moveFileRoot = async (accessToken, fileId, stateToChange, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/files/${fileId}/move`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Moved");
+      stateToChange("");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
@@ -397,6 +481,20 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
    }
 };
 
+export const setTheTag = async (accessToken, tagId, objectId) => {
+   try {
+      await AxiosInstance.post(
+         `/tags/${tagId}/object/${objectId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+   } catch (err) {
+      console.log(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
@@ -415,7 +513,7 @@ export const alertTimeout = (delay, stateToChange) => {
 
 export const metodi = async (accessToken, error) => {
    try {
-      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+      const response = await AxiosInstance.get("/public/dropbox-auth-start", {
          headers: { Authorization: accessToken },
       });
       console.log(response);

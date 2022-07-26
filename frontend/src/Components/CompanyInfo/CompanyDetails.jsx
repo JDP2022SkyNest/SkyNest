@@ -25,7 +25,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                </div>
             )}
          </div>
-         <hr />
+         <hr className="my-1 my-sm-3" />
          <div className="row">
             {!edit && (
                <>
@@ -34,7 +34,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                </>
             )}
          </div>
-         {!edit && <hr />}
+         {!edit && <hr className="my-1 my-sm-3" />}
          <div className="row">
             <strong className="col-sm-4 p-2">Address:</strong>
             {!edit ? (
@@ -45,7 +45,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                </div>
             )}
          </div>
-         <hr />
+         <hr className="my-1 my-sm-3" />
          <div className="row">
             <strong className="col-sm-4 p-2">Phone Number:</strong>
 
@@ -57,7 +57,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                </div>
             )}
          </div>
-         {!edit && <hr />}
+         {!edit && <hr className="my-1 my-sm-3" />}
          <div className="row">
             {!edit && (
                <>
@@ -66,7 +66,7 @@ const CompanyDetails = ({ companyData, edit, clonedData, setClonedData }) => {
                </>
             )}
          </div>
-         {!edit && <hr />}
+         {!edit && <hr className="my-1 my-sm-3" />}
          <div className="row">
             {!edit && (
                <>

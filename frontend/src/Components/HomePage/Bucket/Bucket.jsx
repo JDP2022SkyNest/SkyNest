@@ -7,6 +7,8 @@ import { deleteBucket, restoreBucket, redirectTo } from "../../ReusableComponent
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
+import AllTags from "../Tags/AllTags";
+import TagDisplay from "../Tags/TagDisplay";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -14,6 +16,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
    const handleShow = () => setShow(true);
    const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
+   const TGZ = elem?.tags;
+
+   const writeTags = TGZ?.map((el, index) => {
+      return <TagDisplay key={index} el={el} />;
+   });
 
    return (
       <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-1">
@@ -34,9 +41,14 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   {elem.name}
                </div>
                <div className="text-muted text-overflow description-width">{elem.description}</div>
+               <div className="w-100  text-overflow">
+                  <small>
+                     <AiCions.AiOutlineTag className="main-icon-align" />
+                     {elem?.tags?.length > 0 ? <span className="ml-1">{writeTags}</span> : <span className="ml-1 text-muted">No tags</span>}
+                  </small>
+               </div>
             </div>
             {!elem.isPublic && <AiCions.AiFillLock className="private-bucket-indicator" />}
-
             <div>
                <Dropdown>
                   <Dropdown.Toggle>
@@ -51,9 +63,16 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      >
                         Bucket Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
-                     </Dropdown.Item>
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <AllTags objectId={elem.bucketId} refresh={refreshBuckets} TGZ={TGZ} setErrorMsg={setErrorMsg} />
+                        </Dropdown.Item>
+                     )}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {
