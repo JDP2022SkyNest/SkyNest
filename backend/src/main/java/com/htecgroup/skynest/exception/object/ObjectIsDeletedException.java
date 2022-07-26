@@ -7,6 +7,6 @@ public class ObjectIsDeletedException extends ObjectException{
     public static final String MESSAGE = "Object is deleted";
 
     public ObjectIsDeletedException() {
-        super(MESSAGE, HttpStatus.NOT_FOUND);
+        super(MESSAGE, HttpStatus.CONFLICT);
     }
 }

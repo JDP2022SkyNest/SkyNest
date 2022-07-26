@@ -8,6 +8,7 @@ import EditFileInfo from "./EditFileInfo";
 import GlobalContext from "../../context/GlobalContext";
 import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
+import RemoveTag from "../Tags/RemoveTag";
 
 const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -74,6 +75,11 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                      {elem.deletedOn === null && (
                         <Dropdown.Item className="text-dark">
                            <AllTags refresh={refresh} objectId={elem.id} TGZ={TGZ} setErrorMsg={setErrorMsg} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <RemoveTag TGZ={TGZ} objectId={elem.id} refresh={refresh} />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null && (

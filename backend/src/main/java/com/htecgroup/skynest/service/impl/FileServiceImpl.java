@@ -62,6 +62,10 @@ public class FileServiceImpl implements FileService {
             multipartFile.getContentType(),
             bucketId);
 
+    if (!emptyFileMetadata.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForBucket(
+          emptyFileMetadata.getBucket().getId(), AccessType.EDIT);
+
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
     permissionService.grantOwnerForObject(savedFileMetadata);
     actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
@@ -81,6 +85,7 @@ public class FileServiceImpl implements FileService {
             folderId);
 
     checkFolderNotDeleted(emptyFileMetadata);
+    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
 
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
     permissionService.grantOwnerForObject(savedFileMetadata);
@@ -177,6 +182,8 @@ public class FileServiceImpl implements FileService {
     fileMetadata.setType(multipartFile.getContentType());
     fileMetadata.setSize(multipartFile.getSize());
 
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
+
     String oldFileContentId = fileMetadata.getContentId();
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(fileMetadata, multipartFile);
     fileContentService.deleteById(oldFileContentId);
@@ -254,7 +261,6 @@ public class FileServiceImpl implements FileService {
   private FileMetadataEntity saveContentAndMetadata(
       FileMetadataEntity fileMetadata, MultipartFile multipartFile) {
 
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadata);
     checkBucketNotDeleted(fileMetadata);
     checkBucketSizeExceedsMax(fileMetadata);
