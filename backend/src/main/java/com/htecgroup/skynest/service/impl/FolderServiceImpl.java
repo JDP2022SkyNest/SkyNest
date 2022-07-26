@@ -146,9 +146,6 @@ public class FolderServiceImpl implements FolderService {
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
     if (!folderEntity.getBucket().getIsPublic()) {
       permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
-      permissionService.currentUserHasPermissionForBucket(
-          folderEntity.getBucket().getId(), AccessType.VIEW);
-      FolderUtil.getPathToFolder(folderEntity).stream().filter(f -> checkPermissionForPath(f));
     }
 
     List<TagResponse> tags = tagService.getTagsForObject(uuid);
