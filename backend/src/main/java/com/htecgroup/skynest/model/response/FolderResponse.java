@@ -18,6 +18,5 @@ public class FolderResponse {
   private UUID createdById;
   private UUID parentFolderId;
   private UUID bucketId;
-  @With
-  private List<TagResponse> tags;
+  @With private List<TagResponse> tags;
 }

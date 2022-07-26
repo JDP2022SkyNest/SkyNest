@@ -1,6 +1,5 @@
 package com.htecgroup.skynest.model.response;
 
-import com.htecgroup.skynest.model.entity.TagEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

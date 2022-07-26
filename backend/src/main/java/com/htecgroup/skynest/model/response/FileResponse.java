@@ -20,6 +20,5 @@ public class FileResponse {
   private UUID bucketId;
   private String type;
   private String size;
-  @With
-  private List<TagResponse> tags;
+  @With private List<TagResponse> tags;
 }

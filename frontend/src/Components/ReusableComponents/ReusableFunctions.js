@@ -405,6 +405,40 @@ export const moveFolderRoot = async (accessToken, fileId, stateToChange, error, 
    }
 };
 
+export const moveFile = async (accessToken, fileId, folderId, stateToChange, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/files/${fileId}/move/${folderId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("File Successfully Moved");
+      stateToChange("");
+   } catch (err) {
+      error(err.response.data.error);
+      console.log(err);
+   }
+};
+
+export const moveFileRoot = async (accessToken, fileId, stateToChange, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/files/${fileId}/move`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Folder Successfully Moved");
+      stateToChange("");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const fileDownload = async (accessToken, fileId, fileName, error, success) => {
    try {
       const response = await AxiosInstance.get(`/files/${fileId}`, {
