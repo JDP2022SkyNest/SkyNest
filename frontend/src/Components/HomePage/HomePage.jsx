@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets, metodi } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -101,7 +101,7 @@ const HomePage = () => {
                   <div className="row data-folder">{allData}</div>
                </div>
             </div>
-            {/* <div className="d-flex justify-content-center mt-5">
+            <div className="d-flex justify-content-center mt-5">
                <button
                   onClick={() => {
                      metodi(accessToken, setErrorMsg);
@@ -110,7 +110,7 @@ const HomePage = () => {
                >
                   METODI
                </button>
-            </div> */}
+            </div>
          </div>
          <Footer />
       </div>
