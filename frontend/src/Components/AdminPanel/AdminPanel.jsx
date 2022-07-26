@@ -63,30 +63,25 @@ const AdminPanel = () => {
                <AdminCarousel />
             </ReusableModal>
          </NavbarPanel>
-         {!loading ? (
-            <Container>
-               <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
-               <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
-               <SetWarningMsg warningMsg={warningMsg} setWarningMsg={setWarningMsg} />
-               <div className="row">
-                  <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
-                     <AdminCard title="Total Users:" body={usersData.length} color={"white"} />
-                  </div>
-                  <div className="col-6 col-md-4 col-lg-3 offset-lg-0">
-                     <AdminCard title="Filtered Users:" body={filterUsers.length} color={"white"} />
-                  </div>
+         {loading && <LoaderAnimation />}
+         <Container>
+            <SetErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+            <SetSuccessMsg successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
+            <SetWarningMsg warningMsg={warningMsg} setWarningMsg={setWarningMsg} />
+            <div className="row">
+               <div className="col-6 col-md-4 col-lg-3 offset-lg-3 offset-md-2 offset-0 ">
+                  <AdminCard title="Total Users:" body={usersData.length} color={"white"} />
                </div>
-               <div className="row">
-                  <div className="col-12 col-lg-8 offset-lg-2">
-                     <Accordion className="shadow">{allUsers}</Accordion>
-                  </div>
+               <div className="col-6 col-md-4 col-lg-3 offset-lg-0">
+                  <AdminCard title="Filtered Users:" body={filterUsers.length} color={"white"} />
                </div>
-            </Container>
-         ) : (
-            <div className="mt-5">
-               <LoaderAnimation />
             </div>
-         )}
+            <div className="row">
+               <div className="col-12 col-lg-8 offset-lg-2">
+                  <Accordion className="shadow">{allUsers}</Accordion>
+               </div>
+            </div>
+         </Container>
          <Footer />
       </div>
    );

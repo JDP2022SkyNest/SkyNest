@@ -3,7 +3,7 @@ import { Accordion } from "react-bootstrap";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as VscIcons from "react-icons/vsc";
-import { disableUser, enableUser, promoteUser, demoteUser, addToCompany, removeFromCompany } from "../ReusableComponents/ReusableFunctions";
+import { disableUser, enableUser, promoteUser, demoteUser, addToCompany } from "../ReusableComponents/ReusableFunctions";
 import GlobalContext from "../context/GlobalContext";
 
 const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSuccessMsg, setWarningMsg }) => {
@@ -11,7 +11,7 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
    const userRoleName = elem.roleName.slice(5);
    const accessToken = localStorage.accessToken;
 
-   const { userCompany, userID } = useContext(GlobalContext);
+   const { userID } = useContext(GlobalContext);
 
    return (
       <Accordion.Item eventKey={index} className={`${!elem.verified}`}>
@@ -98,17 +98,6 @@ const AccordionUsers = ({ elem, index, setChange, change, setErrorMsg, setSucces
                            className="btn btn-secondary ml-2 button-width"
                         >
                            Add
-                        </button>
-                     )}
-                     {userCompany === elem.companyName && (
-                        <button
-                           onClick={async () => {
-                              await removeFromCompany(accessToken, elem.id, setErrorMsg, setSuccessMsg);
-                              setChange(!change);
-                           }}
-                           className="btn btn-outline-secondary ml-2 button-width"
-                        >
-                           Remove
                         </button>
                      )}
                   </div>
