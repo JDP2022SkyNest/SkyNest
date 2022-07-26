@@ -269,6 +269,34 @@ public class FileServiceImpl implements FileService {
     return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
   }
 
+  @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.RESTORE)
+  public FileResponse restoreFile(UUID fileId) {
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+
+    if (!fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyRestoredException();
+    }
+
+    if (fileMetadataEntity.someParentIsDeleted()) {
+      throw new FileParentIsDeletedException();
+    }
+
+    log.info(
+        "User {} ({}) is attempting to restore file {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        fileMetadataEntity.getName(),
+        fileMetadataEntity.getId());
+
+    fileMetadataEntity.restore();
+    FileMetadataEntity savedFileMetadataEntity = fileMetadataRepository.save(fileMetadataEntity);
+    return modelMapper.map(savedFileMetadataEntity, FileResponse.class);
+  }
+
   private FileMetadataEntity initFileMetadata(
       String name, long size, String type, BucketEntity bucket, FolderEntity parentFolder) {
 
