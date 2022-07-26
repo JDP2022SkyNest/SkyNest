@@ -12,7 +12,6 @@ import com.htecgroup.skynest.model.entity.TagEntity;
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.repository.ObjectToTagRepository;
 import com.htecgroup.skynest.repository.TagRepository;
-import com.htecgroup.skynest.service.TagValidationService;
 import com.htecgroup.skynest.utils.ObjectEntityUtil;
 import com.htecgroup.skynest.utils.tag.ObjectToTagKeyUtil;
 import com.htecgroup.skynest.utils.tag.TagCreateRequestUtil;
@@ -24,19 +23,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TagValidationServiceImplTest {
   @Mock TagRepository tagRepository;
-  @Mock
-  ObjectToTagRepository objectToTagRepository;
-  @InjectMocks
-  TagValidationServiceImpl tagValidationService;
+  @Mock ObjectToTagRepository objectToTagRepository;
+  @InjectMocks TagValidationServiceImpl tagValidationService;
 
   @Test
   void checkIfTagAlreadyExists() {
@@ -45,7 +39,8 @@ class TagValidationServiceImplTest {
     String expectedErrorMessage = TagAlreadyExistsException.MESSAGE;
     Exception thrownException =
         Assertions.assertThrows(
-            TagAlreadyExistsException.class, () -> tagValidationService.checkIfTagAlreadyExists(tagCreateRequest));
+            TagAlreadyExistsException.class,
+            () -> tagValidationService.checkIfTagAlreadyExists(tagCreateRequest));
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
     verify(tagRepository, times(1)).existsByName(tagCreateRequest.getName());
   }
@@ -55,17 +50,18 @@ class TagValidationServiceImplTest {
     TagEntity tag = TagEntityUtil.get();
     ObjectEntity object = ObjectEntityUtil.get();
     ObjectToTagKey key = ObjectToTagKeyUtil.get();
-    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key,tag,object);
+    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tag, object);
 
     when(objectToTagRepository.existsById(any())).thenReturn(true);
 
     String expectedErrorMessage = TagOnObjectAlreadyExists.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    TagOnObjectAlreadyExists.class, () -> tagValidationService.checkIfTagOnObjectAlreadyExists(objectToTagEntity));
+        Assertions.assertThrows(
+            TagOnObjectAlreadyExists.class,
+            () -> tagValidationService.checkIfTagOnObjectAlreadyExists(objectToTagEntity));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
-    verify(objectToTagRepository,times(1)).existsById(key);
+    verify(objectToTagRepository, times(1)).existsById(key);
   }
 
   @Test
@@ -73,17 +69,18 @@ class TagValidationServiceImplTest {
     TagEntity tag = TagEntityUtil.get();
     ObjectEntity object = ObjectEntityUtil.get();
     ObjectToTagKey key = ObjectToTagKeyUtil.get();
-    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key,tag,object);
+    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tag, object);
 
     when(objectToTagRepository.existsById(any())).thenReturn(false);
 
     String expectedErrorMessage = TagOnObjectNotFound.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    TagOnObjectNotFound.class, () -> tagValidationService.checkIfObjectIsTagged(objectToTagEntity));
+        Assertions.assertThrows(
+            TagOnObjectNotFound.class,
+            () -> tagValidationService.checkIfObjectIsTagged(objectToTagEntity));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
-    verify(objectToTagRepository,times(1)).existsById(key);
+    verify(objectToTagRepository, times(1)).existsById(key);
   }
 
   @Test
@@ -91,12 +88,13 @@ class TagValidationServiceImplTest {
     TagEntity tag = TagEntityUtil.getOtherCompanyTag();
     ObjectEntity object = ObjectEntityUtil.get();
     ObjectToTagKey key = ObjectToTagKeyUtil.get();
-    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key,tag,object);
+    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tag, object);
 
     String expectedErrorMessage = TagNotFromTheSameCompany.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    TagNotFromTheSameCompany.class, () -> tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity));
+        Assertions.assertThrows(
+            TagNotFromTheSameCompany.class,
+            () -> tagValidationService.checkIfTagAndObjectHasTheSameCompany(objectToTagEntity));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
@@ -106,12 +104,13 @@ class TagValidationServiceImplTest {
     TagEntity tag = TagEntityUtil.get();
     ObjectEntity object = ObjectEntityUtil.getDeleted();
     ObjectToTagKey key = ObjectToTagKeyUtil.get();
-    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key,tag,object);
+    ObjectToTagEntity objectToTagEntity = new ObjectToTagEntity(key, tag, object);
 
     String expectedErrorMessage = ObjectIsDeletedException.MESSAGE;
     Exception thrownException =
-            Assertions.assertThrows(
-                    ObjectIsDeletedException.class, () -> tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity));
+        Assertions.assertThrows(
+            ObjectIsDeletedException.class,
+            () -> tagValidationService.checkIfObjectIsNotDeleted(objectToTagEntity));
 
     Assertions.assertEquals(expectedErrorMessage, thrownException.getMessage());
   }
