@@ -239,6 +239,8 @@ public class FileServiceImpl implements FileService {
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
     fileMetadataEntity.delete();
     fileMetadataRepository.save(fileMetadataEntity);
   }
