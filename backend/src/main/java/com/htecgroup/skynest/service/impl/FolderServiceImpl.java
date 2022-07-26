@@ -79,6 +79,9 @@ public class FolderServiceImpl implements FolderService {
         bucketRepository.findById(bucketEntityId).orElseThrow(BucketNotFoundException::new);
     bucketEntity = modelMapper.map(bucketEntity, BucketEntity.class);
     FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
+    if (!bucketEntity.getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolderEntity, AccessType.EDIT);
+    }
 
     folderEntity.setParentFolder(parentFolderEntity);
     folderEntity.setBucket(bucketEntity);
@@ -92,10 +95,9 @@ public class FolderServiceImpl implements FolderService {
 
     LoggedUserDto currentUser = currentUserService.getLoggedUser();
 
-    FolderDto folderDto =
-        modelMapper.map(
-            folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new),
-            FolderDto.class);
+    FolderEntity folderEntity =
+        folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
+    FolderDto folderDto = modelMapper.map(folderEntity, FolderDto.class);
 
     log.info(
         "User {} ({}) is attempting to delete folder {} ({})",
@@ -107,10 +109,15 @@ public class FolderServiceImpl implements FolderService {
     if (folderDto.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
+
+    if (!folderDto.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
+
     FolderDto deletedFolderDto = folderDto.deleteFolder();
-    FolderEntity folderEntity =
+    FolderEntity savedFolderEntity =
         folderRepository.save(modelMapper.map(deletedFolderDto, FolderEntity.class));
-    actionService.recordAction(Collections.singleton(folderEntity), ActionType.DELETE);
+    actionService.recordAction(Collections.singleton(savedFolderEntity), ActionType.DELETE);
   }
 
   @Override
@@ -225,6 +232,9 @@ public class FolderServiceImpl implements FolderService {
   public StorageContentResponse getFolderContent(UUID folderId) {
     FolderEntity parentFolder =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    if (!parentFolder.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolder, AccessType.VIEW);
+    }
     UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
