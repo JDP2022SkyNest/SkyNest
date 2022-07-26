@@ -74,11 +74,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                            <AllTags objectId={elem.bucketId} refresh={refreshBuckets} TGZ={TGZ} setErrorMsg={setErrorMsg} />
                         </Dropdown.Item>
                      )}
-                     {elem.deletedOn === null && (
+                     {elem.deletedOn === null && TGZ.length > 0 ? (
                         <Dropdown.Item className="text-dark">
                            <RemoveTag TGZ={TGZ} objectId={elem.bucketId} refresh={refreshBuckets} />
                         </Dropdown.Item>
-                     )}
+                     ) : null}
                      {elem.deletedOn === null ? (
                         <Dropdown.Item
                            onClick={async () => {
