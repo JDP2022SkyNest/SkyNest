@@ -10,7 +10,7 @@ import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
 import NoToken from "./Components/Routes/NoToken";
 import AdminRoute from "./Components/Routes/AdminRoute";
-import { getCompanyName, getUserData } from "./Components/ReusableComponents/ReusableFunctions";
+import {getUserData } from "./Components/ReusableComponents/ReusableFunctions";
 import UserInfo from "./Components/UserInfo/UserInfo";
 import CompanyInfo from "./Components/CompanyInfo/CompanyInfo";
 import GlobalContext from "./Components/context/GlobalContext";
@@ -19,12 +19,11 @@ import DynamicFolderRoute from "./Components/HomePage/Folder/DynamicFolderRoute"
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
-   const { setUserCompany, accessToken, setUserID, setUserRole } = useContext(GlobalContext);
+   const {accessToken, setUserID, setUserRole } = useContext(GlobalContext);
 
    useEffect(() => {
       if (accessToken) {
          getUserData(accessToken, setUserRole, setUserID);
-         getCompanyName(accessToken, setUserCompany);
       }
       // eslint-disable-next-line
    }, [accessToken]);

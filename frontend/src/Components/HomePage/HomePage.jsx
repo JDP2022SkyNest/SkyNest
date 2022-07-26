@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets, metodi } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -91,33 +91,27 @@ const HomePage = () => {
                setSuccessMsg={setSuccessMsg}
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
-            {!loader ? (
-               <div>
-                  <div className="py-2 mt-2 rounded d-flex">
-                     <AddBucketModal refreshBuckets={refreshBuckets} />
-                     <CreateNewTag />
-                  </div>
-                  <div className="container mt-2">
-                     <div className="row data-folder">{allData}</div>
-                  </div>
+            {loader && <LoaderAnimation />}
+            <div>
+               <div className="py-2 mt-2 rounded d-flex">
+                  <AddBucketModal refreshBuckets={refreshBuckets} />
+                  <CreateNewTag />
                </div>
-            ) : (
-               <div className="mt-5">
-                  <LoaderAnimation />
+               <div className="container mt-2">
+                  <div className="row data-folder">{allData}</div>
                </div>
-            )}
+            </div>
+            {/* <div className="d-flex justify-content-center mt-5">
+               <button
+                  onClick={() => {
+                     metodi(accessToken, setErrorMsg);
+                  }}
+                  className="btn btn-danger"
+               >
+                  METODI
+               </button>
+            </div> */}
          </div>
-         <div className="d-flex justify-content-center mt-5">
-            <button
-               onClick={() => {
-                  metodi(accessToken, setErrorMsg);
-               }}
-               className="btn btn-danger"
-            >
-               METODI
-            </button>
-         </div>
-
          <Footer />
       </div>
    );

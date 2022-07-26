@@ -14,6 +14,7 @@ import Files from "../Files/Files";
 import * as AiCions from "react-icons/ai";
 import * as ImCions from "react-icons/im";
 import GlobalContext from "../../context/GlobalContext";
+import LoaderAnimation from "../../Loader/LoaderAnimation";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -38,6 +39,7 @@ const DynamicRoute = () => {
 
    useEffect(() => {
       const getData = async () => {
+         setLoading(true);
          await bucketContent(accessToken, routeId, setData, setErrorMsg);
          setLoading(false);
       };
@@ -45,7 +47,9 @@ const DynamicRoute = () => {
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
+      setLoading(true);
       await bucketContent(accessToken, routeId, setData);
+      setLoading(false);
    };
 
    const allData = filteredFolders?.map((elem, index) => (
@@ -92,6 +96,7 @@ const DynamicRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" close={false} />
+            {loading && <LoaderAnimation />}
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
