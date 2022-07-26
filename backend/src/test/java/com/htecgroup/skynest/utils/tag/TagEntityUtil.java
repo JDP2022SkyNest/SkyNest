@@ -22,6 +22,9 @@ public final class TagEntityUtil {
 
   public static TagEntity getOtherCompanyTag() {
     return new TagEntity(
-        UUID.fromString("d7168464-18a1-40e4-a6a1-9a9a55861092"), CompanyEntityUtil.getOther(), name, rgb);
+        UUID.fromString("d7168464-18a1-40e4-a6a1-9a9a55861092"),
+        CompanyEntityUtil.getOther(),
+        name,
+        rgb);
   }
 }

@@ -1,6 +1,7 @@
 package com.htecgroup.skynest.service.impl;
 
 import com.htecgroup.skynest.annotation.actions.RecordAction;
+import com.htecgroup.skynest.event.UploadFileToExternalServiceEvent;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
@@ -9,6 +10,7 @@ import com.htecgroup.skynest.exception.buckets.BucketsTooFullException;
 import com.htecgroup.skynest.exception.file.*;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
+import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FileInfoEditRequest;
@@ -23,6 +25,8 @@ import com.htecgroup.skynest.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl implements FileService, ApplicationEventPublisherAware {
 
   private final ModelMapper modelMapper;
   private final FileContentService fileContentService;
@@ -51,6 +55,13 @@ public class FileServiceImpl implements FileService {
   private final TagService tagService;
   private final FolderRepository folderRepository;
 
+  private ApplicationEventPublisher publisher;
+
+  @Override
+  public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    publisher = applicationEventPublisher;
+  }
+
   @Override
   @Transactional(rollbackFor = Exception.class)
   public FileResponse uploadFileToBucket(MultipartFile multipartFile, UUID bucketId) {
@@ -61,6 +72,8 @@ public class FileServiceImpl implements FileService {
             multipartFile.getSize(),
             multipartFile.getContentType(),
             bucketId);
+
+    executeLambdaForBucket(emptyFileMetadata.getBucket(), multipartFile);
 
     if (!emptyFileMetadata.getBucket().getIsPublic())
       permissionService.currentUserHasPermissionForBucket(
@@ -89,6 +102,8 @@ public class FileServiceImpl implements FileService {
       permissionService.currentUserHasPermissionForFolder(
           emptyFileMetadata.getParentFolder(), AccessType.EDIT);
     }
+
+    executeLambdaForBucket(emptyFileMetadata.getBucket(), multipartFile);
 
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
     permissionService.grantOwnerForObject(savedFileMetadata);
@@ -418,5 +433,17 @@ public class FileServiceImpl implements FileService {
 
     if (currentTotalSize + fileMetadataEntity.getSize() > maxAllowedSize)
       throw new BucketsTooFullException();
+  }
+
+  private void executeLambdaForBucket(BucketEntity bucket, MultipartFile multipartFile) {
+    if (bucket.getLambdaTypes().contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA)) {
+      LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+      UserEntity userEntity =
+          userRepository.findById(loggedUserDto.getUuid()).orElseThrow(UserNotFoundException::new);
+      UploadFileToExternalServiceEvent event =
+          new UploadFileToExternalServiceEvent(
+              this, multipartFile, bucket.getName(), userEntity.getDropboxAccessToken());
+      publisher.publishEvent(event);
+    }
   }
 }

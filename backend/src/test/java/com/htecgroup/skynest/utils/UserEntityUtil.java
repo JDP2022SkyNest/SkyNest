@@ -22,6 +22,7 @@ public class UserEntityUtil extends BasicUtil {
         null,
         false,
         false,
+        "dropboxAccessToken",
         roleWorkerEntity,
         CompanyEntityUtil.get());
   }

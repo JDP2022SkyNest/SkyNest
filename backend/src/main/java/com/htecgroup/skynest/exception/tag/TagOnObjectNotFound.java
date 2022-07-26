@@ -4,11 +4,11 @@ import org.springframework.http.HttpStatus;
 
 public class TagOnObjectNotFound extends TagException {
 
-    private static final long serialVersionUID = -4284721576854147103L;
+  private static final long serialVersionUID = -4284721576854147103L;
 
-    public static final String MESSAGE = "Tag not found for selected object";
+  public static final String MESSAGE = "Tag not found for selected object";
 
-    public TagOnObjectNotFound() {
-        super(MESSAGE, HttpStatus.CONFLICT);
-    }
+  public TagOnObjectNotFound() {
+    super(MESSAGE, HttpStatus.CONFLICT);
+  }
 }
