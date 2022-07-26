@@ -15,6 +15,7 @@ import Breadcrumbs from "./Breadcrumbs";
 import * as AiCions from "react-icons/ai";
 import * as ImCions from "react-icons/im";
 import GlobalContext from "../../context/GlobalContext";
+import LoaderAnimation from "../../Loader/LoaderAnimation";
 
 const DynamicFolderRoute = () => {
    const { routeId } = useParams();
@@ -40,6 +41,7 @@ const DynamicFolderRoute = () => {
 
    useEffect(() => {
       const getData = async () => {
+         setLoading(true);
          await folderContent(accessToken, routeId, setData, setErrorMsg);
          setLoading(false);
       };
@@ -47,7 +49,9 @@ const DynamicFolderRoute = () => {
    }, [routeId, accessToken]);
 
    const refreshFoldersAndFiles = async () => {
+      setLoading(true);
       await folderContent(accessToken, routeId, setData);
+      setLoading(false);
    };
 
    const allData = filteredFolders?.map((elem, index) => (
@@ -98,6 +102,7 @@ const DynamicFolderRoute = () => {
                customStyle="alert alert-success text-success text-center col-12 mt-3"
             />
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" close={false} />
+            {loading && <LoaderAnimation />}
             <small>
                <nav aria-label="breadcrumb">
                   <ol className="breadcrumb mt-3 mb-2 bg-white px-3 py-2 mx-1 ">

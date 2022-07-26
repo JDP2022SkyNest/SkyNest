@@ -193,17 +193,6 @@ export const getCompany = async (accessToken, stateToChange, error, info = true)
    }
 };
 
-export const getCompanyName = async (accessToken, stateToChange) => {
-   try {
-      let response = await AxiosInstance.get("/companies", {
-         headers: { Authorization: accessToken },
-      });
-      stateToChange(response.data.name);
-   } catch (err) {
-      console.error(err);
-   }
-};
-
 export const editCompany = async (accessToken, payload, error, success, func) => {
    try {
       await AxiosInstance.put(
@@ -237,22 +226,6 @@ export const addToCompany = async (accessToken, id, error, success) => {
          }
       );
       success("User added to your company");
-   } catch (err) {
-      error(err.response.data.messages);
-      console.error(err);
-   }
-};
-
-export const removeFromCompany = async (accessToken, id, error, success) => {
-   try {
-      await AxiosInstance.put(
-         `/users/${id}/company/remove`,
-         {},
-         {
-            headers: { Authorization: accessToken },
-         }
-      );
-      success("User removed from your company");
    } catch (err) {
       error(err.response.data.messages);
       console.error(err);
@@ -481,6 +454,18 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
    }
 };
 
+export const getAllTags = async (accessToken,stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get("/tags", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const setTheTag = async (accessToken, tagId, objectId) => {
    try {
       await AxiosInstance.post(
@@ -513,10 +498,13 @@ export const alertTimeout = (delay, stateToChange) => {
 
 export const metodi = async (accessToken, error) => {
    try {
-      const response = await AxiosInstance.get("/public/dropbox-auth-start", {
+      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
          headers: { Authorization: accessToken },
       });
       console.log(response);
+      let newUrl = response.data;
+      console.log(newUrl);
+      window.location.href = newUrl;
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
