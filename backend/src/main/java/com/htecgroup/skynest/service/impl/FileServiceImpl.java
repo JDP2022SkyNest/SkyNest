@@ -85,7 +85,9 @@ public class FileServiceImpl implements FileService {
             folderId);
 
     checkFolderNotDeleted(emptyFileMetadata);
-    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
+    if (!emptyFileMetadata.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFolder(
+          emptyFileMetadata.getParentFolder(), AccessType.EDIT);
 
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
     permissionService.grantOwnerForObject(savedFileMetadata);
