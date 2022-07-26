@@ -165,6 +165,9 @@ public class FileServiceImpl implements FileService {
     FileMetadataEntity fileMetadata =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
+    checkIfDeleted(fileMetadata);
+    permissionService.currentUserHasPermissionForFile(fileMetadata, AccessType.EDIT);
+
     String oldFileType = fileMetadata.getType();
     String newFileType = multipartFile.getContentType();
     if (!oldFileType.equals(newFileType)) throw new FileCannotChangeTypeException();
