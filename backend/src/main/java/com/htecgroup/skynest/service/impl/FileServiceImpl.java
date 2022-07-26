@@ -284,6 +284,10 @@ public class FileServiceImpl implements FileService {
       throw new FileAlreadyRestoredException();
     }
 
+    if (!fileMetadataEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+    }
+
     if (fileMetadataEntity.someParentIsDeleted()) {
       throw new FileParentIsDeletedException();
     }
