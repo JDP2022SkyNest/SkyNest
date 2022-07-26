@@ -188,6 +188,11 @@ public class FolderServiceImpl implements FolderService {
   public void moveFolderToRoot(UUID folderId) {
     FolderEntity folderEntity = findFolderEntity(folderId);
     checkIfDeleted(folderEntity);
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForBucket(
+          folderEntity.getBucket().getId(), AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     folderValidatorService.checkIfFolderAlreadyInsideRoot(folderEntity);
     folderEntity.moveToRoot(folderEntity);
     saveMoveFolder(folderEntity);
@@ -200,6 +205,10 @@ public class FolderServiceImpl implements FolderService {
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     checkIfDeleted(parentFolderEntity);
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolderEntity, AccessType.EDIT);
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     folderValidatorService.checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
     folderValidatorService.checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
     folderEntity.setParentFolder(parentFolderEntity);
