@@ -30,7 +30,7 @@ const HomePage = () => {
    const [successMsg, setSuccessMsg] = useState("");
    const [loader, setLoader] = useState(false);
 
-   const { setAccessToken, userRole, userID } = useContext(GlobalContext);
+   const { setAccessToken, userRole, userID, setMoveFilderID, setMoveFileID } = useContext(GlobalContext);
    const accessToken = localStorage.accessToken;
 
    useEffect(() => {
@@ -51,6 +51,12 @@ const HomePage = () => {
    const allData = filteredBuckets.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshBuckets} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
+
+   useEffect(() => {
+      setMoveFilderID("");
+      setMoveFileID("");
+      //eslint-disable-next-line
+   }, []);
 
    return (
       <div className="home-page-body">
@@ -101,7 +107,7 @@ const HomePage = () => {
                </div>
             )}
          </div>
-         <div className="d-flex justify-content-center">
+         <div className="d-flex justify-content-center mt-5">
             <button
                onClick={() => {
                   metodi(accessToken, setErrorMsg);
