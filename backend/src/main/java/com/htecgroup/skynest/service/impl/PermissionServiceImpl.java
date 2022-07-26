@@ -1,10 +1,12 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.SkyNestBaseException;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
+import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
@@ -258,7 +260,7 @@ public class PermissionServiceImpl implements PermissionService {
     FileMetadataEntity file =
         fileMetadataRepository
             .findById(permissionGrantRequest.getObjectId())
-            .orElseThrow(BucketNotFoundException::new);
+            .orElseThrow(FileNotFoundException::new);
 
     if (file.isDeleted()) {
       throw new FileAlreadyDeletedException();
@@ -271,7 +273,7 @@ public class PermissionServiceImpl implements PermissionService {
     permission.setId(
         new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
 
-    currentUserHasPermissionForBucket(permissionGrantRequest.getObjectId(), AccessType.OWNER);
+    currentUserHasPermissionForFile(file, AccessType.OWNER);
 
     if (permissionRepository.existsById(
         new UserObjectAccessKey(targetUser.getId(), file.getId()))) {
@@ -280,11 +282,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserObjectAccessEntity savedPermission = permissionRepository.save(permission);
 
-    grantViewPermissionToAllFoldersUpstream(file.getParentFolder(), currentUser, targetUser);
-
-    permissionGrantRequest.setObjectId(file.getBucket().getId());
-    permissionGrantRequest.setAccess("view");
-    grantPermissionForBucket(permissionGrantRequest);
+    grantViewPermissionUpstream(file, currentUser, targetUser, permissionGrantRequest);
 
     log.info(
         "User {} ({}) granted {} permission for file {} ({}) to user {} ({})",
@@ -297,6 +295,21 @@ public class PermissionServiceImpl implements PermissionService {
         permission.getGrantedTo().getId());
 
     return modelMapper.map(savedPermission, PermissionResponse.class);
+  }
+
+  private void grantViewPermissionUpstream(
+      FileMetadataEntity file,
+      UserEntity currentUser,
+      UserEntity targetUser,
+      PermissionGrantRequest permissionGrantRequest) {
+
+    grantViewPermissionToAllFoldersUpstream(file.getParentFolder(), currentUser, targetUser);
+    permissionGrantRequest.setObjectId(file.getBucket().getId());
+    permissionGrantRequest.setAccess("view");
+    try {
+      grantPermissionForBucket(permissionGrantRequest);
+    } catch (SkyNestBaseException ignored) {
+    }
   }
 
   private void grantViewPermissionToAllFoldersUpstream(
@@ -324,7 +337,7 @@ public class PermissionServiceImpl implements PermissionService {
     permissionRepository.save(permission);
 
     log.info(
-        "User {} ({}) granted {} permission for file {} ({}) to user {} ({})",
+        "User {} ({}) granted {} permission for folder {} ({}) to user {} ({})",
         permission.getGrantedBy().getEmail(),
         permission.getGrantedBy().getId(),
         permission.getAccess().getName(),
@@ -332,6 +345,8 @@ public class PermissionServiceImpl implements PermissionService {
         permission.getObject().getId(),
         permission.getGrantedTo().getEmail(),
         permission.getGrantedTo().getId());
+
+    grantViewPermissionToAllFoldersUpstream(parent.getParentFolder(), currentUser, targetUser);
   }
 
   private void checkIfPermissionExist(UserObjectAccessEntity permission) {
