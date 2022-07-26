@@ -228,6 +228,9 @@ public class FolderServiceImpl implements FolderService {
   public StorageContentResponse getFolderContent(UUID folderId) {
     FolderEntity parentFolder =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    if (!parentFolder.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(parentFolder, AccessType.VIEW);
+    }
     UUID bucketId = parentFolder.getBucket().getId();
     List<FolderResponse> allFoldersResponse = getAllFoldersWithParent(folderId);
     List<FileResponse> allFilesResponse = fileService.getAllFilesWithParent(folderId);
