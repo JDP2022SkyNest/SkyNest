@@ -338,4 +338,131 @@ public class PermissionController {
   public void deletePermissionForBucket(@PathVariable UUID bucketId, @PathVariable UUID userId) {
     permissionService.revokePermission(bucketId, userId);
   }
+
+  @Operation(summary = "Current user grants permission to a file")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully granted permission",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = PermissionResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\n"
+                                + "    \"grantedToId\": \"a526981e-3a4c-4a32-ba73-ad95c7a4e26a\",\n"
+                                + "    \"grantedToEmail\": \"dragan.mitrasinovic@htecgroup.com\",\n"
+                                + "    \"objectId\": \"e0d31981-0526-48c6-bc89-5a1abeb30096\",\n"
+                                + "    \"grantedOn\": null,\n"
+                                + "    \"accessName\": \"owner\",\n"
+                                + "    \"grantedById\": \"67898b3b-4d5f-4a51-95e2-3808b4dfc903\",\n"
+                                + "    \"grantedByEmail\": \"ivan.fajgelj@htecgroup.com\"\n"
+                                + "}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Invalid session token",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Invalid session token\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access denied",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User does not have access to file\"],"
+                                + " \"status\": \"403\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File/User not found",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "file",
+                        value =
+                            "{\"messages\":[\"File not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}"),
+                    @ExampleObject(
+                        name = "user",
+                        value =
+                            "{\"messages\":[\"User not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-03 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User already has some kind of permission",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User already has some kind of access to requested object\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "File is  deleted",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File is already deleted.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = {
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "Internal Server Error")})
+            })
+      })
+  @PostMapping("/grant/file")
+  public ResponseEntity<PermissionResponse> grantPermissionToFile(
+      @Valid @RequestBody PermissionGrantRequest permissionGrantRequest) {
+
+    ResponseEntity<PermissionResponse> response =
+        new ResponseEntity<>(
+            permissionService.grantPermissionForFile(permissionGrantRequest), HttpStatus.OK);
+
+    return response;
+  }
 }
