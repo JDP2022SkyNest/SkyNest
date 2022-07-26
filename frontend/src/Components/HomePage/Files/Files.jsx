@@ -3,7 +3,7 @@ import * as AiCions from "react-icons/ai";
 import * as BsCions from "react-icons/bs";
 import { Dropdown, Modal } from "react-bootstrap";
 import FileInfo from "./FileInfo";
-import { fileDownload, deleteFile } from "../../ReusableComponents/ReusableFunctions";
+import { fileDownload, deleteFile, restoreFile } from "../../ReusableComponents/ReusableFunctions";
 import EditFileInfo from "./EditFileInfo";
 import GlobalContext from "../../context/GlobalContext";
 import AllTags from "../Tags/AllTags";
@@ -14,10 +14,11 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
+   const TGZ = elem?.tags;
 
    const { moveFileID, setMoveFileID, setMoveFilderID } = useContext(GlobalContext);
 
-   const writeTags = elem?.tags?.map((el, index) => {
+   const writeTags = TGZ?.map((el, index) => {
       return <TagDisplay key={index} el={el} />;
    });
 
@@ -50,44 +51,64 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                      >
                         File Info
                      </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <EditFileInfo elem={elem} refresh={refresh} />
-                     </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={() => {
-                           if (elem.id === moveFileID) {
-                              setMoveFileID("");
-                           } else {
-                              setMoveFileID(elem.id);
-                              setMoveFilderID("");
-                           }
-                        }}
-                        className="text-dark"
-                     >
-                        {elem.id === moveFileID ? "Cancel Move" : "Move File"}
-                     </Dropdown.Item>
-                     <Dropdown.Item className="text-dark">
-                        <AllTags refresh={refresh} objectId={elem.id} />
-                     </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={async () => {
-                           setInfoMsg("Preparing Download");
-                           await fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg);
-                           setInfoMsg("");
-                        }}
-                        className="text-dark"
-                     >
-                        Download File
-                     </Dropdown.Item>
-                     <Dropdown.Item
-                        onClick={async () => {
-                           await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
-                           refresh();
-                        }}
-                        className="text-danger"
-                     >
-                        Delete File
-                     </Dropdown.Item>
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <EditFileInfo elem={elem} refresh={refresh} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item
+                           onClick={() => {
+                              if (elem.id === moveFileID) {
+                                 setMoveFileID("");
+                              } else {
+                                 setMoveFileID(elem.id);
+                                 setMoveFilderID("");
+                              }
+                           }}
+                           className="text-dark"
+                        >
+                           {elem.id === moveFileID ? "Cancel Move" : "Move File"}
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <AllTags refresh={refresh} objectId={elem.id} TGZ={TGZ} setErrorMsg={setErrorMsg} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              setInfoMsg("Preparing Download");
+                              await fileDownload(accessToken, elem.id, elem.name, setErrorMsg, setSuccessMsg);
+                              setInfoMsg("");
+                           }}
+                           className="text-dark"
+                        >
+                           Download File
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null ? (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await deleteFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              refresh();
+                           }}
+                           className="text-danger"
+                        >
+                           Delete File
+                        </Dropdown.Item>
+                     ) : (
+                        <Dropdown.Item
+                           onClick={async () => {
+                              await restoreFile(accessToken, elem.id, setErrorMsg, setSuccessMsg);
+                              refresh();
+                           }}
+                           className="text-danger"
+                        >
+                           Restore file
+                        </Dropdown.Item>
+                     )}
                   </Dropdown.Menu>
                </Dropdown>
             </div>

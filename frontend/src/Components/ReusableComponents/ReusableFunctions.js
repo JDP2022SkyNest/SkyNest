@@ -347,6 +347,22 @@ export const deleteFile = async (accessToken, fileId, error, success) => {
    }
 };
 
+export const restoreFile = async (accessToken, fileId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/files/${fileId}/restore`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("File Successfully Restored");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const bucketContent = async (accessToken, bucketId, stateToChange, error) => {
    try {
       let response = await AxiosInstance.get(`/buckets/${bucketId}`, {
@@ -497,7 +513,7 @@ export const alertTimeout = (delay, stateToChange) => {
 
 export const metodi = async (accessToken, error) => {
    try {
-      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+      const response = await AxiosInstance.get("/public/dropbox-auth-start", {
          headers: { Authorization: accessToken },
       });
       console.log(response);

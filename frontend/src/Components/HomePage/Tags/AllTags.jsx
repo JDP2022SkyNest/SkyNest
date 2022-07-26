@@ -3,7 +3,7 @@ import AxiosInstance from "../../axios/AxiosInstance";
 import Tag from "./Tag";
 import { setTheTag } from "../../ReusableComponents/ReusableFunctions";
 
-const AllTags = ({ setErrorMsg, objectId, refresh }) => {
+const AllTags = ({ setErrorMsg, objectId, refresh, TGZ }) => {
    const [data, setData] = useState();
    const [menuOpen, setMenuOpen] = useState(false);
    const accessToken = localStorage.accessToken;
@@ -38,7 +38,7 @@ const AllTags = ({ setErrorMsg, objectId, refresh }) => {
          className="form-select select-width "
       >
          <option value="Tag">Tag:</option>
-         <Tag data={data} />
+         <Tag data={data} TGZ={TGZ} />
       </select>
    );
 };
