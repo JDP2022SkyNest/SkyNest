@@ -77,11 +77,11 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                            <AllTags refresh={refresh} objectId={elem.id} TGZ={TGZ} setErrorMsg={setErrorMsg} />
                         </Dropdown.Item>
                      )}
-                     {elem.deletedOn === null && (
+                     {elem.deletedOn === null && TGZ.length > 0 ? (
                         <Dropdown.Item className="text-dark">
                            <RemoveTag TGZ={TGZ} objectId={elem.id} refresh={refresh} />
                         </Dropdown.Item>
-                     )}
+                     ) : null}
                      {elem.deletedOn === null && (
                         <Dropdown.Item
                            onClick={async () => {

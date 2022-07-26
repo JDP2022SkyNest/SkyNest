@@ -35,7 +35,7 @@ const RemoveTagPanel = ({ TGZ, objectId, refresh, setErrorMsg, handleClose }) =>
                   }
                }}
                className="float-right"
-               style={{ color: `#${el.rgb}`, position: "relative", top: "6px", cursor: "pointer" }}
+               style={{ color: "gray", position: "relative", top: "6px", cursor: "pointer" }}
             />
             {index !== TGZ.length - 1 && <hr />}
          </div>
