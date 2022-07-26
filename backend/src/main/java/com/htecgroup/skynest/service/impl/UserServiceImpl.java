@@ -241,13 +241,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void saveDropboxAccessToken(String accessToken) {
-    // LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
     UserEntity userEntity =
         userRepository
-            .findUserByEmail("metodi_mladenovski@yahoo.com")
+            .findUserByEmail(loggedUserDto.getUsername())
             .orElseThrow(UserNotFoundException::new);
     userEntity.setDropboxAccessToken(accessToken);
-    // log.info("Set dropbox access token for user {}", loggedUserDto.getUuid());
+    log.info("Set dropbox access token for user {}", loggedUserDto.getUuid());
     userRepository.save(userEntity);
   }
 }
