@@ -2,8 +2,9 @@ import React from "react";
 import * as FaCions from "react-icons/fa";
 import AxiosInstance from "../../axios/AxiosInstance";
 
-const RemoveTagPanel = ({ TGZ, objectId }) => {
+const RemoveTagPanel = ({ TGZ, objectId, refresh }) => {
    const accessToken = localStorage.accessToken;
+
    const untagAnObject = async (tagId) => {
       try {
          await AxiosInstance.put(
@@ -13,6 +14,7 @@ const RemoveTagPanel = ({ TGZ, objectId }) => {
                headers: { Authorization: accessToken },
             }
          );
+         refresh();
       } catch (err) {
          console.log(err);
       }

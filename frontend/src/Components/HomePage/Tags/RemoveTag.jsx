@@ -26,7 +26,7 @@ const RemoveTag = ({ TGZ, objectId, refresh }) => {
                   setSuccessMsg={setSuccessMsg}
                   customStyle="m-0 w-100 alert alert-success text-success text-center mb-3"
                />
-               <RemoveTagPanel TGZ={TGZ} objectId={objectId} />
+               <RemoveTagPanel TGZ={TGZ} objectId={objectId} refresh={refresh} />
                <div className="mt-5 d-flex justify-content-end">
                   <button
                      onClick={() => {
