@@ -481,6 +481,18 @@ export const fileDownload = async (accessToken, fileId, fileName, error, success
    }
 };
 
+export const getAllTags = async (accessToken,stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get("/tags", {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const setTheTag = async (accessToken, tagId, objectId) => {
    try {
       await AxiosInstance.post(
