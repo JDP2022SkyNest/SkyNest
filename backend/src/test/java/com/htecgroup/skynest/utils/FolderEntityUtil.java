@@ -2,9 +2,12 @@ package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.entity.BucketEntity;
 import com.htecgroup.skynest.model.entity.FolderEntity;
+import com.htecgroup.skynest.utils.tag.TagEntityUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -31,6 +34,12 @@ public final class FolderEntityUtil {
   public static FolderEntity getDeletedFolder() {
     FolderEntity folderEntity = new FolderEntity(null, bucketEntityUtil);
     folderEntity.delete();
+    return folderEntity;
+  }
+
+  public static FolderEntity getFolderWithParentAndTags() {
+    FolderEntity folderEntity = getFolderWithParent();
+    folderEntity.setTags(new HashSet<>(Collections.singletonList(TagEntityUtil.get())));
     return folderEntity;
   }
 }
