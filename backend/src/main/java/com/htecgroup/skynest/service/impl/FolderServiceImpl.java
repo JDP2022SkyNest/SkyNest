@@ -7,6 +7,7 @@ import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyRestoredException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
+import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
@@ -145,11 +146,23 @@ public class FolderServiceImpl implements FolderService {
         folderRepository.findById(uuid).orElseThrow(FolderNotFoundException::new);
     if (!folderEntity.getBucket().getIsPublic()) {
       permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
+      permissionService.currentUserHasPermissionForBucket(
+          folderEntity.getBucket().getId(), AccessType.VIEW);
+      FolderUtil.getPathToFolder(folderEntity).stream().filter(f -> checkPermissionForPath(f));
     }
 
     List<TagResponse> tags = tagService.getTagsForObject(uuid);
 
     return modelMapper.map(folderEntity, FolderResponse.class).withTags(tags);
+  }
+
+  private boolean checkPermissionForPath(FolderEntity folderEntity) {
+    try {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
+    } catch (ObjectAccessDeniedException o) {
+      return false;
+    }
+    return true;
   }
 
   @Override
