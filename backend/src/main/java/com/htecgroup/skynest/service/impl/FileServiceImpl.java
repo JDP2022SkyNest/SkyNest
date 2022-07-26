@@ -177,6 +177,8 @@ public class FileServiceImpl implements FileService {
     fileMetadata.setType(multipartFile.getContentType());
     fileMetadata.setSize(multipartFile.getSize());
 
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
+
     String oldFileContentId = fileMetadata.getContentId();
     FileMetadataEntity savedFileMetadata = saveContentAndMetadata(fileMetadata, multipartFile);
     fileContentService.deleteById(oldFileContentId);
