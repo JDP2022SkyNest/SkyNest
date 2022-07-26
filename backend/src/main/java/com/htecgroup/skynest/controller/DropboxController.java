@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/public")
+@RequestMapping("/connect")
 public class DropboxController {
   private DropboxService dropboxService;
 
