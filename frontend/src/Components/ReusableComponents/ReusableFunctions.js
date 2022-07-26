@@ -513,10 +513,13 @@ export const alertTimeout = (delay, stateToChange) => {
 
 export const metodi = async (accessToken, error) => {
    try {
-      const response = await AxiosInstance.get("/public/dropbox-auth-start", {
+      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
          headers: { Authorization: accessToken },
       });
       console.log(response);
+      let newUrl = response.data;
+      console.log(newUrl);
+      window.location.href = newUrl;
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
