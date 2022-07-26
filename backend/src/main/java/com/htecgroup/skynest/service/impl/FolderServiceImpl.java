@@ -160,6 +160,9 @@ public class FolderServiceImpl implements FolderService {
     if (folderEntity.isDeleted()) {
       throw new FolderAlreadyDeletedException();
     }
+    if (!folderEntity.getBucket().getIsPublic()) {
+      permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.EDIT);
+    }
     folderEntity.setName(folderEditRequest.getName().trim());
 
     modelMapper.map(folderEditRequest, folderEntity);
