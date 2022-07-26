@@ -134,9 +134,7 @@ public class FolderServiceImpl implements FolderService {
 
     if (!folderEntity.isDeleted()) throw new FolderAlreadyRestoredException();
 
-    if (folderEntity.getParentFolder() == null
-        ? folderEntity.getBucket().isDeleted()
-        : folderEntity.getParentFolder().isDeleted()) throw new FolderParentIsDeletedException();
+    if (folderEntity.someParentIsDeleted()) throw new FolderParentIsDeletedException();
 
     folderEntity.restore();
     FolderEntity savedFolderEntity = folderRepository.save(folderEntity);
@@ -189,6 +187,7 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public void moveFolderToRoot(UUID folderId) {
     FolderEntity folderEntity = findFolderEntity(folderId);
+    checkIfDeleted(folderEntity);
     folderValidatorService.checkIfFolderAlreadyInsideRoot(folderEntity);
     folderEntity.moveToRoot(folderEntity);
     saveMoveFolder(folderEntity);
@@ -197,12 +196,20 @@ public class FolderServiceImpl implements FolderService {
   @Override
   public void moveFolderToFolder(UUID folderId, UUID destinationFolderId) {
     FolderEntity folderEntity = findFolderEntity(folderId);
+    checkIfDeleted(folderEntity);
     FolderEntity parentFolderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
+    checkIfDeleted(parentFolderEntity);
     folderValidatorService.checkIfFolderAlreadyInsideFolder(folderEntity, parentFolderEntity);
     folderValidatorService.checkIfDestinationFolderIsChildFolder(folderEntity, parentFolderEntity);
     folderEntity.setParentFolder(parentFolderEntity);
     saveMoveFolder(folderEntity);
+  }
+
+  private void checkIfDeleted(FolderEntity folderEntity) {
+    if (folderEntity.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
   }
 
   private FolderEntity findFolderEntity(UUID folderID) {

@@ -34,4 +34,8 @@ public class FolderEntity extends ObjectEntity {
     return super.isDeleted()
         || (parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted());
   }
+
+  public boolean someParentIsDeleted() {
+    return parentFolder == null ? bucket.isDeleted() : parentFolder.isDeleted();
+  }
 }

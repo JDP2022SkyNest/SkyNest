@@ -19,20 +19,11 @@ import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FileMetadataRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
-import com.htecgroup.skynest.service.ActionService;
-import com.htecgroup.skynest.service.FileService;
-import com.htecgroup.skynest.service.PermissionService;
-import com.htecgroup.skynest.service.TagService;
-import com.mongodb.MongoException;
-import com.mongodb.client.gridfs.model.GridFSFile;
+import com.htecgroup.skynest.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,8 +40,8 @@ import java.util.stream.Collectors;
 @Log4j2
 public class FileServiceImpl implements FileService {
 
-  private final GridFsOperations operations;
   private final ModelMapper modelMapper;
+  private final FileContentService fileContentService;
   private final CurrentUserServiceImpl currentUserService;
   private final BucketRepository bucketRepository;
   private final UserRepository userRepository;
@@ -71,12 +62,11 @@ public class FileServiceImpl implements FileService {
             multipartFile.getContentType(),
             bucketId);
 
-    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
-    checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
-    checkBucketNotDeleted(emptyFileMetadata);
-    checkBucketSizeExceedsMax(emptyFileMetadata);
+    FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
+    permissionService.grantOwnerForObject(savedFileMetadata);
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
 
-    return uploadFile(emptyFileMetadata, multipartFile);
+    return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
 
   @Override
@@ -90,38 +80,24 @@ public class FileServiceImpl implements FileService {
             multipartFile.getContentType(),
             folderId);
 
-    checkOnlyCreatorsCanAccessPrivateBuckets(emptyFileMetadata);
-    checkOnlyEmployeesCanAccessCompanyBuckets(emptyFileMetadata);
-    checkBucketNotDeleted(emptyFileMetadata);
     checkFolderNotDeleted(emptyFileMetadata);
-    checkBucketSizeExceedsMax(emptyFileMetadata);
 
-    return uploadFile(emptyFileMetadata, multipartFile);
-  }
+    FileMetadataEntity savedFileMetadata = saveContentAndMetadata(emptyFileMetadata, multipartFile);
+    permissionService.grantOwnerForObject(savedFileMetadata);
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
 
-  private FileResponse uploadFile(
-      FileMetadataEntity emptyFileMetadata, MultipartFile multipartFile) {
-    try {
-      InputStream fileContents = multipartFile.getInputStream();
-
-      FileMetadataEntity savedFileMetadata = storeFileContents(emptyFileMetadata, fileContents);
-      permissionService.grantOwnerForObject(savedFileMetadata);
-      actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.CREATE);
-
-      return modelMapper.map(savedFileMetadata, FileResponse.class);
-    } catch (IOException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
+    return modelMapper.map(savedFileMetadata, FileResponse.class);
   }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
   public FileResponse getFileMetadata(UUID fileId) {
 
-    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
+
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.VIEW);
 
     List<TagResponse> tags = tagService.getTagsForObject(fileId);
 
@@ -133,11 +109,13 @@ public class FileServiceImpl implements FileService {
   @Override
   public FileDownloadResponse downloadFile(UUID fileId) {
 
-    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
-    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadataEntity);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
-    Resource fileContents = getFileContents(fileMetadataEntity.getContentId());
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.DOWNLOAD);
+
+    Resource fileContents = fileContentService.findById(fileMetadataEntity.getContentId());
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.DOWNLOAD);
 
     return new FileDownloadResponse(
@@ -149,6 +127,10 @@ public class FileServiceImpl implements FileService {
 
     FileMetadataEntity fileMetadataEntity =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+
+    if (!fileMetadataEntity.getBucket().getIsPublic())
+      permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
+
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
@@ -177,8 +159,30 @@ public class FileServiceImpl implements FileService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
+  public FileResponse editFileContent(MultipartFile multipartFile, UUID fileId) {
+
+    FileMetadataEntity fileMetadata =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+
+    String oldFileType = fileMetadata.getType();
+    String newFileType = multipartFile.getContentType();
+    if (!oldFileType.equals(newFileType)) throw new FileCannotChangeTypeException();
+
+    fileMetadata.setType(multipartFile.getContentType());
+    fileMetadata.setSize(multipartFile.getSize());
+
+    String oldFileContentId = fileMetadata.getContentId();
+    FileMetadataEntity savedFileMetadata = saveContentAndMetadata(fileMetadata, multipartFile);
+    fileContentService.deleteById(oldFileContentId);
+    actionService.recordAction(Collections.singleton(savedFileMetadata), ActionType.EDIT);
+
+    return modelMapper.map(savedFileMetadata, FileResponse.class);
+  }
+
+  @Override
   public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
-    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkIfDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
@@ -189,7 +193,7 @@ public class FileServiceImpl implements FileService {
 
   @Override
   public void moveFileToRoot(UUID fileId) {
-    FileMetadataEntity fileMetadataEntity = findFileMetaDataEntity(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     checkIfDeleted(fileMetadataEntity);
     checkIfFileIsAlreadyInsideRoot(fileMetadataEntity);
     fileMetadataEntity.moveToRoot(fileMetadataEntity);
@@ -216,10 +220,6 @@ public class FileServiceImpl implements FileService {
     }
   }
 
-  private FileMetadataEntity findFileMetaDataEntity(UUID fileId) {
-    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-  }
-
   private void saveMoveFile(FileMetadataEntity fileMetadataEntity) {
     fileMetadataRepository.save(fileMetadataEntity);
     actionService.recordAction(Collections.singleton(fileMetadataEntity), ActionType.MOVE);
@@ -235,12 +235,66 @@ public class FileServiceImpl implements FileService {
   @Override
   @RecordAction(objectId = "[0].toString()", actionType = ActionType.DELETE)
   public void deleteFile(UUID fileId) {
-    FileMetadataEntity fileMetadataEntity = getFileMetadataEntity(fileId);
+    FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
     fileMetadataEntity.delete();
     fileMetadataRepository.save(fileMetadataEntity);
+  }
+
+  private FileMetadataEntity saveContentAndMetadata(
+      FileMetadataEntity fileMetadata, MultipartFile multipartFile) {
+
+    checkOnlyCreatorsCanAccessPrivateBuckets(fileMetadata);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadata);
+    checkBucketNotDeleted(fileMetadata);
+    checkBucketSizeExceedsMax(fileMetadata);
+
+    try {
+      InputStream fileContent = multipartFile.getInputStream();
+
+      String fileContentId =
+          fileContentService.save(fileMetadata.getName(), fileMetadata.getType(), fileContent);
+      fileMetadata.setContentId(fileContentId);
+
+      return fileMetadataRepository.save(fileMetadata);
+    } catch (IOException e) {
+      log.error(e);
+      throw new FileIOException();
+    }
+  }
+
+  private FileMetadataEntity findFileMetadataById(UUID fileId) {
+    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+  }
+
+  @Override
+  @RecordAction(objectId = "[0].toString()", actionType = ActionType.RESTORE)
+  public FileResponse restoreFile(UUID fileId) {
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    FileMetadataEntity fileMetadataEntity =
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+
+    if (!fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyRestoredException();
+    }
+
+    if (fileMetadataEntity.someParentIsDeleted()) {
+      throw new FileParentIsDeletedException();
+    }
+
+    log.info(
+        "User {} ({}) is attempting to restore file {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        fileMetadataEntity.getName(),
+        fileMetadataEntity.getId());
+
+    fileMetadataEntity.restore();
+    FileMetadataEntity savedFileMetadataEntity = fileMetadataRepository.save(fileMetadataEntity);
+    return modelMapper.map(savedFileMetadataEntity, FileResponse.class);
   }
 
   private FileMetadataEntity initFileMetadata(
@@ -285,31 +339,6 @@ public class FileServiceImpl implements FileService {
     return initFileMetadata(name, size, type, bucket, parentFolder);
   }
 
-  private FileMetadataEntity storeFileContents(
-      FileMetadataEntity emptyFileMetadata, InputStream fileContents) {
-
-    String fileContentId =
-        storeFileContentsToDatabase(
-            emptyFileMetadata.getName(), emptyFileMetadata.getType(), fileContents);
-
-    emptyFileMetadata.setContentId(fileContentId);
-    return fileMetadataRepository.save(emptyFileMetadata);
-  }
-
-  private FileMetadataEntity getFileMetadataEntity(UUID fileId) {
-    return fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-  }
-
-  private String storeFileContentsToDatabase(String name, String type, InputStream inputStream) {
-    try {
-      Object objectId = operations.store(inputStream, name, type);
-      return objectId.toString();
-    } catch (MongoException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
-  }
-
   private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
@@ -324,17 +353,15 @@ public class FileServiceImpl implements FileService {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();
 
-    if (bucket.getCompany() != null) {
-      UUID companyId = bucket.getCompany().getId();
+    UUID companyId = bucket.getCompany().getId();
 
-      LoggedUserDto currentUser = currentUserService.getLoggedUser();
-      if (currentUser.getCompany() == null) throw new BucketAccessDeniedException();
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+    if (currentUser.getCompany() == null) throw new BucketAccessDeniedException();
 
-      UUID currentUserCompanyId = currentUserService.getLoggedUser().getCompany().getId();
+    UUID currentUserCompanyId = currentUserService.getLoggedUser().getCompany().getId();
 
-      if (bucket.getIsPublic() && !currentUserCompanyId.equals(companyId))
-        throw new BucketAccessDeniedException();
-    }
+    if (bucket.getIsPublic() && !currentUserCompanyId.equals(companyId))
+      throw new BucketAccessDeniedException();
   }
 
   private void checkBucketNotDeleted(FileMetadataEntity fileMetadataEntity) {
@@ -352,40 +379,16 @@ public class FileServiceImpl implements FileService {
     long maxAllowedSize;
     long currentTotalSize;
 
-    if (bucket.getCompany() != null) {
+    CompanyEntity company = bucket.getCompany();
 
-      CompanyEntity company = bucket.getCompany();
+    UUID companyId = company.getId();
+    currentTotalSize = bucketRepository.sumSizeByCompanyId(companyId);
 
-      UUID companyId = company.getId();
-      currentTotalSize = bucketRepository.sumSizeByCompanyId(companyId);
-
-      TierEntity tierEntity = company.getTier();
-      TierType tierType = TierType.valueOf(tierEntity.getName().toUpperCase());
-      maxAllowedSize = tierType.getMaxSize();
-    } else {
-
-      UUID currentUserId = currentUserService.getLoggedUser().getUuid();
-      currentTotalSize = bucketRepository.sumSizeByUserId(currentUserId);
-
-      maxAllowedSize = 1024L * 1024L * 512L; //  512MiB
-    }
+    TierEntity tierEntity = company.getTier();
+    TierType tierType = TierType.valueOf(tierEntity.getName().toUpperCase());
+    maxAllowedSize = tierType.getMaxSize();
 
     if (currentTotalSize + fileMetadataEntity.getSize() > maxAllowedSize)
       throw new BucketsTooFullException();
-  }
-
-  private InputStreamResource getFileContents(String objectId) {
-    try {
-      if (objectId == null || objectId.isEmpty()) throw new FileNotFoundException();
-
-      GridFSFile gridFSFile = operations.findOne(new Query(Criteria.where("_id").is(objectId)));
-      if (gridFSFile == null) throw new FileNotFoundException();
-
-      InputStream inputStream = operations.getResource(gridFSFile).getInputStream();
-      return new InputStreamResource(inputStream);
-    } catch (IOException | MongoException e) {
-      log.error(e);
-      throw new FileIOException();
-    }
   }
 }
