@@ -51,7 +51,7 @@ const UploadToFolder = ({ folderId, refresh }) => {
    return (
       <div className="ml-auto ml-sm-2 latte-background custom-rounded shadow">
          <span onClick={handleShow}>
-            <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload To Folder
+            <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">
