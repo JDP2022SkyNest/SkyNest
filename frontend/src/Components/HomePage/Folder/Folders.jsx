@@ -17,11 +17,12 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const navigate = useNavigate();
    const accessToken = localStorage.accessToken;
 
+   const TGZ = elem?.tags;
    const timeFrame = elem.createdOn.replace("T", " @ ");
 
    const { moveFolderID, setMoveFilderID, setMoveFileID } = useContext(GlobalContext);
 
-   const writeTags = elem?.tags?.map((el, index) => {
+   const writeTags = TGZ?.map((el, index) => {
       return <TagDisplay key={index} el={el} />;
    });
 
@@ -82,7 +83,7 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                      )}
                      {elem.deletedOn === null && (
                         <Dropdown.Item className="text-dark">
-                           <AllTags refresh={refresh} objectId={elem.id} />
+                           <AllTags refresh={refresh} objectId={elem.id} TGZ={TGZ} setErrorMsg={setErrorMsg} />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null ? (

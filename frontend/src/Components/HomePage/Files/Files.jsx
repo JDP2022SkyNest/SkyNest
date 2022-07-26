@@ -14,10 +14,11 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
    const accessToken = localStorage.accessToken;
+   const TGZ = elem?.tags;
 
    const { moveFileID, setMoveFileID, setMoveFilderID } = useContext(GlobalContext);
 
-   const writeTags = elem?.tags?.map((el, index) => {
+   const writeTags = TGZ?.map((el, index) => {
       return <TagDisplay key={index} el={el} />;
    });
 
@@ -72,7 +73,7 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                      )}
                      {elem.deletedOn === null && (
                         <Dropdown.Item className="text-dark">
-                           <AllTags refresh={refresh} objectId={elem.id} />
+                           <AllTags refresh={refresh} objectId={elem.id} TGZ={TGZ} setErrorMsg={setErrorMsg} />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null && (
