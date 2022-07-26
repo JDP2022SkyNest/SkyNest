@@ -242,12 +242,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public void saveDropboxAccessToken(String accessToken) {
     LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    UserDto userDto = findUserByEmail(loggedUserDto.getUsername());
     UserEntity userEntity =
-        userRepository
-            .findUserByEmail(loggedUserDto.getUsername())
-            .orElseThrow(UserNotFoundException::new);
-    userEntity.setDropboxAccessToken(accessToken);
-    log.info("Set dropbox access token for user {}", loggedUserDto.getUuid());
+        modelMapper.map(userDto, UserEntity.class).withDropboxAccessToken(accessToken);
+    log.info("Set dropbox access token {} for user {}", accessToken, userEntity.getId());
     userRepository.save(userEntity);
   }
 }
