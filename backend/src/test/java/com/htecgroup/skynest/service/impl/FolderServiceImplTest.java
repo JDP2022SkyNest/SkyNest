@@ -117,14 +117,15 @@ class FolderServiceImplTest {
   void getFolderDetails() {
     FolderEntity expectedFolderEntity = FolderEntityUtil.getFolderWithParent();
     when(folderRepository.findById(any())).thenReturn(Optional.of(expectedFolderEntity));
-    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     FolderResponse actualFolderResponse =
         folderService.getFolderDetails(expectedFolderEntity.getId());
 
     this.assertFolderEntityAndFolderResponse(expectedFolderEntity, actualFolderResponse);
     verify(folderRepository, times(1)).findById(any());
-    verify(tagService,times(1)).getTagsForObject(expectedFolderEntity.getId());
+    verify(tagService, times(1)).getTagsForObject(expectedFolderEntity.getId());
   }
 
   @Test
@@ -291,7 +292,8 @@ class FolderServiceImplTest {
         new ArrayList<>(Collections.singleton(FileResponseUtil.getFileWithParent()));
     when(fileService.getAllFilesWithParent(any())).thenReturn(expectedFileResponseList);
 
-    when(tagService.getTagsForObject(any())).thenReturn(Collections.singletonList(TagResponseUtil.get()));
+    when(tagService.getTagsForObject(any()))
+        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<FolderResponse> expectedFolderResponseList =
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getFolderWithParent()));
@@ -311,7 +313,7 @@ class FolderServiceImplTest {
     verify(folderRepository, times(1)).findById(parentId);
     verify(folderRepository, times(1)).findAllByParentFolderIdOrderByNameAscCreatedOnDesc(parentId);
     verify(fileService, times(1)).getAllFilesWithParent(parentId);
-    verify(tagService,times(1)).getTagsForObject(expectedFolderEntities.get(0).getId());
+    verify(tagService, times(1)).getTagsForObject(expectedFolderEntities.get(0).getId());
   }
 
   @Test

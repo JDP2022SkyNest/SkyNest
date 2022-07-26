@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ObjectToTagRepository extends CrudRepository<ObjectToTagEntity, ObjectToTagKey> {
-    List<ObjectToTagEntity> findAllByIdObjectId(UUID objectId);
+  List<ObjectToTagEntity> findAllByIdObjectId(UUID objectId);
 }

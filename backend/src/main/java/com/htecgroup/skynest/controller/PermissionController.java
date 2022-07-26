@@ -289,7 +289,6 @@ public class PermissionController {
     List<PermissionResponse> permissionList = permissionService.getAllBucketPermission(bucketId);
     return permissionList;
   }
-  // TODO: check if current user is owner
 
   @Operation(summary = "Revoke permission")
   @ApiResponses(
