@@ -220,6 +220,7 @@ public class PermissionServiceImpl implements PermissionService {
     currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
     UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(bucketId);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
+    checkIfTargetUserIsTheCurrentUser(targetUser);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
 
     return setAndSavePermission(
@@ -233,6 +234,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserEntity user =
         userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
+    checkIfTargetUserIsTheCurrentUser(user);
     UserObjectAccessEntity permission =
         permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
     checkIfPermissionExist(permission);
