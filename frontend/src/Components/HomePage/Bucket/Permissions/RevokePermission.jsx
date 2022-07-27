@@ -14,10 +14,6 @@ const RevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
       //eslint-disable-next-line
    }, []);
 
-   useEffect(() => {
-      console.log(data);
-   }, [data]);
-
    const refreshedData = async () => {
       await AllBucketPermissions(accessToken, objectId, setData, setErrorMsg);
    };

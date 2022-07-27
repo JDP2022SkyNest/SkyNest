@@ -594,29 +594,12 @@ export const GrantFilePermission = async (accessToken, email, fileId, role, erro
 
 export const RevokeBucketPermissions = async (accessToken, bucketId, userEmail, error, success) => {
    try {
-      await AxiosInstance.delete(
-         `/permissions/bucket`,
-         {
+      await AxiosInstance.delete(`/permissions/bucket`, {
+         headers: { Authorization: accessToken },
+         data: {
             grantedToEmail: userEmail,
             objectId: bucketId,
          },
-         {
-            headers: { Authorization: accessToken },
-         }
-      );
-      success("Permission Removed");
-   } catch (err) {
-      error(err.response.data.messages);
-      console.log(err);
-   }
-
-   console.log("permissions/bucket", userEmail, bucketId);
-};
-
-export const RevokeFolderPermissions = async (accessToken, folderId, userId, error, success) => {
-   try {
-      await AxiosInstance.delete(`/permissions/folder/${folderId}/user/${userId}`, {
-         headers: { Authorization: accessToken },
       });
       success("Permission Removed");
    } catch (err) {
@@ -625,10 +608,30 @@ export const RevokeFolderPermissions = async (accessToken, folderId, userId, err
    }
 };
 
-export const RevokeFilePermissions = async (accessToken, fileId, userId, error, success) => {
+export const RevokeFolderPermissions = async (accessToken, folderId, userEmail, error, success) => {
    try {
-      await AxiosInstance.delete(`/permissions/file/${fileId}/user/${userId}`, {
+      await AxiosInstance.delete(`/permissions/folder`, {
          headers: { Authorization: accessToken },
+         data: {
+            grantedToEmail: userEmail,
+            objectId: folderId,
+         },
+      });
+      success("Permission Removed");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const RevokeFilePermissions = async (accessToken, fileId, userEmail, error, success) => {
+   try {
+      await AxiosInstance.delete(`/permissions/file`, {
+         headers: { Authorization: accessToken },
+         data: {
+            grantedToEmail: userEmail,
+            objectId: fileId,
+         },
       });
       success("Permission Removed");
    } catch (err) {
