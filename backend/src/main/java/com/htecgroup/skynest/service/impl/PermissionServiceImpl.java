@@ -9,8 +9,6 @@ import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
-import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
-import com.htecgroup.skynest.exception.file.FileNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
@@ -282,7 +280,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserEntity targetUser =
         userRepository
-            .findById(permissionGrantRequest.getGrantedTo())
+            .findUserByEmail(permissionGrantRequest.getGrantedToEmail())
             .orElseThrow(UserNotFoundException::new);
 
     AccessTypeEntity accessType =
