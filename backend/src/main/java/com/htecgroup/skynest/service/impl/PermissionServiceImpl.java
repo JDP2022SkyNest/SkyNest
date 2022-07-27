@@ -9,6 +9,7 @@ import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -232,13 +233,27 @@ public class PermissionServiceImpl implements PermissionService {
 
   @Override
   public List<PermissionResponse> getAllFolderPermission(UUID folderId) {
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    log.info(
+        "User {} ({}) is attempting to view all permissions for folder {}...",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderId);
+
     FolderEntity folder =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
     checkIfFolderIsDeleted(folder);
     currentUserHasPermissionForFolder(folder, AccessType.OWNER);
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(folderId);
 
-    log.info("Current user accessed the permissions of the folder with the id {}", folderId);
+    log.info(
+        "User {} ({}) viewed all permissions for folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folder.getName(),
+        folder.getId());
+
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
