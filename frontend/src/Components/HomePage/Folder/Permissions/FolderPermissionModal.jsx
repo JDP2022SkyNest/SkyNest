@@ -17,7 +17,7 @@ const FolderPermissionModal = ({ objectId }) => {
 
    const allComponents = [
       { name: "Permissions", comp: <FolderAllPermissions objectId={objectId} setErrorMsg={setErrorMsg} /> },
-      { name: "Grant", comp: <FolderGrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} setSuccessMsg={setSuccessMsg} /> },
+      { name: "Grant/Edit", comp: <FolderGrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} setSuccessMsg={setSuccessMsg} /> },
       { name: "Revoke", comp: <FolderRevokePermission objectId={objectId} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} /> },
    ];
 

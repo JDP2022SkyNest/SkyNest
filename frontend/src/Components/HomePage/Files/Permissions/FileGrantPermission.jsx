@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GrantFilePermission } from "../../../ReusableComponents/ReusableFunctions";
+import { GrantFilePermission, ModifyFilePermissions } from "../../../ReusableComponents/ReusableFunctions";
 import ModalLoader from "../../../Loader/ModalLoader";
 
 const FileGrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg }) => {
@@ -12,6 +12,18 @@ const FileGrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg })
       if (email.length > 5) {
          setLoading(true);
          await GrantFilePermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
+         setLoading(false);
+      } else if (!email.includes("@")) {
+         setErrorMsg("Invalid email format");
+      } else {
+         setErrorMsg("Email has to be more than 5 characters");
+      }
+   };
+
+   const onEdit = async () => {
+      if (email.length > 5) {
+         setLoading(true);
+         await ModifyFilePermissions(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
          setLoading(false);
       } else if (!email.includes("@")) {
          setErrorMsg("Invalid email format");
@@ -54,6 +66,13 @@ const FileGrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg })
                   {!loading ? (
                      <button onClick={onSubmit} className="btn btn-secondary button-width" disabled={!email}>
                         Grant
+                     </button>
+                  ) : (
+                     <ModalLoader />
+                  )}
+                  {!loading ? (
+                     <button onClick={onEdit} className="btn ml-3 btn-secondary button-width" disabled={!email}>
+                        Edit
                      </button>
                   ) : (
                      <ModalLoader />

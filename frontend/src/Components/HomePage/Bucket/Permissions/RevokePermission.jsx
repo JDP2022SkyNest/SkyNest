@@ -27,7 +27,7 @@ const RevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                   <AiIcons.AiFillCloseCircle
                      className="revoke-perm-icon"
                      onClick={async () => {
-                        await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
+                        await RevokeBucketPermissions(accessToken, objectId, el.grantedToEmail, setErrorMsg, setSuccessMsg);
                         refreshedData();
                      }}
                   />

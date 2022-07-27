@@ -27,7 +27,7 @@ const FolderRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                   <AiIcons.AiFillCloseCircle
                      className="revoke-perm-icon"
                      onClick={async () => {
-                        await RevokeFolderPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
+                        await RevokeFolderPermissions(accessToken, objectId, el.grantedToEmail, setErrorMsg, setSuccessMsg);
                         refreshedData();
                      }}
                   />
