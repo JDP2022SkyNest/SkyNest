@@ -436,12 +436,6 @@ public class PermissionServiceImpl implements PermissionService {
     grantViewPermissionToAllFoldersUpstream(parent.getParentFolder(), currentUser, targetUser);
   }
 
-  private void checkIfPermissionExist(UserObjectAccessEntity permission) {
-    if (permission == null) {
-      throw new PermissionDoesNotExistException();
-    }
-  }
-
   private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
     UserEntity targetUser =
         userRepository
