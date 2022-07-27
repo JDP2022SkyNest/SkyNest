@@ -32,8 +32,12 @@ const UploadToFolder = ({ folderId, refresh }) => {
             refresh();
          }, 2000);
       } catch (err) {
-         setErrorMsg(err.response.data.messages);
-         console.log(err);
+         if (err.response.status === 500) {
+            setErrorMsg("Maximal Upload Size is 1024 MB");
+         } else {
+            setErrorMsg(err.response.data.error);
+            console.log(err);
+         }
       }
    };
 
