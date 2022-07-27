@@ -8,6 +8,16 @@ const GrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg }) => 
    const [loading, setLoading] = useState(false);
    const accessToken = localStorage.accessToken;
 
+   const onSubmit = async () => {
+      if (email.length > 5) {
+         setLoading(true);
+         await GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
+         setLoading(false);
+      } else {
+         setErrorMsg("Email has to be more than 5 characters");
+      }
+   };
+
    return (
       <div className="px-3">
          <fieldset disabled={loading}>
@@ -40,15 +50,7 @@ const GrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg }) => 
                </div>
                <div className="mt-3">
                   {!loading ? (
-                     <button
-                        onClick={async () => {
-                           setLoading(true);
-                           await GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
-                           setLoading(false);
-                        }}
-                        className="btn btn-secondary button-width"
-                        disabled={!email}
-                     >
+                     <button onClick={onSubmit} className="btn btn-secondary button-width" disabled={!email}>
                         Grant
                      </button>
                   ) : (
