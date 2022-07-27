@@ -513,7 +513,7 @@ public class PermissionServiceImpl implements PermissionService {
         permissionEditRequest.getAccess());
 
     FileMetadataEntity fileMetadata =
-        fileMetadataRepository.findById(fileId).orElseThrow(FolderNotFoundException::new);
+        fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
     checkIfFileIsDeleted(fileMetadata);
     currentUserHasPermissionForFile(fileMetadata, AccessType.OWNER);
