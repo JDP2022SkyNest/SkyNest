@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AllBucketPermissions, RevokeBucketPermissions } from "../../../ReusableComponents/ReusableFunctions";
+import { AllFolderPermissions, RevokeFolderPermissions } from "../../../ReusableComponents/ReusableFunctions";
 import * as AiIcons from "react-icons/ai";
 
 const FolderRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
@@ -8,14 +8,14 @@ const FolderRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
 
    useEffect(() => {
       const getData = async () => {
-         await AllBucketPermissions(accessToken, objectId, setData, setErrorMsg);
+         await AllFolderPermissions(accessToken, objectId, setData, setErrorMsg);
       };
       getData();
       //eslint-disable-next-line
    }, []);
 
    const refreshedData = async () => {
-      await AllBucketPermissions(accessToken, objectId, setData, setErrorMsg);
+      await AllFolderPermissions(accessToken, objectId, setData, setErrorMsg);
    };
 
    const mapData = data?.map((el, index) => {
@@ -27,7 +27,7 @@ const FolderRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                   <AiIcons.AiFillCloseCircle
                      className="revoke-perm-icon"
                      onClick={async () => {
-                        await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
+                        await RevokeFolderPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
                         refreshedData();
                      }}
                   />
