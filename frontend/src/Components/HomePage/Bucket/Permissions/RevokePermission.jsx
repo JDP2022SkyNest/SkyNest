@@ -25,6 +25,7 @@ const RevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                <span>{el.grantedToEmail}</span>
                <span className="text-danger px-3" style={{ cursor: "pointer" }}>
                   <AiIcons.AiFillCloseCircle
+                     className="revoke-perm-icon"
                      onClick={async () => {
                         await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
                         refreshedData();
@@ -32,7 +33,7 @@ const RevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                   />
                </span>
             </div>
-            {index !== data.length - 1 && <hr/>}
+            {index !== data.length - 1 && <hr />}
          </div>
       );
    });
