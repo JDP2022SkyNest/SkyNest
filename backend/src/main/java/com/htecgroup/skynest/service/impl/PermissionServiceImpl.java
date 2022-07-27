@@ -242,7 +242,7 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public void revokeFilePermission(UUID fileId, String email) throws FileNotFoundException {
+  public void revokeFilePermission(UUID fileId, String email) {
     FileMetadataEntity fileMetadataEntity =
         fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
     checkIfBucketIsDeleted(fileMetadataEntity.getBucket().getId());
