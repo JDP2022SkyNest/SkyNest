@@ -10,6 +10,7 @@ import EditBucketModal from "./EditBucketModal";
 import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
 import RemoveTag from "../Tags/RemoveTag";
+import PermissionModal from "./Permissions/PermissionModal";
 
 const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => {
    const [show, setShow] = useState(false);
@@ -67,6 +68,11 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      {elem.deletedOn === null && (
                         <Dropdown.Item className="text-dark">
                            <EditBucketModal refreshBuckets={refreshBuckets} elem={elem} />
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <PermissionModal />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null && (
