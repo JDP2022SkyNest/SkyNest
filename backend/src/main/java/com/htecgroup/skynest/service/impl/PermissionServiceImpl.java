@@ -11,6 +11,7 @@ import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
+import com.htecgroup.skynest.exception.permission.UserCantRevokeTheirOwnPermissions;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
@@ -229,7 +230,8 @@ public class PermissionServiceImpl implements PermissionService {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
 
-    UserEntity user = userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
+    UserEntity user =
+        userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
     UserObjectAccessEntity permission =
         permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
     checkIfPermissionExist(permission);
@@ -237,16 +239,26 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public void revokeFilePermission(UUID fileId, UUID userId) throws FileNotFoundException {
+  public void revokeFilePermission(UUID fileId, String email) throws FileNotFoundException {
     FileMetadataEntity fileMetadataEntity =
         fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
     checkIfBucketIsDeleted(fileMetadataEntity.getBucket().getId());
+    checkIfFileIsDeleted(fileMetadataEntity);
     currentUserHasPermissionForFile(fileMetadataEntity, AccessType.OWNER);
 
-    UserEntity user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    UserEntity user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
+    checkIfTargetUserIsTheCurrentUser(user);
     UserObjectAccessEntity permission =
         permissionRepository.findByObjectIdAndGrantedTo(fileId, user);
+    checkIfPermissionExist(permission);
     permissionRepository.delete(permission);
+  }
+
+  private void checkIfTargetUserIsTheCurrentUser(UserEntity user) {
+    LoggedUserDto userDto = currentUserService.getLoggedUser();
+    if (userDto.getUuid().equals(user.getId())) {
+      throw new UserCantRevokeTheirOwnPermissions();
+    }
   }
 
   @Override
@@ -280,6 +292,12 @@ public class PermissionServiceImpl implements PermissionService {
   private void checkIfFolderIsDeleted(FolderEntity folder) {
     if (folder.isDeleted()) {
       throw new FolderAlreadyDeletedException();
+    }
+  }
+
+  private void checkIfFileIsDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
     }
   }
 

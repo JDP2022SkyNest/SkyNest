@@ -30,7 +30,7 @@ public interface PermissionService {
 
   void revokePermission(UUID bucketId, String userEmail);
 
-  void revokeFilePermission(UUID fileId, UUID userId) throws FileNotFoundException;
+  void revokeFilePermission(UUID fileId, String email) throws FileNotFoundException;
 
   List<PermissionResponse> getAllFilePermissions(UUID fileId);
 

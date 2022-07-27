@@ -337,8 +337,10 @@ public class PermissionController {
       })
   @DeleteMapping("/bucket")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForBucket(@Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
-    permissionService.revokePermission(permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
+  public void deletePermissionForBucket(
+      @Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
+    permissionService.revokePermission(
+        permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
   }
 
   @Operation(summary = "Revoke File permission")
@@ -384,11 +386,13 @@ public class PermissionController {
                   })
             }),
       })
-  @DeleteMapping("/file/{fileId}/user/{userId}")
+  @DeleteMapping("/file")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForFile(@PathVariable UUID fileId, @PathVariable UUID userId)
+  public void deletePermissionForFile(
+      @Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest)
       throws FileNotFoundException {
-    permissionService.revokeFilePermission(fileId, userId);
+    permissionService.revokeFilePermission(
+        permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
   }
 
   @Operation(summary = "Get all permissions for file")
