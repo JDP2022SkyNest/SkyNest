@@ -509,7 +509,8 @@ export const GrantBucketPermission = async (accessToken, email, bucketId, role, 
       success("Permission Added");
    } catch (err) {
       if (err.response.status === 400) {
-         error(err.response.data.error);
+         error(err.response.data.messages);
+         console.log(err);
       } else {
          error(err.response.data.messages);
          console.log(err);
