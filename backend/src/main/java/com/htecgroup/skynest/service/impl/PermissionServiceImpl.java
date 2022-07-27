@@ -53,7 +53,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserEntity targetUser =
         userRepository
-            .findById(permissionGrantRequest.getGrantedTo())
+            .findUserByEmail(permissionGrantRequest.getGrantedToEmail())
             .orElseThrow(UserNotFoundException::new);
 
     AccessTypeEntity accessType =
@@ -274,7 +274,7 @@ public class PermissionServiceImpl implements PermissionService {
   private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
     UserEntity targetUser =
         userRepository
-            .findById(permissionEditRequest.getGrantedTo())
+            .findUserByEmail(permissionEditRequest.getGrantedToEmail())
             .orElseThrow(UserNotFoundException::new);
     return targetUser;
   }
