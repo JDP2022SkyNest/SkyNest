@@ -11,6 +11,6 @@ public class PermissionEditRequestUtil {
   protected static AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
 
   public static PermissionEditRequest get() {
-    return new PermissionEditRequest(user.getId(), accessType.toString());
+    return new PermissionEditRequest(user.getEmail(), accessType.toString());
   }
 }
