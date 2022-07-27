@@ -10,7 +10,10 @@ import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.BucketCreateRequest;
 import com.htecgroup.skynest.model.request.BucketEditRequest;
-import com.htecgroup.skynest.model.response.*;
+import com.htecgroup.skynest.model.response.BucketResponse;
+import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
@@ -33,8 +36,6 @@ public class BucketServiceImpl implements BucketService {
   private UserRepository userRepository;
   private FolderService folderService;
   private FileService fileService;
-  private TagService tagService;
-
   private ActionService actionService;
   private PermissionService permissionService;
 
@@ -70,13 +71,10 @@ public class BucketServiceImpl implements BucketService {
     if (!bucketEntity.getIsPublic()) {
       permissionService.currentUserHasPermissionForBucket(uuid, AccessType.VIEW);
     }
-    BucketResponse bucketResponse = modelMapper.map(bucketEntity, BucketResponse.class);
-
-    List<TagResponse> tags = tagService.getTagsForObject(uuid);
 
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
-    return bucketResponse.withTags(tags);
+    return modelMapper.map(bucketEntity, BucketResponse.class);
   }
 
   @Override
@@ -95,6 +93,19 @@ public class BucketServiceImpl implements BucketService {
     bucketEntity.addLambda(lambdaType);
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.EDIT);
     bucketRepository.save(bucketEntity);
+  }
+
+  @Override
+  public List<BucketResponse> getAllBucketsWithTag(UUID tagId, UUID loggedUserId) {
+    List<BucketEntity> allBuckets =
+        bucketRepository.findAllByTagIdWhereUserCanView(tagId, loggedUserId);
+    return asBucketResponseList(allBuckets);
+  }
+
+  private List<BucketResponse> asBucketResponseList(List<BucketEntity> allBuckets) {
+    return allBuckets.stream()
+        .map(bucket -> modelMapper.map(bucket, BucketResponse.class))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -119,7 +130,6 @@ public class BucketServiceImpl implements BucketService {
 
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
-        .map(bucket -> bucket.withTags(tagService.getTagsForObject(bucket.getBucketId())))
         .collect(Collectors.toList());
   }
 

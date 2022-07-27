@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "object")
@@ -33,6 +34,13 @@ public class ObjectEntity implements Serializable {
   private UserEntity createdBy;
 
   private String name;
+
+  @ManyToMany
+  @JoinTable(
+      name = "object_to_tag",
+      joinColumns = @JoinColumn(name = "object_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private Set<TagEntity> tags;
 
   public boolean isDeleted() {
     return deletedOn != null;

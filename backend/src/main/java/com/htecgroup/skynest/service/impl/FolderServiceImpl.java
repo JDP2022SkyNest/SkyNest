@@ -12,7 +12,10 @@ import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.FolderCreateRequest;
 import com.htecgroup.skynest.model.request.FolderEditRequest;
-import com.htecgroup.skynest.model.response.*;
+import com.htecgroup.skynest.model.response.FileResponse;
+import com.htecgroup.skynest.model.response.FolderResponse;
+import com.htecgroup.skynest.model.response.ShortFolderResponse;
+import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
 import com.htecgroup.skynest.repository.UserRepository;
@@ -47,7 +50,6 @@ public class FolderServiceImpl implements FolderService {
 
   private ActionService actionService;
   private PermissionService permissionService;
-  private TagService tagService;
 
   private FolderValidatorService folderValidatorService;
 
@@ -162,9 +164,7 @@ public class FolderServiceImpl implements FolderService {
       permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
     }
 
-    List<TagResponse> tags = tagService.getTagsForObject(uuid);
-
-    return modelMapper.map(folderEntity, FolderResponse.class).withTags(tags);
+    return modelMapper.map(folderEntity, FolderResponse.class);
   }
 
   @Override
@@ -265,10 +265,16 @@ public class FolderServiceImpl implements FolderService {
     return storageContentResponse;
   }
 
+  @Override
+  public List<FolderResponse> getAllFoldersWithTag(UUID tagId, UUID loggedUserId) {
+    List<FolderEntity> allFolders =
+        folderRepository.findAllByTagIdWhereUserCanView(tagId, loggedUserId);
+    return asFolderResponseList(allFolders);
+  }
+
   private List<FolderResponse> asFolderResponseList(List<FolderEntity> allFolders) {
     return allFolders.stream()
         .map(folder -> modelMapper.map(folder, FolderResponse.class))
-        .map(folder -> folder.withTags(tagService.getTagsForObject(folder.getId())))
         .collect(Collectors.toList());
   }
 
