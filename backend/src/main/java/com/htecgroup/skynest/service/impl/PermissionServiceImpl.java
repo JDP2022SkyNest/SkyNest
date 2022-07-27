@@ -220,7 +220,7 @@ public class PermissionServiceImpl implements PermissionService {
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository
-            .findByObjectId(bucketId)
+            .findByObjectIdAndGrantedToEmail(bucketId, permissionEditRequest.getGrantedToEmail())
             .orElseThrow(UserObjectAccessEntityNotFound::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     checkIfTargetUserIsTheCurrentUser(targetUser);
