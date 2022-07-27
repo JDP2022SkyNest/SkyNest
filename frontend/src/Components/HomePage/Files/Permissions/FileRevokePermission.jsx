@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AllFolderPermissions, RevokeFolderPermissions } from "../../../ReusableComponents/ReusableFunctions";
+import { AllFilePermissions, RevokeFilePermissions } from "../../../ReusableComponents/ReusableFunctions";
 import * as AiIcons from "react-icons/ai";
 
 const FileRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
@@ -8,14 +8,14 @@ const FileRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
 
    useEffect(() => {
       const getData = async () => {
-         await AllFolderPermissions(accessToken, objectId, setData, setErrorMsg);
+         await AllFilePermissions(accessToken, objectId, setData, setErrorMsg);
       };
       getData();
       //eslint-disable-next-line
    }, []);
 
    const refreshedData = async () => {
-      await AllFolderPermissions(accessToken, objectId, setData, setErrorMsg);
+      await AllFilePermissions(accessToken, objectId, setData, setErrorMsg);
    };
 
    const mapData = data?.map((el, index) => {
@@ -27,7 +27,7 @@ const FileRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                   <AiIcons.AiFillCloseCircle
                      className="revoke-perm-icon"
                      onClick={async () => {
-                        await RevokeFolderPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
+                        await RevokeFilePermissions(accessToken, objectId, el.grantedToEmail, setErrorMsg, setSuccessMsg);
                         refreshedData();
                      }}
                   />
