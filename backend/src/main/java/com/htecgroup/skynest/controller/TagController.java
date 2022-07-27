@@ -2,6 +2,7 @@ package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.request.TagCreateRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.model.response.TagFilteredStorageResponse;
 import com.htecgroup.skynest.model.response.TagResponse;
 import com.htecgroup.skynest.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -333,5 +334,13 @@ public class TagController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void untagObject(@PathVariable UUID tagId, @PathVariable UUID objectId) {
     tagService.untagObject(tagId, objectId);
+  }
+
+  @GetMapping("/{tagId}/objects")
+  public ResponseEntity<TagFilteredStorageResponse> getAllObjectsWithTag(@PathVariable UUID tagId) {
+    TagFilteredStorageResponse tagFilteredStorageResponse = tagService.getAllObjectsWithTag(tagId);
+    ResponseEntity<TagFilteredStorageResponse> tagFilteredStorageResponseEntity =
+        new ResponseEntity<>(tagFilteredStorageResponse, HttpStatus.OK);
+    return tagFilteredStorageResponseEntity;
   }
 }

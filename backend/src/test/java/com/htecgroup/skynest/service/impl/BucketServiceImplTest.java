@@ -16,7 +16,6 @@ import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
-import com.htecgroup.skynest.utils.tag.TagResponseUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,8 +49,6 @@ class BucketServiceImplTest {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getPrivateBucket());
     when(bucketRepository.findAllByOrderByNameAscCreatedOnDesc()).thenReturn(bucketEntityList);
-    when(tagService.getTagsForObject(any()))
-        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
 
@@ -60,22 +57,18 @@ class BucketServiceImplTest {
     Assertions.assertEquals(expectedResponse.size(), actualResponse.size());
     this.assertBucketEntityAndBucketResponse(expectedResponse.get(0), actualResponse.get(0));
     verify(bucketRepository, times(1)).findAllByOrderByNameAscCreatedOnDesc();
-    verify(tagService, times(1)).getTagsForObject(bucketEntityList.get(0).getId());
   }
 
   @Test
   void getBucket() {
     BucketEntity expectedBucketEntity = BucketEntityUtil.getPrivateBucket();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(expectedBucketEntity));
-    when(tagService.getTagsForObject(any()))
-        .thenReturn(Collections.singletonList(TagResponseUtil.get()));
 
     BucketResponse actualBucketResponse =
         bucketService.getBucketDetails(expectedBucketEntity.getId());
 
     this.assertBucketEntityAndBucketResponse(expectedBucketEntity, actualBucketResponse);
     verify(bucketRepository, times(1)).findById(any());
-    verify(tagService, times(1)).getTagsForObject(expectedBucketEntity.getId());
   }
 
   @Test

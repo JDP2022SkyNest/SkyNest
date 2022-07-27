@@ -15,9 +15,12 @@ const AllPermissions = ({ objectId, setErrorMsg }) => {
 
    const mapData = data?.map((el, index) => {
       return (
-         <div key={index} className="d-flex justify-content-between mb-2">
-            <span>{el.grantedToEmail}</span>
-            <span className="permissions-color font-weight-bold border-bottom">{el.accessName}</span>
+         <div key={index}>
+            <div className="d-flex justify-content-between mb-2">
+               <span>{el.grantedToEmail}</span>
+               <span className="permissions-color border-bottom">{el.accessName}</span>
+            </div>
+            {index !== data.length - 1 && <hr />}
          </div>
       );
    });

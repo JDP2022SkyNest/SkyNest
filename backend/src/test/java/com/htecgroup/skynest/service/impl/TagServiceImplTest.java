@@ -66,13 +66,13 @@ class TagServiceImplTest {
     List<TagEntity> expectedTagEntityList = Collections.singletonList(TagEntityUtil.get());
 
     when(currentUserService.getCompanyEntityFromLoggedUser()).thenReturn(Optional.of(company));
-    when(tagRepository.findByCompanyId(any())).thenReturn(expectedTagEntityList);
+    when(tagRepository.findByCompanyIdOrderByNameAsc(any())).thenReturn(expectedTagEntityList);
 
     List<TagResponse> actualResponse = tagService.listAllTags();
 
     Assertions.assertEquals(expectedTagEntityList.size(), actualResponse.size());
     this.assertTagEntityAndTagResponse(expectedTagEntityList.get(0), actualResponse.get(0));
-    verify(tagRepository, times(1)).findByCompanyId(company.getId());
+    verify(tagRepository, times(1)).findByCompanyIdOrderByNameAsc(company.getId());
   }
 
   @Test
