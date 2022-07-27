@@ -124,7 +124,9 @@ public class BucketServiceImpl implements BucketService {
 
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
-    entityList.stream().filter(this::doesCurrentUserHaveViewPermissionOnBucket);
+    entityList.stream()
+        .filter(this::doesCurrentUserHaveViewPermissionOnBucket)
+        .collect(Collectors.toList());
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
