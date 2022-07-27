@@ -235,7 +235,7 @@ public class PermissionServiceImpl implements PermissionService {
     FolderEntity folder =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
     checkIfFolderIsDeleted(folder);
-    currentUserHasPermissionForFolder(folder, AccessType.VIEW);
+    currentUserHasPermissionForFolder(folder, AccessType.OWNER);
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(folderId);
 
     log.info("Current user accessed the permissions of the folder with the id {}", folderId);
