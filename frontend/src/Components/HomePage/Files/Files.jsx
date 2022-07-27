@@ -9,6 +9,7 @@ import GlobalContext from "../../context/GlobalContext";
 import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
 import RemoveTag from "../Tags/RemoveTag";
+import FilePermissionModal from "./Permissions/FilePermissionModal";
 
 const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -70,6 +71,11 @@ const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
                            className="text-dark"
                         >
                            {elem.id === moveFileID ? "Cancel Move" : "Move File"}
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <FilePermissionModal objectId={elem.id} />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null && (
