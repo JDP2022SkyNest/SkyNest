@@ -243,8 +243,6 @@ public class PermissionServiceImpl implements PermissionService {
         fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
     checkIfBucketIsDeleted(fileMetadataEntity.getBucket().getId());
     currentUserHasPermissionForFile(fileMetadataEntity, AccessType.OWNER);
-    currentUserHasPermissionForFolder(fileMetadataEntity.getParentFolder(), AccessType.OWNER);
-    currentUserHasPermissionForBucket(fileMetadataEntity.getBucket().getId(), AccessType.OWNER);
 
     UserEntity user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     UserObjectAccessEntity permission =
