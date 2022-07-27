@@ -336,8 +336,10 @@ public class PermissionController {
       })
   @DeleteMapping("/bucket")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForBucket(@Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
-    permissionService.revokePermission(permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
+  public void deletePermissionForBucket(
+      @Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
+    permissionService.revokePermission(
+        permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
   }
 
   @Operation(summary = "Get all permissions for file")
@@ -599,6 +601,16 @@ public class PermissionController {
     ResponseEntity<PermissionResponse> response =
         new ResponseEntity<>(
             permissionService.grantPermissionForFile(permissionGrantRequest), HttpStatus.OK);
+
+    return response;
+  }
+
+  public ResponseEntity<PermissionResponse> grantPermissionToFolder(
+      @Valid @RequestBody PermissionGrantRequest permissionGrantRequest) {
+
+    ResponseEntity<PermissionResponse> response =
+        new ResponseEntity<>(
+            permissionService.grantPermissionForFolder(permissionGrantRequest), HttpStatus.OK);
 
     return response;
   }
