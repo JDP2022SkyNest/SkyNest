@@ -30,4 +30,6 @@ public interface PermissionService {
   void revokePermission(UUID bucketId, UUID userId);
 
   List<PermissionResponse> getAllFilePermissions(UUID fileId);
+
+  List<PermissionResponse> getAllFolderPermission(UUID folderId);
 }

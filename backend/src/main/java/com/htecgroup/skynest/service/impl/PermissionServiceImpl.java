@@ -6,6 +6,8 @@ import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.file.FileAlreadyDeletedException;
 import com.htecgroup.skynest.exception.file.FileNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
@@ -39,6 +41,7 @@ public class PermissionServiceImpl implements PermissionService {
   private final UserObjectAccessRepository permissionRepository;
   private final FileMetadataRepository fileMetadataRepository;
   private final ModelMapper modelMapper;
+  private final FolderRepository folderRepository;
 
   @Override
   public PermissionResponse grantPermissionForBucket(
@@ -188,7 +191,6 @@ public class PermissionServiceImpl implements PermissionService {
 
   @Override
   public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
-    checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(bucketId);
@@ -197,10 +199,6 @@ public class PermissionServiceImpl implements PermissionService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
-  }
-
-  private void checkIfBucketExist(UUID bucketId) {
-    bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
   }
 
   private void checkIfBucketIsDeleted(UUID bucketId) {
@@ -214,7 +212,6 @@ public class PermissionServiceImpl implements PermissionService {
   @Override
   public PermissionResponse editPermission(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
-    checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
     UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(bucketId);
@@ -227,7 +224,6 @@ public class PermissionServiceImpl implements PermissionService {
 
   @Override
   public void revokePermission(UUID bucketId, UUID userId) {
-    checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
 
@@ -236,6 +232,40 @@ public class PermissionServiceImpl implements PermissionService {
         permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
     checkIfPermissionExist(permission);
     permissionRepository.delete(permission);
+  }
+
+  @Override
+  public List<PermissionResponse> getAllFolderPermission(UUID folderId) {
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    log.info(
+        "User {} ({}) is attempting to view all permissions for folder {}...",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderId);
+
+    FolderEntity folder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    checkIfFolderIsDeleted(folder);
+    currentUserHasPermissionForFolder(folder, AccessType.OWNER);
+    List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(folderId);
+
+    log.info(
+        "User {} ({}) viewed all permissions for folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folder.getName(),
+        folder.getId());
+
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, PermissionResponse.class))
+        .collect(Collectors.toList());
+  }
+
+  private void checkIfFolderIsDeleted(FolderEntity folder) {
+    if (folder.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
   }
 
   private void checkIfPermissionExist(UserObjectAccessEntity permission) {
