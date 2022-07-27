@@ -31,4 +31,6 @@ public interface FolderService {
   void moveFolderToFolder(UUID folderId, UUID destinationFolderId);
 
   StorageContentResponse getFolderContent(UUID folderId);
+
+  List<FolderResponse> getAllFoldersWithTag(UUID tagId, UUID loggedUserId);
 }

@@ -1,10 +1,13 @@
 package com.htecgroup.skynest.utils;
 
 import com.htecgroup.skynest.model.entity.ObjectEntity;
+import com.htecgroup.skynest.utils.tag.TagEntityUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -17,7 +20,8 @@ public final class ObjectEntityUtil {
         null,
         null,
         UserEntityUtil.getVerified(),
-        "Object");
+        "Object",
+        new HashSet<>(Collections.singletonList(TagEntityUtil.get())));
   }
 
   public static ObjectEntity getDeleted() {
@@ -27,6 +31,7 @@ public final class ObjectEntityUtil {
         null,
         LocalDateTime.now(),
         UserEntityUtil.getVerified(),
-        "Object");
+        "Object",
+        new HashSet<>(Collections.singletonList(TagEntityUtil.get())));
   }
 }

@@ -35,4 +35,6 @@ public interface BucketService {
   void deactivateLambda(UUID bucketId, LambdaType lambda);
 
   void activateLambda(UUID bucketId, LambdaType lambdaType);
+
+  List<BucketResponse> getAllBucketsWithTag(UUID tagId, UUID loggedUserId);
 }
