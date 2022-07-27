@@ -217,11 +217,13 @@ public class PermissionServiceImpl implements PermissionService {
   public PermissionResponse editPermission(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
     checkIfBucketIsDeleted(bucketId);
-    currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
+    currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
     UserObjectAccessEntity userObjectAccessEntity =
-        permissionRepository.findByObjectId(bucketId).orElseThrow(BucketNotFoundException::new);
+        permissionRepository
+            .findByObjectId(bucketId)
+            .orElseThrow(PermissionDoesNotExistException::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
-    checkIfTargetUserIsTheCurrentUser(targetUser);
+    checkCurrentUserNotTargetUser(targetUser);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
 
     return setAndSavePermission(
@@ -235,12 +237,11 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserEntity user =
         userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
-    checkIfTargetUserIsTheCurrentUser(user);
+    checkCurrentUserNotTargetUser(user);
     UserObjectAccessEntity permission =
         permissionRepository
             .findByObjectIdAndGrantedTo(bucketId, user)
-            .orElseThrow(BucketNotFoundException::new);
-    checkIfPermissionExist(permission);
+            .orElseThrow(PermissionDoesNotExistException::new);
     permissionRepository.delete(permission);
   }
 
@@ -248,21 +249,19 @@ public class PermissionServiceImpl implements PermissionService {
   public void revokeFilePermission(UUID fileId, String email) {
     FileMetadataEntity fileMetadataEntity =
         fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-    checkIfBucketIsDeleted(fileMetadataEntity.getBucket().getId());
     checkIfFileIsDeleted(fileMetadataEntity);
     currentUserHasPermissionForFile(fileMetadataEntity, AccessType.OWNER);
 
     UserEntity user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
-    checkIfTargetUserIsTheCurrentUser(user);
+    checkCurrentUserNotTargetUser(user);
     UserObjectAccessEntity permission =
         permissionRepository
             .findByObjectIdAndGrantedTo(fileId, user)
-            .orElseThrow(FileNotFoundException::new);
-    checkIfPermissionExist(permission);
+            .orElseThrow(PermissionDoesNotExistException::new);
     permissionRepository.delete(permission);
   }
 
-  private void checkIfTargetUserIsTheCurrentUser(UserEntity user) {
+  private void checkCurrentUserNotTargetUser(UserEntity user) {
     LoggedUserDto userDto = currentUserService.getLoggedUser();
     if (userDto.getUuid().equals(user.getId())) {
       throw new UserCantRevokeTheirOwnPermissions();
@@ -366,6 +365,23 @@ public class PermissionServiceImpl implements PermissionService {
         permission.getGrantedTo().getId());
 
     return modelMapper.map(savedPermission, PermissionResponse.class);
+  }
+
+  @Override
+  public void revokeFolderPermission(UUID objectId, String grantedToEmail) {
+    FolderEntity folderEntity =
+        folderRepository.findById(objectId).orElseThrow(FolderNotFoundException::new);
+    checkIfFolderIsDeleted(folderEntity);
+    currentUserHasPermissionForFolder(folderEntity, AccessType.OWNER);
+
+    UserEntity user =
+        userRepository.findUserByEmail(grantedToEmail).orElseThrow(UserNotFoundException::new);
+    checkCurrentUserNotTargetUser(user);
+    UserObjectAccessEntity permission =
+        permissionRepository
+            .findByObjectIdAndGrantedTo(folderEntity.getId(), user)
+            .orElseThrow(PermissionDoesNotExistException::new);
+    permissionRepository.delete(permission);
   }
 
   private void grantViewPermissionUpstream(

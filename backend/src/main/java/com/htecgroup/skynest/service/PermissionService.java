@@ -36,4 +36,6 @@ public interface PermissionService {
   List<PermissionResponse> getAllFolderPermission(UUID folderId);
 
   PermissionResponse grantPermissionForFile(PermissionGrantRequest permissionGrantRequest);
+
+  void revokeFolderPermission(UUID objectId, String grantedToEmail);
 }

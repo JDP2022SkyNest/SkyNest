@@ -393,6 +393,57 @@ public class PermissionController {
         permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
   }
 
+  @Operation(summary = "Revoke Folder permission")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Permission successfully revoked ",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = String.class),
+                  examples = {@ExampleObject(value = "true")})
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket with id a6fd6d95-0a60-43ff-961f-2b9b2ff72f95 doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @DeleteMapping("/folder")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deletePermissionForFolder(
+      @Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
+    permissionService.revokeFolderPermission(
+        permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
+  }
+
   @Operation(summary = "Get all permissions for file")
   @ApiResponses(
       value = {
