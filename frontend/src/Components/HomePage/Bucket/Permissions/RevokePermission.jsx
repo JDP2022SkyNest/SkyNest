@@ -20,16 +20,19 @@ const RevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
 
    const mapData = data?.map((el, index) => {
       return (
-         <div key={index} className="d-flex justify-content-between mb-2">
-            <span>{el.grantedToEmail}</span>
-            <span className="text-danger px-3" style={{ cursor: "pointer" }}>
-               <AiIcons.AiFillCloseCircle
-                  onClick={async () => {
-                     await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
-                     refreshedData();
-                  }}
-               />
-            </span>
+         <div key={index}>
+            <div className="d-flex justify-content-between mb-2">
+               <span>{el.grantedToEmail}</span>
+               <span className="text-danger px-3" style={{ cursor: "pointer" }}>
+                  <AiIcons.AiFillCloseCircle
+                     onClick={async () => {
+                        await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
+                        refreshedData();
+                     }}
+                  />
+               </span>
+            </div>
+            {index !== data.length - 1 && <hr/>}
          </div>
       );
    });
