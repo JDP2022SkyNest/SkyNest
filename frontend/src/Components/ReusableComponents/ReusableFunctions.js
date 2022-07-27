@@ -481,6 +481,52 @@ export const setTheTag = async (accessToken, tagId, objectId) => {
    }
 };
 
+export const AllBucketPermissions = async (accessToken, bucketId, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get(`/permissions/${bucketId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const GrantBucketPermission = async (accessToken, email, bucketId, role, error) => {
+   try {
+      await AxiosInstance.post(
+         `/permissions/grant/bucket`,
+         {
+            grantedTo: email,
+            objectId: bucketId,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.error);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
+export const RevokeBucketPermissions = async (accessToken, bucketId, userId, error) => {
+   try {
+      await AxiosInstance.delete(`/permissions/${bucketId}/revoke/${userId}`, {
+         headers: { Authorization: accessToken },
+      });
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();

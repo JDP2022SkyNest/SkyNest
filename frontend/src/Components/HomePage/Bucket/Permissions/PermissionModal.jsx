@@ -6,7 +6,7 @@ import GrantPermission from "./GrantPermission";
 import RevokePermission from "./RevokePermission";
 import AllPermissions from "./AllPermissions";
 
-const PermissionModal = () => {
+const PermissionModal = ({ objectId }) => {
    const [show, setShow] = useState(false);
    const [errorMsg, setErrorMsg] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
@@ -16,16 +16,16 @@ const PermissionModal = () => {
    const handleShow = () => setShow(true);
 
    const allComponents = [
-      { name: "Permissions", comp: <AllPermissions /> },
-      { name: "Grant", comp: <GrantPermission /> },
-      { name: "Revoke", comp: <RevokePermission /> },
+      { name: "Permissions", comp: <AllPermissions objectId={objectId} setErrorMsg={setErrorMsg} /> },
+      { name: "Grant", comp: <GrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} /> },
+      { name: "Revoke", comp: <RevokePermission objectId={objectId} setErrorMsg={setErrorMsg} /> },
    ];
 
    const mappedComponents = allComponents.map((el, index) => (
       <div
          key={index}
          onClick={() => setActive(index)}
-         className={`${active === index && "permissions-color border-bottom"} d-inline-block px-3 py-2`}
+         className={`${active === index && "permissions-color border-bottom"} d-inline-block py-2 px-3`}
          style={{ cursor: "pointer" }}
       >
          {el.name}

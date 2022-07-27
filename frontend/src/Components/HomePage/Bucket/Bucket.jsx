@@ -72,7 +72,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                      )}
                      {elem.deletedOn === null && (
                         <Dropdown.Item className="text-dark">
-                           <PermissionModal />
+                           <PermissionModal objectId={elem.bucketId} />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null && (
