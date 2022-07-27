@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AllBucketPermissions, RevokeBucketPermissions } from "../../../ReusableComponents/ReusableFunctions";
 import * as AiIcons from "react-icons/ai";
 
-const RevokePermission = ({ objectId, setErrorMsg, refresh }) => {
+const RevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
    const [data, setData] = useState([]);
    const accessToken = localStorage.accessToken;
 
@@ -25,7 +25,7 @@ const RevokePermission = ({ objectId, setErrorMsg, refresh }) => {
             <span className="text-danger px-3" style={{ cursor: "pointer" }}>
                <AiIcons.AiFillCloseCircle
                   onClick={async () => {
-                     await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg);
+                     await RevokeBucketPermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
                      refreshedData();
                   }}
                />

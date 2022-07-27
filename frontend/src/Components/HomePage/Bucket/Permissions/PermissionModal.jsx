@@ -17,8 +17,8 @@ const PermissionModal = ({ objectId }) => {
 
    const allComponents = [
       { name: "Permissions", comp: <AllPermissions objectId={objectId} setErrorMsg={setErrorMsg} /> },
-      { name: "Grant", comp: <GrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} /> },
-      { name: "Revoke", comp: <RevokePermission objectId={objectId} setErrorMsg={setErrorMsg} /> },
+      { name: "Grant", comp: <GrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} setSuccessMsg={setSuccessMsg} /> },
+      { name: "Revoke", comp: <RevokePermission objectId={objectId} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} /> },
    ];
 
    const mappedComponents = allComponents.map((el, index) => (

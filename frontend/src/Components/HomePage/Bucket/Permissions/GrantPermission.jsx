@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { GrantBucketPermission } from "../../../ReusableComponents/ReusableFunctions";
 import ModalLoader from "../../../Loader/ModalLoader";
 
-const GrantPermission = ({ objectId, setErrorMsg, errorMsg }) => {
+const GrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg }) => {
    const [email, setEmail] = useState("");
    const [role, setRole] = useState("view");
    const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ const GrantPermission = ({ objectId, setErrorMsg, errorMsg }) => {
                      <button
                         onClick={async () => {
                            setLoading(true);
-                           await GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg);
+                           await GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
                            setLoading(false);
                         }}
                         className="btn btn-secondary button-width"
