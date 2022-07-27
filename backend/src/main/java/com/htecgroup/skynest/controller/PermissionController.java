@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/permissions")
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "Permissions API", description = "permissions")
+@Tag(name = "Permissions API", description = "Manage permissions for objects")
 public class PermissionController {
 
   private final PermissionService permissionService;
@@ -148,7 +148,7 @@ public class PermissionController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PostMapping("/grant/bucket")
+  @PostMapping("/bucket")
   public ResponseEntity<PermissionResponse> grantPermissions(
       @Valid @RequestBody PermissionGrantRequest permissionGrantRequest) {
 
@@ -212,7 +212,7 @@ public class PermissionController {
                   })
             }),
       })
-  @PutMapping("/{bucketId}/edit")
+  @PutMapping("/bucket/{bucketId}")
   public ResponseEntity<PermissionResponse> editPermissions(
       @Valid @RequestBody PermissionEditRequest permissionEditRequest,
       @PathVariable UUID bucketId) {
@@ -222,7 +222,7 @@ public class PermissionController {
     return permissionResponseEntity;
   }
 
-  @Operation(summary = "Get all bucket permissions")
+  @Operation(summary = "Get all permissions for bucket")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -284,7 +284,7 @@ public class PermissionController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @GetMapping("/{bucketId}")
+  @GetMapping("/bucket/{bucketId}")
   public List<PermissionResponse> getAllPermissions(@PathVariable UUID bucketId) {
     List<PermissionResponse> permissionList = permissionService.getAllBucketPermission(bucketId);
     return permissionList;
@@ -333,7 +333,7 @@ public class PermissionController {
                   })
             }),
       })
-  @DeleteMapping("/{bucketId}/revoke/{userId}")
+  @DeleteMapping("/bucket/{bucketId}/user/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deletePermissionForBucket(@PathVariable UUID bucketId, @PathVariable UUID userId) {
     permissionService.revokePermission(bucketId, userId);
