@@ -70,7 +70,7 @@ public class TagServiceImpl implements TagService {
             .getCompanyEntityFromLoggedUser()
             .orElseThrow(CompanyNotFoundException::new);
 
-    return tagRepository.findByCompanyId(companyEntity.getId()).stream()
+    return tagRepository.findByCompanyIdOrderByNameAsc(companyEntity.getId()).stream()
         .map(e -> modelMapper.map(e, TagResponse.class))
         .collect(Collectors.toList());
   }
