@@ -218,7 +218,8 @@ public class PermissionServiceImpl implements PermissionService {
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
-    UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(bucketId);
+    UserObjectAccessEntity userObjectAccessEntity =
+        permissionRepository.findByObjectId(bucketId).orElseThrow(BucketNotFoundException::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     checkIfTargetUserIsTheCurrentUser(targetUser);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
@@ -236,7 +237,9 @@ public class PermissionServiceImpl implements PermissionService {
         userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
     checkIfTargetUserIsTheCurrentUser(user);
     UserObjectAccessEntity permission =
-        permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
+        permissionRepository
+            .findByObjectIdAndGrantedTo(bucketId, user)
+            .orElseThrow(BucketNotFoundException::new);
     checkIfPermissionExist(permission);
     permissionRepository.delete(permission);
   }
@@ -252,7 +255,9 @@ public class PermissionServiceImpl implements PermissionService {
     UserEntity user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
     checkIfTargetUserIsTheCurrentUser(user);
     UserObjectAccessEntity permission =
-        permissionRepository.findByObjectIdAndGrantedTo(fileId, user);
+        permissionRepository
+            .findByObjectIdAndGrantedTo(fileId, user)
+            .orElseThrow(FileNotFoundException::new);
     checkIfPermissionExist(permission);
     permissionRepository.delete(permission);
   }
