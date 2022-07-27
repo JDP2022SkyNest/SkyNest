@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.exception.SkyNestBaseException;
 import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
@@ -299,6 +300,117 @@ public class PermissionServiceImpl implements PermissionService {
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
+  }
+
+  @Override
+  public PermissionResponse grantPermissionForFile(PermissionGrantRequest permissionGrantRequest) {
+    UserObjectAccessEntity permission = new UserObjectAccessEntity();
+
+    UserEntity currentUser =
+        userRepository
+            .findById(currentUserService.getLoggedUser().getUuid())
+            .orElseThrow(UserNotFoundException::new);
+
+    UserEntity targetUser =
+        userRepository
+            .findUserByEmail(permissionGrantRequest.getGrantedToEmail())
+            .orElseThrow(UserNotFoundException::new);
+
+    AccessTypeEntity accessType =
+        accessTypeRepository
+            .findByName(permissionGrantRequest.getAccess())
+            .orElseThrow(AccessTypeNotFoundException::new);
+
+    FileMetadataEntity file =
+        fileMetadataRepository
+            .findById(permissionGrantRequest.getObjectId())
+            .orElseThrow(FileNotFoundException::new);
+
+    if (file.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
+
+    permission.setGrantedBy(currentUser);
+    permission.setGrantedTo(targetUser);
+    permission.setAccess(accessType);
+    permission.setObject(file);
+    permission.setId(
+        new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
+
+    currentUserHasPermissionForFile(file, AccessType.OWNER);
+
+    if (permissionRepository.existsById(
+        new UserObjectAccessKey(targetUser.getId(), file.getId()))) {
+      throw new PermissionAlreadyExistsException();
+    }
+
+    UserObjectAccessEntity savedPermission = permissionRepository.save(permission);
+
+    grantViewPermissionUpstream(file, currentUser, targetUser, permissionGrantRequest);
+
+    log.info(
+        "User {} ({}) granted {} permission for file {} ({}) to user {} ({})",
+        permission.getGrantedBy().getEmail(),
+        permission.getGrantedBy().getId(),
+        permission.getAccess().getName(),
+        permission.getObject().getName(),
+        permission.getObject().getId(),
+        permission.getGrantedTo().getEmail(),
+        permission.getGrantedTo().getId());
+
+    return modelMapper.map(savedPermission, PermissionResponse.class);
+  }
+
+  private void grantViewPermissionUpstream(
+      FileMetadataEntity file,
+      UserEntity currentUser,
+      UserEntity targetUser,
+      PermissionGrantRequest permissionGrantRequest) {
+
+    grantViewPermissionToAllFoldersUpstream(file.getParentFolder(), currentUser, targetUser);
+    permissionGrantRequest.setObjectId(file.getBucket().getId());
+    permissionGrantRequest.setAccess("view");
+    try {
+      grantPermissionForBucket(permissionGrantRequest);
+    } catch (SkyNestBaseException ignored) {
+    }
+  }
+
+  private void grantViewPermissionToAllFoldersUpstream(
+      FolderEntity parent, UserEntity currentUser, UserEntity targetUser) {
+
+    if (parent == null
+        || permissionRepository.existsById(
+            new UserObjectAccessKey(targetUser.getId(), parent.getId()))) {
+      return;
+    }
+
+    AccessTypeEntity accessTypeView =
+        accessTypeRepository
+            .findByName(AccessType.VIEW.getText())
+            .orElseThrow(AccessTypeNotFoundException::new);
+
+    UserObjectAccessEntity permission = new UserObjectAccessEntity();
+    permission.setGrantedBy(currentUser);
+    permission.setGrantedTo(targetUser);
+    permission.setAccess(accessTypeView);
+    permission.setObject(parent);
+    permission.setId(
+        new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
+
+    permissionRepository.save(permission);
+
+    log.info(
+        "User {} ({}) granted {} permission for folder {} ({}) to user {} ({})",
+        permission.getGrantedBy().getEmail(),
+        permission.getGrantedBy().getId(),
+        permission.getAccess().getName(),
+        permission.getObject().getName(),
+        permission.getObject().getId(),
+        permission.getGrantedTo().getEmail(),
+        permission.getGrantedTo().getId());
+
+    grantViewPermissionToAllFoldersUpstream(parent.getParentFolder(), currentUser, targetUser);
   }
 
   private void checkIfPermissionExist(UserObjectAccessEntity permission) {

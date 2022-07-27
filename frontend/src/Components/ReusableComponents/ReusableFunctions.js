@@ -493,6 +493,18 @@ export const AllBucketPermissions = async (accessToken, bucketId, stateToChange,
    }
 };
 
+export const AllFolderPermissions = async (accessToken, folderId, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get(`/permissions/folder/${folderId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const GrantBucketPermission = async (accessToken, email, bucketId, role, error, success) => {
    try {
       await AxiosInstance.post(
@@ -518,9 +530,46 @@ export const GrantBucketPermission = async (accessToken, email, bucketId, role, 
    }
 };
 
+export const GrantFolderPermission = async (accessToken, email, folderId, role, error, success) => {
+   try {
+      await AxiosInstance.post(
+         `/permissions/folder`,
+         {
+            grantedToEmail: email,
+            objectId: folderId,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Added");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
 export const RevokeBucketPermissions = async (accessToken, bucketId, userId, error, success) => {
    try {
       await AxiosInstance.delete(`/permissions/bucket/${bucketId}/user/${userId}`, {
+         headers: { Authorization: accessToken },
+      });
+      success("Permission Removed");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const RevokeFolderPermissions = async (accessToken, folderId, userId, error, success) => {
+   try {
+      await AxiosInstance.delete(`/permissions/folder/${folderId}/user/${userId}`, {
          headers: { Authorization: accessToken },
       });
       success("Permission Removed");

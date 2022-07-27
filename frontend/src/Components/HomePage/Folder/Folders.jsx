@@ -10,6 +10,7 @@ import AllTags from "../Tags/AllTags";
 import TagDisplay from "../Tags/TagDisplay";
 import GlobalContext from "../../context/GlobalContext";
 import RemoveTag from "../Tags/RemoveTag";
+import FolderPermissionModal from "./Permissions/FolderPermissionModal";
 
 const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
    const [show, setShow] = useState(false);
@@ -80,6 +81,11 @@ const Folders = ({ elem, setErrorMsg, setSuccessMsg, refresh }) => {
                            className="text-dark"
                         >
                            {elem.id === moveFolderID ? "Cancel Move" : "Move Folder"}
+                        </Dropdown.Item>
+                     )}
+                     {elem.deletedOn === null && (
+                        <Dropdown.Item className="text-dark">
+                           <FolderPermissionModal objectId={elem.id} />
                         </Dropdown.Item>
                      )}
                      {elem.deletedOn === null && (
