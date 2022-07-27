@@ -530,6 +530,31 @@ export const GrantBucketPermission = async (accessToken, email, bucketId, role, 
    }
 };
 
+export const GrantFolderPermission = async (accessToken, email, folderId, role, error, success) => {
+   try {
+      await AxiosInstance.post(
+         `/permissions/folder`,
+         {
+            grantedToEmail: email,
+            objectId: folderId,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Added");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
 export const RevokeBucketPermissions = async (accessToken, bucketId, userId, error, success) => {
    try {
       await AxiosInstance.delete(`/permissions/bucket/${bucketId}/user/${userId}`, {
