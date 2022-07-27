@@ -132,6 +132,8 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   public FileDownloadResponse downloadFile(UUID fileId) {
 
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
+
+    checkFileNotDeleted(fileMetadataEntity);
     checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
 
     if (!fileMetadataEntity.getBucket().getIsPublic())
@@ -150,12 +152,12 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     FileMetadataEntity fileMetadataEntity =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
+    checkFileNotDeleted(fileMetadataEntity);
+    checkOnlyEmployeesCanAccessCompanyBuckets(fileMetadataEntity);
+
     if (!fileMetadataEntity.getBucket().getIsPublic())
       permissionService.currentUserHasPermissionForFile(fileMetadataEntity, AccessType.EDIT);
 
-    if (fileMetadataEntity.isDeleted()) {
-      throw new FileAlreadyDeletedException();
-    }
     fileInfoEditRequest.setName(fileInfoEditRequest.getName().trim());
 
     modelMapper.map(fileInfoEditRequest, fileMetadataEntity);
@@ -187,7 +189,7 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     FileMetadataEntity fileMetadata =
         fileMetadataRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
 
-    checkIfDeleted(fileMetadata);
+    checkFileNotDeleted(fileMetadata);
     if (!fileMetadata.getBucket().getIsPublic()) {
       permissionService.currentUserHasPermissionForFile(fileMetadata, AccessType.EDIT);
     }
@@ -210,7 +212,7 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   @Override
   public void moveFileToFolder(UUID fileId, UUID destinationFolderId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
-    checkIfDeleted(fileMetadataEntity);
+    checkFileNotDeleted(fileMetadataEntity);
     FolderEntity folderEntity =
         folderRepository.findById(destinationFolderId).orElseThrow(FolderNotFoundException::new);
     if (!fileMetadataEntity.getBucket().getIsPublic()) {
@@ -225,7 +227,7 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
   @Override
   public void moveFileToRoot(UUID fileId) {
     FileMetadataEntity fileMetadataEntity = findFileMetadataById(fileId);
-    checkIfDeleted(fileMetadataEntity);
+    checkFileNotDeleted(fileMetadataEntity);
     if (!fileMetadataEntity.getBucket().getIsPublic()) {
       permissionService.currentUserHasPermissionForBucket(
           fileMetadataEntity.getBucket().getId(), AccessType.EDIT);
@@ -236,7 +238,7 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     saveMoveFile(fileMetadataEntity);
   }
 
-  private void checkIfDeleted(FileMetadataEntity fileMetadataEntity) {
+  private void checkFileNotDeleted(FileMetadataEntity fileMetadataEntity) {
     if (fileMetadataEntity.isDeleted()) {
       throw new FileAlreadyDeletedException();
     }
