@@ -43,7 +43,7 @@ const GrantPermission = ({ objectId, setErrorMsg, errorMsg }) => {
                      <button
                         onClick={async () => {
                            setLoading(true);
-                           GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg);
+                           await GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg);
                            setLoading(false);
                         }}
                         className="btn btn-secondary button-width"
