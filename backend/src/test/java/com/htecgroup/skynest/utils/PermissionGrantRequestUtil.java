@@ -11,6 +11,6 @@ public class PermissionGrantRequestUtil {
   private static final BucketEntity bucket = BucketEntityUtil.getPrivateBucket();
 
   public static PermissionGrantRequest get(AccessType accessType) {
-    return new PermissionGrantRequest(user.getId(), bucket.getId(), accessType.getText());
+    return new PermissionGrantRequest(user.getEmail(), bucket.getId(), accessType.getText());
   }
 }
