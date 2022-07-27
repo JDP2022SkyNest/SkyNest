@@ -616,6 +616,18 @@ export const RevokeFolderPermissions = async (accessToken, folderId, userId, err
    }
 };
 
+export const RevokeFilePermissions = async (accessToken, fileId, userId, error, success) => {
+   try {
+      await AxiosInstance.delete(`/permissions/file/${fileId}/user/${userId}`, {
+         headers: { Authorization: accessToken },
+      });
+      success("Permission Removed");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
