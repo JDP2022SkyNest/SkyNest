@@ -17,10 +17,7 @@ const FilePermissionModal = ({ objectId }) => {
 
    const allComponents = [
       { name: "Permissions", comp: <FileAllPermissions objectId={objectId} setErrorMsg={setErrorMsg} /> },
-      {
-         name: "Grant",
-         comp: <FileGrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} setSuccessMsg={setSuccessMsg} />,
-      },
+      { name: "Grant/Edit", comp: <FileGrantPermission objectId={objectId} setErrorMsg={setErrorMsg} errorMsg={errorMsg} setSuccessMsg={setSuccessMsg} /> },
       { name: "Revoke", comp: <FileRevokePermission objectId={objectId} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} /> },
    ];
 
