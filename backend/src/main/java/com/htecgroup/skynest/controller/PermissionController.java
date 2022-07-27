@@ -2,6 +2,7 @@ package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
+import com.htecgroup.skynest.model.request.PermissionRevokeRequest;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.model.response.PermissionResponse;
 import com.htecgroup.skynest.service.PermissionService;
@@ -334,10 +335,10 @@ public class PermissionController {
                   })
             }),
       })
-  @DeleteMapping("/bucket/{bucketId}/user/{userId}")
+  @DeleteMapping("/bucket")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForBucket(@PathVariable UUID bucketId, @PathVariable UUID userId) {
-    permissionService.revokePermission(bucketId, userId);
+  public void deletePermissionForBucket(@Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
+    permissionService.revokePermission(permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
   }
 
   @Operation(summary = "Revoke File permission")
