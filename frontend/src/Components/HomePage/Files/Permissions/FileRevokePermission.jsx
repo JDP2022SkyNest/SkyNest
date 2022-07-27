@@ -27,7 +27,7 @@ const FileRevokePermission = ({ objectId, setErrorMsg, setSuccessMsg }) => {
                   <AiIcons.AiFillCloseCircle
                      className="revoke-perm-icon"
                      onClick={async () => {
-                        await RevokeFilePermissions(accessToken, objectId, el.grantedToId, setErrorMsg, setSuccessMsg);
+                        await RevokeFilePermissions(accessToken, objectId, el.grantedToEmail, setErrorMsg, setSuccessMsg);
                         refreshedData();
                      }}
                   />
