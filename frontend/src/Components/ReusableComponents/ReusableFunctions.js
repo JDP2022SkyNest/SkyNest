@@ -688,6 +688,30 @@ export const ModifyFolderPermissions = async (accessToken, email, folderId, role
    }
 };
 
+export const ModifyFilePermissions = async (accessToken, email, fileId, role, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/permissions/file/${fileId}`,
+         {
+            grantedToEmail: email,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Edited");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
