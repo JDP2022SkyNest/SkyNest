@@ -13,6 +13,8 @@ const GrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg }) => 
          setLoading(true);
          await GrantBucketPermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
          setLoading(false);
+      } else if (!email.includes("@")) {
+         setErrorMsg("Invalid email format");
       } else {
          setErrorMsg("Email has to be more than 5 characters");
       }
