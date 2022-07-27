@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets, metodi } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets, startDropboxAutorization, finishDropboxAutorization } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import "./HomePage.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
 import HomeSearchBar from "./HomeSearchBar";
 import CreateNewTag from "./Tags/CreateNewTag";
+import LambdaIcon from "../HomePage/lambda.png";
 
 const HomePage = () => {
    const navigate = useNavigate();
@@ -23,6 +24,7 @@ const HomePage = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
    const [delState, setDelState] = useState(false);
+   const [code, setCode] = useState("");
    const filteredBuckets = allBuckets.filter(
       (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
    );
@@ -57,6 +59,11 @@ const HomePage = () => {
       setMoveFileID("");
       //eslint-disable-next-line
    }, []);
+
+   const handleLambda = async (e) => {
+      e.preventDefault();
+      await finishDropboxAutorization();
+   };
 
    return (
       <div className="home-page-body">
@@ -97,21 +104,30 @@ const HomePage = () => {
                   <AddBucketModal refreshBuckets={refreshBuckets} />
                   <CreateNewTag />
                </div>
+               <div className="py-2 mt-2 rounded d-flex">
+                  <div
+                     onClick={() => {
+                        startDropboxAutorization(accessToken, setErrorMsg);
+                     }}
+                     className="ml-2 latte-background custom-rounded shadow"
+                  >
+                     <img src={LambdaIcon} alt="lambda" className="lambda-icon" />
+                  </div>
+                  <form onSubmit={handleLambda}>
+                     <div>
+                        <input className="ml-2 border border-white" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter code" />
+                     </div>
+                     <button className="ml-2 btn btn-light" type="submit">
+                        Connect to DROPBOX
+                     </button>
+                  </form>
+               </div>
                <div className="container mt-2">
                   <div className="row data-folder">{allData}</div>
                </div>
             </div>
-            <div className="d-flex justify-content-center mt-5">
-               <button
-                  onClick={() => {
-                     metodi(accessToken, setErrorMsg);
-                  }}
-                  className="btn btn-danger"
-               >
-                  METODI
-               </button>
-            </div>
          </div>
+
          <Footer />
       </div>
    );
