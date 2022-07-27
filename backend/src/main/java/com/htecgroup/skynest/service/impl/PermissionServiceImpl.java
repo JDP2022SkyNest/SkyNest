@@ -436,6 +436,17 @@ public class PermissionServiceImpl implements PermissionService {
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
     checkIfTargetUserIsTheCurrentUser(targetUser);
 
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+    log.info(
+        "User {} ({}) modified permission for folder {} ({}) for user {} ({}) to {}",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        userObjectAccessEntity.getObject().getName(),
+        userObjectAccessEntity.getObject().getId(),
+        userObjectAccessEntity.getGrantedTo().getEmail(),
+        userObjectAccessEntity.getGrantedTo().getId(),
+        userObjectAccessEntity.getAccess().getName());
+
     return setAndSavePermission(
         userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
   }

@@ -36,4 +36,11 @@ public class UserEntityUtil extends BasicUtil {
     userEntity.setRole(roleAdminEntity);
     return userEntity;
   }
+
+  public static UserEntity getTargetUser() {
+    UserEntity userEntity = getVerified();
+    userEntity.setId(UUID.randomUUID());
+    userEntity.setEmail("targetUser@email.com");
+    return userEntity;
+  }
 }

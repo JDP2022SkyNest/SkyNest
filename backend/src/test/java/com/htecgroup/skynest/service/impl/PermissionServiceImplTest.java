@@ -171,7 +171,7 @@ class PermissionServiceImplTest {
   void editPermission() {
     UserObjectAccessEntity expectedUserObjectAccessEntity =
         UserObjectAccessEntityUtil.getUserObjectAccess();
-    UserEntity userEntity = UserEntityUtil.getVerified();
+    UserEntity userEntity = UserEntityUtil.getTargetUser();
     AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
     BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
     UserObjectAccessEntity userObjectAccessEntity =
@@ -204,7 +204,7 @@ class PermissionServiceImplTest {
   void when_revokePermission_DeleteFromDatabase() {
     UserObjectAccessEntity expectedUserObjectAccessEntity =
         UserObjectAccessEntityUtil.getUserObjectAccess();
-    UserEntity userEntity = UserEntityUtil.getVerified();
+    UserEntity userEntity = UserEntityUtil.getTargetUser();
     BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
     UUID bucketId = bucketEntity.getId();
     UserObjectAccessEntity userObjectAccessEntity =
