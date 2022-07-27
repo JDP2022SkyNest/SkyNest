@@ -36,6 +36,7 @@ public class ObjectEntity implements Serializable {
   private String name;
 
   @ManyToMany
+  @OrderBy("name ASC")
   @JoinTable(
       name = "object_to_tag",
       joinColumns = @JoinColumn(name = "object_id"),
