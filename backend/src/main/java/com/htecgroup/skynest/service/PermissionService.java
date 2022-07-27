@@ -29,6 +29,8 @@ public interface PermissionService {
 
   void revokePermission(UUID bucketId, String userEmail);
 
+  void revokeFilePermission(UUID fileId, String email);
+
   List<PermissionResponse> getAllFilePermissions(UUID fileId);
 
   PermissionResponse modifyFolderPermissions(

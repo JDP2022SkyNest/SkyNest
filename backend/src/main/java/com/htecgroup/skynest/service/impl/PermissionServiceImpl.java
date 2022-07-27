@@ -12,6 +12,8 @@ import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
+import com.htecgroup.skynest.exception.permission.UserCantRevokeTheirOwnPermissions;
+import com.htecgroup.skynest.exception.permission.UserObjectAccessEntityNotFound;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
@@ -43,6 +45,7 @@ public class PermissionServiceImpl implements PermissionService {
   private final FileMetadataRepository fileMetadataRepository;
   private final ModelMapper modelMapper;
   private final FolderRepository folderRepository;
+  private final FileMetadataRepository fileRepository;
 
   @Override
   public PermissionResponse grantPermissionForBucket(
@@ -217,9 +220,10 @@ public class PermissionServiceImpl implements PermissionService {
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository
-            .findByObjectIdAndGrantedToEmail(bucketId, permissionEditRequest.getGrantedToEmail())
-            .orElseThrow(RuntimeException::new);
+            .findByObjectId(bucketId)
+            .orElseThrow(UserObjectAccessEntityNotFound::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
+    checkIfTargetUserIsTheCurrentUser(targetUser);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
 
     return setAndSavePermission(
@@ -230,13 +234,40 @@ public class PermissionServiceImpl implements PermissionService {
   public void revokePermission(UUID bucketId, String userEmail) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
-
     UserEntity user =
         userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
+    checkIfTargetUserIsTheCurrentUser(user);
     UserObjectAccessEntity permission =
-        permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
+        permissionRepository
+            .findByObjectIdAndGrantedTo(bucketId, user)
+            .orElseThrow(BucketNotFoundException::new);
     checkIfPermissionExist(permission);
     permissionRepository.delete(permission);
+  }
+
+  @Override
+  public void revokeFilePermission(UUID fileId, String email) {
+    FileMetadataEntity fileMetadataEntity =
+        fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    checkIfBucketIsDeleted(fileMetadataEntity.getBucket().getId());
+    checkIfFileIsDeleted(fileMetadataEntity);
+    currentUserHasPermissionForFile(fileMetadataEntity, AccessType.OWNER);
+
+    UserEntity user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
+    checkIfTargetUserIsTheCurrentUser(user);
+    UserObjectAccessEntity permission =
+        permissionRepository
+            .findByObjectIdAndGrantedTo(fileId, user)
+            .orElseThrow(FileNotFoundException::new);
+    checkIfPermissionExist(permission);
+    permissionRepository.delete(permission);
+  }
+
+  private void checkIfTargetUserIsTheCurrentUser(UserEntity user) {
+    LoggedUserDto userDto = currentUserService.getLoggedUser();
+    if (userDto.getUuid().equals(user.getId())) {
+      throw new UserCantRevokeTheirOwnPermissions();
+    }
   }
 
   @Override
@@ -270,6 +301,12 @@ public class PermissionServiceImpl implements PermissionService {
   private void checkIfFolderIsDeleted(FolderEntity folder) {
     if (folder.isDeleted()) {
       throw new FolderAlreadyDeletedException();
+    }
+  }
+
+  private void checkIfFileIsDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
     }
   }
 
@@ -391,13 +428,13 @@ public class PermissionServiceImpl implements PermissionService {
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
     checkIfFolderIsDeleted(folder);
     currentUserHasPermissionForFolder(folder, AccessType.OWNER);
-    // TODO: change errors here and in editObjectAccessEntity
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository
             .findByObjectIdAndGrantedToEmail(folderId, permissionEditRequest.getGrantedToEmail())
-            .orElseThrow(RuntimeException::new);
+            .orElseThrow(UserObjectAccessEntityNotFound::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
+    checkIfTargetUserIsTheCurrentUser(targetUser);
 
     return setAndSavePermission(
         userObjectAccessEntity, targetUser, accessType, permissionEditRequest);

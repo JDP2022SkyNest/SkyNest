@@ -13,9 +13,9 @@ public interface UserObjectAccessRepository
     extends CrudRepository<UserObjectAccessEntity, UserObjectAccessKey> {
   List<UserObjectAccessEntity> findAllByObjectId(UUID objectId);
 
-  UserObjectAccessEntity findByObjectId(UUID objectId);
-
-  UserObjectAccessEntity findByObjectIdAndGrantedTo(UUID bucketId, UserEntity user);
+  Optional<UserObjectAccessEntity> findByObjectId(UUID objectId);
 
   Optional<UserObjectAccessEntity> findByObjectIdAndGrantedToEmail(UUID bucketId, String email);
+
+  Optional<UserObjectAccessEntity> findByObjectIdAndGrantedTo(UUID bucketId, UserEntity user);
 }
