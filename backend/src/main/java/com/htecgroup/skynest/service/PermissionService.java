@@ -31,4 +31,8 @@ public interface PermissionService {
   void revokePermission(UUID bucketId, UUID userId);
 
   void revokeFilePermission(UUID fileId, UUID userId) throws FileNotFoundException;
+
+  List<PermissionResponse> getAllFilePermissions(UUID fileId);
+
+  List<PermissionResponse> getAllFolderPermission(UUID folderId);
 }
