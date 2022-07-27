@@ -4,6 +4,7 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
@@ -11,10 +12,7 @@ import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
-import com.htecgroup.skynest.repository.AccessTypeRepository;
-import com.htecgroup.skynest.repository.BucketRepository;
-import com.htecgroup.skynest.repository.UserObjectAccessRepository;
-import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.repository.*;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +36,8 @@ public class PermissionServiceImpl implements PermissionService {
   private final BucketRepository bucketRepository;
   private final UserObjectAccessRepository permissionRepository;
   private final ModelMapper modelMapper;
+
+  private final FolderRepository folderRepository;
 
   @Override
   public PermissionResponse grantPermissionForBucket(
@@ -235,6 +235,20 @@ public class PermissionServiceImpl implements PermissionService {
         permissionRepository.findByObjectIdAndGrantedTo(bucketId, user);
     checkIfPermissionExist(permission);
     permissionRepository.delete(permission);
+  }
+
+  @Override
+  public PermissionResponse modifyFolderPermissions(
+      PermissionEditRequest permissionEditRequest, UUID folderId) {
+    FolderEntity folder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    currentUserHasPermissionForFolder(folder, AccessType.EDIT);
+    UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(folderId);
+    UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
+    AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
+
+    return setAndSavePermission(
+        userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
   }
 
   private void checkIfPermissionExist(UserObjectAccessEntity permission) {

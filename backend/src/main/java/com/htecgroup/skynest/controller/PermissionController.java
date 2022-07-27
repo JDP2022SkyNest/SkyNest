@@ -222,6 +222,70 @@ public class PermissionController {
     return permissionResponseEntity;
   }
 
+  @Operation(summary = "Edit permission")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Permission successfully edited",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = PermissionResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"grantedToId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"grantedToEmail\": \"Email@com\","
+                                + "\"objectId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"grantedOn\": \"2022-07-18-04-00-15\","
+                                + "\"accessName\": \"EDIT\","
+                                + "{\"grantedById\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"grantedByEmail\": \"email2@com\"}")
+                  }),
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Bucket not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Bucket not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PutMapping("/folder/{folderId}")
+  public ResponseEntity<PermissionResponse> modifyFolderPermissions(
+      @Valid @RequestBody PermissionEditRequest permissionEditRequest,
+      @PathVariable UUID folderId) {
+    ResponseEntity<PermissionResponse> permissionResponseEntity =
+        new ResponseEntity<>(
+            permissionService.modifyFolderPermissions(permissionEditRequest, folderId),
+            HttpStatus.OK);
+    return permissionResponseEntity;
+  }
+
   @Operation(summary = "Get all permissions for bucket")
   @ApiResponses(
       value = {
