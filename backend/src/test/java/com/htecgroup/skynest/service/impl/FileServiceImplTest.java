@@ -19,7 +19,7 @@ import com.htecgroup.skynest.service.TagService;
 import com.htecgroup.skynest.utils.FileEditRequestUtil;
 import com.htecgroup.skynest.utils.FileMetadataEntityUtil;
 import com.htecgroup.skynest.utils.FolderEntityUtil;
-import com.htecgroup.skynest.utils.tag.TagResponseUtil;
+import com.htecgroup.skynest.utils.LoggedUserDtoUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,6 +80,7 @@ class FileServiceImplTest {
     FileMetadataEntity expectedFileEntity = FileMetadataEntityUtil.getRootFileMetadataEntity();
     when(fileMetadataRepository.findById(any())).thenReturn(Optional.of(expectedFileEntity));
     when(fileMetadataRepository.save(any())).thenReturn(expectedFileEntity);
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
 
     FileInfoEditRequest fileInfoEditRequest = FileEditRequestUtil.get();
     FileResponse actualFileResponse =
