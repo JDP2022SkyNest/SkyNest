@@ -214,7 +214,7 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public PermissionResponse editPermission(
+  public PermissionResponse editPermissionForBucket(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
@@ -229,7 +229,7 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public void revokePermission(UUID bucketId, String userEmail) {
+  public void revokePermissionForBucket(UUID bucketId, String userEmail) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
 
@@ -453,6 +453,18 @@ public class PermissionServiceImpl implements PermissionService {
     modelMapper.map(permissionEditRequest, userObjectAccessEntity);
     UserObjectAccessEntity savedUserObjectAccessEntity =
         permissionRepository.save(userObjectAccessEntity);
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+    log.info(
+        "User {} ({}) modified permission for file {} ({}) for user {} ({}) to {}",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        savedUserObjectAccessEntity.getObject().getName(),
+        savedUserObjectAccessEntity.getObject().getId(),
+        savedUserObjectAccessEntity.getGrantedTo().getEmail(),
+        savedUserObjectAccessEntity.getGrantedTo().getId(),
+        savedUserObjectAccessEntity.getAccess().getName());
+
     return modelMapper.map(savedUserObjectAccessEntity, PermissionResponse.class);
   }
 
@@ -485,5 +497,38 @@ public class PermissionServiceImpl implements PermissionService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public PermissionResponse editPermissionForFile(
+      PermissionEditRequest permissionEditRequest, UUID fileId) {
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+    log.info(
+        "User {} ({}) is attempting to modify permission for file {} for user {} to {}",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        fileId,
+        permissionEditRequest.getGrantedToEmail(),
+        permissionEditRequest.getAccess());
+
+    FileMetadataEntity fileMetadata =
+        fileMetadataRepository.findById(fileId).orElseThrow(FolderNotFoundException::new);
+
+    checkIfFileIsDeleted(fileMetadata);
+    currentUserHasPermissionForFile(fileMetadata, AccessType.OWNER);
+
+    UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
+    checkIfTargetUserIsTheCurrentUser(targetUser);
+
+    UserObjectAccessEntity userObjectAccessEntity =
+        permissionRepository
+            .findByObjectId(fileId)
+            .orElseThrow(PermissionDoesNotExistException::new);
+
+    AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
+
+    return setAndSavePermission(
+        userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
   }
 }
