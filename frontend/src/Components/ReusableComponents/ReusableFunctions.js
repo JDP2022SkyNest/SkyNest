@@ -505,6 +505,18 @@ export const AllFolderPermissions = async (accessToken, folderId, stateToChange,
    }
 };
 
+export const AllFilePermissions = async (accessToken, fileId, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get(`/permissions/file/${fileId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const GrantBucketPermission = async (accessToken, email, bucketId, role, error, success) => {
    try {
       await AxiosInstance.post(
