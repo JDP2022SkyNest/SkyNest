@@ -82,7 +82,11 @@ public class FolderServiceImpl implements FolderService {
     bucketEntity = modelMapper.map(bucketEntity, BucketEntity.class);
     FolderEntity parentFolderEntity = folderRepository.findFolderById(parentFolderEntityId);
     if (!bucketEntity.getIsPublic()) {
-      permissionService.currentUserHasPermissionForFolder(parentFolderEntity, AccessType.EDIT);
+      if (parentFolderEntity != null) {
+        permissionService.currentUserHasPermissionForFolder(parentFolderEntity, AccessType.EDIT);
+      } else {
+        permissionService.currentUserHasPermissionForBucket(bucketEntityId, AccessType.EDIT);
+      }
     }
 
     folderEntity.setParentFolder(parentFolderEntity);
