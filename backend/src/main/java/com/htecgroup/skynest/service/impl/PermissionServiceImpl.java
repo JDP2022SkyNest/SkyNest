@@ -11,10 +11,7 @@ import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
-import com.htecgroup.skynest.repository.AccessTypeRepository;
-import com.htecgroup.skynest.repository.BucketRepository;
-import com.htecgroup.skynest.repository.UserObjectAccessRepository;
-import com.htecgroup.skynest.repository.UserRepository;
+import com.htecgroup.skynest.repository.*;
 import com.htecgroup.skynest.service.CurrentUserService;
 import com.htecgroup.skynest.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +36,8 @@ public class PermissionServiceImpl implements PermissionService {
   private final BucketRepository bucketRepository;
   private final UserObjectAccessRepository permissionRepository;
   private final ModelMapper modelMapper;
+
+  private final FileMetadataRepository fileRepository;
 
   @Override
   public PermissionResponse grantPermissionForBucket(
@@ -238,7 +238,19 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public void revokeFilePermission(UUID fileId, UUID userId) {}
+  public void revokeFilePermission(UUID fileId, UUID userId) throws FileNotFoundException {
+    FileMetadataEntity fileMetadataEntity =
+        fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
+    checkIfBucketIsDeleted(fileMetadataEntity.getBucket().getId());
+    currentUserHasPermissionForFile(fileMetadataEntity, AccessType.OWNER);
+    currentUserHasPermissionForFolder(fileMetadataEntity.getParentFolder(), AccessType.OWNER);
+    currentUserHasPermissionForBucket(fileMetadataEntity.getBucket().getId(), AccessType.OWNER);
+
+    UserEntity user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    UserObjectAccessEntity permission =
+        permissionRepository.findByObjectIdAndGrantedTo(fileId, user);
+    permissionRepository.delete(permission);
+  }
 
   private void checkIfPermissionExist(UserObjectAccessEntity permission) {
     if (permission == null) {

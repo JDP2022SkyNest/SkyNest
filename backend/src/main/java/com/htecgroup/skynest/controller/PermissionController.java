@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -384,7 +385,8 @@ public class PermissionController {
       })
   @DeleteMapping("/file/{fileId}/user/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForFile(@PathVariable UUID fileId, @PathVariable UUID userId) {
+  public void deletePermissionForFile(@PathVariable UUID fileId, @PathVariable UUID userId)
+      throws FileNotFoundException {
     permissionService.revokeFilePermission(fileId, userId);
   }
 }

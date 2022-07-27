@@ -8,6 +8,7 @@ import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
 import com.htecgroup.skynest.model.response.PermissionResponse;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,5 +30,5 @@ public interface PermissionService {
 
   void revokePermission(UUID bucketId, UUID userId);
 
-  void revokeFilePermission(UUID fileId, UUID userId);
+  void revokeFilePermission(UUID fileId, UUID userId) throws FileNotFoundException;
 }
