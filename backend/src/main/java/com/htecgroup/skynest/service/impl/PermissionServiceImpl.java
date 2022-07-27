@@ -416,7 +416,7 @@ public class PermissionServiceImpl implements PermissionService {
     grantViewPermissionUpstreamFolder(folder, currentUser, targetUser, permissionGrantRequest);
 
     log.info(
-        "User {} ({}) granted {} permission for file {} ({}) to user {} ({})",
+        "User {} ({}) granted {} permission for folder {} ({}) to user {} ({})",
         permission.getGrantedBy().getEmail(),
         permission.getGrantedBy().getId(),
         permission.getAccess().getName(),
