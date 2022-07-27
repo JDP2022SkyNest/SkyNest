@@ -592,16 +592,25 @@ export const GrantFilePermission = async (accessToken, email, fileId, role, erro
    }
 };
 
-export const RevokeBucketPermissions = async (accessToken, bucketId, userId, error, success) => {
+export const RevokeBucketPermissions = async (accessToken, bucketId, userEmail, error, success) => {
    try {
-      await AxiosInstance.delete(`/permissions/bucket/${bucketId}/user/${userId}`, {
-         headers: { Authorization: accessToken },
-      });
+      await AxiosInstance.delete(
+         `/permissions/bucket`,
+         {
+            grantedToEmail: userEmail,
+            objectId: bucketId,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
       success("Permission Removed");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
    }
+
+   console.log("permissions/bucket", userEmail, bucketId);
 };
 
 export const RevokeFolderPermissions = async (accessToken, folderId, userId, error, success) => {
