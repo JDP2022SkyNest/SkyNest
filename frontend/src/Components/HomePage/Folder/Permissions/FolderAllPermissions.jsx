@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AllBucketPermissions } from "../../../ReusableComponents/ReusableFunctions";
+import { AllFolderPermissions } from "../../../ReusableComponents/ReusableFunctions";
 
 const FolderAllPermissions = ({ objectId, setErrorMsg }) => {
    const [data, setData] = useState([]);
@@ -7,7 +7,7 @@ const FolderAllPermissions = ({ objectId, setErrorMsg }) => {
 
    useEffect(() => {
       const getData = async () => {
-         await AllBucketPermissions(accessToken, objectId, setData, setErrorMsg);
+         await AllFolderPermissions(accessToken, objectId, setData, setErrorMsg);
       };
       getData();
       //eslint-disable-next-line
