@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GrantFolderPermission } from "../../../ReusableComponents/ReusableFunctions";
+import { GrantFilePermission } from "../../../ReusableComponents/ReusableFunctions";
 import ModalLoader from "../../../Loader/ModalLoader";
 
 const FileGrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg }) => {
@@ -11,7 +11,7 @@ const FileGrantPermission = ({ objectId, setErrorMsg, errorMsg, setSuccessMsg })
    const onSubmit = async () => {
       if (email.length > 5) {
          setLoading(true);
-         await GrantFolderPermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
+         await GrantFilePermission(accessToken, email, objectId, role, setErrorMsg, setSuccessMsg);
          setLoading(false);
       } else if (!email.includes("@")) {
          setErrorMsg("Invalid email format");
