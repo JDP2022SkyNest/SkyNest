@@ -664,6 +664,30 @@ export const ModifyBucketPermissions = async (accessToken, email, bucketId, role
    }
 };
 
+export const ModifyFolderPermissions = async (accessToken, email, folderId, role, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/permissions/folder/${folderId}`,
+         {
+            grantedToEmail: email,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Edited");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
