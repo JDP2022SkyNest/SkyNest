@@ -31,4 +31,6 @@ public interface PermissionService {
 
   PermissionResponse modifyFolderPermissions(
       PermissionEditRequest permissionEditRequest, UUID folderId);
+
+  List<PermissionResponse> getAllFolderPermission(UUID folderId);
 }

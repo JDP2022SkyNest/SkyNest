@@ -4,10 +4,12 @@ import com.htecgroup.skynest.exception.UserNotFoundException;
 import com.htecgroup.skynest.exception.accesstype.AccessTypeNotFoundException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
 import com.htecgroup.skynest.model.request.PermissionGrantRequest;
@@ -36,7 +38,6 @@ public class PermissionServiceImpl implements PermissionService {
   private final BucketRepository bucketRepository;
   private final UserObjectAccessRepository permissionRepository;
   private final ModelMapper modelMapper;
-
   private final FolderRepository folderRepository;
 
   @Override
@@ -187,7 +188,6 @@ public class PermissionServiceImpl implements PermissionService {
 
   @Override
   public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
-    checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.VIEW);
     List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(bucketId);
@@ -196,10 +196,6 @@ public class PermissionServiceImpl implements PermissionService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
-  }
-
-  private void checkIfBucketExist(UUID bucketId) {
-    bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
   }
 
   private void checkIfBucketIsDeleted(UUID bucketId) {
@@ -213,10 +209,12 @@ public class PermissionServiceImpl implements PermissionService {
   @Override
   public PermissionResponse editPermission(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
-    checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
-    currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
-    UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(bucketId);
+    currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
+    UserObjectAccessEntity userObjectAccessEntity =
+        permissionRepository
+            .findByObjectIdAndGrantedToEmail(bucketId, permissionEditRequest.getGrantedToEmail())
+            .orElseThrow(RuntimeException::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
 
@@ -226,7 +224,6 @@ public class PermissionServiceImpl implements PermissionService {
 
   @Override
   public void revokePermission(UUID bucketId, UUID userId) {
-    checkIfBucketExist(bucketId);
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
 
@@ -238,12 +235,51 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
+  public List<PermissionResponse> getAllFolderPermission(UUID folderId) {
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+
+    log.info(
+        "User {} ({}) is attempting to view all permissions for folder {}...",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folderId);
+
+    FolderEntity folder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    checkIfFolderIsDeleted(folder);
+    currentUserHasPermissionForFolder(folder, AccessType.OWNER);
+    List<UserObjectAccessEntity> entityList = permissionRepository.findAllByObjectId(folderId);
+
+    log.info(
+        "User {} ({}) viewed all permissions for folder {} ({})",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        folder.getName(),
+        folder.getId());
+
+    return entityList.stream()
+        .map(e -> modelMapper.map(e, PermissionResponse.class))
+        .collect(Collectors.toList());
+  }
+
+  private void checkIfFolderIsDeleted(FolderEntity folder) {
+    if (folder.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
+  }
+
+  @Override
   public PermissionResponse modifyFolderPermissions(
       PermissionEditRequest permissionEditRequest, UUID folderId) {
     FolderEntity folder =
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
-    currentUserHasPermissionForFolder(folder, AccessType.EDIT);
-    UserObjectAccessEntity userObjectAccessEntity = permissionRepository.findByObjectId(folderId);
+    checkIfFolderIsDeleted(folder);
+    currentUserHasPermissionForFolder(folder, AccessType.OWNER);
+    // TODO: change errors here and in editObjectAccessEntity
+    UserObjectAccessEntity userObjectAccessEntity =
+        permissionRepository
+            .findByObjectIdAndGrantedToEmail(folderId, permissionEditRequest.getGrantedToEmail())
+            .orElseThrow(RuntimeException::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
 

@@ -6,6 +6,7 @@ import com.htecgroup.skynest.model.entity.UserObjectAccessKey;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserObjectAccessRepository
@@ -15,4 +16,6 @@ public interface UserObjectAccessRepository
   UserObjectAccessEntity findByObjectId(UUID objectId);
 
   UserObjectAccessEntity findByObjectIdAndGrantedTo(UUID bucketId, UserEntity user);
+
+  Optional<UserObjectAccessEntity> findByObjectIdAndGrantedToEmail(UUID bucketId, String email);
 }
