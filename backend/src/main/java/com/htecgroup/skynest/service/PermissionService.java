@@ -27,7 +27,7 @@ public interface PermissionService {
 
   PermissionResponse editPermission(PermissionEditRequest permissionEditRequest, UUID bucketId);
 
-  void revokePermission(UUID bucketId, UUID userId);
+  void revokePermission(UUID bucketId, String userEmail);
 
   List<PermissionResponse> getAllFilePermissions(UUID fileId);
 
