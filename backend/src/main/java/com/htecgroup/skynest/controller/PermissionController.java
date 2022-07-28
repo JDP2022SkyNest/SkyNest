@@ -224,12 +224,12 @@ public class PermissionController {
     return permissionResponseEntity;
   }
 
-  @Operation(summary = "Edit permission")
+  @Operation(summary = "Modify folder permission")
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Permission successfully edited",
+            description = "Permission successfully modified for folder",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -263,7 +263,7 @@ public class PermissionController {
             }),
         @ApiResponse(
             responseCode = "404",
-            description = "Bucket not found",
+            description = "Folder not found",
             content = {
               @Content(
                   mediaType = "application/json",
@@ -271,8 +271,83 @@ public class PermissionController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\"messages\":[\"Bucket not found\"],"
+                            "{\"messages\":[\"Folder not found\"],"
                                 + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User object access entity not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User object access entity not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Access type doesn't exist",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access type doesn't exist\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User cant revoke their own permissions.",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"User cant revoke their own permissions.\"],"
+                                + " \"status\": \"409\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "409",
+            description = "Folder already deleted.",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Folder already deleted.\"],"
+                                + " \"status\": \"409\","
                                 + " \"timestamp\": \"2022-06-07 16:18:12\"}")
                   })
             }),
