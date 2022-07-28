@@ -18,7 +18,7 @@ const BucketInfo = ({ elem }) => {
          <hr className="m-1" />
          <div className="row">
             <div className="col-sm-3 p-2 font-weight-bold">Created by:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.createdByName}</small>
+            <small className="col-sm-8 p-2 text-mutted">{elem.createdByEmail}</small>
          </div>
          <hr className="m-1" />
          <div className="row">
