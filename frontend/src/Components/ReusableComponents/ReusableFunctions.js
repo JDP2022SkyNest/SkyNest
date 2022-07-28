@@ -734,7 +734,6 @@ export const lambdaAuth = async (accessToken) => {
          headers: { Authorization: accessToken },
       });
       window.open(response.data, "_blank", "noopener,noreferrer");
-      console.log("New");
    } catch (err) {
       console.log(err);
    }
