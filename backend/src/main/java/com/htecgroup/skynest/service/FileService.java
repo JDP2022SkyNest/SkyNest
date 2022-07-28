@@ -35,4 +35,6 @@ public interface FileService {
   FileResponse restoreFile(UUID fileId);
 
   List<FileResponse> getAllFilesWithTag(UUID tagId, UUID loggedUserId);
+
+  List<FileResponse> getFilesInBucket(UUID bucketId);
 }

@@ -1,5 +1,6 @@
 package com.htecgroup.skynest.service.impl;
 
+import com.htecgroup.skynest.event.SendBucketStatsEvent;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
@@ -19,6 +20,8 @@ import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 @Validated
 @AllArgsConstructor
-public class BucketServiceImpl implements BucketService {
+public class BucketServiceImpl implements BucketService, ApplicationEventPublisherAware {
 
   private BucketRepository bucketRepository;
   private ModelMapper modelMapper;
@@ -38,6 +41,12 @@ public class BucketServiceImpl implements BucketService {
   private FileService fileService;
   private ActionService actionService;
   private PermissionService permissionService;
+  private ApplicationEventPublisher publisher;
+
+  @Override
+  public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    this.publisher = applicationEventPublisher;
+  }
 
   @Override
   public BucketResponse createBucket(BucketCreateRequest bucketCreateRequest) {
@@ -217,6 +226,7 @@ public class BucketServiceImpl implements BucketService {
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
+    executeLambdaForBucketDetails(bucketEntity);
     return storageContentResponse;
   }
 
@@ -224,5 +234,16 @@ public class BucketServiceImpl implements BucketService {
   public List<LambdaType> getActiveLambdas(UUID bucketId) {
     BucketEntity bucketEntity = findBucketEntityById(bucketId);
     return new ArrayList<>(bucketEntity.getLambdaTypes());
+  }
+
+  private void executeLambdaForBucketDetails(BucketEntity bucketEntity) {
+    //    if (bucket.getLambdaTypes().contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA)) {
+    //      LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
+    //      UserEntity userEntity =
+    //
+    // userRepository.findById(loggedUserDto.getUuid()).orElseThrow(UserNotFoundException::new);
+    SendBucketStatsEvent event = new SendBucketStatsEvent(this, bucketEntity);
+    publisher.publishEvent(event);
+    //    }
   }
 }

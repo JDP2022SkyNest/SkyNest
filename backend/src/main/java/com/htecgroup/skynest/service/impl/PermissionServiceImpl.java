@@ -429,11 +429,11 @@ public class PermissionServiceImpl implements PermissionService {
         folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
     checkIfFolderIsDeleted(folder);
     currentUserHasPermissionForFolder(folder, AccessType.OWNER);
+    UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository
             .findByObjectIdAndGrantedToEmail(folderId, permissionEditRequest.getGrantedToEmail())
             .orElseThrow(UserObjectAccessEntityNotFound::new);
-    UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
     checkCurrentUserNotTargetUser(targetUser);
 
