@@ -150,7 +150,7 @@ public class PermissionController {
             })
       })
   @PostMapping("/bucket")
-  public ResponseEntity<PermissionResponse> grantPermissions(
+  public ResponseEntity<PermissionResponse> grantPermissionForBucket(
       @Valid @RequestBody PermissionGrantRequest permissionGrantRequest) {
 
     ResponseEntity<PermissionResponse> response =
@@ -160,7 +160,7 @@ public class PermissionController {
     return response;
   }
 
-  @Operation(summary = "Edit permission")
+  @Operation(summary = "Edit permission for bucket")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -214,12 +214,12 @@ public class PermissionController {
             }),
       })
   @PutMapping("/bucket/{bucketId}")
-  public ResponseEntity<PermissionResponse> modifyBucketPermissions(
+  public ResponseEntity<PermissionResponse> editPermissionsForBucket(
       @Valid @RequestBody PermissionEditRequest permissionEditRequest,
       @PathVariable UUID bucketId) {
     ResponseEntity<PermissionResponse> permissionResponseEntity =
         new ResponseEntity<>(
-            permissionService.modifyBucketPermission(permissionEditRequest, bucketId),
+            permissionService.editPermissionForBucket(permissionEditRequest, bucketId),
             HttpStatus.OK);
     return permissionResponseEntity;
   }
@@ -426,12 +426,12 @@ public class PermissionController {
             })
       })
   @GetMapping("/bucket/{bucketId}")
-  public List<PermissionResponse> getAllPermissions(@PathVariable UUID bucketId) {
+  public List<PermissionResponse> getAllPermissionsForBucket(@PathVariable UUID bucketId) {
     List<PermissionResponse> permissionList = permissionService.getAllBucketPermission(bucketId);
     return permissionList;
   }
 
-  @Operation(summary = "Revoke bucket permission")
+  @Operation(summary = "Revoke permission for bucket")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -476,9 +476,9 @@ public class PermissionController {
       })
   @DeleteMapping("/bucket")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deletePermissionForBucket(
+  public void revokePermissionForBucket(
       @Valid @RequestBody PermissionRevokeRequest permissionRevokeRequest) {
-    permissionService.revokePermission(
+    permissionService.revokePermissionForBucket(
         permissionRevokeRequest.getObjectId(), permissionRevokeRequest.getGrantedToEmail());
   }
 
@@ -921,5 +921,67 @@ public class PermissionController {
             permissionService.grantPermissionForFolder(permissionGrantRequest), HttpStatus.OK);
 
     return response;
+  }
+
+  @Operation(summary = "Edit permission for file")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Permission successfully edited",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = PermissionResponse.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"grantedToId\": \"ff52209c-f913-11ec-b939-0242ac120002\","
+                                + "\"grantedToEmail\": \"Email@com\","
+                                + "\"objectId\": \"h5fd6d95-0a60-43ff-961f-2b9b2ff72f95\","
+                                + "\"grantedOn\": \"2022-07-18-04-00-15\","
+                                + "\"accessName\": \"EDIT\","
+                                + "{\"grantedById\": \"79362ab6-f914-11ec-b939-0242ac120002\","
+                                + "\"grantedByEmail\": \"email2@com\"}")
+                  }),
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized request",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"Access denied\"],"
+                                + " \"status\": \"401\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "File not found",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorMessage.class),
+                  examples = {
+                    @ExampleObject(
+                        value =
+                            "{\"messages\":[\"File not found\"],"
+                                + " \"status\": \"404\","
+                                + " \"timestamp\": \"2022-06-07 16:18:12\"}")
+                  })
+            }),
+      })
+  @PutMapping("/file/{fileId}")
+  public ResponseEntity<PermissionResponse> editPermissionForFile(
+      @Valid @RequestBody PermissionEditRequest permissionEditRequest, @PathVariable UUID fileId) {
+    ResponseEntity<PermissionResponse> permissionResponseEntity =
+        new ResponseEntity<>(
+            permissionService.editPermissionForFile(permissionEditRequest, fileId), HttpStatus.OK);
+    return permissionResponseEntity;
   }
 }

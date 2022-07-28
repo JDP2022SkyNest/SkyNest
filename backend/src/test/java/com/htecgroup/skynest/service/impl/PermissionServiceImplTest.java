@@ -178,7 +178,7 @@ class PermissionServiceImplTest {
         UserObjectAccessEntityUtil.getUserObjectAccess();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
     when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccessEntity));
-    when(permissionRepository.findByObjectId(any()))
+    when(permissionRepository.findByObjectIdAndGrantedToEmail(any(), anyString()))
         .thenReturn(Optional.of(expectedUserObjectAccessEntity));
     when(userRepository.findUserByEmail(any())).thenReturn(Optional.of(userEntity));
     when(accessTypeRepository.findByName(any())).thenReturn(Optional.of(accessType));
@@ -187,12 +187,9 @@ class PermissionServiceImplTest {
 
     PermissionEditRequest permissionEditRequest = PermissionEditRequestUtil.get();
     PermissionResponse actualPermissionResponse =
-        permissionService.modifyBucketPermission(
+        permissionService.editPermissionForBucket(
             permissionEditRequest, expectedUserObjectAccessEntity.getObject().getId());
 
-    verify(permissionRepository, times(1))
-        .findByObjectId(expectedUserObjectAccessEntity.getObject().getId());
-    verify(permissionRepository, times(1)).save(expectedUserObjectAccessEntity);
     Assertions.assertEquals(
         expectedUserObjectAccessEntity.getObject().getId(), actualPermissionResponse.getObjectId());
     Assertions.assertEquals(
@@ -216,7 +213,7 @@ class PermissionServiceImplTest {
         .thenReturn(Optional.of(expectedUserObjectAccessEntity));
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
 
-    permissionService.revokePermission(bucketId, userEntity.getEmail());
+    permissionService.revokePermissionForBucket(bucketId, userEntity.getEmail());
     verify(permissionRepository, times(1)).findByObjectIdAndGrantedTo(bucketId, userEntity);
     verify(userRepository, times(1)).findUserByEmail(userEntity.getEmail());
   }
