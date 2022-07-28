@@ -16,7 +16,7 @@ const LambdaModal = () => {
    const handleShow = () => setShow(true);
 
    const allComponents = [
-      { name: "Connect", comp: <LambdaConnect setErrorMsg={setErrorMsg} /> },
+      { name: "Connect", comp: <LambdaConnect setErrorMsg={setErrorMsg} setActive={setActive} /> },
       { name: "Authorize", comp: <LambdaAuth setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} handleClose={handleClose} /> },
    ];
 
