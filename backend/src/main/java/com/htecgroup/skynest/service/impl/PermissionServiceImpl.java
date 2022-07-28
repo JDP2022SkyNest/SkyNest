@@ -216,12 +216,18 @@ public class PermissionServiceImpl implements PermissionService {
   @Override
   public PermissionResponse editPermissionForBucket(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
+
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
-    UserObjectAccessEntity userObjectAccessEntity =
-        permissionRepository.findByObjectId(bucketId).orElseThrow(BucketNotFoundException::new);
+
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     checkIfTargetUserIsTheCurrentUser(targetUser);
+
+    UserObjectAccessEntity userObjectAccessEntity =
+        permissionRepository
+            .findById(new UserObjectAccessKey(targetUser.getId(), bucketId))
+            .orElseThrow(BucketNotFoundException::new);
+
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
 
     return setAndSavePermission(
