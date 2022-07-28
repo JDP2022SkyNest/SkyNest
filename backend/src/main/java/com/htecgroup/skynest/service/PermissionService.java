@@ -40,4 +40,6 @@ public interface PermissionService {
   List<PermissionResponse> getAllFolderPermission(UUID folderId);
 
   PermissionResponse grantPermissionForFile(PermissionGrantRequest permissionGrantRequest);
+
+  PermissionResponse grantPermissionForFolder(PermissionGrantRequest permissionGrantRequest);
 }
