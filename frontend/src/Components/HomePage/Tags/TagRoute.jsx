@@ -54,6 +54,10 @@ const TagRoute = () => {
       setLoading(false);
    };
 
+   useEffect(() => {
+      console.log(filteredBuckets);
+   }, [filteredBuckets]);
+
    const allBuckets = filteredBuckets?.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshFoldersAndFiles} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
@@ -129,10 +133,10 @@ const TagRoute = () => {
             </div>
             <div>
                <div className="container data-folder mt-0">
-                  {allData?.length > 0 && <div className="row mt-2">{allBuckets}</div>}
-                  {data?.data?.buckets.length > 0 && <div className="my-2 mt-3 mb-3 hr-devider" />}
+                  {allBuckets?.length > 0 && <div className="row mt-2">{allBuckets}</div>}
+                  {allBuckets?.length > 0 && <div className="my-2 mt-3 mb-3 hr-devider" />}
                   {allData?.length > 0 && <div className="row mt-2">{allData}</div>}
-                  {alLFiles?.length > 0 && <div className="my-2 mt-3 hr-devider" />}
+                  {allData?.length > 0 && <div className="my-2 mt-3 hr-devider" />}
                   <div className="row files">{alLFiles}</div>
                </div>
             </div>
