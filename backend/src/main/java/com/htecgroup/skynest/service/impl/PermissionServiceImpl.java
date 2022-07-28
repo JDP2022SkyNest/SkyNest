@@ -13,6 +13,7 @@ import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.exception.permission.PermissionAlreadyExistsException;
 import com.htecgroup.skynest.exception.permission.PermissionDoesNotExistException;
 import com.htecgroup.skynest.exception.permission.UserCantRevokeTheirOwnPermissions;
+import com.htecgroup.skynest.exception.permission.UserObjectAccessEntityNotFound;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
 import com.htecgroup.skynest.model.request.PermissionEditRequest;
@@ -44,7 +45,6 @@ public class PermissionServiceImpl implements PermissionService {
   private final FileMetadataRepository fileMetadataRepository;
   private final ModelMapper modelMapper;
   private final FolderRepository folderRepository;
-
   private final FileMetadataRepository fileRepository;
 
   @Override
@@ -130,70 +130,6 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public void currentUserHasPermissionForBucket(UUID bucketId, AccessType minimumAccessType) {
-
-    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
-
-    UserObjectAccessEntity permission =
-        permissionRepository
-            .findById(new UserObjectAccessKey(currentUserId, bucketId))
-            .orElseThrow(ObjectAccessDeniedException::new);
-
-    AccessType actualAccessType =
-        AccessType.valueOf(permission.getAccess().getName().toUpperCase());
-
-    if (actualAccessType.ordinal() < minimumAccessType.ordinal())
-      throw new ObjectAccessDeniedException();
-  }
-
-  @Override
-  public void currentUserHasPermissionForFolder(FolderEntity folder, AccessType minimumAccessType) {
-
-    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
-
-    Optional<UserObjectAccessEntity> permission =
-        permissionRepository.findById(new UserObjectAccessKey(currentUserId, folder.getId()));
-
-    if (permission.isPresent()) {
-
-      AccessType actualAccessType =
-          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
-
-      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
-    }
-
-    if (folder.getParentFolder() != null) {
-      currentUserHasPermissionForFolder(folder.getParentFolder(), minimumAccessType);
-    } else {
-      currentUserHasPermissionForBucket(folder.getBucket().getId(), minimumAccessType);
-    }
-  }
-
-  @Override
-  public void currentUserHasPermissionForFile(
-      FileMetadataEntity file, AccessType minimumAccessType) {
-
-    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
-
-    Optional<UserObjectAccessEntity> permission =
-        permissionRepository.findById(new UserObjectAccessKey(currentUserId, file.getId()));
-
-    if (permission.isPresent()) {
-
-      AccessType actualAccessType =
-          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
-
-      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
-    }
-
-    if (file.getParentFolder() != null) {
-      currentUserHasPermissionForFolder(file.getParentFolder(), minimumAccessType);
-    } else {
-      currentUserHasPermissionForBucket(file.getBucket().getId(), minimumAccessType);
-    }
-  }
-
-  @Override
   public List<PermissionResponse> getAllBucketPermission(UUID bucketId) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
@@ -203,14 +139,6 @@ public class PermissionServiceImpl implements PermissionService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
-  }
-
-  private void checkIfBucketIsDeleted(UUID bucketId) {
-    BucketEntity bucketEntity =
-        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
-    if (bucketEntity.isDeleted()) {
-      throw new BucketAlreadyDeletedException();
-    }
   }
 
   @Override
@@ -223,8 +151,8 @@ public class PermissionServiceImpl implements PermissionService {
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository
-            .findByObjectId(bucketId)
-            .orElseThrow(PermissionDoesNotExistException::new);
+            .findByObjectIdAndGrantedToEmail(bucketId, permissionEditRequest.getGrantedToEmail())
+            .orElseThrow(UserObjectAccessEntityNotFound::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
     checkCurrentUserNotTargetUser(targetUser);
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
@@ -237,7 +165,6 @@ public class PermissionServiceImpl implements PermissionService {
   public void revokePermissionForBucket(UUID bucketId, String userEmail) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
-
     UserEntity user =
         userRepository.findUserByEmail(userEmail).orElseThrow(UserNotFoundException::new);
     checkCurrentUserNotTargetUser(user);
@@ -262,13 +189,6 @@ public class PermissionServiceImpl implements PermissionService {
             .findByObjectIdAndGrantedTo(fileId, user)
             .orElseThrow(PermissionDoesNotExistException::new);
     permissionRepository.delete(permission);
-  }
-
-  private void checkCurrentUserNotTargetUser(UserEntity user) {
-    LoggedUserDto userDto = currentUserService.getLoggedUser();
-    if (userDto.getUuid().equals(user.getId())) {
-      throw new UserCantRevokeTheirOwnPermissions();
-    }
   }
 
   @Override
@@ -297,18 +217,6 @@ public class PermissionServiceImpl implements PermissionService {
     return entityList.stream()
         .map(e -> modelMapper.map(e, PermissionResponse.class))
         .collect(Collectors.toList());
-  }
-
-  private void checkIfFolderIsDeleted(FolderEntity folder) {
-    if (folder.isDeleted()) {
-      throw new FolderAlreadyDeletedException();
-    }
-  }
-
-  private void checkIfFileIsDeleted(FileMetadataEntity fileMetadataEntity) {
-    if (fileMetadataEntity.isDeleted()) {
-      throw new FileAlreadyDeletedException();
-    }
   }
 
   @Override
@@ -514,46 +422,34 @@ public class PermissionServiceImpl implements PermissionService {
     grantViewPermissionToAllFoldersUpstream(parent.getParentFolder(), currentUser, targetUser);
   }
 
-  private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
-    UserEntity targetUser =
-        userRepository
-            .findUserByEmail(permissionEditRequest.getGrantedToEmail())
-            .orElseThrow(UserNotFoundException::new);
-    return targetUser;
-  }
-
-  private AccessTypeEntity findAccessTypeForEdit(PermissionEditRequest permissionEditRequest) {
-    AccessTypeEntity accessType =
-        accessTypeRepository
-            .findByName(permissionEditRequest.getAccess())
-            .orElseThrow(AccessTypeNotFoundException::new);
-    return accessType;
-  }
-
-  private PermissionResponse setAndSavePermission(
-      UserObjectAccessEntity userObjectAccessEntity,
-      UserEntity targetUser,
-      AccessTypeEntity accessType,
-      PermissionEditRequest permissionEditRequest) {
-    userObjectAccessEntity.setGrantedTo(targetUser);
-    userObjectAccessEntity.setAccess(accessType);
-
-    modelMapper.map(permissionEditRequest, userObjectAccessEntity);
-    UserObjectAccessEntity savedUserObjectAccessEntity =
-        permissionRepository.save(userObjectAccessEntity);
+  @Override
+  public PermissionResponse modifyFolderPermissions(
+      PermissionEditRequest permissionEditRequest, UUID folderId) {
+    FolderEntity folder =
+        folderRepository.findById(folderId).orElseThrow(FolderNotFoundException::new);
+    checkIfFolderIsDeleted(folder);
+    currentUserHasPermissionForFolder(folder, AccessType.OWNER);
+    UserObjectAccessEntity userObjectAccessEntity =
+        permissionRepository
+            .findByObjectIdAndGrantedToEmail(folderId, permissionEditRequest.getGrantedToEmail())
+            .orElseThrow(UserObjectAccessEntityNotFound::new);
+    UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
+    AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
+    checkCurrentUserNotTargetUser(targetUser);
 
     LoggedUserDto currentUser = currentUserService.getLoggedUser();
     log.info(
-        "User {} ({}) modified permission for file {} ({}) for user {} ({}) to {}",
+        "User {} ({}) modified permission for folder {} ({}) for user {} ({}) to {}",
         currentUser.getUsername(),
         currentUser.getUuid(),
-        savedUserObjectAccessEntity.getObject().getName(),
-        savedUserObjectAccessEntity.getObject().getId(),
-        savedUserObjectAccessEntity.getGrantedTo().getEmail(),
-        savedUserObjectAccessEntity.getGrantedTo().getId(),
-        savedUserObjectAccessEntity.getAccess().getName());
+        userObjectAccessEntity.getObject().getName(),
+        userObjectAccessEntity.getObject().getId(),
+        userObjectAccessEntity.getGrantedTo().getEmail(),
+        userObjectAccessEntity.getGrantedTo().getId(),
+        userObjectAccessEntity.getAccess().getName());
 
-    return modelMapper.map(savedUserObjectAccessEntity, PermissionResponse.class);
+    return setAndSavePermission(
+        userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
   }
 
   @Override
@@ -618,5 +514,144 @@ public class PermissionServiceImpl implements PermissionService {
 
     return setAndSavePermission(
         userObjectAccessEntity, targetUser, accessType, permissionEditRequest);
+  }
+
+  private void checkIfPermissionExist(UserObjectAccessEntity permission) {
+    if (permission == null) {
+      throw new PermissionDoesNotExistException();
+    }
+  }
+
+  private UserEntity findTargetUserForEdit(PermissionEditRequest permissionEditRequest) {
+    UserEntity targetUser =
+        userRepository
+            .findUserByEmail(permissionEditRequest.getGrantedToEmail())
+            .orElseThrow(UserNotFoundException::new);
+    return targetUser;
+  }
+
+  private AccessTypeEntity findAccessTypeForEdit(PermissionEditRequest permissionEditRequest) {
+    AccessTypeEntity accessType =
+        accessTypeRepository
+            .findByName(permissionEditRequest.getAccess())
+            .orElseThrow(AccessTypeNotFoundException::new);
+    return accessType;
+  }
+
+  private PermissionResponse setAndSavePermission(
+      UserObjectAccessEntity userObjectAccessEntity,
+      UserEntity targetUser,
+      AccessTypeEntity accessType,
+      PermissionEditRequest permissionEditRequest) {
+    userObjectAccessEntity.setGrantedTo(targetUser);
+    userObjectAccessEntity.setAccess(accessType);
+
+    modelMapper.map(permissionEditRequest, userObjectAccessEntity);
+    UserObjectAccessEntity savedUserObjectAccessEntity =
+        permissionRepository.save(userObjectAccessEntity);
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
+    log.info(
+        "User {} ({}) modified permission for file {} ({}) for user {} ({}) to {}",
+        currentUser.getUsername(),
+        currentUser.getUuid(),
+        savedUserObjectAccessEntity.getObject().getName(),
+        savedUserObjectAccessEntity.getObject().getId(),
+        savedUserObjectAccessEntity.getGrantedTo().getEmail(),
+        savedUserObjectAccessEntity.getGrantedTo().getId(),
+        savedUserObjectAccessEntity.getAccess().getName());
+
+    return modelMapper.map(savedUserObjectAccessEntity, PermissionResponse.class);
+  }
+
+  private void checkIfFolderIsDeleted(FolderEntity folder) {
+    if (folder.isDeleted()) {
+      throw new FolderAlreadyDeletedException();
+    }
+  }
+
+  private void checkIfFileIsDeleted(FileMetadataEntity fileMetadataEntity) {
+    if (fileMetadataEntity.isDeleted()) {
+      throw new FileAlreadyDeletedException();
+    }
+  }
+
+  @Override
+  public void currentUserHasPermissionForBucket(UUID bucketId, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    UserObjectAccessEntity permission =
+        permissionRepository
+            .findById(new UserObjectAccessKey(currentUserId, bucketId))
+            .orElseThrow(ObjectAccessDeniedException::new);
+
+    AccessType actualAccessType =
+        AccessType.valueOf(permission.getAccess().getName().toUpperCase());
+
+    if (actualAccessType.ordinal() < minimumAccessType.ordinal())
+      throw new ObjectAccessDeniedException();
+  }
+
+  @Override
+  public void currentUserHasPermissionForFolder(FolderEntity folder, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    Optional<UserObjectAccessEntity> permission =
+        permissionRepository.findById(new UserObjectAccessKey(currentUserId, folder.getId()));
+
+    if (permission.isPresent()) {
+
+      AccessType actualAccessType =
+          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
+
+      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
+    }
+
+    if (folder.getParentFolder() != null) {
+      currentUserHasPermissionForFolder(folder.getParentFolder(), minimumAccessType);
+    } else {
+      currentUserHasPermissionForBucket(folder.getBucket().getId(), minimumAccessType);
+    }
+  }
+
+  @Override
+  public void currentUserHasPermissionForFile(
+      FileMetadataEntity file, AccessType minimumAccessType) {
+
+    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
+
+    Optional<UserObjectAccessEntity> permission =
+        permissionRepository.findById(new UserObjectAccessKey(currentUserId, file.getId()));
+
+    if (permission.isPresent()) {
+
+      AccessType actualAccessType =
+          AccessType.valueOf(permission.get().getAccess().getName().toUpperCase());
+
+      if (actualAccessType.ordinal() >= minimumAccessType.ordinal()) return;
+    }
+
+    if (file.getParentFolder() != null) {
+      currentUserHasPermissionForFolder(file.getParentFolder(), minimumAccessType);
+    } else {
+      currentUserHasPermissionForBucket(file.getBucket().getId(), minimumAccessType);
+    }
+  }
+
+  private void checkIfBucketIsDeleted(UUID bucketId) {
+    BucketEntity bucketEntity =
+        bucketRepository.findById(bucketId).orElseThrow(BucketNotFoundException::new);
+    if (bucketEntity.isDeleted()) {
+      throw new BucketAlreadyDeletedException();
+    }
+  }
+
+  private void checkCurrentUserNotTargetUser(UserEntity user) {
+    LoggedUserDto userDto = currentUserService.getLoggedUser();
+    if (userDto.getUuid().equals(user.getId())) {
+      throw new UserCantRevokeTheirOwnPermissions();
+    }
   }
 }

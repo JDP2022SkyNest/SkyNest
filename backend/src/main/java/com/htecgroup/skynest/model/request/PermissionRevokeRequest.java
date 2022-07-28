@@ -14,11 +14,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PermissionRevokeRequest {
-    @NotNull(message = "cannot be null")
-    @Pattern(message = "format is not valid", regexp = RegexUtil.EMAIL_FORMAT_REGEX)
-    @Size(max = 254, message = "length cannot be over 254 characters")
-    private String grantedToEmail;
+  @NotNull(message = "cannot be null")
+  @Pattern(message = "format is not valid", regexp = RegexUtil.EMAIL_FORMAT_REGEX)
+  @Size(max = 254, message = "length cannot be over 254 characters")
+  private String grantedToEmail;
 
-    @NotNull(message = "object id cannot be null or empty")
-    private UUID objectId;
+  @NotNull(message = "object id cannot be null or empty")
+  private UUID objectId;
 }

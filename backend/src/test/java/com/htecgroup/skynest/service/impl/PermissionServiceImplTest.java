@@ -171,14 +171,14 @@ class PermissionServiceImplTest {
   void editPermission() {
     UserObjectAccessEntity expectedUserObjectAccessEntity =
         UserObjectAccessEntityUtil.getUserObjectAccess();
-    UserEntity userEntity = UserEntityUtil.getVerified();
+    UserEntity userEntity = UserEntityUtil.getTargetUser();
     AccessTypeEntity accessType = AccessTypeEntityUtil.get(AccessType.EDIT);
     BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
     UserObjectAccessEntity userObjectAccessEntity =
         UserObjectAccessEntityUtil.getUserObjectAccess();
     when(bucketRepository.findById(any())).thenReturn(Optional.of(bucketEntity));
     when(permissionRepository.findById(any())).thenReturn(Optional.of(userObjectAccessEntity));
-    when(permissionRepository.findByObjectId(any()))
+    when(permissionRepository.findByObjectIdAndGrantedToEmail(any(), anyString()))
         .thenReturn(Optional.of(expectedUserObjectAccessEntity));
     when(userRepository.findUserByEmail(any())).thenReturn(Optional.of(userEntity));
     when(accessTypeRepository.findByName(any())).thenReturn(Optional.of(accessType));
@@ -190,9 +190,6 @@ class PermissionServiceImplTest {
         permissionService.editPermissionForBucket(
             permissionEditRequest, expectedUserObjectAccessEntity.getObject().getId());
 
-    verify(permissionRepository, times(1))
-        .findByObjectId(expectedUserObjectAccessEntity.getObject().getId());
-    verify(permissionRepository, times(1)).save(expectedUserObjectAccessEntity);
     Assertions.assertEquals(
         expectedUserObjectAccessEntity.getObject().getId(), actualPermissionResponse.getObjectId());
     Assertions.assertEquals(
@@ -204,7 +201,7 @@ class PermissionServiceImplTest {
   void when_revokePermission_DeleteFromDatabase() {
     UserObjectAccessEntity expectedUserObjectAccessEntity =
         UserObjectAccessEntityUtil.getUserObjectAccess();
-    UserEntity userEntity = UserEntityUtil.getVerified();
+    UserEntity userEntity = UserEntityUtil.getTargetUser();
     BucketEntity bucketEntity = BucketEntityUtil.getPrivateBucket();
     UUID bucketId = bucketEntity.getId();
     UserObjectAccessEntity userObjectAccessEntity =

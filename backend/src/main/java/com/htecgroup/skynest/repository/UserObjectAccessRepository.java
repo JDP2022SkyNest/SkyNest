@@ -15,5 +15,7 @@ public interface UserObjectAccessRepository
 
   Optional<UserObjectAccessEntity> findByObjectId(UUID objectId);
 
+  Optional<UserObjectAccessEntity> findByObjectIdAndGrantedToEmail(UUID bucketId, String email);
+
   Optional<UserObjectAccessEntity> findByObjectIdAndGrantedTo(UUID bucketId, UserEntity user);
 }
