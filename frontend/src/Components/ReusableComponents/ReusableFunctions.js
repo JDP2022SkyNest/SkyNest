@@ -811,13 +811,15 @@ export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error
    }
 };
 
-export const getAllSpecificTags = async (accessToken, tagId) => {
+export const getAllSpecificTags = async (accessToken, tagId, stateToChange, error) => {
    try {
       const response = await AxiosInstance.get(`/tags/${tagId}/objects`, {
          headers: { Authorization: accessToken },
       });
       console.log(response);
+      stateToChange(response);
    } catch (err) {
+      error(err.response.data.messages);
       console.log(err);
    }
 };

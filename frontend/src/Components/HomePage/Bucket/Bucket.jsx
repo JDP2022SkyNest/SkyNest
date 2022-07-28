@@ -3,7 +3,7 @@ import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as TiCions from "react-icons/ti";
 import * as AiCions from "react-icons/ai";
-import { deleteBucket, restoreBucket, redirectTo } from "../../ReusableComponents/ReusableFunctions";
+import { deleteBucket, restoreBucket } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
@@ -34,7 +34,7 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
          >
             <div
                onClick={() => {
-                  redirectTo(navigate, `bucket/${elem.bucketId}`, 1);
+                  navigate(`bucket/${elem.bucketId}`, { replace: true });
                }}
                className="card-body p-2 px-3"
             >
