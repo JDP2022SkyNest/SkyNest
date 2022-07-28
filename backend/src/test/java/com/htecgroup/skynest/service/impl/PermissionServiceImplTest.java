@@ -187,7 +187,7 @@ class PermissionServiceImplTest {
 
     PermissionEditRequest permissionEditRequest = PermissionEditRequestUtil.get();
     PermissionResponse actualPermissionResponse =
-        permissionService.editPermission(
+        permissionService.editPermissionForBucket(
             permissionEditRequest, expectedUserObjectAccessEntity.getObject().getId());
 
     verify(permissionRepository, times(1))
@@ -216,7 +216,7 @@ class PermissionServiceImplTest {
         .thenReturn(Optional.of(expectedUserObjectAccessEntity));
     when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
 
-    permissionService.revokePermission(bucketId, userEntity.getEmail());
+    permissionService.revokePermissionForBucket(bucketId, userEntity.getEmail());
     verify(permissionRepository, times(1)).findByObjectIdAndGrantedTo(bucketId, userEntity);
     verify(userRepository, times(1)).findUserByEmail(userEntity.getEmail());
   }
