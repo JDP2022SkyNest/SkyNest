@@ -766,11 +766,10 @@ export const activeLambdas = async (accessToken, stateToChange, bucketId, error)
 
 export const lambdaFinish = async (accessToken, code, error, success) => {
    try {
-      const response = await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
+      await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
          headers: { Authorization: accessToken },
       });
       success("Successfully Connected");
-      console.log(response);
    } catch (err) {
       error(err.response.data.messages);
       console.log(err.response.data.messages);
@@ -779,7 +778,7 @@ export const lambdaFinish = async (accessToken, code, error, success) => {
 
 export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
    try {
-      const response = await AxiosInstance.put(
+      await AxiosInstance.put(
          `/lambdas/bucket/${bucketId}/activate?lambda=${lambdaId}`,
          {},
          {
@@ -787,7 +786,6 @@ export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, 
          }
       );
       success("Successfully Activated");
-      console.log(response);
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);
@@ -796,7 +794,7 @@ export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, 
 
 export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
    try {
-      const response = await AxiosInstance.put(
+      await AxiosInstance.put(
          `/lambdas/bucket/${bucketId}/deactivate?lambda=${lambdaId}`,
          {},
          {
@@ -804,7 +802,6 @@ export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error
          }
       );
       success("Successfully Deactivated");
-      console.log(response);
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);

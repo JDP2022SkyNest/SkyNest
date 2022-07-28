@@ -4,7 +4,6 @@ import SetSuccessMsg from "../../../ReusableComponents/SetSuccessMsg";
 import SetErrorMsg from "../../../ReusableComponents/SetErrorMsg";
 import AllLambdas from "./AllLambdas";
 import ActiveLembdas from "./ActiveLambdas";
-import * as FaIcons from "react-icons/fa";
 import lambdaIcon from "./Assets/lambda.png";
 
 const BucketLambdaModal = ({ bucketId }) => {
