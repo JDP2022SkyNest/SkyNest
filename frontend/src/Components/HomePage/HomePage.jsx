@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets, metodi } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets, lambdaAuth, lambdaFinish } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,7 @@ const HomePage = () => {
    const [allBuckets, setAllBuckets] = useState([]);
    const [errorMsg, setErrorMsg] = useState("");
    const [searchTerm, setSearchTerm] = useState("");
+   const [lambdaCode, setLambdaCode] = useState("");
    const [delState, setDelState] = useState(false);
    const filteredBuckets = allBuckets.filter(
       (el) => !!el.deletedOn === delState && (el.name.includes(searchTerm) || el.tags.find((x) => x.name.includes(searchTerm)))
@@ -97,19 +98,25 @@ const HomePage = () => {
                   <AddBucketModal refreshBuckets={refreshBuckets} />
                   <CreateNewTag />
                </div>
+               <div className="py-2 mt-2 rounded d-flex">
+                  <div onClick={() => lambdaAuth(accessToken)} className="ml-1 mr-1 btn btn-secondary">
+                     Lambda
+                  </div>
+                  <input type="text" value={lambdaCode} onChange={(e) => setLambdaCode(e.target.value)} />
+                  <div
+                     onClick={() => {
+                        console.log(accessToken);
+                        console.log(lambdaCode);
+                        lambdaFinish(accessToken, lambdaCode);
+                     }}
+                     className="ml-1 btn btn-secondary"
+                  >
+                     Connect
+                  </div>
+               </div>
                <div className="container mt-2">
                   <div className="row data-folder">{allData}</div>
                </div>
-            </div>
-            <div className="d-flex justify-content-center mt-5">
-               <button
-                  onClick={() => {
-                     metodi(accessToken, setErrorMsg);
-                  }}
-                  className="btn btn-danger"
-               >
-                  METODI
-               </button>
             </div>
          </div>
          <Footer />

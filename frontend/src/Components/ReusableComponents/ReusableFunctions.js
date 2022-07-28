@@ -728,17 +728,25 @@ export const alertTimeout = (delay, stateToChange) => {
    }, delay);
 };
 
-export const metodi = async (accessToken, error) => {
+export const lambdaAuth = async (accessToken) => {
    try {
-      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+      const response = await AxiosInstance.get(`/connect/dropbox-auth-start`, {
+         headers: { Authorization: accessToken },
+      });
+      window.open(response.data, "_blank", "noopener,noreferrer");
+      console.log("New");
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+export const lambdaFinish = async (accessToken, code) => {
+   try {
+      const response = await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
          headers: { Authorization: accessToken },
       });
       console.log(response);
-      let newUrl = response.data;
-      console.log(newUrl);
-      window.location.href = newUrl;
    } catch (err) {
-      error(err.response.data.messages);
       console.log(err);
    }
 };
