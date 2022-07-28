@@ -1,6 +1,7 @@
 import React from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import "../ReusableComponents/NavBarPanel.css";
+import SearchBarTags from "./Tags/SearchBarTags";
 
 const HomeSearchBar = ({ searchBar, setSearchTerm, searchTerm, setDelState, placeholder = "Search User" }) => {
    return (
@@ -22,6 +23,9 @@ const HomeSearchBar = ({ searchBar, setSearchTerm, searchTerm, setDelState, plac
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark" onClick={() => setDelState(false)}>
                         Not Deleted
+                     </Dropdown.Item>
+                     <Dropdown.Item className="text-dark">
+                        <SearchBarTags />
                      </Dropdown.Item>
                      <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
                         Clear Search

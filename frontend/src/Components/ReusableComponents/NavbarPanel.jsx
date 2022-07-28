@@ -3,6 +3,7 @@ import { Navbar, Container, DropdownButton, Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { redirectTo } from "../ReusableComponents/ReusableFunctions";
 import "./NavBarPanel.css";
+import SearchBarTags from "../HomePage/Tags/SearchBarTags";
 
 const AdminPanelNav = ({
    name,
@@ -71,6 +72,9 @@ const AdminPanelNav = ({
                            </Dropdown.Item>
                            <Dropdown.Item className="text-dark" onClick={() => setDelState(false)}>
                               Not Deleted
+                           </Dropdown.Item>
+                           <Dropdown.Item className="text-dark">
+                              <SearchBarTags />
                            </Dropdown.Item>
                            <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
                               Clear Search

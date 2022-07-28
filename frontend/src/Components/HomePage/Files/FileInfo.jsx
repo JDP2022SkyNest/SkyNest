@@ -13,7 +13,7 @@ const FileInfo = ({ elem }) => {
          <hr className="m-1" />
          <div className="row">
             <div className="col-sm-3 p-2 font-weight-bold">Created by:</div>
-            <small className="col-sm-8 p-2 text-mutted">{elem.createdById}</small>
+            <small className="col-sm-8 p-2 text-mutted">{elem.createdByName}</small>
          </div>
          <hr className="m-1" />
          <div className="row">

@@ -11,7 +11,7 @@ import TagDisplay from "../Tags/TagDisplay";
 import RemoveTag from "../Tags/RemoveTag";
 import FilePermissionModal from "./Permissions/FilePermissionModal";
 
-const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh }) => {
+const Files = ({ elem, setErrorMsg, setSuccessMsg, setInfoMsg, refresh, moveIt = true }) => {
    const [show, setShow] = useState(false);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
