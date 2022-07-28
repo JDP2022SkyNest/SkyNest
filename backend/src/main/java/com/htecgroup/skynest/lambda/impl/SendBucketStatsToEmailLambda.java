@@ -69,9 +69,9 @@ public class SendBucketStatsToEmailLambda implements Lambda<SendBucketStatsEvent
                   actionService
                       .getActionsWithTypeForObject(ActionType.MOVE, fileResponse.getId(), true)
                       .size();
-
+              Double size = Double.parseDouble(fileResponse.getSize()) / 1000000;
               return new FileStatsEmailResponse(
-                  fileResponse.getName(), downloads, edits, views, moves, fileResponse.getSize());
+                  fileResponse.getName(), downloads, edits, views, moves, size.toString());
             })
         .collect(Collectors.toList());
   }

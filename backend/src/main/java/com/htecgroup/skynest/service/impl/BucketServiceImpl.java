@@ -88,6 +88,8 @@ public class BucketServiceImpl implements BucketService, ApplicationEventPublish
 
     actionService.recordAction(Collections.singleton(bucketEntity), ActionType.VIEW);
 
+    executeLambdaForBucketDetails(bucketEntity);
+
     return modelMapper.map(bucketEntity, BucketResponse.class);
   }
 
@@ -240,8 +242,6 @@ public class BucketServiceImpl implements BucketService, ApplicationEventPublish
             .map(o -> objectRepository.findById(o).orElseThrow(ObjectNotFoundException::new))
             .collect(Collectors.toSet()),
         ActionType.VIEW);
-
-    executeLambdaForBucketDetails(bucketEntity);
     return storageContentResponse;
   }
 
@@ -252,13 +252,9 @@ public class BucketServiceImpl implements BucketService, ApplicationEventPublish
   }
 
   private void executeLambdaForBucketDetails(BucketEntity bucketEntity) {
-    //    if (bucket.getLambdaTypes().contains(LambdaType.UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA)) {
-    //      LoggedUserDto loggedUserDto = currentUserService.getLoggedUser();
-    //      UserEntity userEntity =
-    //
-    // userRepository.findById(loggedUserDto.getUuid()).orElseThrow(UserNotFoundException::new);
-    SendBucketStatsEvent event = new SendBucketStatsEvent(this, bucketEntity);
-    publisher.publishEvent(event);
-    //    }
+    if (bucketEntity.getLambdaTypes().contains(LambdaType.SEND_BUCKET_STATS_TO_EMAIL_LAMBDA)) {
+      SendBucketStatsEvent event = new SendBucketStatsEvent(this, bucketEntity);
+      publisher.publishEvent(event);
+    }
   }
 }
