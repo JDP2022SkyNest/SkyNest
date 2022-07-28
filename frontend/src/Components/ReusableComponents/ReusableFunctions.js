@@ -640,6 +640,78 @@ export const RevokeFilePermissions = async (accessToken, fileId, userEmail, erro
    }
 };
 
+export const ModifyBucketPermissions = async (accessToken, email, bucketId, role, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/permissions/bucket/${bucketId}`,
+         {
+            grantedToEmail: email,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Edited");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
+export const ModifyFolderPermissions = async (accessToken, email, folderId, role, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/permissions/folder/${folderId}`,
+         {
+            grantedToEmail: email,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Edited");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
+export const ModifyFilePermissions = async (accessToken, email, fileId, role, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/permissions/file/${fileId}`,
+         {
+            grantedToEmail: email,
+            access: role,
+         },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Permission Edited");
+   } catch (err) {
+      if (err.response.status === 400) {
+         error(err.response.data.messages);
+         console.log(err);
+      } else {
+         error(err.response.data.messages);
+         console.log(err);
+      }
+   }
+};
+
 export const openFullscreen = () => {
    if (elem.requestFullscreen) {
       elem.requestFullscreen();
