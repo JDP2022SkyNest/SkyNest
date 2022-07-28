@@ -53,7 +53,7 @@ const UploadToBucket = ({ bucketId, refresh }) => {
    };
 
    return (
-      <div className="ml-auto ml-sm-2 mr-0 mr-sm-2 latte-background custom-rounded shadow">
+      <div className="ml-auto ml-sm-2 mr-0 mr-2 mr-sm-2 latte-background custom-rounded shadow">
          <span onClick={handleShow}>
             <TiCions.TiCloudStorageOutline className="main-icon-align" fill="var(--gold)" /> Upload
          </span>
