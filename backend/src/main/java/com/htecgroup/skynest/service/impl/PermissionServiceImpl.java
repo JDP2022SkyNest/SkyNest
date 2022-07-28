@@ -214,7 +214,7 @@ public class PermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public PermissionResponse editPermission(
+  public PermissionResponse modifyBucketPermission(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
     checkIfBucketIsDeleted(bucketId);
     currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);

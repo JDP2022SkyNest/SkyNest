@@ -214,12 +214,13 @@ public class PermissionController {
             }),
       })
   @PutMapping("/bucket/{bucketId}")
-  public ResponseEntity<PermissionResponse> editPermissions(
+  public ResponseEntity<PermissionResponse> modifyBucketPermissions(
       @Valid @RequestBody PermissionEditRequest permissionEditRequest,
       @PathVariable UUID bucketId) {
     ResponseEntity<PermissionResponse> permissionResponseEntity =
         new ResponseEntity<>(
-            permissionService.editPermission(permissionEditRequest, bucketId), HttpStatus.OK);
+            permissionService.modifyBucketPermission(permissionEditRequest, bucketId),
+            HttpStatus.OK);
     return permissionResponseEntity;
   }
 

@@ -187,7 +187,7 @@ class PermissionServiceImplTest {
 
     PermissionEditRequest permissionEditRequest = PermissionEditRequestUtil.get();
     PermissionResponse actualPermissionResponse =
-        permissionService.editPermission(
+        permissionService.modifyBucketPermission(
             permissionEditRequest, expectedUserObjectAccessEntity.getObject().getId());
 
     verify(permissionRepository, times(1))
