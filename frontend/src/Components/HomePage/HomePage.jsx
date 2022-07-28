@@ -61,9 +61,10 @@ const HomePage = () => {
    }, []);
 
    const handleLambda = (e) => {
+      e.preventDefault();
       finishDropboxAutorization(accessToken, code);
    };
-
+   finishDropboxAutorization(accessToken, code);
    return (
       <div className="home-page-body">
          <Navbar bg="dark" variant="dark">
