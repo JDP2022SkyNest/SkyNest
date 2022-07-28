@@ -159,6 +159,7 @@ transform: translate(-50%,-50%) scale(0.8);
 .lambda-icon {
   width: 13px;
   filter: sepia(100);
+  transform: scale(1.4);
 }
 
 @media only screen and (max-width: 574px) {
