@@ -11,6 +11,7 @@ public class BucketResponseUtil {
     return new BucketResponse(
         BucketEntityUtil.getPrivateBucket().getId(),
         BucketEntityUtil.getPrivateBucket().getCreatedBy().getId(),
+        BucketEntityUtil.getPrivateBucket().getCreatedBy().getEmail(),
         "Name",
         BucketDtoUtil.companyDto.getId(),
         "Description",

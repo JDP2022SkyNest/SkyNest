@@ -16,6 +16,7 @@ public class FileResponse {
   private String deletedOn;
   private String name;
   private UUID createdById;
+  private String createdByEmail;
   private UUID parentFolderId;
   private UUID bucketId;
   private String type;
