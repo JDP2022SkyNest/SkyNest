@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +35,7 @@ public class TagServiceImpl implements TagService {
   private BucketService bucketService;
   private FolderService folderService;
   private FileService fileService;
+  private ActionService actionService;
   private ModelMapper modelMapper;
 
   @Override
@@ -152,6 +155,17 @@ public class TagServiceImpl implements TagService {
 
     TagFilteredStorageResponse tagFilteredStorageResponse =
         new TagFilteredStorageResponse(allBucketsWithTag, allFoldersWithTag, allFilesWithTag);
+
+    actionService.recordAction(
+        Stream.of(
+                allBucketsWithTag.stream().map(BucketResponse::getBucketId),
+                allFoldersWithTag.stream().map(FolderResponse::getId),
+                allFilesWithTag.stream().map(FileResponse::getId))
+            .flatMap(Function.identity())
+            .map(o -> objectRepository.findById(o).orElseThrow(ObjectNotFoundException::new))
+            .collect(Collectors.toSet()),
+        ActionType.VIEW);
+
     return tagFilteredStorageResponse;
   }
 }

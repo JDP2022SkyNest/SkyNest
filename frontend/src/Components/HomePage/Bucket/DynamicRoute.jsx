@@ -15,6 +15,7 @@ import * as AiCions from "react-icons/ai";
 import * as ImCions from "react-icons/im";
 import GlobalContext from "../../context/GlobalContext";
 import LoaderAnimation from "../../Loader/LoaderAnimation";
+import BucketLambdaModal from "./Lambdas/BucketLambdaModal";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
@@ -100,6 +101,7 @@ const DynamicRoute = () => {
             <div className="py-2 mt-2 rounded d-flex">
                <AddFolderModal bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
                <UploadToBucket bucketId={data?.data?.bucketId} refresh={refreshFoldersAndFiles} />
+               <BucketLambdaModal bucketId={data?.data?.bucketId} />
                {moveFolderID && (
                   <div
                      onClick={async () => {

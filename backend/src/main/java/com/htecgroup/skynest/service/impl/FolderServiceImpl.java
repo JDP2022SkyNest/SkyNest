@@ -7,6 +7,7 @@ import com.htecgroup.skynest.exception.folder.FolderAlreadyDeletedException;
 import com.htecgroup.skynest.exception.folder.FolderAlreadyRestoredException;
 import com.htecgroup.skynest.exception.folder.FolderNotFoundException;
 import com.htecgroup.skynest.exception.folder.FolderParentIsDeletedException;
+import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.model.dto.FolderDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.entity.*;
@@ -18,6 +19,7 @@ import com.htecgroup.skynest.model.response.ShortFolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
+import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.util.FolderUtil;
@@ -31,7 +33,9 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +51,7 @@ public class FolderServiceImpl implements FolderService {
   private UserRepository userRepository;
 
   private BucketRepository bucketRepository;
+  private ObjectRepository objectRepository;
 
   private ActionService actionService;
   private PermissionService permissionService;
@@ -66,6 +71,7 @@ public class FolderServiceImpl implements FolderService {
         folderCreateRequest.getParentFolderId());
     folderEntity = folderRepository.save(folderEntity);
 
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.CREATE);
     permissionService.grantOwnerForObject(folderEntity);
 
     return modelMapper.map(folderEntity, FolderResponse.class);
@@ -163,6 +169,7 @@ public class FolderServiceImpl implements FolderService {
     if (!folderEntity.getBucket().getIsPublic()) {
       permissionService.currentUserHasPermissionForFolder(folderEntity, AccessType.VIEW);
     }
+    actionService.recordAction(Collections.singleton(folderEntity), ActionType.VIEW);
 
     return modelMapper.map(folderEntity, FolderResponse.class);
   }
@@ -262,6 +269,16 @@ public class FolderServiceImpl implements FolderService {
         asShortFolderResponseList(FolderUtil.getPathToFolder(parentFolder));
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, path);
+
+    actionService.recordAction(
+        Stream.of(
+                allFilesResponse.stream().map(FileResponse::getId),
+                allFoldersResponse.stream().map(FolderResponse::getId))
+            .flatMap(Function.identity())
+            .map(o -> objectRepository.findById(o).orElseThrow(ObjectNotFoundException::new))
+            .collect(Collectors.toSet()),
+        ActionType.VIEW);
+
     return storageContentResponse;
   }
 

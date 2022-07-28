@@ -19,6 +19,7 @@ public class FolderResponseUtil {
         !rootFolder.isDeleted() ? null : getRootFolder().getDeletedOn().toString(),
         rootFolder.getName(),
         rootFolder.getCreatedBy().getId(),
+        rootFolder.getCreatedBy().getEmail(),
         rootFolder.getParentFolder() == null ? null : rootFolder.getParentFolder().getId(),
         rootFolder.getBucket().getId(),
         Collections.singletonList(TagResponseUtil.get()));
@@ -34,6 +35,7 @@ public class FolderResponseUtil {
         !folderWithParent.isDeleted() ? null : getRootFolder().getDeletedOn().toString(),
         folderWithParent.getName(),
         folderWithParent.getCreatedBy().getId(),
+        folderWithParent.getCreatedBy().getEmail(),
         folderWithParent.getParentFolder().getId(),
         folderWithParent.getBucket().getId(),
         Collections.singletonList(TagResponseUtil.get()));

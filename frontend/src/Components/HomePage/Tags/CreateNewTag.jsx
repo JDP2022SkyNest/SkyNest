@@ -56,7 +56,7 @@ const CreateNewTag = () => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-auto ml-sm-2 latte-background custom-rounded shadow">
+         <span onClick={handleShow} className="ml-auto ml-sm-2 mr-2 latte-background custom-rounded shadow">
             <AiCions.AiOutlineTags className="main-icon-align" /> Create Tag
          </span>
 

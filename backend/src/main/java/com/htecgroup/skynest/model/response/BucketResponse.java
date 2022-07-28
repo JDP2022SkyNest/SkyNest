@@ -17,6 +17,8 @@ public class BucketResponse {
 
   private UUID createdById;
 
+  private String createdByEmail;
+
   private String name;
 
   private UUID companyId;

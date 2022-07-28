@@ -728,15 +728,83 @@ export const alertTimeout = (delay, stateToChange) => {
    }, delay);
 };
 
-export const metodi = async (accessToken, error) => {
+export const lambdaAuth = async (accessToken, error) => {
    try {
-      const response = await AxiosInstance.get("/lambdas/dropbox-auth-start", {
+      const response = await AxiosInstance.get(`/connect/dropbox-auth-start`, {
          headers: { Authorization: accessToken },
       });
-      console.log(response);
-      let newUrl = response.data;
-      console.log(newUrl);
-      window.location.href = newUrl;
+      window.open(response.data, "_blank", "noopener,noreferrer");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const getAllLambdas = async (accessToken, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get(`/lambdas`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const activeLambdas = async (accessToken, stateToChange, bucketId, error) => {
+   try {
+      const response = await AxiosInstance.get(`/lambdas/active/bucket/${bucketId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const lambdaFinish = async (accessToken, code, error, success, func) => {
+   try {
+      await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
+         headers: { Authorization: accessToken },
+      });
+      success("Successfully Connected");
+      setTimeout(() => {
+         func();
+      }, 1500);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err.response.data.messages);
+   }
+};
+
+export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/lambdas/bucket/${bucketId}/activate?lambda=${lambdaId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Successfully Activated");
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
+   try {
+      await AxiosInstance.put(
+         `/lambdas/bucket/${bucketId}/deactivate?lambda=${lambdaId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Successfully Deactivated");
    } catch (err) {
       error(err.response.data.messages);
       console.log(err);

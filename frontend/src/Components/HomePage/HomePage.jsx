@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Footer from "../Footer/Footer";
 import { Navbar, Container } from "react-bootstrap";
-import { redirectTo, getAllBuckets, metodi } from "../ReusableComponents/ReusableFunctions";
+import { redirectTo, getAllBuckets } from "../ReusableComponents/ReusableFunctions";
 import ROUTES from "../Routes/ROUTES";
 import ROLE from "../Roles/Roles";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import "./HomePage.css";
 import LoaderAnimation from "../Loader/LoaderAnimation";
 import HomeSearchBar from "./HomeSearchBar";
 import CreateNewTag from "./Tags/CreateNewTag";
+import LambdaModal from "./Lambdas/LambdaModal";
 
 const HomePage = () => {
    const navigate = useNavigate();
@@ -96,20 +97,11 @@ const HomePage = () => {
                <div className="py-2 mt-2 rounded d-flex">
                   <AddBucketModal refreshBuckets={refreshBuckets} />
                   <CreateNewTag />
+                  <LambdaModal />
                </div>
                <div className="container mt-2">
                   <div className="row data-folder">{allData}</div>
                </div>
-            </div>
-            <div className="d-flex justify-content-center mt-5">
-               <button
-                  onClick={() => {
-                     metodi(accessToken, setErrorMsg);
-                  }}
-                  className="btn btn-danger"
-               >
-                  METODI
-               </button>
             </div>
          </div>
          <Footer />

@@ -389,16 +389,6 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
     return initFileMetadata(name, size, type, bucket, parentFolder);
   }
 
-  private void checkOnlyCreatorsCanAccessPrivateBuckets(FileMetadataEntity fileMetadataEntity) {
-
-    BucketEntity bucket = fileMetadataEntity.getBucket();
-    UUID bucketCreatorId = bucket.getCreatedBy().getId();
-    UUID currentUserId = currentUserService.getLoggedUser().getUuid();
-
-    if (!bucket.getIsPublic() && !currentUserId.equals(bucketCreatorId))
-      throw new BucketAccessDeniedException();
-  }
-
   private void checkOnlyEmployeesCanAccessCompanyBuckets(FileMetadataEntity fileMetadataEntity) {
 
     BucketEntity bucket = fileMetadataEntity.getBucket();

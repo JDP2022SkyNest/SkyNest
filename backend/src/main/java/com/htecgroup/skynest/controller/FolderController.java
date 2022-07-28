@@ -97,7 +97,6 @@ public class FolderController {
     ResponseEntity<FolderResponse> folderResponseEntity =
         new ResponseEntity<>(folderService.createFolder(folderCreateRequest), HttpStatus.OK);
 
-    log.info("Folder {} was successfully created", folderCreateRequest.getName());
     return folderResponseEntity;
   }
 
