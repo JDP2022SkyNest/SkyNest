@@ -217,7 +217,7 @@ public class PermissionServiceImpl implements PermissionService {
   public PermissionResponse editPermissionForBucket(
       PermissionEditRequest permissionEditRequest, UUID bucketId) {
     checkIfBucketIsDeleted(bucketId);
-    currentUserHasPermissionForBucket(bucketId, AccessType.EDIT);
+    currentUserHasPermissionForBucket(bucketId, AccessType.OWNER);
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository.findByObjectId(bucketId).orElseThrow(BucketNotFoundException::new);
     UserEntity targetUser = findTargetUserForEdit(permissionEditRequest);
