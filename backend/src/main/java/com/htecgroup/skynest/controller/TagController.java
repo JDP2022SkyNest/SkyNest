@@ -336,6 +336,7 @@ public class TagController {
     tagService.untagObject(tagId, objectId);
   }
 
+  @Operation(summary = "Get buckets/folders/files with tag")
   @GetMapping("/{tagId}/objects")
   public ResponseEntity<TagFilteredStorageResponse> getAllObjectsWithTag(@PathVariable UUID tagId) {
     TagFilteredStorageResponse tagFilteredStorageResponse = tagService.getAllObjectsWithTag(tagId);
