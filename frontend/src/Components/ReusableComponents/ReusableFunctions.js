@@ -764,12 +764,15 @@ export const activeLambdas = async (accessToken, stateToChange, bucketId, error)
    }
 };
 
-export const lambdaFinish = async (accessToken, code, error, success) => {
+export const lambdaFinish = async (accessToken, code, error, success, func) => {
    try {
       await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
          headers: { Authorization: accessToken },
       });
       success("Successfully Connected");
+      setTimeout(() => {
+         func();
+      }, 1500);
    } catch (err) {
       error(err.response.data.messages);
       console.log(err.response.data.messages);

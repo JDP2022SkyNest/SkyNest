@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { lambdaFinish } from "../../ReusableComponents/ReusableFunctions";
 import Label from "../../ReusableComponents/Label";
 import ModalLoader from "../../Loader/ModalLoader";
-import { useEffect } from "react";
 
-const LambdaAuth = ({ setErrorMsg, SetSuccessMsg }) => {
+const LambdaAuth = ({ setErrorMsg, setSuccessMsg, handleClose }) => {
    const [lambdaCode, setLambdaCode] = useState("");
    const [loading, setLoading] = useState(false);
    const accessToken = localStorage.accessToken;
@@ -12,16 +11,12 @@ const LambdaAuth = ({ setErrorMsg, SetSuccessMsg }) => {
    const onSubmit = async () => {
       if (lambdaCode.length > 5) {
          setLoading(true);
-         await lambdaFinish(accessToken, lambdaCode, setErrorMsg, SetSuccessMsg);
+         await lambdaFinish(accessToken, lambdaCode, setErrorMsg, setSuccessMsg, handleClose);
          setLoading(false);
       } else {
          setErrorMsg("Invalid Authorization code length");
       }
    };
-
-   useEffect(() => {
-      console.log(lambdaCode);
-   }, [lambdaCode]);
 
    return (
       <div className="container">
