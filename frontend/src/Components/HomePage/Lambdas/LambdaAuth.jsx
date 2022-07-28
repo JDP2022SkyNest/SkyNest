@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { lambdaFinish } from "../../ReusableComponents/ReusableFunctions";
 import Label from "../../ReusableComponents/Label";
 import ModalLoader from "../../Loader/ModalLoader";
+import { useEffect } from "react";
 
 const LambdaAuth = ({ setErrorMsg, SetSuccessMsg }) => {
    const [lambdaCode, setLambdaCode] = useState("");
@@ -17,6 +18,10 @@ const LambdaAuth = ({ setErrorMsg, SetSuccessMsg }) => {
          setErrorMsg("Invalid Authorization code length");
       }
    };
+
+   useEffect(() => {
+      console.log(lambdaCode);
+   }, [lambdaCode]);
 
    return (
       <div className="container">
@@ -37,7 +42,7 @@ const LambdaAuth = ({ setErrorMsg, SetSuccessMsg }) => {
             />
          </div>
          {!loading ? (
-            <div onClick={onSubmit} className="ml-3 btn btn-secondary">
+            <div onClick={onSubmit} className="ml-0 ml-sm-3 btn btn-secondary">
                Authorize
             </div>
          ) : (
