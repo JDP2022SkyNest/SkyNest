@@ -10,6 +10,7 @@ import com.htecgroup.skynest.model.response.ShortFolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
 import com.htecgroup.skynest.repository.FolderRepository;
+import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
@@ -32,6 +33,7 @@ class FolderServiceImplTest {
   @Spy @InjectMocks FolderServiceImpl folderService;
   @Mock private FolderRepository folderRepository;
   @Mock private BucketRepository bucketRepository;
+  @Mock private ObjectRepository objectRepository;
   @Mock private CurrentUserService currentUserService;
 
   @Mock private PermissionService permissionService;
@@ -298,6 +300,9 @@ class FolderServiceImplTest {
     StorageContentResponse expectedStorageContentResponse =
         new StorageContentResponse(
             bucketId, expectedFolderResponseList, expectedFileResponseList, expectedPath);
+
+    when(objectRepository.findById(any()))
+        .thenReturn(Optional.of(FolderEntityUtil.getFolderWithoutParent()));
 
     UUID parentId = FolderEntityUtil.getFolderWithParent().getParentFolder().getId();
     StorageContentResponse actualStorageContentResponse = folderService.getFolderContent(parentId);
