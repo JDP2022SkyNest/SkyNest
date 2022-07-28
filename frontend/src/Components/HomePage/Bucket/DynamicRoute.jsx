@@ -15,7 +15,7 @@ import * as AiCions from "react-icons/ai";
 import * as ImCions from "react-icons/im";
 import GlobalContext from "../../context/GlobalContext";
 import LoaderAnimation from "../../Loader/LoaderAnimation";
-import BucketLambdaModal from "./Lambdas/BocketLambdaModal";
+import BucketLambdaModal from "./Lambdas/BucketLambdaModal";
 
 const DynamicRoute = () => {
    const { routeId } = useParams();
