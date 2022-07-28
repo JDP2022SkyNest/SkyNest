@@ -598,7 +598,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     UserObjectAccessEntity userObjectAccessEntity =
         permissionRepository
-            .findByObjectId(fileId)
+            .findById(new UserObjectAccessKey(targetUser.getId(), fileId))
             .orElseThrow(PermissionDoesNotExistException::new);
 
     AccessTypeEntity accessType = findAccessTypeForEdit(permissionEditRequest);
