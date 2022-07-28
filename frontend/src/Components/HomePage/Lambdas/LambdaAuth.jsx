@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import { lambdaFinish } from "../../ReusableComponents/ReusableFunctions";
 import Label from "../../ReusableComponents/Label";
+import ModalLoader from "../../Loader/ModalLoader";
 
-const LambdaAuth = () => {
+const LambdaAuth = ({ setErrorMsg, SetSuccessMsg }) => {
    const [lambdaCode, setLambdaCode] = useState("");
+   const [loading, setLoading] = useState(false);
    const accessToken = localStorage.accessToken;
+
+   const onSubmit = async () => {
+      if (lambdaCode.length > 5) {
+         setLoading(true);
+         await lambdaFinish(accessToken, lambdaCode, setErrorMsg, SetSuccessMsg);
+         setLoading(false);
+      } else {
+         setErrorMsg("Invalid Authorization code length");
+      }
+   };
 
    return (
       <div className="container">
@@ -15,26 +27,22 @@ const LambdaAuth = () => {
                name="lastName"
                value={lambdaCode}
                onChange={(e) => {
-                  console.log(lambdaCode);
                   setLambdaCode(e.target.value);
                }}
                id="authInp"
-               className="form-control"
+               className="form-control mr-1"
+               style={{ position: "relative", top: "3px" }}
                required
                autoComplete="off"
             />
          </div>
-         <div
-            onClick={() => {
-               console.log(accessToken);
-               console.log(lambdaCode);
-               lambdaFinish(accessToken, lambdaCode);
-            }}
-            className="ml-1 btn btn-secondary"
-            style={{ position: "relative", top: "-3px" }}
-         >
-            Authorize
-         </div>
+         {!loading ? (
+            <div onClick={onSubmit} className="ml-3 btn btn-secondary">
+               Authorize
+            </div>
+         ) : (
+            <ModalLoader marginLeft="3" />
+         )}
       </div>
    );
 };

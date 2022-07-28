@@ -16,8 +16,8 @@ const LambdaModal = () => {
    const handleShow = () => setShow(true);
 
    const allComponents = [
-      { name: "Connect", comp: <LambdaConnect /> },
-      { name: "Authorize", comp: <LambdaAuth /> },
+      { name: "Connect", comp: <LambdaConnect setErrorMsg={setErrorMsg} /> },
+      { name: "Authorize", comp: <LambdaAuth setErrorMsg={setErrorMsg} successMsg={successMsg} /> },
    ];
 
    const mappedComponents = allComponents.map((el, index) => (

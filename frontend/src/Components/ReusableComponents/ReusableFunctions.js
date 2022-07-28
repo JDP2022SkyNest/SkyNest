@@ -728,24 +728,27 @@ export const alertTimeout = (delay, stateToChange) => {
    }, delay);
 };
 
-export const lambdaAuth = async (accessToken) => {
+export const lambdaAuth = async (accessToken, error) => {
    try {
       const response = await AxiosInstance.get(`/connect/dropbox-auth-start`, {
          headers: { Authorization: accessToken },
       });
       window.open(response.data, "_blank", "noopener,noreferrer");
    } catch (err) {
+      error(err.response.data.messages);
       console.log(err);
    }
 };
 
-export const lambdaFinish = async (accessToken, code) => {
+export const lambdaFinish = async (accessToken, code, error, success) => {
    try {
       const response = await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
          headers: { Authorization: accessToken },
       });
+      success("Successfully Connected");
       console.log(response);
    } catch (err) {
-      console.log(err);
+      error(err.response.data.messages);
+      console.log(err.response.data.messages);
    }
 };

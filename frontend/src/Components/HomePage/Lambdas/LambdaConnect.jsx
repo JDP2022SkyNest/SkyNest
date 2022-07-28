@@ -2,7 +2,7 @@ import React from "react";
 import { lambdaAuth } from "../../ReusableComponents/ReusableFunctions";
 import * as FaIcons from "react-icons/fa";
 
-const LambdaConnect = () => {
+const LambdaConnect = ({ setErrorMsg }) => {
    const accessToken = localStorage.accessToken;
 
    return (

@@ -1,8 +1,8 @@
 import React from "react";
 
-const ModalLoader = () => {
+const ModalLoader = ({ marginLeft = "" }) => {
    return (
-      <button className="btn btn-dark button-width" disabled>
+      <button className={`btn btn-dark button-width ${marginLeft && `ml-${marginLeft}`}`} disabled>
          <span className="spinner-border spinner-border-sm" />
       </button>
    );
