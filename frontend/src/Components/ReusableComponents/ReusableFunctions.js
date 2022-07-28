@@ -610,14 +610,20 @@ export const startDropboxAutorization = async (accessToken, error) => {
    }
 };
 
-export const finishDropboxAutorization = async (accessToken, error) => {
+export const finishDropboxAutorization = async (accessToken, code) => {
+   console.log(accessToken, code);
    try {
-      const response = await AxiosInstance.get("/connect/dropbox-auth-finish", {
-         headers: { Authorization: accessToken },
-      });
+      await console.log(accessToken, code);
+      const response = await AxiosInstance.get(
+         "/connect/dropbox-auth-finish",
+         { code: code },
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
       console.log(response);
    } catch (err) {
-      error(err.response.data.messages);
+      console.log(accessToken, code);
       console.log(err);
    }
 };

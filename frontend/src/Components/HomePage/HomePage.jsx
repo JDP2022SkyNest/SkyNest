@@ -60,9 +60,8 @@ const HomePage = () => {
       //eslint-disable-next-line
    }, []);
 
-   const handleLambda = async (e) => {
-      e.preventDefault();
-      await finishDropboxAutorization();
+   const handleLambda = (e) => {
+      finishDropboxAutorization(accessToken, code);
    };
 
    return (
@@ -113,11 +112,17 @@ const HomePage = () => {
                   >
                      <img src={LambdaIcon} alt="lambda" className="lambda-icon" />
                   </div>
-                  <form onSubmit={handleLambda}>
+                  <form>
                      <div>
                         <input className="ml-2 border border-white" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter code" />
                      </div>
-                     <button className="ml-2 btn btn-light" type="submit">
+                     <button
+                        onClick={() => {
+                           handleLambda();
+                        }}
+                        className="ml-2 btn btn-light"
+                        type="submit"
+                     >
                         Connect to DROPBOX
                      </button>
                   </form>
