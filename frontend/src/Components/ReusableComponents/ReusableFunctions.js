@@ -740,6 +740,30 @@ export const lambdaAuth = async (accessToken, error) => {
    }
 };
 
+export const getAllLambdas = async (accessToken, stateToChange, error) => {
+   try {
+      const response = await AxiosInstance.get(`/lambdas`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const activeLambdas = async (accessToken, stateToChange, bucketId, error) => {
+   try {
+      const response = await AxiosInstance.get(`/lambdas/active/bucket/${bucketId}`, {
+         headers: { Authorization: accessToken },
+      });
+      stateToChange(response.data);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
 export const lambdaFinish = async (accessToken, code, error, success) => {
    try {
       const response = await AxiosInstance.get(`/connect/dropbox-auth-finish/?code=${code}`, {
@@ -750,5 +774,39 @@ export const lambdaFinish = async (accessToken, code, error, success) => {
    } catch (err) {
       error(err.response.data.messages);
       console.log(err.response.data.messages);
+   }
+};
+
+export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
+   try {
+      const response = await AxiosInstance.put(
+         `/lambdas/bucket/${bucketId}/activate?lambda=${lambdaId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Successfully Activated");
+      console.log(response);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
+   }
+};
+
+export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
+   try {
+      const response = await AxiosInstance.put(
+         `/lambdas/bucket/${bucketId}/deactivate?lambda=${lambdaId}`,
+         {},
+         {
+            headers: { Authorization: accessToken },
+         }
+      );
+      success("Successfully Deactivated");
+      console.log(response);
+   } catch (err) {
+      error(err.response.data.messages);
+      console.log(err);
    }
 };

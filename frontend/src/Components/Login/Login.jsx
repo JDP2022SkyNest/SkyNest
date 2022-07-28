@@ -31,7 +31,6 @@ const Login = () => {
       try {
          let reposnse = await AxiosInstance.post("/public/login", { email, password });
          let { headers } = reposnse;
-         console.log(reposnse);
          let token = headers.authorization;
          let refreshToken = headers[`refresh-token`];
          if (headers?.authorization) {
