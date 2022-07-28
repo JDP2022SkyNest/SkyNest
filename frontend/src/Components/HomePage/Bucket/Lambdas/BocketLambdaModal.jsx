@@ -5,6 +5,7 @@ import SetErrorMsg from "../../../ReusableComponents/SetErrorMsg";
 import AllLambdas from "./AllLambdas";
 import ActiveLembdas from "./ActiveLambdas";
 import * as FaIcons from "react-icons/fa";
+import lambdaIcon from "./Assets/lambda.png";
 
 const BucketLambdaModal = ({ bucketId }) => {
    const [show, setShow] = useState(false);
@@ -33,8 +34,8 @@ const BucketLambdaModal = ({ bucketId }) => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-auto ml-sm-2 latte-background custom-rounded shadow">
-            <FaIcons.FaDropbox className="main-icon-align" />
+         <span onClick={handleShow} className="ml-auto ml-sm-0 latte-background custom-rounded shadow">
+            <img src={lambdaIcon} className="main-icon-align lambda-icon" alt="Lambda Icon" />
          </span>
 
          <Modal show={show} onHide={handleClose} className="mt-3">

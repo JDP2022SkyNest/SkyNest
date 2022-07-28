@@ -33,7 +33,7 @@ const LambdaModal = () => {
 
    return (
       <>
-         <span onClick={handleShow} className="ml-auto ml-sm-2 latte-background custom-rounded shadow">
+         <span onClick={handleShow} className="ml-auto ml-sm-0 latte-background custom-rounded shadow">
             <FaIcons.FaDropbox className="main-icon-align" />
          </span>
 

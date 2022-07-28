@@ -156,6 +156,11 @@ transform: translate(-50%,-50%) scale(0.8);
   transform: scale(1.3);
 }
 
+.lambda-icon {
+  width: 13px;
+  filter: sepia(100);
+}
+
 @media only screen and (max-width: 574px) {
  .margin-left-home-search {
    margin-left: 0px !important;
