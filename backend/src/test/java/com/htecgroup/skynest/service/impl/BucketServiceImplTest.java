@@ -13,6 +13,7 @@ import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
+import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import com.htecgroup.skynest.utils.*;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
 class BucketServiceImplTest {
 
   @Mock private BucketRepository bucketRepository;
+  @Mock private ObjectRepository objectRepository;
   @Mock private CurrentUserService currentUserService;
   @Mock private UserRepository userRepository;
   @Mock private ActionService actionService;
@@ -88,6 +90,9 @@ class BucketServiceImplTest {
     StorageContentResponse expectedStorageContentResponse =
         new StorageContentResponse(
             bucketId, expectedFolderResponseList, expectedFileResponseList, null);
+
+    when(objectRepository.findById(any()))
+        .thenReturn(Optional.of(FolderEntityUtil.getFolderWithoutParent()));
 
     StorageContentResponse actualStorageContentResponse = bucketService.getBucketContent(bucketId);
 

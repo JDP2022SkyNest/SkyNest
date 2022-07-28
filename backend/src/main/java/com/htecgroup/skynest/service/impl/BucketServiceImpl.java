@@ -4,6 +4,7 @@ import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
 import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
+import com.htecgroup.skynest.exception.object.ObjectNotFoundException;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -15,6 +16,7 @@ import com.htecgroup.skynest.model.response.FileResponse;
 import com.htecgroup.skynest.model.response.FolderResponse;
 import com.htecgroup.skynest.model.response.StorageContentResponse;
 import com.htecgroup.skynest.repository.BucketRepository;
+import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Validated
@@ -34,6 +38,7 @@ public class BucketServiceImpl implements BucketService {
   private ModelMapper modelMapper;
   private CurrentUserService currentUserService;
   private UserRepository userRepository;
+  private ObjectRepository objectRepository;
   private FolderService folderService;
   private FileService fileService;
   private ActionService actionService;
@@ -217,6 +222,16 @@ public class BucketServiceImpl implements BucketService {
     List<FileResponse> allFilesResponse = fileService.getAllRootFiles(bucketId);
     StorageContentResponse storageContentResponse =
         new StorageContentResponse(bucketId, allFoldersResponse, allFilesResponse, null);
+
+    actionService.recordAction(
+        Stream.of(
+                allFilesResponse.stream().map(FileResponse::getId),
+                allFoldersResponse.stream().map(FolderResponse::getId))
+            .flatMap(Function.identity())
+            .map(o -> objectRepository.findById(o).orElseThrow(ObjectNotFoundException::new))
+            .collect(Collectors.toSet()),
+        ActionType.VIEW);
+
     return storageContentResponse;
   }
 
