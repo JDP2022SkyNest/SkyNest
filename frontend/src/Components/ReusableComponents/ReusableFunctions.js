@@ -810,3 +810,14 @@ export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error
       console.log(err);
    }
 };
+
+export const getAllSpecificTags = async (accessToken, tagId) => {
+   try {
+      const response = await AxiosInstance.get(`/tags/${tagId}/objects`, {
+         headers: { Authorization: accessToken },
+      });
+      console.log(response);
+   } catch (err) {
+      console.log(err);
+   }
+};
