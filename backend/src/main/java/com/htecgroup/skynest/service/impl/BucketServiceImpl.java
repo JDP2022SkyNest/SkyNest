@@ -1,9 +1,9 @@
 package com.htecgroup.skynest.service.impl;
 
-import com.htecgroup.skynest.exception.buckets.BucketAccessDeniedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyDeletedException;
 import com.htecgroup.skynest.exception.buckets.BucketAlreadyRestoredException;
 import com.htecgroup.skynest.exception.buckets.BucketNotFoundException;
+import com.htecgroup.skynest.exception.object.ObjectAccessDeniedException;
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.dto.BucketDto;
 import com.htecgroup.skynest.model.dto.LoggedUserDto;
@@ -124,9 +124,10 @@ public class BucketServiceImpl implements BucketService {
 
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
-    entityList.stream()
-        .filter(this::doesCurrentUserHaveViewPermissionOnBucket)
-        .collect(Collectors.toList());
+    entityList =
+        entityList.stream()
+            .filter(this::doesCurrentUserHaveViewPermissionOnBucket)
+            .collect(Collectors.toList());
 
     actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
 
@@ -138,7 +139,7 @@ public class BucketServiceImpl implements BucketService {
   private boolean doesCurrentUserHaveViewPermissionOnBucket(BucketEntity bucket) {
     try {
       permissionService.currentUserHasPermissionForBucket(bucket.getId(), AccessType.VIEW);
-    } catch (BucketAccessDeniedException b) {
+    } catch (ObjectAccessDeniedException b) {
       return false;
     }
     return true;

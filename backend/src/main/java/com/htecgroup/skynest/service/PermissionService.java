@@ -38,6 +38,8 @@ public interface PermissionService {
 
   PermissionResponse grantPermissionForFile(PermissionGrantRequest permissionGrantRequest);
 
+  PermissionResponse grantPermissionForFolder(PermissionGrantRequest permissionGrantRequest);
+
   PermissionResponse editPermissionForFile(
       PermissionEditRequest permissionEditRequest, UUID fileId);
 }
