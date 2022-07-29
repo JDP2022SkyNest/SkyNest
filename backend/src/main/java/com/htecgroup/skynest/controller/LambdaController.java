@@ -4,7 +4,6 @@ import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.response.ErrorMessage;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
-import com.htecgroup.skynest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class LambdaController {
 
   private BucketService bucketService;
-  private UserService userService;
 
   private CurrentUserService currentUserService;
 
@@ -43,12 +42,14 @@ public class LambdaController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = LambdaType.class),
+                  schema = @Schema(implementation = Map.class),
                   examples = {
                     @ExampleObject(
                         value =
-                            "[\"UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA\","
-                                + "\"SOME_OTHER_LAMBDA\"]")
+                            "{\n"
+                                + "    \"S_B_S_T_E_L\": \"Send bucket stats to e-mail\",\n"
+                                + "    \"U_F_T_E_S_L\": \"Upload file to dropbox lambda\"\n"
+                                + "}")
                   })
             }),
         @ApiResponse(
@@ -68,8 +69,9 @@ public class LambdaController {
             }),
       })
   @GetMapping
-  public List<LambdaType> getAllLambdas() {
-    return Arrays.stream(LambdaType.values()).collect(Collectors.toList());
+  public Map<String, String> getAllLambdas() {
+    return Arrays.stream(LambdaType.values())
+        .collect(Collectors.toMap(LambdaType::getDatabaseCode, LambdaType::getName));
   }
 
   @Operation(summary = "Deactivate lambda for bucket")
@@ -111,8 +113,8 @@ public class LambdaController {
       })
   @PutMapping("/bucket/{bucketId}/deactivate")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deactivateLambdaForBucket(
-      @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
+  public void deactivateLambdaForBucket(@PathVariable UUID bucketId, @RequestParam String code) {
+    LambdaType lambda = LambdaType.getLambda(code);
     bucketService.deactivateLambda(bucketId, lambda);
     log.info(
         "Deactivated lambda {} for bucket {} by owner with id {}",
@@ -130,12 +132,14 @@ public class LambdaController {
             content = {
               @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = LambdaType.class),
+                  schema = @Schema(implementation = Map.class),
                   examples = {
                     @ExampleObject(
                         value =
-                            "[\"UPLOAD_FILE_TO_EXTERNAL_SERVICE_LAMBDA\","
-                                + "\"SOME_OTHER_LAMBDA\"]")
+                            "{\n"
+                                + "    \"S_B_S_T_E_L\": \"Send bucket stats to e-mail\",\n"
+                                + "    \"U_F_T_E_S_L\": \"Upload file to dropbox lambda\"\n"
+                                + "}")
                   })
             }),
         @ApiResponse(
@@ -155,10 +159,11 @@ public class LambdaController {
             }),
       })
   @GetMapping("/active/bucket/{bucketId}")
-  public List<LambdaType> getActiveLambdasForBucket(@PathVariable UUID bucketId) {
+  public Map<String, String> getActiveLambdasForBucket(@PathVariable UUID bucketId) {
     List<LambdaType> activeLambdas = bucketService.getActiveLambdas(bucketId);
     log.info("Successfully got {} active lambdas for bucket {}", activeLambdas, bucketId);
-    return activeLambdas;
+    return activeLambdas.stream()
+        .collect(Collectors.toMap(LambdaType::getDatabaseCode, LambdaType::getName));
   }
 
   @Operation(summary = "Activate lambda for bucket")
@@ -200,8 +205,8 @@ public class LambdaController {
       })
   @PutMapping("/bucket/{bucketId}/activate")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void activateLambdaForBucket(
-      @PathVariable UUID bucketId, @RequestParam LambdaType lambda) {
+  public void activateLambdaForBucket(@PathVariable UUID bucketId, @RequestParam String code) {
+    LambdaType lambda = LambdaType.getLambda(code);
     bucketService.activateLambda(bucketId, lambda);
     log.info(
         "Activated lambda {} for bucket {} by owner with id {}",
