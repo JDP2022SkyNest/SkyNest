@@ -3,7 +3,7 @@ import { Dropdown, Modal } from "react-bootstrap";
 import * as BsCions from "react-icons/bs";
 import * as TiCions from "react-icons/ti";
 import * as AiCions from "react-icons/ai";
-import { deleteBucket, restoreBucket } from "../../ReusableComponents/ReusableFunctions";
+import { deleteBucket, restoreBucket, bucketInfoForLambda } from "../../ReusableComponents/ReusableFunctions";
 import { useNavigate } from "react-router-dom";
 import BucketInfo from "./BucketInfo";
 import EditBucketModal from "./EditBucketModal";
@@ -58,8 +58,9 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                      <Dropdown.Item
-                        onClick={(e) => {
+                        onClick={() => {
                            handleShow();
+                           bucketInfoForLambda(accessToken, elem.bucketId);
                         }}
                         className="text-dark"
                      >
