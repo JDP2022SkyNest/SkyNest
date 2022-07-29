@@ -34,8 +34,9 @@ const UploadToBucket = ({ bucketId, refresh }) => {
       } catch (err) {
          if (err.response.status === 500) {
             setErrorMsg("Maximal Upload Size is 1024 MB");
+            console.log(err);
          } else {
-            setErrorMsg(err.response.data.error);
+            setErrorMsg(err.response.data.messages);
             console.log(err);
          }
       }
