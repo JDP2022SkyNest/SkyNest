@@ -43,7 +43,7 @@ const AllLambdas = ({ setErrorMsg, setSuccessMsg, bucketId }) => {
                      }}
                      className="ml-2 btn btn-sm btn-outline-secondary"
                   >
-                     Deactive
+                     Deactivate
                   </div>
                </div>
             </div>

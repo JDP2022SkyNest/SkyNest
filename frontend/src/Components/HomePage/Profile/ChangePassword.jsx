@@ -5,12 +5,14 @@ import * as AiIcons from "react-icons/ai";
 import PasswordRequirements from "../../ReusableComponents/PasswordRequirements";
 import { passwordRegEx } from "../../ReusableComponents/ReusableFunctions";
 import Label from "../../ReusableComponents/Label";
+import LoadingButton from "../../Loader/LoadingButton";
 
 const ChangePassword = ({ userID }) => {
    const [currentPassword, setCurrentPassword] = useState("");
    const [newPassword, setNewPassword] = useState("");
    const [confirmNewPw, setconfirmNewPw] = useState("");
    const [successMsg, setSuccessMsg] = useState("");
+   const [loading, setLoading] = useState(false);
    const [errorMsg, setErrorMsg] = useState("");
    const [show, setShow] = useState(false);
    const [showPassword, setShowPassword] = useState(false);
@@ -42,6 +44,12 @@ const ChangePassword = ({ userID }) => {
       } catch (err) {
          setErrorMsg(err.response.data.messages);
       }
+   };
+
+   const changePasswordFunc = async () => {
+      setLoading(true);
+      await handlePasswordChange();
+      setLoading(false);
    };
 
    const toggleShowHide = () => {
@@ -104,19 +112,23 @@ const ChangePassword = ({ userID }) => {
                   </Form.Group>
                   {PasswordRequirements(newPassword, confirmNewPw)}
                </Form>
-               <button
-                  onClick={() => {
-                     if (isSuccessfulValidation) {
-                        handlePasswordChange();
-                     } else {
-                        setErrorMsg("Requirements not met");
-                     }
-                  }}
-                  className={isSuccessfulValidation ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
-                  disabled={!isSuccessfulValidation}
-               >
-                  Submit
-               </button>
+               {loading ? (
+                  <LoadingButton />
+               ) : (
+                  <button
+                     onClick={() => {
+                        if (isSuccessfulValidation) {
+                           changePasswordFunc();
+                        } else {
+                           setErrorMsg("Requirements not met");
+                        }
+                     }}
+                     className={isSuccessfulValidation ? "btn btn-dark btn-lg btn-block" : "btn btn-secondary btn-lg btn-block"}
+                     disabled={!isSuccessfulValidation}
+                  >
+                     Submit
+                  </button>
+               )}
             </Modal.Body>
          </Modal>
       </>
