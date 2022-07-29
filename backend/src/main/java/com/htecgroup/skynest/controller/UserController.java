@@ -187,8 +187,6 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize(
-      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{userId}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID userId) {
     UserResponse userResponse = userService.getUser(userId);
@@ -278,8 +276,6 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize(
-      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @PutMapping("/{userId}")
   public ResponseEntity<UserResponse> editUser(
       @Valid @RequestBody UserEditRequest userEditRequest, @PathVariable UUID userId) {
@@ -425,8 +421,6 @@ public class UserController {
                   })
             }),
       })
-  @PreAuthorize(
-      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @PutMapping("/{userId}/password-change")
   public ResponseEntity<Boolean> changePassword(
       @Valid @RequestBody UserChangePasswordRequest userChangePasswordRequest,
