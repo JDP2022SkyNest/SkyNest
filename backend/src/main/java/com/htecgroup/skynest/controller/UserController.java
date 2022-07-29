@@ -187,8 +187,6 @@ public class UserController {
                   examples = {@ExampleObject(value = "Internal Server Error")})
             })
       })
-  @PreAuthorize(
-      "hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_ADMIN) or hasAuthority(T(com.htecgroup.skynest.model.entity.RoleEntity).ROLE_WORKER)")
   @GetMapping("/{userId}")
   public ResponseEntity<UserResponse> getUser(@PathVariable UUID userId) {
     UserResponse userResponse = userService.getUser(userId);
