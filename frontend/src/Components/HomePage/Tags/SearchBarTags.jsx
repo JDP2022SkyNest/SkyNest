@@ -20,7 +20,9 @@ const SearchBarTags = ({ setErrorMsg }) => {
             getAllTags(accessToken, setData, setErrorMsg);
          }}
          onChange={async (e) => {
-            navigate(`/tags/${e.target.value}`, { replace: true });
+            if (e.target.value !== "Tag") {
+               navigate(`/tags/${e.target.value}`, { replace: true });
+            }
          }}
          defaultValue={"Default"}
          className="form-select select-width "
