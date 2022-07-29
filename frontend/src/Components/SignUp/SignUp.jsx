@@ -149,7 +149,7 @@ const SignUp = () => {
                         className="form-control"
                         required
                         autoComplete="off"
-                        disabled
+                        readOnly
                      />
                   </div>
                   <div className="form-outline mb-1">
@@ -162,7 +162,7 @@ const SignUp = () => {
                         className="form-control"
                         required
                         autoComplete="off"
-                        disabled
+                        readOnly
                      />
                   </div>
                   <div className="form-outline mb-1">
