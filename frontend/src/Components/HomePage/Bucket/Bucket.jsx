@@ -35,7 +35,6 @@ const Bucket = ({ elem, index, refreshBuckets, setErrorMsg, setSuccessMsg }) => 
             <div
                onClick={() => {
                   navigate(`/bucket/${elem.bucketId}`, { replace: true });
-                  console.log(`bucket/${elem.bucketId}`);
                }}
                className="card-body p-2 px-3"
             >
