@@ -51,6 +51,7 @@ class BucketServiceImplTest {
     List<BucketEntity> bucketEntityList =
         Collections.singletonList(BucketEntityUtil.getPrivateBucket());
     when(bucketRepository.findAllByOrderByNameAscCreatedOnDesc()).thenReturn(bucketEntityList);
+    when(currentUserService.getLoggedUser()).thenReturn(LoggedUserDtoUtil.getLoggedWorkerUser());
 
     List<BucketEntity> expectedResponse = new ArrayList<>(bucketEntityList);
 

@@ -142,12 +142,17 @@ public class BucketServiceImpl implements BucketService, ApplicationEventPublish
 
     List<BucketEntity> entityList =
         (List<BucketEntity>) bucketRepository.findAllByOrderByNameAscCreatedOnDesc();
+
+    LoggedUserDto currentUser = currentUserService.getLoggedUser();
     entityList =
         entityList.stream()
             .filter(this::doesCurrentUserHaveViewPermissionOnBucket)
+            .filter(b -> b.getCompany().getId().equals(currentUser.getCompany().getId()))
             .collect(Collectors.toList());
 
-    actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
+    if (!entityList.isEmpty()) {
+      actionService.recordAction(new HashSet<>(entityList), ActionType.VIEW);
+    }
 
     return entityList.stream()
         .map(e -> modelMapper.map(e, BucketResponse.class))
@@ -156,7 +161,9 @@ public class BucketServiceImpl implements BucketService, ApplicationEventPublish
 
   private boolean doesCurrentUserHaveViewPermissionOnBucket(BucketEntity bucket) {
     try {
-      permissionService.currentUserHasPermissionForBucket(bucket.getId(), AccessType.VIEW);
+      if (!bucket.getIsPublic()) {
+        permissionService.currentUserHasPermissionForBucket(bucket.getId(), AccessType.VIEW);
+      }
     } catch (ObjectAccessDeniedException b) {
       return false;
     }
