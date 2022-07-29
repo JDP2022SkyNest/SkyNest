@@ -10,16 +10,17 @@ import ConfirmPassword from "./Components/ForgotPassword/ConfirmPassword";
 import AdminPanel from "./Components/AdminPanel/AdminPanel";
 import NoToken from "./Components/Routes/NoToken";
 import AdminRoute from "./Components/Routes/AdminRoute";
-import {getUserData } from "./Components/ReusableComponents/ReusableFunctions";
+import { getUserData } from "./Components/ReusableComponents/ReusableFunctions";
 import UserInfo from "./Components/UserInfo/UserInfo";
 import CompanyInfo from "./Components/CompanyInfo/CompanyInfo";
 import GlobalContext from "./Components/context/GlobalContext";
 import DynamicRoute from "./Components/HomePage/Bucket/DynamicRoute";
 import DynamicFolderRoute from "./Components/HomePage/Folder/DynamicFolderRoute";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import TagRoute from "./Components/HomePage/Tags/TagRoute";
 
 const App = () => {
-   const {accessToken, setUserID, setUserRole } = useContext(GlobalContext);
+   const { accessToken, setUserID, setUserRole } = useContext(GlobalContext);
 
    useEffect(() => {
       if (accessToken) {
@@ -54,6 +55,15 @@ const App = () => {
             element={
                <ProtectedRoute>
                   <DynamicFolderRoute />
+               </ProtectedRoute>
+            }
+         />
+         <Route
+            path="tags/:routeId"
+            exact
+            element={
+               <ProtectedRoute>
+                  <TagRoute />
                </ProtectedRoute>
             }
          />

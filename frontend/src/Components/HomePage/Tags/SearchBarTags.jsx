@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import Tag from "./Tag";
-import { setTheTag, getAllTags } from "../../ReusableComponents/ReusableFunctions";
+import TagZZ from "./TagZZ";
+import { getAllTags } from "../../ReusableComponents/ReusableFunctions";
+import { useNavigate } from "react-router-dom";
 
-const AllTags = ({ setErrorMsg, objectId, refresh, TGZ }) => {
+const SearchBarTags = ({ setErrorMsg }) => {
    const [data, setData] = useState();
    const [menuOpen, setMenuOpen] = useState(false);
    const accessToken = localStorage.accessToken;
+
+   const navigate = useNavigate();
 
    return (
       <select
@@ -18,18 +21,16 @@ const AllTags = ({ setErrorMsg, objectId, refresh, TGZ }) => {
          }}
          onChange={async (e) => {
             if (e.target.value !== "Tag") {
-               await setTheTag(accessToken, e.target.value, objectId);
-               setMenuOpen(false);
-               refresh();
+               navigate(`/tags/${e.target.value}`, { replace: true });
             }
          }}
          defaultValue={"Default"}
          className="form-select select-width "
       >
          <option value="Tag">Tag:</option>
-         <Tag data={data} TGZ={TGZ} />
+         <TagZZ data={data} />
       </select>
    );
 };
 
-export default AllTags;
+export default SearchBarTags;
