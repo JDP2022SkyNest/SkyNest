@@ -92,7 +92,10 @@
                         <td style="border: 1px solid black;   border-collapse: collapse;" th:text="${file.getEdits()}"/>
                         <td style="border: 1px solid black;   border-collapse: collapse;" th:text="${file.getViews()}"/>
                         <td style="border: 1px solid black;   border-collapse: collapse;" th:text="${file.getMoves()}"/>
-                        <td style="border: 1px solid black;   border-collapse: collapse;" th:text="${file.getSize()}"/>
+                        <td style="border: 1px solid black;   border-collapse: collapse;"><p style="display: inline"
+                                                                                             th:text="${file.getSize()}"></p>
+                            MB
+                        </td>
                     </tr>
                     </tbody>
                 </table>

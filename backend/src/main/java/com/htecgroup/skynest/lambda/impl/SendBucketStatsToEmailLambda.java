@@ -3,6 +3,7 @@ package com.htecgroup.skynest.lambda.impl;
 import com.htecgroup.skynest.event.SendBucketStatsEvent;
 import com.htecgroup.skynest.lambda.Lambda;
 import com.htecgroup.skynest.lambda.LambdaType;
+import com.htecgroup.skynest.model.dto.LoggedUserDto;
 import com.htecgroup.skynest.model.email.Email;
 import com.htecgroup.skynest.model.entity.ActionType;
 import com.htecgroup.skynest.model.entity.BucketEntity;
@@ -36,10 +37,18 @@ public class SendBucketStatsToEmailLambda implements Lambda<SendBucketStatsEvent
     List<FileResponse> fileResponses = fileService.getFilesInBucket(bucket.getId());
     List<FileStatsEmailResponse> fileStatsEmailResponses =
         getFileStatsEmailResponses(fileResponses);
+    LoggedUserDto loggedUser = currentUserService.getLoggedUser();
     Email email =
-        EmailUtil.createStatsEmailForBucket(
-            fileStatsEmailResponses, bucket.getName(), currentUserService.getLoggedUser());
+        EmailUtil.createStatsEmailForBucket(fileStatsEmailResponses, bucket.getName(), loggedUser);
+    log.info(
+        "Sending e-mail to user {} for bucket {} in lambda statistics...",
+        loggedUser.getUuid(),
+        bucket.getId());
     emailService.send(email);
+    log.info(
+        "E-mail successfully send to user {} for bucket {} statistics.",
+        loggedUser.getUuid(),
+        bucket.getId());
     return true;
   }
 
@@ -69,9 +78,14 @@ public class SendBucketStatsToEmailLambda implements Lambda<SendBucketStatsEvent
                   actionService
                       .getActionsWithTypeForObject(ActionType.MOVE, fileResponse.getId(), true)
                       .size();
-              Double size = Double.parseDouble(fileResponse.getSize()) / 1000000;
+              Double size = Double.parseDouble(fileResponse.getSize()) / 1048576;
               return new FileStatsEmailResponse(
-                  fileResponse.getName(), downloads, edits, views, moves, size.toString());
+                  fileResponse.getName(),
+                  downloads,
+                  edits,
+                  views,
+                  moves,
+                  String.format("%.6g%n", size));
             })
         .collect(Collectors.toList());
   }

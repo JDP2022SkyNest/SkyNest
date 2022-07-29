@@ -21,6 +21,7 @@ import com.htecgroup.skynest.repository.ObjectRepository;
 import com.htecgroup.skynest.repository.UserRepository;
 import com.htecgroup.skynest.service.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -34,6 +35,7 @@ import java.util.stream.Stream;
 
 @Service
 @Validated
+@Log4j2
 @AllArgsConstructor
 public class BucketServiceImpl implements BucketService, ApplicationEventPublisherAware {
 
@@ -252,8 +254,11 @@ public class BucketServiceImpl implements BucketService, ApplicationEventPublish
   }
 
   private void executeLambdaForBucketDetails(BucketEntity bucketEntity) {
-    if (bucketEntity.getLambdaTypes().contains(LambdaType.SEND_BUCKET_STATS_TO_EMAIL_LAMBDA)) {
+    LambdaType bucketStatsLambda = LambdaType.SEND_BUCKET_STATS_TO_EMAIL_LAMBDA;
+    if (bucketEntity.getLambdaTypes().contains(bucketStatsLambda)) {
       SendBucketStatsEvent event = new SendBucketStatsEvent(this, bucketEntity);
+      log.info(
+          "Invoking event for lambda {} and bucket {}", bucketStatsLambda, bucketEntity.getId());
       publisher.publishEvent(event);
     }
   }
