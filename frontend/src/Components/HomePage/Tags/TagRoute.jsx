@@ -103,14 +103,14 @@ const TagRoute = () => {
             />
             <SetInfoMsg infoMsg={infoMsg} setInfoMsg={setInfoMsg} customStyle="alert alert-info text-info text-center col-12 mt-3" close={false} />
             {loading && <LoaderAnimation />}
-            <div className="py-2 mt-2 rounded d-flex">
+            <div className="py-0 mt-2 rounded d-flex">
                {moveFolderID && (
                   <div
                      onClick={async () => {
                         await moveFolderRoot(accessToken, moveFolderID, setMoveFilderID, setErrorMsg, setSuccessMsg);
                         refreshFoldersAndFiles();
                      }}
-                     className="ml-2 latte-background custom-rounded shadow"
+                     className="ml-2 my-2 latte-background custom-rounded shadow"
                   >
                      <ImCions.ImPaste />
                   </div>
@@ -121,7 +121,7 @@ const TagRoute = () => {
                         await moveFileRoot(accessToken, moveFileID, setMoveFileID, setErrorMsg, setSuccessMsg);
                         refreshFoldersAndFiles();
                      }}
-                     className="ml-2 latte-background custom-rounded shadow"
+                     className="ml-2 my-2 latte-background custom-rounded shadow"
                   >
                      <ImCions.ImPaste />
                   </div>
