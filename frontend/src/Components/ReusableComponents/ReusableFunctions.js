@@ -816,7 +816,6 @@ export const getAllSpecificTags = async (accessToken, tagId, stateToChange, erro
       const response = await AxiosInstance.get(`/tags/${tagId}/objects`, {
          headers: { Authorization: accessToken },
       });
-      console.log(response);
       stateToChange(response);
    } catch (err) {
       error(err.response.data.messages);

@@ -17,9 +17,11 @@ const AllTags = ({ setErrorMsg, objectId, refresh, TGZ }) => {
             getAllTags(accessToken, setData, setErrorMsg);
          }}
          onChange={async (e) => {
-            await setTheTag(accessToken, e.target.value, objectId);
-            setMenuOpen(false);
-            refresh();
+            if (e.target.value !== "Tag") {
+               await setTheTag(accessToken, e.target.value, objectId);
+               setMenuOpen(false);
+               refresh();
+            }
          }}
          defaultValue={"Default"}
          className="form-select select-width "

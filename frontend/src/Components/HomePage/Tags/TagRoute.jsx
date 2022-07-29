@@ -54,10 +54,6 @@ const TagRoute = () => {
       setLoading(false);
    };
 
-   useEffect(() => {
-      console.log(filteredBuckets);
-   }, [filteredBuckets]);
-
    const allBuckets = filteredBuckets?.map((elem, index) => (
       <Bucket elem={elem} key={index} refreshBuckets={refreshFoldersAndFiles} setErrorMsg={setErrorMsg} setSuccessMsg={setSuccessMsg} />
    ));
