@@ -823,3 +823,13 @@ export const getAllSpecificTags = async (accessToken, tagId, stateToChange, erro
       console.log(err);
    }
 };
+
+export const bucketInfoForLambda = async (accessToken, bucketId) => {
+   try {
+      await AxiosInstance.get(`/buckets/${bucketId}/info`, {
+         headers: { Authorization: accessToken },
+      });
+   } catch (err) {
+      console.log(err);
+   }
+};
