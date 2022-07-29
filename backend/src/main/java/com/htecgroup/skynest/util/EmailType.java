@@ -10,6 +10,8 @@ public enum EmailType {
   PASSWORD_CHANGE_NOTIFICATION(
       "Password change for SkyNest", "emails/password-change-notification"),
   PASSWORD_RESET("Password reset for SkyNest", "emails/password-reset"),
+  STATS_REPORT_FROM_LAMBDA("Stats for bucket", "emails/bucket-stats-lambda"),
+
   REGISTRATION_INVITE("Registration invite for SkyNest", "emails/registration-invite");
 
   private final String subject;

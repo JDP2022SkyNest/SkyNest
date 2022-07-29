@@ -22,4 +22,6 @@ public interface FileMetadataRepository extends CrudRepository<FileMetadataEntit
       UUID bucketId);
 
   List<FileMetadataEntity> findAllByParentFolderIdOrderByNameAscCreatedOnDesc(UUID parentFolderId);
+
+  List<FileMetadataEntity> findAllByBucketId(UUID bucketId);
 }

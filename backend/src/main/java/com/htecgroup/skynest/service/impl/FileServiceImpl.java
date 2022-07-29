@@ -443,4 +443,13 @@ public class FileServiceImpl implements FileService, ApplicationEventPublisherAw
       publisher.publishEvent(event);
     }
   }
+
+  public List<FileResponse> getFilesInBucket(UUID bucketId) {
+    List<FileMetadataEntity> fileMetadataEntities =
+        fileMetadataRepository.findAllByBucketId(bucketId);
+
+    return fileMetadataEntities.stream()
+        .map(fileMetadataEntity -> modelMapper.map(fileMetadataEntity, FileResponse.class))
+        .collect(Collectors.toList());
+  }
 }

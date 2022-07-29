@@ -29,6 +29,7 @@ public class EmailServiceImpl implements EmailService {
   public void send(Email email) {
     Context context = new Context();
     context.setVariable("args", email.getArgs());
+    context.setVariable("files", email.getFileStatsEmailResponses());
     String template = email.getEmailType().getTemplate();
     String subject = email.getEmailType().getSubject();
     String emailText = templateEngine.process(template, context);
