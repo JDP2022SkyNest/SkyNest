@@ -19,10 +19,6 @@ const AllLambdas = ({ setErrorMsg, setSuccessMsg, bucketId }) => {
       //eslint-disable-next-line
    }, []);
 
-   // const refreshedData = async () => {
-   //    await getAllLambdas(accessToken, setData, setErrorMsg);
-   // };
-
    const mapData = data?.map((el, index) => {
       return (
          <div key={index}>
