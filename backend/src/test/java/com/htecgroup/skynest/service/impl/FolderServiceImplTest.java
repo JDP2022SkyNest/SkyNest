@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -294,7 +295,7 @@ class FolderServiceImplTest {
         new ArrayList<>(Collections.singleton(FolderResponseUtil.getFolderWithParent()));
     UUID bucketId = folderEntity.getBucket().getId();
     List<ShortFolderResponse> expectedPath =
-        Collections.singleton(folderEntity.getParentFolder()).stream()
+        Stream.of(folderEntity.getParentFolder(), folderEntity)
             .map(folder -> modelMapper.map(folder, ShortFolderResponse.class))
             .collect(Collectors.toList());
     StorageContentResponse expectedStorageContentResponse =

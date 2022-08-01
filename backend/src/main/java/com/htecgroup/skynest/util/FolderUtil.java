@@ -14,6 +14,7 @@ public class FolderUtil {
   public static List<FolderEntity> getPathToFolder(FolderEntity folderEntity) {
 
     Deque<FolderEntity> path = new LinkedList<>();
+    path.addFirst(folderEntity);
     FolderEntity parentFolder = folderEntity.getParentFolder();
     while (parentFolder != null) {
       path.addFirst(parentFolder);

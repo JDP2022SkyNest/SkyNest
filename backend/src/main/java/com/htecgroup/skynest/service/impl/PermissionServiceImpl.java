@@ -81,9 +81,7 @@ public class PermissionServiceImpl implements PermissionService {
     permission.setId(
         new UserObjectAccessKey(permission.getGrantedTo().getId(), permission.getObject().getId()));
 
-    currentUserHasPermissionForBucket(
-        permissionGrantRequest.getObjectId(),
-        AccessType.valueOf(accessType.getName().toUpperCase()));
+    currentUserHasPermissionForBucket(permissionGrantRequest.getObjectId(), AccessType.OWNER);
 
     if (permissionRepository.existsById(
         new UserObjectAccessKey(targetUser.getId(), bucket.getId())))
