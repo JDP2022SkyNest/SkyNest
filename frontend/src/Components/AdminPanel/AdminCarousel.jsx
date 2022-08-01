@@ -4,8 +4,6 @@ import First from "../AdminPanel/Images/First.png";
 import Second from "../AdminPanel/Images/Second.png";
 import Third from "../AdminPanel/Images/Third.png";
 import Fourth from "../AdminPanel/Images/Fourth.png";
-import Fifth from "../AdminPanel/Images/Fifth.png";
-import Sixth from "../AdminPanel/Images/Sixth.png";
 
 const AdminCarousel = () => {
    const [index, setIndex] = useState(0);
@@ -32,18 +30,6 @@ const AdminCarousel = () => {
             <img className="d-block w-100" src={Third} alt="Third slide" />
             <Carousel.Caption>
                <h2 className="text-dark bg-white p-1 rounded border border-dark">3) Demote or Disable</h2>
-            </Carousel.Caption>
-         </Carousel.Item>
-         <Carousel.Item interval={2500}>
-            <img className="d-block w-100" src={Sixth} alt="Fourth slide" />
-            <Carousel.Caption>
-               <h2 className="text-dark bg-white p-1 rounded border border-dark">4) Add To Company</h2>
-            </Carousel.Caption>
-         </Carousel.Item>
-         <Carousel.Item interval={2500}>
-            <img className="d-block w-100" src={Fifth} alt="Fourth slide" />
-            <Carousel.Caption>
-               <h2 className="text-dark bg-white p-1 rounded border border-dark">5) Remove from company</h2>
             </Carousel.Caption>
          </Carousel.Item>
          <Carousel.Item interval={2500}>
