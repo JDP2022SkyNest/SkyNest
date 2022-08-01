@@ -783,7 +783,7 @@ export const lambdaFinish = async (accessToken, code, error, success, func) => {
 export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
    try {
       await AxiosInstance.put(
-         `/lambdas/bucket/${bucketId}/activate?lambda=${lambdaId}`,
+         `/lambdas/bucket/${bucketId}/activate?code=${lambdaId}`,
          {},
          {
             headers: { Authorization: accessToken },
@@ -799,7 +799,7 @@ export const activateTheLambda = async (accessToken, bucketId, lambdaId, error, 
 export const deactivateTheLambda = async (accessToken, bucketId, lambdaId, error, success) => {
    try {
       await AxiosInstance.put(
-         `/lambdas/bucket/${bucketId}/deactivate?lambda=${lambdaId}`,
+         `/lambdas/bucket/${bucketId}/deactivate?code=${lambdaId}`,
          {},
          {
             headers: { Authorization: accessToken },

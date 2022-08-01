@@ -27,11 +27,11 @@ const AllLambdas = ({ setErrorMsg, setSuccessMsg, bucketId }) => {
       return (
          <div key={index}>
             <div className="mb-2" style={overflowStlye}>
-               <span>{el}</span>
+               <span>{el.name}</span>
                <div className="mt-2">
                   <div
                      onClick={async () => {
-                        await activateTheLambda(accessToken, bucketId, el, setErrorMsg, setSuccessMsg);
+                        await activateTheLambda(accessToken, bucketId, el.code, setErrorMsg, setSuccessMsg);
                      }}
                      className="btn btn-sm btn-secondary"
                   >
@@ -39,7 +39,7 @@ const AllLambdas = ({ setErrorMsg, setSuccessMsg, bucketId }) => {
                   </div>
                   <div
                      onClick={async () => {
-                        await deactivateTheLambda(accessToken, bucketId, el, setErrorMsg, setSuccessMsg);
+                        await deactivateTheLambda(accessToken, bucketId, el.code, setErrorMsg, setSuccessMsg);
                      }}
                      className="ml-2 btn btn-sm btn-outline-secondary"
                   >

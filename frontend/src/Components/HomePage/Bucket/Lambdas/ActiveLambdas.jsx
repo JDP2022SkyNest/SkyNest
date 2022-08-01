@@ -17,7 +17,7 @@ const ActiveLambdas = ({ setErrorMsg, bucketId }) => {
       return (
          <div key={index}>
             <div className="d-flex justify-content-between mb-2">
-               <span>{el}</span>
+               <span>{el.name}</span>
             </div>
             {index !== data.length - 1 && <hr />}
          </div>
