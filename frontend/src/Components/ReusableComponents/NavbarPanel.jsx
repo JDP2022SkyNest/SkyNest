@@ -20,7 +20,7 @@ const AdminPanelNav = ({
 
    const searchFilter = () => {
       if (searchTerm === false) {
-         return "Disabled & Unverified";
+         return "Disabled users";
       } else if (searchTerm === true) {
          return "Active Users";
       }
@@ -57,7 +57,7 @@ const AdminPanelNav = ({
                               Active Users
                            </Dropdown.Item>
                            <Dropdown.Item className="text-dark" onClick={() => setSearchTerm(false)}>
-                              Disabled & Unverified
+                              Disabled Users
                            </Dropdown.Item>
                            <Dropdown.Item className="text-dark" onClick={() => setSearchTerm("")}>
                               Clear Search

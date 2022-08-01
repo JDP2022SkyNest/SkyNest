@@ -40,7 +40,7 @@ const AdminPanel = () => {
          user.address.includes(searchTerm) ||
          user.phoneNumber.includes(searchTerm) ||
          user.roleName.includes(searchTerm) ||
-         ((user.verified === searchTerm || user.enabled === searchTerm) && user.enabled === searchTerm && user.verified === searchTerm)
+         user.enabled === searchTerm
    );
 
    const allUsers = filterUsers.map((elem, index) => (
