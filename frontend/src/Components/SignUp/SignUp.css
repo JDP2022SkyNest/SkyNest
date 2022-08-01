@@ -16,6 +16,10 @@
  .no-arrow::-webkit-inner-spin-button {
    display: none;
  }
+
+ .disabled-inputs {
+  background-color: rgb(211, 211, 211) !important;
+ }
  
  .no-arrow::-webkit-outer-spin-button,
  .no-arrow::-webkit-inner-spin-button {

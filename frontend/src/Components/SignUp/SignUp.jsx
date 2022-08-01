@@ -144,25 +144,25 @@ const SignUp = () => {
                      <input
                         type="email"
                         name="email"
-                        defaultValue={email}
+                        value={email}
+                        onChange={() => {}}
                         id="emailInput"
-                        className="form-control"
+                        className="form-control disabled-inputs"
                         required
                         autoComplete="off"
-                        readOnly
                      />
                   </div>
                   <div className="form-outline mb-1">
                      <Label id="companyInput">Company</Label>
                      <input
-                        type="test"
-                        name="email"
-                        defaultValue={company}
+                        type="text"
+                        name="company"
+                        value={company}
+                        onChange={() => {}}
                         id="companyInput"
-                        className="form-control"
+                        className="form-control disabled-inputs"
                         required
                         autoComplete="off"
-                        readOnly
                      />
                   </div>
                   <div className="form-outline mb-1">
