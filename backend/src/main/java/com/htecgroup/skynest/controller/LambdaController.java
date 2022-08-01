@@ -2,6 +2,7 @@ package com.htecgroup.skynest.controller;
 
 import com.htecgroup.skynest.lambda.LambdaType;
 import com.htecgroup.skynest.model.response.ErrorMessage;
+import com.htecgroup.skynest.model.response.LambdaResponse;
 import com.htecgroup.skynest.service.BucketService;
 import com.htecgroup.skynest.service.CurrentUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -46,10 +48,16 @@ public class LambdaController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\n"
-                                + "    \"S_B_S_T_E_L\": \"Send bucket stats to e-mail\",\n"
-                                + "    \"U_F_T_E_S_L\": \"Upload file to dropbox lambda\"\n"
-                                + "}")
+                            "[\n"
+                                + "    {\n"
+                                + "        \"code\": \"U_F_T_E_S_L\",\n"
+                                + "        \"name\": \"Upload file to dropbox lambda\"\n"
+                                + "    },\n"
+                                + "    {\n"
+                                + "        \"code\": \"S_B_S_T_E_L\",\n"
+                                + "        \"name\": \"Send bucket stats to e-mail\"\n"
+                                + "    }\n"
+                                + "]")
                   })
             }),
         @ApiResponse(
@@ -69,9 +77,13 @@ public class LambdaController {
             }),
       })
   @GetMapping
-  public Map<String, String> getAllLambdas() {
-    return Arrays.stream(LambdaType.values())
-        .collect(Collectors.toMap(LambdaType::getDatabaseCode, LambdaType::getName));
+  public ResponseEntity<List<LambdaResponse>> getAllLambdas() {
+    return ResponseEntity.ok(
+        Arrays.stream(LambdaType.values())
+            .map(
+                lambdaType ->
+                    new LambdaResponse(lambdaType.getDatabaseCode(), lambdaType.getName()))
+            .collect(Collectors.toList()));
   }
 
   @Operation(summary = "Deactivate lambda for bucket")
@@ -136,10 +148,16 @@ public class LambdaController {
                   examples = {
                     @ExampleObject(
                         value =
-                            "{\n"
-                                + "    \"S_B_S_T_E_L\": \"Send bucket stats to e-mail\",\n"
-                                + "    \"U_F_T_E_S_L\": \"Upload file to dropbox lambda\"\n"
-                                + "}")
+                            "[\n"
+                                + "    {\n"
+                                + "        \"code\": \"U_F_T_E_S_L\",\n"
+                                + "        \"name\": \"Upload file to dropbox lambda\"\n"
+                                + "    },\n"
+                                + "    {\n"
+                                + "        \"code\": \"S_B_S_T_E_L\",\n"
+                                + "        \"name\": \"Send bucket stats to e-mail\"\n"
+                                + "    }\n"
+                                + "]")
                   })
             }),
         @ApiResponse(
@@ -159,11 +177,16 @@ public class LambdaController {
             }),
       })
   @GetMapping("/active/bucket/{bucketId}")
-  public Map<String, String> getActiveLambdasForBucket(@PathVariable UUID bucketId) {
+  public ResponseEntity<List<LambdaResponse>> getActiveLambdasForBucket(
+      @PathVariable UUID bucketId) {
     List<LambdaType> activeLambdas = bucketService.getActiveLambdas(bucketId);
     log.info("Successfully got {} active lambdas for bucket {}", activeLambdas, bucketId);
-    return activeLambdas.stream()
-        .collect(Collectors.toMap(LambdaType::getDatabaseCode, LambdaType::getName));
+    return ResponseEntity.ok(
+        activeLambdas.stream()
+            .map(
+                lambdaType ->
+                    new LambdaResponse(lambdaType.getDatabaseCode(), lambdaType.getName()))
+            .collect(Collectors.toList()));
   }
 
   @Operation(summary = "Activate lambda for bucket")
